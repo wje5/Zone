@@ -1,0 +1,10 @@
+itemGroup.zone=Zone
+
+item.hammer.name=Hammer
+item.spanner.name=Spanner
+item.file.name=File
+item.saw.name=Saw
+item.iron_plate.name=Iron Plate
+item.rivet.name=Rivet
+
+tile.iron_hull.name=Iron Hull
