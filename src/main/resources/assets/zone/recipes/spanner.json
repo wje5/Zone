@@ -10,7 +10,8 @@
       "item": "minecraft:iron_ingot"
     },
     "*": {
-      "item": "zone:hammer"
+      "item": "zone:hammer",
+      "data":32767
     }
   },
   "result": {

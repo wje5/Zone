@@ -6,7 +6,8 @@
   ],
   "key": {
     "#": {
-      "item": "zone:file"
+      "item": "zone:file",
+      "data":32767
     },
     "*": {
       "item": "minecraft:iron_nugget"

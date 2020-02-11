@@ -10,7 +10,8 @@
       "item": "zone:iron_plate"
     },
     "*": {
-      "item": "zone:spanner"
+      "item": "zone:spanner",
+      "data":32767
     }
   },
   "result": {

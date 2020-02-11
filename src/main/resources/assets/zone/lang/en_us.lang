@@ -6,5 +6,5 @@ item.file.name=File
 item.saw.name=Saw
 item.iron_plate.name=Iron Plate
 item.rivet.name=Rivet
-
+item.iron_plate_riveted.name=Riveted Iron Plate
 tile.iron_hull.name=Iron Hull

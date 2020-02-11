@@ -16,7 +16,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ItemLoader {
 	public static Item hammer, spanner, file, saw;
 
-	public static Item iron_plate, rivet;
+	public static Item iron_plate, rivet, iron_plate_riveted;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -28,6 +28,7 @@ public class ItemLoader {
 		register(registry, saw = new ItemCraftTool("saw"));
 		register(registry, iron_plate = new ZoneItem("iron_plate"));
 		register(registry, rivet = new ZoneItem("rivet"));
+		register(registry, iron_plate_riveted = new ZoneItem("iron_plate_riveted"));
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {
