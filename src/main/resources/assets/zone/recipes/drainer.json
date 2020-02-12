@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "*+*",
+    "*-*"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:iron_bars",
+      "data": 0
+    },
+    "*": {
+      "item": "zone:iron_plate_riveted"
+    },
+    "+": {
+      "item": "zone:iron_hull"
+    },
+    "-": {
+      "item": "zone:circuit_board"
+    }
+  },
+  "result": {
+    "item": "zone:drainer"
+  }
+}

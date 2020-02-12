@@ -1,20 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "###",
+    " # ",
     "#*#",
-    "###"
+    "#*#"
   ],
   "key": {
     "#": {
-      "item": "zone:iron_plate_riveted"
+      "item": "minecraft:glass_pane",
+      "data": 0
     },
     "*": {
-      "item": "zone:spanner",
-      "data":32767
+      "item": "minecraft:redstone"
     }
   },
   "result": {
-    "item": "zone:iron_hull"
+    "item": "zone:vacuum_tube"
   }
 }

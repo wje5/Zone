@@ -7,4 +7,13 @@ item.saw.name=Saw
 item.iron_plate.name=Iron Plate
 item.rivet.name=Rivet
 item.iron_plate_riveted.name=Riveted Iron Plate
+item.quartz_circuit_board.name=Quartz Circuit Board
+item.vacuum_tube.name=Vacuum Tube
+item.chip.name=Chip
+item.circuit_board.name=Circuit Board
+item.grind_head.name=Grind Head
+item.energy.name=Energy
+
 tile.iron_hull.name=Iron Hull
+tile.drainer.name=Drainer
+tile.grinder.name=Grinder

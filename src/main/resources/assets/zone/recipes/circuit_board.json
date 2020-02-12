@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+-+",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:iron_plate_riveted"
+    },
+    "*": {
+      "item": "minecraft:redstone"
+    },
+    "+": {
+      "item": "zone:vacuum_tube"
+    },
+    "-": {
+      "item": "zone:chip"
+    }
+  },
+  "result": {
+    "item": "zone:circuit_board"
+  }
+}

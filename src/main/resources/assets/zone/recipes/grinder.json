@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+-+",
+    "#=#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:iron_plate_riveted"
+    },
+    "*": {
+      "item": "zone:circuit_board"
+    },
+    "+": {
+      "item": "minecraft:glass",
+      "data": 0
+    },
+    "-": {
+      "item": "zone:iron_hull"
+    },
+    "=": {
+      "item": "zone:grind_head"
+    }
+  },
+  "result": {
+    "item": "zone:grinder"
+  }
+}

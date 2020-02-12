@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "*+*",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:rivet"
+    },
+    "*": {
+      "item": "zone:iron_plate"
+    },
+    "+": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "item": "zone:grind_head"
+  }
+}
