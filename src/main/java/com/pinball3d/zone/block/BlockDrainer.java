@@ -5,10 +5,12 @@ import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.gui.GuiElementLoader;
 import com.pinball3d.zone.tileentity.TEDrainer;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
@@ -16,6 +18,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class BlockDrainer extends BlockContainer {
 	public BlockDrainer() {
@@ -32,6 +37,22 @@ public class BlockDrainer extends BlockContainer {
 			playerIn.openGui(Zone.instance, GuiElementLoader.DRAINER, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		}
 		return true;
+	}
+
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		TEDrainer te = (TEDrainer) worldIn.getTileEntity(pos);
+
+		IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+
+		for (int i = handler.getSlots() - 1; i >= 0; --i) {
+			if (handler.getStackInSlot(i) != null) {
+				Block.spawnAsEntity(worldIn, pos, handler.getStackInSlot(i));
+				((IItemHandlerModifiable) handler).setStackInSlot(i, ItemStack.EMPTY);
+			}
+		}
+
+		super.breakBlock(worldIn, pos, state);
 	}
 
 	@Override

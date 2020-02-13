@@ -13,8 +13,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class ZoneMachine extends TileEntity implements ITickable {
-	protected int tick;
-
 	protected ItemStackHandler energy;
 
 	public ZoneMachine(int energySlot) {
@@ -24,9 +22,7 @@ public class ZoneMachine extends TileEntity implements ITickable {
 
 	@Override
 	public void update() {
-		if (!world.isRemote) {
-			tick++;
-		}
+
 	}
 
 	@Override
@@ -48,15 +44,15 @@ public class ZoneMachine extends TileEntity implements ITickable {
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		this.energy.deserializeNBT(compound.getCompoundTag("inventory"));
-		tick = compound.getInteger("tick");
+		energy.deserializeNBT(compound.getCompoundTag("energy"));
+
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
-		compound.setTag("inventory", energy.serializeNBT());
-		compound.setInteger("tick", tick);
+		compound.setTag("energy", energy.serializeNBT());
+
 		return compound;
 	}
 
@@ -74,5 +70,14 @@ public class ZoneMachine extends TileEntity implements ITickable {
 			world.setBlockToAir(pos);
 			Explosion explosion = world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
 		}
+	}
+
+	public boolean tryUseEnergy() {
+		for (int i = 0; i < energy.getSlots(); i++) {
+			if (energy.getStackInSlot(0).getItem() == ItemLoader.energy && !energy.extractItem(i, 1, false).isEmpty()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

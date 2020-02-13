@@ -1,6 +1,10 @@
 package com.pinball3d.zone.tileentity;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 public class TEDrainer extends ZoneMachine {
+	protected int tick;
+
 	public TEDrainer() {
 		super(1);
 	}
@@ -8,9 +12,25 @@ public class TEDrainer extends ZoneMachine {
 	@Override
 	public void update() {
 		super.update();
-		if (tick >= 1200) {
-			tick -= 1200;
+		if (world.isRemote) {
+			return;
+		}
+		if (tick >= 120) {
+			tick -= 120;
 			addEnergy(1);
 		}
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound compound) {
+		super.readFromNBT(compound);
+		tick = compound.getInteger("tick");
+	}
+
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		super.writeToNBT(compound);
+		compound.setInteger("tick", tick);
+		return compound;
 	}
 }

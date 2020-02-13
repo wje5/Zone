@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class GuiElementLoader implements IGuiHandler {
 	public static final int DRAINER = 1;
+	public static final int GRINDER = 2;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -20,6 +21,8 @@ public class GuiElementLoader implements IGuiHandler {
 		switch (ID) {
 		case DRAINER:
 			return new ContainerDrainer(player, world.getTileEntity(new BlockPos(x, y, z)));
+		case GRINDER:
+			return new ContainerGrinder(player, world.getTileEntity(new BlockPos(x, y, z)));
 		}
 		return null;
 	}
@@ -29,6 +32,8 @@ public class GuiElementLoader implements IGuiHandler {
 		switch (ID) {
 		case DRAINER:
 			return new GuiContainerDrainer(new ContainerDrainer(player, world.getTileEntity(new BlockPos(x, y, z))));
+		case GRINDER:
+			return new GuiContainerGrinder(new ContainerGrinder(player, world.getTileEntity(new BlockPos(x, y, z))));
 		}
 		return null;
 	}

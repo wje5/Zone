@@ -19,6 +19,8 @@ public class ItemLoader {
 
 	public static Item energy;
 
+	public static Item crushed_iron_ore;
+
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
 		IForgeRegistry<Item> registry = event.getRegistry();
@@ -35,6 +37,7 @@ public class ItemLoader {
 		register(registry, circuit_board = new ZoneItem("circuit_board"));
 		register(registry, grind_head = new ZoneItem("grind_head"));
 		register(registry, energy = new ZoneItem("energy"));
+		register(registry, crushed_iron_ore = new ZoneItem("crushed_iron_ore"));
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {

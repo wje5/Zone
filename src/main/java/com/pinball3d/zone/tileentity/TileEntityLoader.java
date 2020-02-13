@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class TileEntityLoader {
 	public static void init() {
 		registerTileEntity(TEDrainer.class, "Drainer");
+		registerTileEntity(TEGrinder.class, "Grinder");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {
