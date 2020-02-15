@@ -1,6 +1,6 @@
 package com.pinball3d.zone;
 
-import com.pinball3d.zone.gui.GuiElementLoader;
+import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.recipe.RecipeHandler;
 import com.pinball3d.zone.recipe.VanillaRecipeHandler;
 import com.pinball3d.zone.tileentity.TileEntityLoader;

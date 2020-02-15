@@ -1,4 +1,4 @@
-package com.pinball3d.zone.gui;
+package com.pinball3d.zone.inventory;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;

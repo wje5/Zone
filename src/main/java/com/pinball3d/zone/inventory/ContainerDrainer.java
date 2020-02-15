@@ -1,4 +1,4 @@
-package com.pinball3d.zone.gui;
+package com.pinball3d.zone.inventory;
 
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.tileentity.TEDrainer;
@@ -35,6 +35,33 @@ public class ContainerDrainer extends Container {
 		for (int i = 0; i < 9; ++i) {
 			addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 132));
 		}
+	}
+
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+		Slot slot = inventorySlots.get(index);
+		if (slot == null || !slot.getHasStack()) {
+			return null;
+		}
+		ItemStack newStack = slot.getStack(), oldStack = newStack.copy();
+		boolean isMerged = false;
+		if (index <= 0) {
+			isMerged = mergeItemStack(newStack, 1, 37, true);
+		} else if (index >= 1 && index < 28) {
+			isMerged = mergeItemStack(newStack, 28, 37, false);
+		} else if (index >= 28 && index < 37) {
+			isMerged = mergeItemStack(newStack, 1, 28, false);
+		}
+		if (!isMerged) {
+			return ItemStack.EMPTY;
+		}
+		if (newStack.getCount() == 0) {
+			slot.putStack(ItemStack.EMPTY);
+		} else {
+			slot.onSlotChanged();
+		}
+		slot.onTake(playerIn, newStack);
+		return oldStack;
 	}
 
 	@Override

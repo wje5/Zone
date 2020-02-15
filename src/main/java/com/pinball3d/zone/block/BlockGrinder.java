@@ -2,7 +2,7 @@ package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
-import com.pinball3d.zone.gui.GuiElementLoader;
+import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.tileentity.TEGrinder;
 
 import net.minecraft.block.Block;

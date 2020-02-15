@@ -72,9 +72,10 @@ public class ZoneMachine extends TileEntity implements ITickable {
 		}
 	}
 
-	public boolean tryUseEnergy() {
+	public boolean tryUseEnergy(boolean simulate) {
 		for (int i = 0; i < energy.getSlots(); i++) {
-			if (energy.getStackInSlot(0).getItem() == ItemLoader.energy && !energy.extractItem(i, 1, false).isEmpty()) {
+			if (energy.getStackInSlot(0).getItem() == ItemLoader.energy
+					&& !energy.extractItem(i, 1, simulate).isEmpty()) {
 				return true;
 			}
 		}

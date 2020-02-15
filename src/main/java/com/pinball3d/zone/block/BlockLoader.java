@@ -16,7 +16,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class BlockLoader {
 	public static Block iron_hull;
 
-	public static Block drainer, grinder;
+	public static Block drainer, grinder, elec_furnace;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -24,11 +24,11 @@ public class BlockLoader {
 		register(registry, iron_hull = new BlockIronHull());
 		register(registry, drainer = new BlockDrainer());
 		register(registry, grinder = new BlockGrinder());
+		register(registry, elec_furnace = new BlockElecFurnace());
 	}
 
 	private static void register(IForgeRegistry<Block> registry, Block block) {
 		registry.register(block);
-		registerRender(block);
 	}
 
 	@SubscribeEvent
@@ -37,15 +37,19 @@ public class BlockLoader {
 		registerItem(registry, iron_hull);
 		registerItem(registry, drainer);
 		registerItem(registry, grinder);
+		registerItem(registry, elec_furnace);
 	}
 
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {
-		registry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+		Item item = new ItemBlock(block).setRegistryName(block.getRegistryName());
+		registry.register(item);
+		registerRender(item);
+
 	}
 
 	@SideOnly(Side.CLIENT)
-	private static void registerRender(Block block) {
-		ModelResourceLocation model = new ModelResourceLocation(block.getRegistryName(), "inventory");
-		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, model);
+	private static void registerRender(Item item) {
+		ModelResourceLocation model = new ModelResourceLocation(item.getRegistryName(), "inventory");
+		ModelLoader.setCustomModelResourceLocation(item, 0, model);
 	}
 }

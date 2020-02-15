@@ -21,6 +21,8 @@ public class RecipeHandler {
 		}
 		register(
 				new RecipeGrinder(new ItemStack(Blocks.IRON_ORE), new ItemStack(ItemLoader.crushed_iron_ore, 32), 200));
+		register(
+				new RecipeGrinder(new ItemStack(Blocks.GOLD_ORE), new ItemStack(ItemLoader.crushed_gold_ore, 32), 200));
 	}
 
 	public static void register(Recipe recipe) {

@@ -8,6 +8,7 @@ public class TileEntityLoader {
 	public static void init() {
 		registerTileEntity(TEDrainer.class, "Drainer");
 		registerTileEntity(TEGrinder.class, "Grinder");
+		registerTileEntity(TEElecFurnace.class, "ElecFurnace");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

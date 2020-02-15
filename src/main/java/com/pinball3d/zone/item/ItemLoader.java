@@ -19,7 +19,7 @@ public class ItemLoader {
 
 	public static Item energy;
 
-	public static Item crushed_iron_ore;
+	public static Item crushed_iron_ore, crushed_gold_ore;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -38,6 +38,7 @@ public class ItemLoader {
 		register(registry, grind_head = new ZoneItem("grind_head"));
 		register(registry, energy = new ZoneItem("energy"));
 		register(registry, crushed_iron_ore = new ZoneItem("crushed_iron_ore"));
+		register(registry, crushed_gold_ore = new ZoneItem("crushed_gold_ore"));
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {

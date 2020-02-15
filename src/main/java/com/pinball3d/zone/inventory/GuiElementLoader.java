@@ -1,4 +1,4 @@
-package com.pinball3d.zone.gui;
+package com.pinball3d.zone.inventory;
 
 import com.pinball3d.zone.Zone;
 
@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 public class GuiElementLoader implements IGuiHandler {
 	public static final int DRAINER = 1;
 	public static final int GRINDER = 2;
+	public static final int ELECFURNACE = 3;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -23,6 +24,8 @@ public class GuiElementLoader implements IGuiHandler {
 			return new ContainerDrainer(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case GRINDER:
 			return new ContainerGrinder(player, world.getTileEntity(new BlockPos(x, y, z)));
+		case ELECFURNACE:
+			return new ContainerElecFurnace(player, world.getTileEntity(new BlockPos(x, y, z)));
 		}
 		return null;
 	}
@@ -34,6 +37,9 @@ public class GuiElementLoader implements IGuiHandler {
 			return new GuiContainerDrainer(new ContainerDrainer(player, world.getTileEntity(new BlockPos(x, y, z))));
 		case GRINDER:
 			return new GuiContainerGrinder(new ContainerGrinder(player, world.getTileEntity(new BlockPos(x, y, z))));
+		case ELECFURNACE:
+			return new GuiContainerElecFurnace(
+					new ContainerElecFurnace(player, world.getTileEntity(new BlockPos(x, y, z))));
 		}
 		return null;
 	}

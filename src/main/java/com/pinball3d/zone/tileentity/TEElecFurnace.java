@@ -1,22 +1,18 @@
 package com.pinball3d.zone.tileentity;
 
-import com.pinball3d.zone.recipe.Recipe;
-import com.pinball3d.zone.recipe.RecipeHandler;
-import com.pinball3d.zone.recipe.RecipeHandler.Type;
-
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import scala.actors.threadpool.Arrays;
 
-public class TEGrinder extends ZoneMachine {
-	protected int tick, totalTick, energyTick;
+public class TEElecFurnace extends ZoneMachine {
+	protected int tick, energyTick;
 	protected ItemStackHandler input, output, expectOutput;
 
-	public TEGrinder() {
+	public TEElecFurnace() {
 		super(1);
 		input = new ItemStackHandler();
 		output = new ItemStackHandler();
@@ -33,15 +29,13 @@ public class TEGrinder extends ZoneMachine {
 		if (tick <= 0) {
 			output.insertItem(0, expectOutput.getStackInSlot(0), false);
 			expectOutput.setStackInSlot(0, ItemStack.EMPTY);
-			Recipe recipe = RecipeHandler.getRecipe(Type.GRINDER,
-					Arrays.asList(new ItemStack[] { input.getStackInSlot(0) }));
-			if (tryUseEnergy(true) || energyTick >= recipe.getTime()) {
-				if (recipe != null) {
-					if (output.insertItem(0, recipe.getOutput(0), true).isEmpty()) {
-						input.extractItem(0, recipe.getInput(0).getCount(), false);
-						expectOutput.setStackInSlot(0, recipe.getOutput(0));
-						tick = recipe.getTime();
-						totalTick = recipe.getTime();
+			if (tryUseEnergy(true) || energyTick >= 100) {
+				ItemStack stack = FurnaceRecipes.instance().getSmeltingResult(input.getStackInSlot(0));
+				if (!stack.isEmpty()) {
+					if (output.insertItem(0, stack, true).isEmpty()) {
+						input.extractItem(0, 1, false);
+						expectOutput.setStackInSlot(0, stack);
+						tick = 100;
 					}
 				}
 			}
@@ -55,14 +49,11 @@ public class TEGrinder extends ZoneMachine {
 				expectOutput.setStackInSlot(0, ItemStack.EMPTY);
 			}
 		}
+		markDirty();
 	}
 
 	public int getTick() {
 		return tick;
-	}
-
-	public int getTotalTick() {
-		return totalTick;
 	}
 
 	public int getEnergyTick() {
@@ -91,7 +82,6 @@ public class TEGrinder extends ZoneMachine {
 		output.deserializeNBT(compound.getCompoundTag("output"));
 		expectOutput.deserializeNBT(compound.getCompoundTag("expectOutput"));
 		tick = compound.getInteger("tick");
-		totalTick = compound.getInteger("totalTick");
 		energyTick = compound.getInteger("energyTick");
 	}
 
@@ -102,7 +92,6 @@ public class TEGrinder extends ZoneMachine {
 		compound.setTag("output", output.serializeNBT());
 		compound.setTag("expectOutput", expectOutput.serializeNBT());
 		compound.setInteger("tick", tick);
-		compound.setInteger("totalTick", totalTick);
 		compound.setInteger("energyTick", energyTick);
 		return compound;
 	}

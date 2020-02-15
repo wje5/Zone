@@ -3,7 +3,7 @@ package com.pinball3d.zone.block;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
-import com.pinball3d.zone.tileentity.TEDrainer;
+import com.pinball3d.zone.tileentity.TEElecFurnace;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -22,11 +22,11 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class BlockDrainer extends BlockContainer {
-	public BlockDrainer() {
+public class BlockElecFurnace extends BlockContainer {
+	public BlockElecFurnace() {
 		super(Material.IRON);
-		setRegistryName("zone:drainer");
-		setUnlocalizedName("drainer");
+		setRegistryName("zone:elec_furnace");
+		setUnlocalizedName("elec_furnace");
 		setCreativeTab(TabZone.tab);
 	}
 
@@ -34,14 +34,14 @@ public class BlockDrainer extends BlockContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
-			playerIn.openGui(Zone.instance, GuiElementLoader.DRAINER, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(Zone.instance, GuiElementLoader.ELECFURNACE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		}
 		return true;
 	}
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		TEDrainer te = (TEDrainer) worldIn.getTileEntity(pos);
+		TEElecFurnace te = (TEElecFurnace) worldIn.getTileEntity(pos);
 
 		IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 
@@ -68,6 +68,6 @@ public class BlockDrainer extends BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TEDrainer();
+		return new TEElecFurnace();
 	}
 }

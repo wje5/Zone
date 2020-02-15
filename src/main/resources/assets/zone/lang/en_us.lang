@@ -14,7 +14,9 @@ item.circuit_board.name=Circuit Board
 item.grind_head.name=Grind Head
 item.energy.name=Energy
 item.crushed_iron_ore.name=Crushed Iron Ore
+item.crushed_gold_ore.name=Crushed Gold Ore
 
 tile.iron_hull.name=Iron Hull
 tile.drainer.name=Drainer
 tile.grinder.name=Grinder
+tile.elec_furnace.name=Electric Furnace

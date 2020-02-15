@@ -15,10 +15,12 @@ public class TEDrainer extends ZoneMachine {
 		if (world.isRemote) {
 			return;
 		}
+		tick++;
 		if (tick >= 120) {
 			tick -= 120;
 			addEnergy(1);
 		}
+		markDirty();
 	}
 
 	@Override
