@@ -20,3 +20,7 @@ tile.iron_hull.name=Iron Hull
 tile.drainer.name=Drainer
 tile.grinder.name=Grinder
 tile.elec_furnace.name=Electric Furnace
+
+container.drainer=Drainer
+container.grinder=Grinder
+container.elec_furnace=Electric Furnace

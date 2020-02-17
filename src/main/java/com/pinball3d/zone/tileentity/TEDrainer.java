@@ -16,8 +16,8 @@ public class TEDrainer extends ZoneMachine {
 			return;
 		}
 		tick++;
-		if (tick >= 120) {
-			tick -= 120;
+		if (tick >= 1200) {
+			tick -= 1200;
 			addEnergy(1);
 		}
 		markDirty();

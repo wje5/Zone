@@ -35,8 +35,8 @@ public class TEGrinder extends ZoneMachine {
 			expectOutput.setStackInSlot(0, ItemStack.EMPTY);
 			Recipe recipe = RecipeHandler.getRecipe(Type.GRINDER,
 					Arrays.asList(new ItemStack[] { input.getStackInSlot(0) }));
-			if (tryUseEnergy(true) || energyTick >= recipe.getTime()) {
-				if (recipe != null) {
+			if (recipe != null) {
+				if (tryUseEnergy(true) || energyTick >= recipe.getTime()) {
 					if (output.insertItem(0, recipe.getOutput(0), true).isEmpty()) {
 						input.extractItem(0, recipe.getInput(0).getCount(), false);
 						expectOutput.setStackInSlot(0, recipe.getOutput(0));

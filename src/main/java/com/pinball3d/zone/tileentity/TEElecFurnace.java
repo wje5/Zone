@@ -30,7 +30,7 @@ public class TEElecFurnace extends ZoneMachine {
 			output.insertItem(0, expectOutput.getStackInSlot(0), false);
 			expectOutput.setStackInSlot(0, ItemStack.EMPTY);
 			if (tryUseEnergy(true) || energyTick >= 100) {
-				ItemStack stack = FurnaceRecipes.instance().getSmeltingResult(input.getStackInSlot(0));
+				ItemStack stack = FurnaceRecipes.instance().getSmeltingResult(input.getStackInSlot(0)).copy();
 				if (!stack.isEmpty()) {
 					if (output.insertItem(0, stack, true).isEmpty()) {
 						input.extractItem(0, 1, false);
