@@ -1,7 +1,7 @@
 package com.pinball3d.zone.inventory;
 
 import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.tileentity.TEElecFurnace;
+import com.pinball3d.zone.tileentity.TEAlloySmelter;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -16,13 +16,13 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ContainerElecFurnace extends Container {
+public class ContainerAlloySmelter extends Container {
 	private IItemHandler energy, input, output;
-	private int tick, energyTick;
-	protected TEElecFurnace tileEntity;
+	private int tick, totalTick, energyTick;
+	protected TEAlloySmelter tileEntity;
 
-	public ContainerElecFurnace(EntityPlayer player, TileEntity tileEntity) {
-		this.tileEntity = (TEElecFurnace) tileEntity;
+	public ContainerAlloySmelter(EntityPlayer player, TileEntity tileEntity) {
+		this.tileEntity = (TEAlloySmelter) tileEntity;
 		energy = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
 		input = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 		output = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
@@ -32,7 +32,9 @@ public class ContainerElecFurnace extends Container {
 				return stack.getItem() == ItemLoader.energy;
 			}
 		});
-		addSlotToContainer(new SlotItemHandler(input, 0, 56, 17));
+		addSlotToContainer(new SlotItemHandler(input, 0, 38, 17));
+		addSlotToContainer(new SlotItemHandler(input, 1, 56, 17));
+		addSlotToContainer(new SlotItemHandler(input, 2, 74, 17));
 		addSlotToContainer(new SlotItemHandler(output, 0, 116, 35));
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
@@ -49,10 +51,12 @@ public class ContainerElecFurnace extends Container {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 		tick = tileEntity.getTick();
+		totalTick = tileEntity.getTotalTick();
 		energyTick = tileEntity.getEnergyTick();
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 0, tick);
-			i.sendWindowProperty(this, 1, energyTick);
+			i.sendWindowProperty(this, 1, totalTick);
+			i.sendWindowProperty(this, 2, energyTick);
 		}
 	}
 
@@ -65,6 +69,9 @@ public class ContainerElecFurnace extends Container {
 			tick = data;
 			break;
 		case 1:
+			totalTick = data;
+			break;
+		case 2:
 			energyTick = data;
 			break;
 		}
@@ -78,17 +85,17 @@ public class ContainerElecFurnace extends Container {
 		}
 		ItemStack newStack = slot.getStack(), oldStack = newStack.copy();
 		boolean isMerged = false;
-		if (index <= 2) {
-			isMerged = mergeItemStack(newStack, 3, 39, true);
-		} else if (index >= 3 && index < 30) {
-			isMerged = mergeItemStack(newStack, 0, 2, false);
+		if (index <= 4) {
+			isMerged = mergeItemStack(newStack, 5, 41, true);
+		} else if (index >= 5 && index < 32) {
+			isMerged = mergeItemStack(newStack, 0, 4, false);
 			if (!isMerged) {
-				isMerged = mergeItemStack(newStack, 30, 39, false);
+				isMerged = mergeItemStack(newStack, 32, 41, false);
 			}
-		} else if (index >= 30) {
-			isMerged = mergeItemStack(newStack, 0, 2, false);
+		} else if (index >= 32) {
+			isMerged = mergeItemStack(newStack, 0, 4, false);
 			if (!isMerged) {
-				isMerged = mergeItemStack(newStack, 4, 30, false);
+				isMerged = mergeItemStack(newStack, 5, 32, false);
 			}
 		}
 		if (!isMerged) {
@@ -105,6 +112,10 @@ public class ContainerElecFurnace extends Container {
 
 	public int getTick() {
 		return tick;
+	}
+
+	public int getTotalTick() {
+		return totalTick;
 	}
 
 	public int getEnergyTick() {

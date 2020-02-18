@@ -49,7 +49,7 @@ public class ContainerDrainer extends Container {
 			isMerged = mergeItemStack(newStack, 1, 37, true);
 		} else if (index >= 1 && index < 28) {
 			isMerged = mergeItemStack(newStack, 28, 37, false);
-		} else if (index >= 28 && index < 37) {
+		} else if (index >= 28) {
 			isMerged = mergeItemStack(newStack, 1, 28, false);
 		}
 		if (!isMerged) {

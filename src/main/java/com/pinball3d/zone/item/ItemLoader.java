@@ -15,7 +15,7 @@ public class ItemLoader {
 	public static Item hammer, spanner, file, saw;
 
 	public static Item iron_plate, rivet, iron_plate_riveted, quartz_circuit_board, vacuum_tube, chip, circuit_board,
-			grind_head;
+			grind_head, gold_plate, gold_plate_riveted, thermal_amplifier, etherium;
 
 	public static Item energy;
 
@@ -39,6 +39,10 @@ public class ItemLoader {
 		register(registry, energy = new ZoneItem("energy"));
 		register(registry, crushed_iron_ore = new ZoneItem("crushed_iron_ore"));
 		register(registry, crushed_gold_ore = new ZoneItem("crushed_gold_ore"));
+		register(registry, gold_plate = new ZoneItem("gold_plate"));
+		register(registry, gold_plate_riveted = new ZoneItem("gold_plate_riveted"));
+		register(registry, thermal_amplifier = new ZoneItem("thermal_amplifier"));
+		register(registry, etherium = new ZoneItem("etherium"));
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {

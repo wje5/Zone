@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "*+*",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:gold_plate_riveted"
+    },
+    "*": {
+      "item": "minecraft:redstone"
+    },
+    "+": {
+      "item": "zone:chip"
+    }
+  },
+  "result": {
+    "item": "zone:thermal_amplifier"
+  }
+}

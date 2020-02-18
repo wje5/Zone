@@ -15,12 +15,18 @@ item.grind_head.name=Grind Head
 item.energy.name=Energy
 item.crushed_iron_ore.name=Crushed Iron Ore
 item.crushed_gold_ore.name=Crushed Gold Ore
+item.gold_plate.name=Gold Plate
+item.gold_plate_riveted.name=Riveted Gold Plate
+item.thermal_amplifier.name=Thermal Amplifier
+item.etherium.name=Etherium
 
 tile.iron_hull.name=Iron Hull
 tile.drainer.name=Drainer
 tile.grinder.name=Grinder
 tile.elec_furnace.name=Electric Furnace
+tile.alloy_smelter.name=Alloy Smelter
 
 container.drainer=Drainer
 container.grinder=Grinder
 container.elec_furnace=Electric Furnace
+container.alloy_smelter=Alloy Smelter

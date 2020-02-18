@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+-+",
+    "#=#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:iron_plate_riveted"
+    },
+    "*": {
+      "item": "zone:thermal_amplifier"
+    },
+    "+": {
+      "item": "minecraft:glass",
+      "data": 0
+    },
+    "-": {
+      "item": "zone:iron_hull"
+    },
+    "=": {
+      "item": "zone:circuit_board"
+    }
+  },
+  "result": {
+    "item": "zone:alloy_smelter"
+  }
+}

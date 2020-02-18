@@ -25,6 +25,8 @@ public class RecipeHandler {
 		register(
 				new RecipeGrinder(new ItemStack(Blocks.GOLD_ORE), new ItemStack(ItemLoader.crushed_gold_ore, 32), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.REDSTONE_ORE), new ItemStack(Items.REDSTONE, 16), 200));
+		register(new RecipeAlloySmelter(new ItemStack(Items.IRON_INGOT), new ItemStack(Items.GOLD_INGOT),
+				new ItemStack(Items.QUARTZ), new ItemStack(ItemLoader.etherium), 200));
 	}
 
 	public static void register(Recipe recipe) {
@@ -56,6 +58,6 @@ public class RecipeHandler {
 	}
 
 	public static enum Type {
-		GRINDER;
+		GRINDER, ALLOY_SMELTER;
 	}
 }

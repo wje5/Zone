@@ -16,7 +16,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class BlockLoader {
 	public static Block iron_hull;
 
-	public static Block drainer, grinder, elec_furnace;
+	public static Block drainer, grinder, elec_furnace, alloy_smelter;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -25,6 +25,7 @@ public class BlockLoader {
 		register(registry, drainer = new BlockDrainer());
 		register(registry, grinder = new BlockGrinder());
 		register(registry, elec_furnace = new BlockElecFurnace());
+		register(registry, alloy_smelter = new BlockAlloySmelter());
 	}
 
 	private static void register(IForgeRegistry<Block> registry, Block block) {
@@ -38,6 +39,7 @@ public class BlockLoader {
 		registerItem(registry, drainer);
 		registerItem(registry, grinder);
 		registerItem(registry, elec_furnace);
+		registerItem(registry, alloy_smelter);
 	}
 
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {

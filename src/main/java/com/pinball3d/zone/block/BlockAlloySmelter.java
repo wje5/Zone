@@ -3,7 +3,7 @@ package com.pinball3d.zone.block;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
-import com.pinball3d.zone.tileentity.TEElecFurnace;
+import com.pinball3d.zone.tileentity.TEAlloySmelter;
 import com.pinball3d.zone.tileentity.TEGrinder;
 
 import net.minecraft.block.Block;
@@ -23,11 +23,11 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class BlockElecFurnace extends BlockContainer {
-	public BlockElecFurnace() {
+public class BlockAlloySmelter extends BlockContainer {
+	public BlockAlloySmelter() {
 		super(Material.IRON);
-		setRegistryName("zone:elec_furnace");
-		setUnlocalizedName("elec_furnace");
+		setRegistryName("zone:alloy_smelter");
+		setUnlocalizedName("alloy_smelter");
 		setCreativeTab(TabZone.tab);
 	}
 
@@ -35,7 +35,8 @@ public class BlockElecFurnace extends BlockContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
-			playerIn.openGui(Zone.instance, GuiElementLoader.ELEC_FURNACE, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(Zone.instance, GuiElementLoader.ALLOY_SMELTER, worldIn, pos.getX(), pos.getY(),
+					pos.getZ());
 		}
 		return true;
 	}
@@ -65,6 +66,7 @@ public class BlockElecFurnace extends BlockContainer {
 				((IItemHandlerModifiable) output).setStackInSlot(i, ItemStack.EMPTY);
 			}
 		}
+
 		super.breakBlock(worldIn, pos, state);
 	}
 
@@ -81,6 +83,6 @@ public class BlockElecFurnace extends BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TEElecFurnace();
+		return new TEAlloySmelter();
 	}
 }

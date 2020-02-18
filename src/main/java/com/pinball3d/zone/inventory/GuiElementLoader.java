@@ -11,7 +11,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 public class GuiElementLoader implements IGuiHandler {
 	public static final int DRAINER = 1;
 	public static final int GRINDER = 2;
-	public static final int ELECFURNACE = 3;
+	public static final int ELEC_FURNACE = 3;
+	public static final int ALLOY_SMELTER = 4;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -24,8 +25,10 @@ public class GuiElementLoader implements IGuiHandler {
 			return new ContainerDrainer(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case GRINDER:
 			return new ContainerGrinder(player, world.getTileEntity(new BlockPos(x, y, z)));
-		case ELECFURNACE:
+		case ELEC_FURNACE:
 			return new ContainerElecFurnace(player, world.getTileEntity(new BlockPos(x, y, z)));
+		case ALLOY_SMELTER:
+			return new ContainerAlloySmelter(player, world.getTileEntity(new BlockPos(x, y, z)));
 		}
 		return null;
 	}
@@ -37,9 +40,12 @@ public class GuiElementLoader implements IGuiHandler {
 			return new GuiContainerDrainer(new ContainerDrainer(player, world.getTileEntity(new BlockPos(x, y, z))));
 		case GRINDER:
 			return new GuiContainerGrinder(new ContainerGrinder(player, world.getTileEntity(new BlockPos(x, y, z))));
-		case ELECFURNACE:
+		case ELEC_FURNACE:
 			return new GuiContainerElecFurnace(
 					new ContainerElecFurnace(player, world.getTileEntity(new BlockPos(x, y, z))));
+		case ALLOY_SMELTER:
+			return new GuiContainerAlloySmelter(
+					new ContainerAlloySmelter(player, world.getTileEntity(new BlockPos(x, y, z))));
 		}
 		return null;
 	}
