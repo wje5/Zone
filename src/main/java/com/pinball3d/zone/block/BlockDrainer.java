@@ -25,6 +25,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 public class BlockDrainer extends BlockContainer {
 	public BlockDrainer() {
 		super(Material.IRON);
+		setHardness(5.0F);
+		setResistance(10.0F);
 		setRegistryName("zone:drainer");
 		setUnlocalizedName("drainer");
 		setCreativeTab(TabZone.tab);

@@ -4,7 +4,6 @@ import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.tileentity.TEElecFurnace;
-import com.pinball3d.zone.tileentity.TEGrinder;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -26,6 +25,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 public class BlockElecFurnace extends BlockContainer {
 	public BlockElecFurnace() {
 		super(Material.IRON);
+		setHardness(5.0F);
+		setResistance(10.0F);
 		setRegistryName("zone:elec_furnace");
 		setUnlocalizedName("elec_furnace");
 		setCreativeTab(TabZone.tab);
@@ -42,7 +43,7 @@ public class BlockElecFurnace extends BlockContainer {
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		TEGrinder te = (TEGrinder) worldIn.getTileEntity(pos);
+		TEElecFurnace te = (TEElecFurnace) worldIn.getTileEntity(pos);
 
 		IItemHandler input = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 		IItemHandler energy = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);

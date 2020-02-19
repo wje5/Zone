@@ -25,6 +25,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 public class BlockGrinder extends BlockContainer {
 	public BlockGrinder() {
 		super(Material.IRON);
+		setHardness(5.0F);
+		setResistance(10.0F);
 		setRegistryName("zone:grinder");
 		setUnlocalizedName("grinder");
 		setCreativeTab(TabZone.tab);

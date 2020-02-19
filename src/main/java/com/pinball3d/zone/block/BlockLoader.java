@@ -14,7 +14,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber
 public class BlockLoader {
-	public static Block iron_hull;
+	public static Block iron_hull, clarity_glass, reinforced_glass;
 
 	public static Block drainer, grinder, elec_furnace, alloy_smelter;
 
@@ -22,6 +22,8 @@ public class BlockLoader {
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
 		IForgeRegistry<Block> registry = event.getRegistry();
 		register(registry, iron_hull = new BlockIronHull());
+		register(registry, clarity_glass = new BlockClarityGlass());
+		register(registry, reinforced_glass = new BlockReinforcedGlass());
 		register(registry, drainer = new BlockDrainer());
 		register(registry, grinder = new BlockGrinder());
 		register(registry, elec_furnace = new BlockElecFurnace());
@@ -36,6 +38,8 @@ public class BlockLoader {
 	public static void registerItems(RegistryEvent.Register<Item> event) {
 		IForgeRegistry<Item> registry = event.getRegistry();
 		registerItem(registry, iron_hull);
+		registerItem(registry, clarity_glass);
+		registerItem(registry, reinforced_glass);
 		registerItem(registry, drainer);
 		registerItem(registry, grinder);
 		registerItem(registry, elec_furnace);

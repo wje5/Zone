@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "*+*",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:rivet"
+    },
+    "*": {
+      "item": "zone:etherium_plate"
+    },
+    "+": {
+      "item": "zone:hammer",
+      "data":32767
+    }
+  },
+  "result": {
+    "item": "zone:etherium_plate_riveted",
+    "count": 4
+  }
+}
