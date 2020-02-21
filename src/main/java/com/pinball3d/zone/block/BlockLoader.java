@@ -6,6 +6,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -55,7 +56,9 @@ public class BlockLoader {
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {
 		Item item = new ItemBlock(block).setRegistryName(block.getRegistryName());
 		registry.register(item);
-		registerRender(item);
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			registerRender(item);
+		}
 
 	}
 
