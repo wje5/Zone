@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "zone:blocks/etherium_bars"
+        "layer0": "zone:blocks/clarity_glass"
     }
 }

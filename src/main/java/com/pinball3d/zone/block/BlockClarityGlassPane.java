@@ -2,16 +2,16 @@ package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
 
-import net.minecraft.block.BlockGlass;
+import net.minecraft.block.BlockPane;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.BlockRenderLayer;
 
-public class BlockClarityGlass extends BlockGlass {
-	public BlockClarityGlass() {
+public class BlockClarityGlassPane extends BlockPane {
+	public BlockClarityGlassPane() {
 		super(Material.GLASS, false);
 		setHardness(0.3F);
-		setRegistryName("zone:clarity_glass");
-		setUnlocalizedName("clarity_glass");
+		setRegistryName("zone:clarity_glass_pane");
+		setUnlocalizedName("clarity_glass_pane");
 		setCreativeTab(TabZone.tab);
 	}
 

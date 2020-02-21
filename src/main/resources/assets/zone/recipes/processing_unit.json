@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+-+",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:gold_nugget"
+    },
+    "*": {
+      "item": "zone:etherium_plate_riveted"
+    },
+    "+": {
+      "item": "minecraft:redstone"
+    },
+    "-": {
+      "item": "minecraft:prismarine_shard"
+    }
+  },
+  "result": {
+    "item": "zone:processing_unit"
+  }
+}
