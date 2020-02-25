@@ -1,5 +1,8 @@
 package com.pinball3d.zone.tileentity;
 
+import java.util.Arrays;
+
+import com.pinball3d.zone.block.BlockElecFurnace;
 import com.pinball3d.zone.recipe.Recipe;
 import com.pinball3d.zone.recipe.RecipeHandler;
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
@@ -10,7 +13,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import scala.actors.threadpool.Arrays;
 
 public class TEAlloySmelter extends ZoneMachine {
 	protected int tick, totalTick, energyTick;
@@ -57,6 +59,7 @@ public class TEAlloySmelter extends ZoneMachine {
 				expectOutput.setStackInSlot(0, ItemStack.EMPTY);
 			}
 		}
+		world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockElecFurnace.BURNING, energyTick > 0));
 	}
 
 	public int getTick() {

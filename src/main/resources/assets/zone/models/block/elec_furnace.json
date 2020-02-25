@@ -1,6 +1,8 @@
 {
-    "parent": "block/cube_all",
+    "parent": "block/orientable",
     "textures": {
-        "all": "zone:blocks/elec_furnace"
+        "top": "zone:blocks/iron_hull",
+        "front": "zone:blocks/elec_furnace",
+        "side": "zone:blocks/iron_hull"
     }
 }

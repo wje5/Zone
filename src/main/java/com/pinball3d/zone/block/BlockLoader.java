@@ -17,7 +17,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class BlockLoader {
 	public static Block iron_hull, clarity_glass, reinforced_glass, etherium_hull, etherium_bars, clarity_glass_pane;
 
-	public static Block drainer, grinder, elec_furnace, alloy_smelter;
+	public static Block drainer, grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter,
+			alloy_smelter_light;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -31,7 +32,8 @@ public class BlockLoader {
 		register(registry, drainer = new BlockDrainer());
 		register(registry, grinder = new BlockGrinder());
 		register(registry, elec_furnace = new BlockElecFurnace());
-		register(registry, alloy_smelter = new BlockAlloySmelter());
+		register(registry, alloy_smelter = new BlockAlloySmelter(false));
+		register(registry, alloy_smelter_light = new BlockAlloySmelter(true));
 	}
 
 	private static void register(IForgeRegistry<Block> registry, Block block) {

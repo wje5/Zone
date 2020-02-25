@@ -1,6 +1,7 @@
 {
-    "parent": "block/cube_all",
+    "parent": "block/cube_top",
     "textures": {
-        "all": "zone:blocks/drainer"
+        "top": "zone:blocks/drainer",
+        "side": "zone:blocks/iron_hull"
     }
 }

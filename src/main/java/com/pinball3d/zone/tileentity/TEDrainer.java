@@ -20,7 +20,6 @@ public class TEDrainer extends ZoneMachine {
 			tick -= 1200;
 			addEnergy(1);
 		}
-		markDirty();
 	}
 
 	@Override

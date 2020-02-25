@@ -1,5 +1,7 @@
 package com.pinball3d.zone.tileentity;
 
+import java.util.Arrays;
+
 import com.pinball3d.zone.recipe.Recipe;
 import com.pinball3d.zone.recipe.RecipeHandler;
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
@@ -10,7 +12,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import scala.actors.threadpool.Arrays;
 
 public class TEGrinder extends ZoneMachine {
 	protected int tick, totalTick, energyTick;

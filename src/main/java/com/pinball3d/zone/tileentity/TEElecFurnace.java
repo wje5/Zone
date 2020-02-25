@@ -1,5 +1,7 @@
 package com.pinball3d.zone.tileentity;
 
+import com.pinball3d.zone.block.BlockElecFurnace;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
@@ -49,7 +51,7 @@ public class TEElecFurnace extends ZoneMachine {
 				expectOutput.setStackInSlot(0, ItemStack.EMPTY);
 			}
 		}
-		markDirty();
+		world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockElecFurnace.BURNING, energyTick > 0));
 	}
 
 	public int getTick() {
