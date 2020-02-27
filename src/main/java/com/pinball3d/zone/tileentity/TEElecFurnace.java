@@ -27,6 +27,7 @@ public class TEElecFurnace extends ZoneMachine {
 		if (world.isRemote) {
 			return;
 		}
+		boolean flag = energyTick > 0;
 		tick = tick < 1 ? 0 : tick - 1;
 		if (tick <= 0) {
 			output.insertItem(0, expectOutput.getStackInSlot(0), false);
@@ -51,7 +52,9 @@ public class TEElecFurnace extends ZoneMachine {
 				expectOutput.setStackInSlot(0, ItemStack.EMPTY);
 			}
 		}
-		world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockElecFurnace.BURNING, energyTick > 0));
+		if (energyTick > 0 != flag) {
+			((BlockElecFurnace) blockType).setState(energyTick > 0, world, pos);
+		}
 	}
 
 	public int getTick() {

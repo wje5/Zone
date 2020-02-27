@@ -8,7 +8,10 @@ import com.pinball3d.zone.tileentity.TEGrinder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -23,13 +26,20 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class BlockGrinder extends BlockContainer {
-	public BlockGrinder() {
+	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+	private final boolean isBurning;
+	private static boolean keepInventory;
+
+	public BlockGrinder(boolean burning) {
 		super(Material.IRON);
 		setHardness(5.0F);
 		setResistance(10.0F);
-		setRegistryName("zone:grinder");
+		setLightLevel(burning ? 1F : 0F);
+		setRegistryName("zone:grinder" + (burning ? "_light" : ""));
 		setUnlocalizedName("grinder");
 		setCreativeTab(TabZone.tab);
+		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+		isBurning = burning;
 	}
 
 	@Override
@@ -43,31 +53,107 @@ public class BlockGrinder extends BlockContainer {
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		TEGrinder te = (TEGrinder) worldIn.getTileEntity(pos);
-
-		IItemHandler input = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-		IItemHandler energy = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
-		IItemHandler output = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-		for (int i = input.getSlots() - 1; i >= 0; --i) {
-			if (input.getStackInSlot(i) != null) {
-				Block.spawnAsEntity(worldIn, pos, input.getStackInSlot(i));
-				((IItemHandlerModifiable) input).setStackInSlot(i, ItemStack.EMPTY);
+		if (!keepInventory) {
+			TEGrinder te = (TEGrinder) worldIn.getTileEntity(pos);
+			IItemHandler input = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			IItemHandler energy = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
+			IItemHandler output = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+			for (int i = input.getSlots() - 1; i >= 0; --i) {
+				if (input.getStackInSlot(i) != null) {
+					Block.spawnAsEntity(worldIn, pos, input.getStackInSlot(i));
+					((IItemHandlerModifiable) input).setStackInSlot(i, ItemStack.EMPTY);
+				}
+			}
+			for (int i = energy.getSlots() - 1; i >= 0; --i) {
+				if (energy.getStackInSlot(i) != null) {
+					Block.spawnAsEntity(worldIn, pos, energy.getStackInSlot(i));
+					((IItemHandlerModifiable) energy).setStackInSlot(i, ItemStack.EMPTY);
+				}
+			}
+			for (int i = output.getSlots() - 1; i >= 0; --i) {
+				if (output.getStackInSlot(i) != null) {
+					Block.spawnAsEntity(worldIn, pos, output.getStackInSlot(i));
+					((IItemHandlerModifiable) output).setStackInSlot(i, ItemStack.EMPTY);
+				}
 			}
 		}
-		for (int i = energy.getSlots() - 1; i >= 0; --i) {
-			if (energy.getStackInSlot(i) != null) {
-				Block.spawnAsEntity(worldIn, pos, energy.getStackInSlot(i));
-				((IItemHandlerModifiable) energy).setStackInSlot(i, ItemStack.EMPTY);
-			}
-		}
-		for (int i = output.getSlots() - 1; i >= 0; --i) {
-			if (output.getStackInSlot(i) != null) {
-				Block.spawnAsEntity(worldIn, pos, output.getStackInSlot(i));
-				((IItemHandlerModifiable) output).setStackInSlot(i, ItemStack.EMPTY);
-			}
-		}
-
 		super.breakBlock(worldIn, pos, state);
+	}
+
+	@Override
+	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+		super.onBlockAdded(worldIn, pos, state);
+		this.setDefaultFacing(worldIn, pos, state);
+	}
+
+	private void setDefaultFacing(World worldIn, BlockPos pos, IBlockState state) {
+		if (!worldIn.isRemote) {
+			IBlockState iblockstate = worldIn.getBlockState(pos.north());
+			IBlockState iblockstate1 = worldIn.getBlockState(pos.south());
+			IBlockState iblockstate2 = worldIn.getBlockState(pos.west());
+			IBlockState iblockstate3 = worldIn.getBlockState(pos.east());
+			EnumFacing enumfacing = state.getValue(FACING);
+
+			if (enumfacing == EnumFacing.NORTH && iblockstate.isFullBlock() && !iblockstate1.isFullBlock()) {
+				enumfacing = EnumFacing.SOUTH;
+			} else if (enumfacing == EnumFacing.SOUTH && iblockstate1.isFullBlock() && !iblockstate.isFullBlock()) {
+				enumfacing = EnumFacing.NORTH;
+			} else if (enumfacing == EnumFacing.WEST && iblockstate2.isFullBlock() && !iblockstate3.isFullBlock()) {
+				enumfacing = EnumFacing.EAST;
+			} else if (enumfacing == EnumFacing.EAST && iblockstate3.isFullBlock() && !iblockstate2.isFullBlock()) {
+				enumfacing = EnumFacing.WEST;
+			}
+
+			worldIn.setBlockState(pos, state.withProperty(FACING, enumfacing), 2);
+		}
+	}
+
+	@Override
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, FACING);
+	}
+
+	public static void setState(boolean active, World worldIn, BlockPos pos) {
+		IBlockState iblockstate = worldIn.getBlockState(pos);
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+		keepInventory = true;
+
+		if (active) {
+			worldIn.setBlockState(pos,
+					BlockLoader.grinder_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+			worldIn.setBlockState(pos,
+					BlockLoader.grinder_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+		} else {
+			worldIn.setBlockState(pos,
+					BlockLoader.grinder.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+			worldIn.setBlockState(pos,
+					BlockLoader.grinder.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+		}
+
+		keepInventory = false;
+
+		if (tileentity != null) {
+			tileentity.validate();
+			worldIn.setTileEntity(pos, tileentity);
+		}
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		EnumFacing facing = EnumFacing.getHorizontal(meta % 4);
+		Boolean burning = meta > 4;
+		return this.getDefaultState().withProperty(FACING, facing);
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		return state.getValue(FACING).getHorizontalIndex();
+	}
+
+	@Override
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
+			float hitZ, int meta, EntityLivingBase placer) {
+		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
 	@Override

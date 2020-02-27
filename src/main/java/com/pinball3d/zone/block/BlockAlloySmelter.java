@@ -34,8 +34,8 @@ public class BlockAlloySmelter extends BlockContainer {
 		super(Material.IRON);
 		setHardness(5.0F);
 		setResistance(10.0F);
-		setLightLevel(burning ? 0.875F : 0F);
-		setRegistryName("zone:alloy_smelter");
+		setLightLevel(burning ? 1F : 0F);
+		setRegistryName("zone:alloy_smelter" + (burning ? "_light" : ""));
 		setUnlocalizedName("alloy_smelter");
 		setCreativeTab(TabZone.tab);
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
@@ -54,30 +54,30 @@ public class BlockAlloySmelter extends BlockContainer {
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		TEAlloySmelter te = (TEAlloySmelter) worldIn.getTileEntity(pos);
-
-		IItemHandler input = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-		IItemHandler energy = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
-		IItemHandler output = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-		for (int i = input.getSlots() - 1; i >= 0; --i) {
-			if (input.getStackInSlot(i) != null) {
-				Block.spawnAsEntity(worldIn, pos, input.getStackInSlot(i));
-				((IItemHandlerModifiable) input).setStackInSlot(i, ItemStack.EMPTY);
+		if (!keepInventory) {
+			TEAlloySmelter te = (TEAlloySmelter) worldIn.getTileEntity(pos);
+			IItemHandler input = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			IItemHandler energy = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
+			IItemHandler output = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+			for (int i = input.getSlots() - 1; i >= 0; --i) {
+				if (input.getStackInSlot(i) != null) {
+					Block.spawnAsEntity(worldIn, pos, input.getStackInSlot(i));
+					((IItemHandlerModifiable) input).setStackInSlot(i, ItemStack.EMPTY);
+				}
+			}
+			for (int i = energy.getSlots() - 1; i >= 0; --i) {
+				if (energy.getStackInSlot(i) != null) {
+					Block.spawnAsEntity(worldIn, pos, energy.getStackInSlot(i));
+					((IItemHandlerModifiable) energy).setStackInSlot(i, ItemStack.EMPTY);
+				}
+			}
+			for (int i = output.getSlots() - 1; i >= 0; --i) {
+				if (output.getStackInSlot(i) != null) {
+					Block.spawnAsEntity(worldIn, pos, output.getStackInSlot(i));
+					((IItemHandlerModifiable) output).setStackInSlot(i, ItemStack.EMPTY);
+				}
 			}
 		}
-		for (int i = energy.getSlots() - 1; i >= 0; --i) {
-			if (energy.getStackInSlot(i) != null) {
-				Block.spawnAsEntity(worldIn, pos, energy.getStackInSlot(i));
-				((IItemHandlerModifiable) energy).setStackInSlot(i, ItemStack.EMPTY);
-			}
-		}
-		for (int i = output.getSlots() - 1; i >= 0; --i) {
-			if (output.getStackInSlot(i) != null) {
-				Block.spawnAsEntity(worldIn, pos, output.getStackInSlot(i));
-				((IItemHandlerModifiable) output).setStackInSlot(i, ItemStack.EMPTY);
-			}
-		}
-
 		super.breakBlock(worldIn, pos, state);
 	}
 
@@ -142,14 +142,12 @@ public class BlockAlloySmelter extends BlockContainer {
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing facing = EnumFacing.getHorizontal(meta % 4);
-		Boolean burning = meta > 4;
 		return this.getDefaultState().withProperty(FACING, facing);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		int facing = state.getValue(FACING).getHorizontalIndex();
-		return facing;
+		return state.getValue(FACING).getHorizontalIndex();
 	}
 
 	@Override

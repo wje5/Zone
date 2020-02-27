@@ -2,6 +2,7 @@ package com.pinball3d.zone.tileentity;
 
 import java.util.Arrays;
 
+import com.pinball3d.zone.block.BlockGrinder;
 import com.pinball3d.zone.recipe.Recipe;
 import com.pinball3d.zone.recipe.RecipeHandler;
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
@@ -30,6 +31,7 @@ public class TEGrinder extends ZoneMachine {
 		if (world.isRemote) {
 			return;
 		}
+		boolean flag = energyTick > 0;
 		tick = tick < 1 ? 0 : tick - 1;
 		if (tick <= 0) {
 			output.insertItem(0, expectOutput.getStackInSlot(0), false);
@@ -55,6 +57,9 @@ public class TEGrinder extends ZoneMachine {
 				tick = 0;
 				expectOutput.setStackInSlot(0, ItemStack.EMPTY);
 			}
+		}
+		if (energyTick > 0 != flag) {
+			((BlockGrinder) blockType).setState(energyTick > 0, world, pos);
 		}
 	}
 

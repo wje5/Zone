@@ -1,7 +1,7 @@
 {
     "parent": "block/orientable",
     "textures": {
-        "top": "zone:blocks/iron_hull",
+        "top": "zone:blocks/alloy_smelter_top",
         "front": "zone:blocks/alloy_smelter_light",
         "side": "zone:blocks/iron_hull"
     }

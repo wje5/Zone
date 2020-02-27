@@ -79,7 +79,7 @@ public class ContainerGrinder extends Container {
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
 		Slot slot = inventorySlots.get(index);
 		if (slot == null || !slot.getHasStack()) {
-			return null;
+			return ItemStack.EMPTY;
 		}
 		ItemStack newStack = slot.getStack(), oldStack = newStack.copy();
 		boolean isMerged = false;

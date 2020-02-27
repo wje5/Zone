@@ -2,7 +2,7 @@ package com.pinball3d.zone.tileentity;
 
 import java.util.Arrays;
 
-import com.pinball3d.zone.block.BlockElecFurnace;
+import com.pinball3d.zone.block.BlockAlloySmelter;
 import com.pinball3d.zone.recipe.Recipe;
 import com.pinball3d.zone.recipe.RecipeHandler;
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
@@ -31,6 +31,7 @@ public class TEAlloySmelter extends ZoneMachine {
 		if (world.isRemote) {
 			return;
 		}
+		boolean flag = energyTick > 0;
 		tick = tick < 1 ? 0 : tick - 1;
 		if (tick <= 0) {
 			output.insertItem(0, expectOutput.getStackInSlot(0), false);
@@ -59,7 +60,9 @@ public class TEAlloySmelter extends ZoneMachine {
 				expectOutput.setStackInSlot(0, ItemStack.EMPTY);
 			}
 		}
-		world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockElecFurnace.BURNING, energyTick > 0));
+		if (energyTick > 0 != flag) {
+			((BlockAlloySmelter) blockType).setState(energyTick > 0, world, pos);
+		}
 	}
 
 	public int getTick() {

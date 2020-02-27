@@ -1,12 +1,8 @@
 {
     "variants": {
-        "burning=false,facing=east": { "model": "zone:elec_furnace", "y": 90, "uvlock": true },
-        "burning=true,facing=east": { "model": "zone:elec_furnace_light", "y": 90, "uvlock": true },
-        "burning=false,facing=north": { "model": "zone:elec_furnace" },
-        "burning=true,facing=north": { "model": "zone:elec_furnace_light" },
-        "burning=false,facing=south": { "model": "zone:elec_furnace", "y": 180, "uvlock": true },
-        "burning=true,facing=south": { "model": "zone:elec_furnace_light", "y": 180, "uvlock": true },
-        "burning=false,facing=west": { "model": "zone:elec_furnace", "y": 270, "uvlock": true },
-        "burning=true,facing=west": { "model": "zone:elec_furnace_light", "y": 270, "uvlock": true }
+        "facing=north": { "model": "zone:elec_furnace" },
+        "facing=south": { "model": "zone:elec_furnace", "y": 180 },
+        "facing=west":  { "model": "zone:elec_furnace", "y": 270 },
+        "facing=east":  { "model": "zone:elec_furnace", "y": 90 }
     }
 }

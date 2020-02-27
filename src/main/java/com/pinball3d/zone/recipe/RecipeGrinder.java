@@ -20,11 +20,11 @@ public class RecipeGrinder extends Recipe {
 
 	@Override
 	public ItemStack getInput(int index) {
-		return index == 0 ? input : ItemStack.EMPTY;
+		return (index == 0 ? input : ItemStack.EMPTY).copy();
 	}
 
 	@Override
 	public ItemStack getOutput(int index) {
-		return index == 0 ? output : ItemStack.EMPTY;
+		return (index == 0 ? output : ItemStack.EMPTY).copy();
 	}
 }

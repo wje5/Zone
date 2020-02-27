@@ -21,11 +21,11 @@ public class RecipeAlloySmelter extends Recipe {
 
 	@Override
 	public ItemStack getInput(int index) {
-		return index > 2 ? ItemStack.EMPTY : inputs[index];
+		return (index > 2 ? ItemStack.EMPTY : inputs[index]).copy();
 	}
 
 	@Override
 	public ItemStack getOutput(int index) {
-		return index == 0 ? output : ItemStack.EMPTY;
+		return (index == 0 ? output : ItemStack.EMPTY).copy();
 	}
 }

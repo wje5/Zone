@@ -8,7 +8,6 @@ import com.pinball3d.zone.tileentity.TEElecFurnace;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -28,17 +27,19 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class BlockElecFurnace extends BlockContainer {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-	public static final PropertyBool BURNING = PropertyBool.create("burning");
+	private final boolean isBurning;
+	private static boolean keepInventory;
 
-	public BlockElecFurnace() {
+	public BlockElecFurnace(boolean burning) {
 		super(Material.IRON);
 		setHardness(5.0F);
 		setResistance(10.0F);
-		setRegistryName("zone:elec_furnace");
+		setLightLevel(burning ? 1F : 0F);
+		setRegistryName("zone:elec_furnace" + (burning ? "_light" : ""));
 		setUnlocalizedName("elec_furnace");
 		setCreativeTab(TabZone.tab);
-		setDefaultState(
-				blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(BURNING, Boolean.FALSE));
+		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+		isBurning = burning;
 	}
 
 	@Override
@@ -52,27 +53,28 @@ public class BlockElecFurnace extends BlockContainer {
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		TEElecFurnace te = (TEElecFurnace) worldIn.getTileEntity(pos);
-
-		IItemHandler input = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-		IItemHandler energy = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
-		IItemHandler output = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-		for (int i = input.getSlots() - 1; i >= 0; --i) {
-			if (input.getStackInSlot(i) != null) {
-				Block.spawnAsEntity(worldIn, pos, input.getStackInSlot(i));
-				((IItemHandlerModifiable) input).setStackInSlot(i, ItemStack.EMPTY);
+		if (!keepInventory) {
+			TEElecFurnace te = (TEElecFurnace) worldIn.getTileEntity(pos);
+			IItemHandler input = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			IItemHandler energy = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
+			IItemHandler output = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+			for (int i = input.getSlots() - 1; i >= 0; --i) {
+				if (input.getStackInSlot(i) != null) {
+					Block.spawnAsEntity(worldIn, pos, input.getStackInSlot(i));
+					((IItemHandlerModifiable) input).setStackInSlot(i, ItemStack.EMPTY);
+				}
 			}
-		}
-		for (int i = energy.getSlots() - 1; i >= 0; --i) {
-			if (energy.getStackInSlot(i) != null) {
-				Block.spawnAsEntity(worldIn, pos, energy.getStackInSlot(i));
-				((IItemHandlerModifiable) energy).setStackInSlot(i, ItemStack.EMPTY);
+			for (int i = energy.getSlots() - 1; i >= 0; --i) {
+				if (energy.getStackInSlot(i) != null) {
+					Block.spawnAsEntity(worldIn, pos, energy.getStackInSlot(i));
+					((IItemHandlerModifiable) energy).setStackInSlot(i, ItemStack.EMPTY);
+				}
 			}
-		}
-		for (int i = output.getSlots() - 1; i >= 0; --i) {
-			if (output.getStackInSlot(i) != null) {
-				Block.spawnAsEntity(worldIn, pos, output.getStackInSlot(i));
-				((IItemHandlerModifiable) output).setStackInSlot(i, ItemStack.EMPTY);
+			for (int i = output.getSlots() - 1; i >= 0; --i) {
+				if (output.getStackInSlot(i) != null) {
+					Block.spawnAsEntity(worldIn, pos, output.getStackInSlot(i));
+					((IItemHandlerModifiable) output).setStackInSlot(i, ItemStack.EMPTY);
+				}
 			}
 		}
 		super.breakBlock(worldIn, pos, state);
@@ -108,21 +110,46 @@ public class BlockElecFurnace extends BlockContainer {
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, FACING, BURNING);
+		return new BlockStateContainer(this, FACING);
+	}
+
+	public static void setState(boolean active, World worldIn, BlockPos pos) {
+		IBlockState iblockstate = worldIn.getBlockState(pos);
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+		keepInventory = true;
+
+		if (active) {
+			worldIn.setBlockState(pos,
+					BlockLoader.elec_furnace_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					3);
+			worldIn.setBlockState(pos,
+					BlockLoader.elec_furnace_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					3);
+		} else {
+			worldIn.setBlockState(pos,
+					BlockLoader.elec_furnace.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+			worldIn.setBlockState(pos,
+					BlockLoader.elec_furnace.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+		}
+
+		keepInventory = false;
+
+		if (tileentity != null) {
+			tileentity.validate();
+			worldIn.setTileEntity(pos, tileentity);
+		}
 	}
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing facing = EnumFacing.getHorizontal(meta % 4);
 		Boolean burning = meta > 4;
-		return this.getDefaultState().withProperty(FACING, facing).withProperty(BURNING, burning);
+		return this.getDefaultState().withProperty(FACING, facing);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		int facing = state.getValue(FACING).getHorizontalIndex();
-		int burning = state.getValue(BURNING).booleanValue() ? 4 : 0;
-		return facing | burning;
+		return state.getValue(FACING).getHorizontalIndex();
 	}
 
 	@Override

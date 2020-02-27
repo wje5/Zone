@@ -30,8 +30,10 @@ public class BlockLoader {
 		register(registry, etherium_bars = new BlockEtheriumBars());
 		register(registry, clarity_glass_pane = new BlockClarityGlassPane());
 		register(registry, drainer = new BlockDrainer());
-		register(registry, grinder = new BlockGrinder());
-		register(registry, elec_furnace = new BlockElecFurnace());
+		register(registry, grinder = new BlockGrinder(false));
+		register(registry, grinder_light = new BlockGrinder(true));
+		register(registry, elec_furnace = new BlockElecFurnace(false));
+		register(registry, elec_furnace_light = new BlockElecFurnace(true));
 		register(registry, alloy_smelter = new BlockAlloySmelter(false));
 		register(registry, alloy_smelter_light = new BlockAlloySmelter(true));
 	}
