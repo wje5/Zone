@@ -15,10 +15,11 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber
 public class BlockLoader {
-	public static Block iron_hull, clarity_glass, reinforced_glass, etherium_hull, etherium_bars, clarity_glass_pane;
+	public static Block iron_hull, clarity_glass, reinforced_glass, etherium_hull, etherium_bars, clarity_glass_pane,
+			etherium_frame, structure_block;
 
 	public static Block drainer, grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter,
-			alloy_smelter_light;
+			alloy_smelter_light, centrifuge, centrifuge_light;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -29,6 +30,8 @@ public class BlockLoader {
 		register(registry, etherium_hull = new BlockEtheriumHull());
 		register(registry, etherium_bars = new BlockEtheriumBars());
 		register(registry, clarity_glass_pane = new BlockClarityGlassPane());
+		register(registry, etherium_frame = new BlockEtheriumFrame());
+		register(registry, structure_block = new BlockStructureBlock());
 		register(registry, drainer = new BlockDrainer());
 		register(registry, grinder = new BlockGrinder(false));
 		register(registry, grinder_light = new BlockGrinder(true));
@@ -36,6 +39,8 @@ public class BlockLoader {
 		register(registry, elec_furnace_light = new BlockElecFurnace(true));
 		register(registry, alloy_smelter = new BlockAlloySmelter(false));
 		register(registry, alloy_smelter_light = new BlockAlloySmelter(true));
+		register(registry, centrifuge = new BlockCentrifuge(false));
+		register(registry, centrifuge_light = new BlockCentrifuge(true));
 	}
 
 	private static void register(IForgeRegistry<Block> registry, Block block) {
@@ -51,10 +56,13 @@ public class BlockLoader {
 		registerItem(registry, etherium_hull);
 		registerItem(registry, etherium_bars);
 		registerItem(registry, clarity_glass_pane);
+		registerItem(registry, etherium_frame);
+		registerItem(registry, structure_block);
 		registerItem(registry, drainer);
 		registerItem(registry, grinder);
 		registerItem(registry, elec_furnace);
 		registerItem(registry, alloy_smelter);
+		registerItem(registry, centrifuge);
 	}
 
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {
@@ -63,7 +71,6 @@ public class BlockLoader {
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 			registerRender(item);
 		}
-
 	}
 
 	@SideOnly(Side.CLIENT)

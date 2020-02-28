@@ -24,8 +24,19 @@ public class RecipeHandler {
 				new RecipeGrinder(new ItemStack(Blocks.IRON_ORE), new ItemStack(ItemLoader.crushed_iron_ore, 32), 200));
 		register(
 				new RecipeGrinder(new ItemStack(Blocks.GOLD_ORE), new ItemStack(ItemLoader.crushed_gold_ore, 32), 200));
-		register(new RecipeGrinder(new ItemStack(Blocks.REDSTONE_ORE), new ItemStack(Items.REDSTONE, 16), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.DIAMOND_ORE), new ItemStack(ItemLoader.crushed_diamond_ore, 32),
+				200));
+		register(new RecipeGrinder(new ItemStack(Blocks.EMERALD_ORE), new ItemStack(ItemLoader.crushed_emerald_ore, 32),
+				200));
+		register(new RecipeGrinder(new ItemStack(Blocks.REDSTONE_ORE),
+				new ItemStack(ItemLoader.crushed_redstone_ore, 32), 200));
+		register(
+				new RecipeGrinder(new ItemStack(Blocks.COAL_ORE), new ItemStack(ItemLoader.crushed_coal_ore, 32), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.LAPIS_ORE), new ItemStack(ItemLoader.crushed_lapis_ore, 32),
+				200));
 		register(new RecipeAlloySmelter(new ItemStack(Items.IRON_INGOT), new ItemStack(Items.GOLD_INGOT),
+				new ItemStack(Items.QUARTZ), new ItemStack(ItemLoader.etherium), 200));
+		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_iron_ore), new ItemStack(Items.GOLD_INGOT),
 				new ItemStack(Items.QUARTZ), new ItemStack(ItemLoader.etherium), 200));
 	}
 
@@ -58,6 +69,6 @@ public class RecipeHandler {
 	}
 
 	public static enum Type {
-		GRINDER, ALLOY_SMELTER;
+		GRINDER, ALLOY_SMELTER, CENTRIFUGE;
 	}
 }

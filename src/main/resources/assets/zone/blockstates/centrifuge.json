@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "zone:centrifuge" },
+        "facing=south": { "model": "zone:centrifuge", "y": 180 },
+        "facing=west":  { "model": "zone:centrifuge", "y": 270 },
+        "facing=east":  { "model": "zone:centrifuge", "y": 90 }
+    }
+}

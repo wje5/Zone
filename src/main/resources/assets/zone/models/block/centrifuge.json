@@ -1,0 +1,8 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "top": "zone:blocks/centrifuge_top",
+        "front": "zone:blocks/centrifuge",
+        "side": "zone:blocks/etherium_hull"
+    }
+}

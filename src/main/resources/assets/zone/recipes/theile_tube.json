@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "#*#",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:clarity_glass_pane"
+    },
+    "*": {
+      "item": "minecraft:dragon_breath"
+    }
+  },
+  "result": {
+    "item": "zone:theile_tube"
+  }
+}

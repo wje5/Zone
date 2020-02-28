@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "* *",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:etherium_rod"
+    },
+    "*": {
+      "item": "zone:processing_unit"
+    }
+  },
+  "result": {
+    "item": "zone:restrain_circle"
+  }
+}
