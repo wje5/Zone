@@ -10,7 +10,6 @@ import java.util.Set;
 import com.pinball3d.zone.item.ItemLoader;
 
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 public class RecipeHandler {
@@ -34,10 +33,34 @@ public class RecipeHandler {
 				new RecipeGrinder(new ItemStack(Blocks.COAL_ORE), new ItemStack(ItemLoader.crushed_coal_ore, 32), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.LAPIS_ORE), new ItemStack(ItemLoader.crushed_lapis_ore, 32),
 				200));
-		register(new RecipeAlloySmelter(new ItemStack(Items.IRON_INGOT), new ItemStack(Items.GOLD_INGOT),
-				new ItemStack(Items.QUARTZ), new ItemStack(ItemLoader.etherium), 200));
-		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_iron_ore), new ItemStack(Items.GOLD_INGOT),
-				new ItemStack(Items.QUARTZ), new ItemStack(ItemLoader.etherium), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.QUARTZ_ORE), new ItemStack(ItemLoader.crushed_quartz_ore, 32),
+				200));
+		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.iron_dust), new ItemStack(ItemLoader.gold_dust),
+				new ItemStack(ItemLoader.quartz_dust), new ItemStack(ItemLoader.etherium), 200));
+		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_iron_ore),
+				new ItemStack(ItemLoader.tiny_pile_iron_dust), new ItemStack(ItemLoader.tiny_pile_iron_dust),
+				new ItemStack(ItemLoader.small_pile_stone_dust), 200));
+		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_gold_ore),
+				new ItemStack(ItemLoader.tiny_pile_gold_dust), new ItemStack(ItemLoader.tiny_pile_gold_dust),
+				new ItemStack(ItemLoader.small_pile_stone_dust), 200));
+		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_diamond_ore),
+				new ItemStack(ItemLoader.tiny_pile_diamond_dust), new ItemStack(ItemLoader.tiny_pile_diamond_dust),
+				new ItemStack(ItemLoader.small_pile_stone_dust), 200));
+		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_emerald_ore),
+				new ItemStack(ItemLoader.tiny_pile_emerald_dust), new ItemStack(ItemLoader.tiny_pile_emerald_dust),
+				new ItemStack(ItemLoader.small_pile_stone_dust), 200));
+		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_redstone_ore),
+				new ItemStack(ItemLoader.small_pile_redstone_dust), new ItemStack(ItemLoader.small_pile_redstone_dust),
+				new ItemStack(ItemLoader.small_pile_stone_dust), 200));
+		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_coal_ore),
+				new ItemStack(ItemLoader.small_pile_coal_dust), new ItemStack(ItemLoader.small_pile_coal_dust),
+				new ItemStack(ItemLoader.small_pile_stone_dust), 200));
+		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_lapis_ore),
+				new ItemStack(ItemLoader.small_pile_lapis_dust), new ItemStack(ItemLoader.small_pile_lapis_dust),
+				new ItemStack(ItemLoader.small_pile_stone_dust), 200));
+		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_quartz_ore),
+				new ItemStack(ItemLoader.small_pile_quartz_dust), new ItemStack(ItemLoader.small_pile_quartz_dust),
+				new ItemStack(ItemLoader.small_pile_stone_dust), 200));
 	}
 
 	public static void register(Recipe recipe) {

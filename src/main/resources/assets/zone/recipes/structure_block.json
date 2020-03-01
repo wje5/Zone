@@ -10,7 +10,7 @@
       "item": "zone:etherium_plate_riveted"
     },
     "*": {
-      "item": "zone:etherium_frame",
+      "item": "zone:etherium_frame"
     }
   },
   "result": {

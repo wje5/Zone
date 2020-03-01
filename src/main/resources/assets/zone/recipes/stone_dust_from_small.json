@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "zone:dust_from_small",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:small_pile_stone_dust"
+    }
+  },
+  "result": {
+    "item": "zone:stone_dust"
+  }
+}

@@ -9,7 +9,7 @@
     "#": {
       "item": "zone:etherium_rod"
     },
-    "#": {
+    "*": {
       "item": "zone:rivet"
     },
     "+": {
