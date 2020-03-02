@@ -14,7 +14,9 @@ Fixed grinder&alloy smelter recipe.
 Fixed clarity glass pane top texture.
 Fixed clarity glass&pane break sound.
 
-#???
+#1.0.4
 Now grinder can handles all vanilla ores.
 Changed grinder recipe:redstone ore will be grinded to "crashed redstone ore".
+Add centrifuge.
 Add some textures.
+Fixed machine bottom texture.

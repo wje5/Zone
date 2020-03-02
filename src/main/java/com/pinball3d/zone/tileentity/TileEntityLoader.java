@@ -10,6 +10,7 @@ public class TileEntityLoader {
 		registerTileEntity(TEGrinder.class, "Grinder");
 		registerTileEntity(TEElecFurnace.class, "ElecFurnace");
 		registerTileEntity(TEAlloySmelter.class, "AlloySmelter");
+		registerTileEntity(TECentrifuge.class, "Centrifuge");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

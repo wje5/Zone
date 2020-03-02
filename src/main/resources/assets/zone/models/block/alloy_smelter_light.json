@@ -3,6 +3,7 @@
     "textures": {
         "top": "zone:blocks/alloy_smelter_top",
         "front": "zone:blocks/alloy_smelter_light",
-        "side": "zone:blocks/iron_hull"
+        "side": "zone:blocks/iron_hull",
+        "down": "zone:blocks/iron_hull"
     }
 }

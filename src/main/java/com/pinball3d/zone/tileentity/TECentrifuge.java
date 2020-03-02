@@ -2,7 +2,7 @@ package com.pinball3d.zone.tileentity;
 
 import java.util.Arrays;
 
-import com.pinball3d.zone.block.BlockGrinder;
+import com.pinball3d.zone.block.BlockCentrifuge;
 import com.pinball3d.zone.recipe.Recipe;
 import com.pinball3d.zone.recipe.RecipeHandler;
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
@@ -35,14 +35,22 @@ public class TECentrifuge extends ZoneMachine {
 		tick = tick < 1 ? 0 : tick - 1;
 		if (tick <= 0) {
 			output.insertItem(0, expectOutput.getStackInSlot(0), false);
+			output.insertItem(1, expectOutput.getStackInSlot(1), false);
+			output.insertItem(2, expectOutput.getStackInSlot(2), false);
 			expectOutput.setStackInSlot(0, ItemStack.EMPTY);
-			Recipe recipe = RecipeHandler.getRecipe(Type.GRINDER,
+			expectOutput.setStackInSlot(1, ItemStack.EMPTY);
+			expectOutput.setStackInSlot(2, ItemStack.EMPTY);
+			Recipe recipe = RecipeHandler.getRecipe(Type.CENTRIFUGE,
 					Arrays.asList(new ItemStack[] { input.getStackInSlot(0) }));
 			if (recipe != null) {
 				if (tryUseEnergy(true) || energyTick >= recipe.getTime()) {
-					if (output.insertItem(0, recipe.getOutput(0), true).isEmpty()) {
+					if (output.insertItem(0, recipe.getOutput(0), true).isEmpty()
+							&& output.insertItem(1, recipe.getOutput(1), true).isEmpty()
+							&& output.insertItem(2, recipe.getOutput(2), true).isEmpty()) {
 						input.extractItem(0, recipe.getInput(0).getCount(), false);
 						expectOutput.setStackInSlot(0, recipe.getOutput(0));
+						expectOutput.setStackInSlot(1, recipe.getOutput(1));
+						expectOutput.setStackInSlot(2, recipe.getOutput(2));
 						tick = recipe.getTime();
 						totalTick = recipe.getTime();
 					}
@@ -52,14 +60,14 @@ public class TECentrifuge extends ZoneMachine {
 		energyTick = energyTick < 1 ? 0 : energyTick - 1;
 		if (energyTick <= 0 && tick > 0) {
 			if (tryUseEnergy(false)) {
-				energyTick += 400;
+				energyTick += 100;
 			} else {
 				tick = 0;
 				expectOutput.setStackInSlot(0, ItemStack.EMPTY);
 			}
 		}
 		if (energyTick > 0 != flag) {
-			((BlockGrinder) blockType).setState(energyTick > 0, world, pos);
+			((BlockCentrifuge) blockType).setState(energyTick > 0, world, pos);
 		}
 	}
 

@@ -13,6 +13,7 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int GRINDER = 2;
 	public static final int ELEC_FURNACE = 3;
 	public static final int ALLOY_SMELTER = 4;
+	public static final int CENTRIFUGE = 5;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -29,6 +30,8 @@ public class GuiElementLoader implements IGuiHandler {
 			return new ContainerElecFurnace(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case ALLOY_SMELTER:
 			return new ContainerAlloySmelter(player, world.getTileEntity(new BlockPos(x, y, z)));
+		case CENTRIFUGE:
+			return new ContainerCentrifuge(player, world.getTileEntity(new BlockPos(x, y, z)));
 		}
 		return null;
 	}
@@ -46,6 +49,9 @@ public class GuiElementLoader implements IGuiHandler {
 		case ALLOY_SMELTER:
 			return new GuiContainerAlloySmelter(
 					new ContainerAlloySmelter(player, world.getTileEntity(new BlockPos(x, y, z))));
+		case CENTRIFUGE:
+			return new GuiContainerCentrifuge(
+					new ContainerCentrifuge(player, world.getTileEntity(new BlockPos(x, y, z))));
 		}
 		return null;
 	}

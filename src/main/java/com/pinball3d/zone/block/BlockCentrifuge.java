@@ -3,6 +3,7 @@ package com.pinball3d.zone.block;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
+import com.pinball3d.zone.tileentity.TECentrifuge;
 import com.pinball3d.zone.tileentity.TEGrinder;
 
 import net.minecraft.block.Block;
@@ -46,7 +47,7 @@ public class BlockCentrifuge extends BlockContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
-			playerIn.openGui(Zone.instance, GuiElementLoader.GRINDER, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(Zone.instance, GuiElementLoader.CENTRIFUGE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		}
 		return true;
 	}
@@ -171,6 +172,6 @@ public class BlockCentrifuge extends BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TEGrinder();
+		return new TECentrifuge();
 	}
 }
