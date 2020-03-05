@@ -16,10 +16,10 @@ import net.minecraftforge.registries.IForgeRegistry;
 @Mod.EventBusSubscriber
 public class BlockLoader {
 	public static Block iron_hull, clarity_glass, reinforced_glass, etherium_hull, etherium_bars, clarity_glass_pane,
-			etherium_frame, structure_block;
+			etherium_frame, structure_block, reinforced_glass_pane, charged_glass, charged_glass_pane;
 
 	public static Block drainer, grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter,
-			alloy_smelter_light, centrifuge, centrifuge_light;
+			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -32,6 +32,9 @@ public class BlockLoader {
 		register(registry, clarity_glass_pane = new BlockClarityGlassPane());
 		register(registry, etherium_frame = new BlockEtheriumFrame());
 		register(registry, structure_block = new BlockStructureBlock());
+		register(registry, reinforced_glass_pane = new BlockReinforcedGlassPane());
+		register(registry, charged_glass = new BlockChargedGlass());
+		register(registry, charged_glass_pane = new BlockChargedGlassPane());
 		register(registry, drainer = new BlockDrainer());
 		register(registry, grinder = new BlockGrinder(false));
 		register(registry, grinder_light = new BlockGrinder(true));
@@ -41,6 +44,9 @@ public class BlockLoader {
 		register(registry, alloy_smelter_light = new BlockAlloySmelter(true));
 		register(registry, centrifuge = new BlockCentrifuge(false));
 		register(registry, centrifuge_light = new BlockCentrifuge(true));
+		register(registry, node = new BlockNode());
+		register(registry, crystallizer = new BlockCrystallizer(false));
+		register(registry, crystallizer_light = new BlockCrystallizer(true));
 	}
 
 	private static void register(IForgeRegistry<Block> registry, Block block) {
@@ -58,11 +64,16 @@ public class BlockLoader {
 		registerItem(registry, clarity_glass_pane);
 		registerItem(registry, etherium_frame);
 		registerItem(registry, structure_block);
+		registerItem(registry, reinforced_glass_pane);
+		registerItem(registry, charged_glass);
+		registerItem(registry, charged_glass_pane);
 		registerItem(registry, drainer);
 		registerItem(registry, grinder);
 		registerItem(registry, elec_furnace);
 		registerItem(registry, alloy_smelter);
 		registerItem(registry, centrifuge);
+		registerItem(registry, node);
+		registerItem(registry, crystallizer);
 	}
 
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {

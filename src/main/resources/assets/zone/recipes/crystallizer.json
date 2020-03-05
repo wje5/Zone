@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+-+",
+    "+O+"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:reinforced_glass"
+    },
+    "*": {
+      "item": "zone:crystallization_accelerator"
+    },
+    "+": {
+      "item": "zone:etherium_plate_riveted"
+    },
+    "-": {
+      "item": "zone:etherium_hull"
+    },
+    "O": {
+      "item": "zone:advenced_circuit_board"
+    }
+  },
+  "result": {
+    "item": "zone:crystallizer"
+  }
+}

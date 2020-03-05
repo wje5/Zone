@@ -58,6 +58,11 @@ public class RecipeHandler {
 				new ItemStack(ItemLoader.tiny_pile_clarity_glass_dust, 8), 200));
 		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.iron_dust), new ItemStack(ItemLoader.gold_dust),
 				new ItemStack(ItemLoader.quartz_dust), new ItemStack(ItemLoader.etherium), 200));
+		register(new RecipeAlloySmelter(new ItemStack(Items.SLIME_BALL), new ItemStack(ItemLoader.emerald_dust),
+				new ItemStack(Items.BLAZE_POWDER), new ItemStack(ItemLoader.dioptric_crystal), 200));
+		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.clarity_glass_dust),
+				new ItemStack(ItemLoader.diamond_dust), new ItemStack(ItemLoader.energy_group),
+				new ItemStack(BlockLoader.charged_glass), 200));
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_iron_ore),
 				new ItemStack(ItemLoader.tiny_pile_iron_dust), new ItemStack(ItemLoader.tiny_pile_iron_dust),
 				new ItemStack(ItemLoader.small_pile_stone_dust), 100));
@@ -82,6 +87,10 @@ public class RecipeHandler {
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_quartz_ore),
 				new ItemStack(ItemLoader.small_pile_quartz_dust), new ItemStack(ItemLoader.small_pile_quartz_dust),
 				new ItemStack(ItemLoader.small_pile_stone_dust), 100));
+		register(new RecipeCrystallizer(new ItemStack(Items.REDSTONE, 16), new ItemStack(ItemLoader.redstone_crystal),
+				400));
+		register(new RecipeCrystallizer(new ItemStack(Items.BLAZE_POWDER, 16), new ItemStack(ItemLoader.blaze_crystal),
+				400));
 	}
 
 	public static void register(Recipe recipe) {
@@ -113,6 +122,6 @@ public class RecipeHandler {
 	}
 
 	public static enum Type {
-		GRINDER, ALLOY_SMELTER, CENTRIFUGE;
+		GRINDER, ALLOY_SMELTER, CENTRIFUGE, CRYSTALLIZER;
 	}
 }

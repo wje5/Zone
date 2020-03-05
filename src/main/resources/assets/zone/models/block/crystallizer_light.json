@@ -1,0 +1,9 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "top": "zone:blocks/crystallizer_top",
+        "front": "zone:blocks/crystallizer_light",
+        "side": "zone:blocks/etherium_hull",
+        "down": "zone:blocks/etherium_hull"
+    }
+}

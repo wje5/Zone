@@ -18,7 +18,8 @@ public class ItemLoader {
 	public static Item iron_plate, rivet, iron_plate_riveted, quartz_circuit_board, vacuum_tube, chip, circuit_board,
 			grind_head, gold_plate, gold_plate_riveted, thermal_amplifier, etherium, etherium_plate,
 			etherium_plate_riveted, kinetic_amplifier, etherium_rod, advenced_circuit_board, processing_unit,
-			transistor, energy_group, restrain_circle, theile_tube, laser_generater;
+			transistor, energy_group, restrain_circle, theile_tube, laser_generater, crystallization_accelerator,
+			redstone_crystal, dioptric_crystal, induction_tube, smoothing_unit, blaze_crystal;
 
 	public static Item energy;
 
@@ -66,6 +67,12 @@ public class ItemLoader {
 		register(registry, restrain_circle = new ZoneItem("restrain_circle"));
 		register(registry, theile_tube = new ZoneItem("theile_tube"));
 		register(registry, laser_generater = new ZoneItem("laser_generater"));
+		register(registry, crystallization_accelerator = new ZoneItem("crystallization_accelerator"));
+		register(registry, redstone_crystal = new ZoneItem("redstone_crystal"));
+		register(registry, dioptric_crystal = new ZoneItem("dioptric_crystal"));
+		register(registry, induction_tube = new ZoneItem("induction_tube"));
+		register(registry, smoothing_unit = new ZoneItem("smoothing_unit"));
+		register(registry, blaze_crystal = new ZoneItem("blaze_crystal"));
 		register(registry, energy = new ZoneItem("energy"));
 		register(registry, crushed_iron_ore = new ZoneItem("crushed_iron_ore"));
 		register(registry, crushed_gold_ore = new ZoneItem("crushed_gold_ore"));

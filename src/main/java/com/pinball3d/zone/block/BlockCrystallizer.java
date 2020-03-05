@@ -3,8 +3,7 @@ package com.pinball3d.zone.block;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
-import com.pinball3d.zone.tileentity.TECentrifuge;
-import com.pinball3d.zone.tileentity.TEGrinder;
+import com.pinball3d.zone.tileentity.TECrystallizer;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -26,18 +25,18 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class BlockCentrifuge extends BlockContainer {
+public class BlockCrystallizer extends BlockContainer {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	private final boolean isBurning;
 	private static boolean keepInventory;
 
-	public BlockCentrifuge(boolean burning) {
+	public BlockCrystallizer(boolean burning) {
 		super(Material.IRON);
 		setHardness(100.0F);
 		setResistance(2500.0F);
 		setLightLevel(burning ? 1F : 0F);
-		setRegistryName("zone:centrifuge" + (burning ? "_light" : ""));
-		setUnlocalizedName("centrifuge");
+		setRegistryName("zone:crystallizer" + (burning ? "_light" : ""));
+		setUnlocalizedName("crystallizer");
 		setCreativeTab(TabZone.tab);
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 		isBurning = burning;
@@ -47,7 +46,7 @@ public class BlockCentrifuge extends BlockContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
-			playerIn.openGui(Zone.instance, GuiElementLoader.CENTRIFUGE, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(Zone.instance, GuiElementLoader.CRYSTALLIZER, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		}
 		return true;
 	}
@@ -55,7 +54,7 @@ public class BlockCentrifuge extends BlockContainer {
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		if (!keepInventory) {
-			TEGrinder te = (TEGrinder) worldIn.getTileEntity(pos);
+			TECrystallizer te = (TECrystallizer) worldIn.getTileEntity(pos);
 			IItemHandler input = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 			IItemHandler energy = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
 			IItemHandler output = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
@@ -121,16 +120,16 @@ public class BlockCentrifuge extends BlockContainer {
 
 		if (active) {
 			worldIn.setBlockState(pos,
-					BlockLoader.centrifuge_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					BlockLoader.crystallizer_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
 					3);
 			worldIn.setBlockState(pos,
-					BlockLoader.centrifuge_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					BlockLoader.crystallizer_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
 					3);
 		} else {
 			worldIn.setBlockState(pos,
-					BlockLoader.centrifuge.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+					BlockLoader.crystallizer.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
 			worldIn.setBlockState(pos,
-					BlockLoader.centrifuge.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+					BlockLoader.crystallizer.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
 		}
 
 		keepInventory = false;
@@ -172,6 +171,6 @@ public class BlockCentrifuge extends BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TECentrifuge();
+		return new TECrystallizer();
 	}
 }

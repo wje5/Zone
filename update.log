@@ -20,3 +20,6 @@ Changed grinder recipe:redstone ore will be grinded to "crashed redstone ore".
 Add centrifuge.
 Add some textures.
 Fixed machine bottom texture.
+
+#1.1.0
+Now grinder can handles blaze rod.

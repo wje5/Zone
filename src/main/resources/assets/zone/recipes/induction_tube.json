@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " #*",
+    "#+#",
+    "*# "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:redstone"
+    },
+    "*": {
+      "item": "zone:transistor"
+    },
+    "+": {
+      "item": "zone:etherium_rod"
+    }
+  },
+  "result": {
+    "item": "zone:induction_tube"
+  }
+}

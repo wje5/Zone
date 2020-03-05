@@ -7,14 +7,14 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.BlockRenderLayer;
 
-public class BlockReinforcedGlass extends BlockGlass {
-	public BlockReinforcedGlass() {
+public class BlockChargedGlass extends BlockGlass {
+	public BlockChargedGlass() {
 		super(Material.GLASS, false);
-		setHardness(20.0F);
-		setResistance(500.0F);
+		setHardness(10F);
+		setResistance(200.0F);
 		setSoundType(SoundType.GLASS);
-		setRegistryName("zone:reinforced_glass");
-		setUnlocalizedName("reinforced_glass");
+		setRegistryName("zone:charged_glass");
+		setUnlocalizedName("charged_glass");
 		setCreativeTab(TabZone.tab);
 	}
 

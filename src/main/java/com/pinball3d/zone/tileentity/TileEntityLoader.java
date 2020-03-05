@@ -11,6 +11,8 @@ public class TileEntityLoader {
 		registerTileEntity(TEElecFurnace.class, "ElecFurnace");
 		registerTileEntity(TEAlloySmelter.class, "AlloySmelter");
 		registerTileEntity(TECentrifuge.class, "Centrifuge");
+		registerTileEntity(TENode.class, "Node");
+		registerTileEntity(TECrystallizer.class, "Crystallizer");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {
