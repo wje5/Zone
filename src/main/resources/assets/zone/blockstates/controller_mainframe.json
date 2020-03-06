@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "zone:controller_mainframe" },
+        "facing=south": { "model": "zone:controller_mainframe", "y": 180 },
+        "facing=west":  { "model": "zone:controller_mainframe", "y": 270 },
+        "facing=east":  { "model": "zone:controller_mainframe", "y": 90 }
+    }
+}

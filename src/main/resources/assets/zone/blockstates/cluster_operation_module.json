@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "normal": { "model": "zone:cluster_operation_module" }
+    }
+}

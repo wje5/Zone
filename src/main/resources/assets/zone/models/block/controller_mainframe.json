@@ -1,0 +1,9 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "top": "zone:blocks/structure_block",
+        "front": "zone:blocks/controller_mainframe",
+        "side": "zone:blocks/structure_block",
+        "down": "zone:blocks/structure_block"
+    }
+}

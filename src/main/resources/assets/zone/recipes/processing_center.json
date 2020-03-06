@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+++",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:charged_glass_pane"
+    },
+    "*": {
+      "item": "zone:amplify_unit"
+    },
+    "+": {
+      "item": "zone:cluster_operation_module"
+    }
+  },
+  "result": {
+    "item": "zone:processing_center"
+  }
+}

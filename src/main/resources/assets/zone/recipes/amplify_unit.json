@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*+",
+    "*-*",
+    "+*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:theile_tube"
+    },
+    "*": {
+      "item": "minecraft:experience_bottle"
+    },
+    "+": {
+      "item": "zone:smoothing_unit"
+    },
+    "-": {
+      "item": "minecraft:end_crystal"
+    }
+  },
+  "result": {
+    "item": "zone:amplify_unit"
+  }
+}

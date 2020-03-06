@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+-+",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:advenced_circuit_board"
+    },
+    "*": {
+      "item": "zone:etherium_plate_riveted"
+    },
+    "+": {
+      "item": "zone:smoothing_unit"
+    },
+    "-": {
+      "item": "zone:etherium_hull"
+    }
+  },
+  "result": {
+    "item": "zone:cluster_operation_module"
+  }
+}

@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "axis=x": { "model": "zone:truss_x" },
+        "axis=y": { "model": "zone:truss_y" },
+        "axis=z": { "model": "zone:truss_z" }
+    }
+}

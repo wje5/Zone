@@ -19,7 +19,8 @@ public class ItemLoader {
 			grind_head, gold_plate, gold_plate_riveted, thermal_amplifier, etherium, etherium_plate,
 			etherium_plate_riveted, kinetic_amplifier, etherium_rod, advenced_circuit_board, processing_unit,
 			transistor, energy_group, restrain_circle, theile_tube, laser_generater, crystallization_accelerator,
-			redstone_crystal, dioptric_crystal, induction_tube, smoothing_unit, blaze_crystal;
+			redstone_crystal, dioptric_crystal, induction_tube, smoothing_unit, blaze_crystal, display_screen,
+			amplify_unit;
 
 	public static Item energy;
 
@@ -73,6 +74,8 @@ public class ItemLoader {
 		register(registry, induction_tube = new ZoneItem("induction_tube"));
 		register(registry, smoothing_unit = new ZoneItem("smoothing_unit"));
 		register(registry, blaze_crystal = new ZoneItem("blaze_crystal"));
+		register(registry, display_screen = new ZoneItem("display_screen"));
+		register(registry, amplify_unit = new ZoneItem("amplify_unit"));
 		register(registry, energy = new ZoneItem("energy"));
 		register(registry, crushed_iron_ore = new ZoneItem("crushed_iron_ore"));
 		register(registry, crushed_gold_ore = new ZoneItem("crushed_gold_ore"));

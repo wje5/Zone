@@ -21,6 +21,8 @@ public class BlockLoader {
 	public static Block drainer, grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter,
 			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light;
 
+	public static Block cluster_operation_module, controller_mainframe, processing_center, truss;
+
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
 		IForgeRegistry<Block> registry = event.getRegistry();
@@ -47,6 +49,10 @@ public class BlockLoader {
 		register(registry, node = new BlockNode());
 		register(registry, crystallizer = new BlockCrystallizer(false));
 		register(registry, crystallizer_light = new BlockCrystallizer(true));
+		register(registry, cluster_operation_module = new BlockClusterOperationModule());
+		register(registry, controller_mainframe = new BlockControllerMainframe());
+		register(registry, processing_center = new BlockProcessingCenter());
+		register(registry, truss = new BlockTruss());
 	}
 
 	private static void register(IForgeRegistry<Block> registry, Block block) {
@@ -74,6 +80,10 @@ public class BlockLoader {
 		registerItem(registry, centrifuge);
 		registerItem(registry, node);
 		registerItem(registry, crystallizer);
+		registerItem(registry, cluster_operation_module);
+		registerItem(registry, controller_mainframe);
+		registerItem(registry, processing_center);
+		registerItem(registry, truss);
 	}
 
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {
