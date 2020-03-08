@@ -22,7 +22,7 @@ public class ItemLoader {
 			redstone_crystal, dioptric_crystal, induction_tube, smoothing_unit, blaze_crystal, display_screen,
 			amplify_unit;
 
-	public static Item energy;
+	public static Item energy, construct_block;
 
 	public static Item crushed_iron_ore, crushed_gold_ore, crushed_diamond_ore, crushed_emerald_ore,
 			crushed_redstone_ore, crushed_coal_ore, crushed_lapis_ore, crushed_quartz_ore;

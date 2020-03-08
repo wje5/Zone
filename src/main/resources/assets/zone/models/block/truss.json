@@ -1,8 +1,8 @@
 {
     "parent": "block/block",
     "elements": [
-        {   "from": [ 5, 5, 0 ],
-            "to": [ 11, 11, 16 ],
+        {   "from": [ 5, 0, 5 ],
+            "to": [ 11, 16, 11 ],
             "faces": {
                 "down":  { "texture": "#down", "cullface": "down" },
                 "up":    { "texture": "#up", "cullface": "up" },
@@ -14,12 +14,12 @@
         }
     ],
     "textures": {
-        "down": "zone:blocks/truss",
-        "up": "zone:blocks/truss",
-        "north": "zone:blocks/truss_up",
-        "south": "zone:blocks/truss_up",
-        "west": "zone:blocks/truss",
-        "east": "zone:blocks/truss",
+        "down": "zone:blocks/truss_up",
+        "up": "zone:blocks/truss_up",
+        "north": "zone:blocks/truss_turn",
+        "south": "zone:blocks/truss_turn",
+        "west": "zone:blocks/truss_turn",
+        "east": "zone:blocks/truss_turn",
         "particle": "zone:blocks/truss"
     }
 }

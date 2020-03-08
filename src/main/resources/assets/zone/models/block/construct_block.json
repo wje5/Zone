@@ -1,6 +1,6 @@
 {
     "parent": "block/cube_all",
     "textures": {
-        "all": "zone:blocks/structure_block"
+        "all": "zone:blocks/construct_block"
     }
 }

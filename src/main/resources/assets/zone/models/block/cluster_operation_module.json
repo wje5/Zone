@@ -3,6 +3,6 @@
     "textures": {
         "top": "zone:blocks/cluster_operation_module_top",
         "bottom": "zone:blocks/cluster_operation_module_top",
-        "side": "zone:blocks/cluster_operation_module"
+        "side": "zone:blocks/cluster_operation_module_animated"
     }
 }

@@ -1,5 +1,8 @@
 package com.pinball3d.zone.block;
 
+import com.pinball3d.zone.item.ItemConstructBlock;
+import com.pinball3d.zone.item.ItemLoader;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -16,12 +19,13 @@ import net.minecraftforge.registries.IForgeRegistry;
 @Mod.EventBusSubscriber
 public class BlockLoader {
 	public static Block iron_hull, clarity_glass, reinforced_glass, etherium_hull, etherium_bars, clarity_glass_pane,
-			etherium_frame, structure_block, reinforced_glass_pane, charged_glass, charged_glass_pane;
+			etherium_frame, reinforced_glass_pane, charged_glass, charged_glass_pane;
 
 	public static Block drainer, grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter,
 			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light;
 
-	public static Block cluster_operation_module, controller_mainframe, processing_center, truss;
+	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
+			processing_center, truss;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -33,7 +37,6 @@ public class BlockLoader {
 		register(registry, etherium_bars = new BlockEtheriumBars());
 		register(registry, clarity_glass_pane = new BlockClarityGlassPane());
 		register(registry, etherium_frame = new BlockEtheriumFrame());
-		register(registry, structure_block = new BlockStructureBlock());
 		register(registry, reinforced_glass_pane = new BlockReinforcedGlassPane());
 		register(registry, charged_glass = new BlockChargedGlass());
 		register(registry, charged_glass_pane = new BlockChargedGlassPane());
@@ -49,6 +52,8 @@ public class BlockLoader {
 		register(registry, node = new BlockNode());
 		register(registry, crystallizer = new BlockCrystallizer(false));
 		register(registry, crystallizer_light = new BlockCrystallizer(true));
+		register(registry, construct_block = new BlockConstructBlock());
+		register(registry, construct_block_all = new BlockConstructBlockAll());
 		register(registry, cluster_operation_module = new BlockClusterOperationModule());
 		register(registry, controller_mainframe = new BlockControllerMainframe());
 		register(registry, processing_center = new BlockProcessingCenter());
@@ -69,7 +74,6 @@ public class BlockLoader {
 		registerItem(registry, etherium_bars);
 		registerItem(registry, clarity_glass_pane);
 		registerItem(registry, etherium_frame);
-		registerItem(registry, structure_block);
 		registerItem(registry, reinforced_glass_pane);
 		registerItem(registry, charged_glass);
 		registerItem(registry, charged_glass_pane);
@@ -80,6 +84,7 @@ public class BlockLoader {
 		registerItem(registry, centrifuge);
 		registerItem(registry, node);
 		registerItem(registry, crystallizer);
+		registerItem(registry, ItemLoader.construct_block = new ItemConstructBlock());
 		registerItem(registry, cluster_operation_module);
 		registerItem(registry, controller_mainframe);
 		registerItem(registry, processing_center);
@@ -87,7 +92,10 @@ public class BlockLoader {
 	}
 
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {
-		Item item = new ItemBlock(block).setRegistryName(block.getRegistryName());
+		registerItem(registry, new ItemBlock(block).setRegistryName(block.getRegistryName()));
+	}
+
+	private static void registerItem(IForgeRegistry<Item> registry, Item item) {
 		registry.register(item);
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 			registerRender(item);

@@ -16,7 +16,7 @@
       "item": "zone:reinforced_glass"
     },
     "-": {
-      "item": "zone:structure_block"
+      "item": "zone:construct_block"
     },
     "=": {
       "item": "zone:advenced_circuit_board"

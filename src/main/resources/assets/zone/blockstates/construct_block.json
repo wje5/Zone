@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "axis=y":  { "model": "zone:construct_block" },
+        "axis=z":   { "model": "zone:construct_block", "x": 90 },
+        "axis=x":   { "model": "zone:construct_block", "x": 90, "y": 90 },
+        "axis=none": { "model": "zone:construct_block_all" }
+    }
+}
