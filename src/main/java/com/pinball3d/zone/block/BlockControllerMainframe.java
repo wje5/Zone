@@ -8,7 +8,9 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -23,6 +25,20 @@ public class BlockControllerMainframe extends Block {
 		setRegistryName("zone:controller_mainframe");
 		setUnlocalizedName("controller_mainframe");
 		setCreativeTab(TabZone.tab);
+	}
+
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (!worldIn.isRemote) {
+			pos = pos.offset(state.getValue(FACING).getOpposite(), 3);
+			pos = pos.add(0, 2, 0);
+			Block block = worldIn.getBlockState(pos).getBlock();
+			if (block == BlockLoader.processing_center) {
+				System.out.println(((BlockProcessingCenter) block).isFullStructure(worldIn, pos));
+			}
+		}
+		return true;
 	}
 
 	@Override

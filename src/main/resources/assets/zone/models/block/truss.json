@@ -16,10 +16,10 @@
     "textures": {
         "down": "zone:blocks/truss_up",
         "up": "zone:blocks/truss_up",
-        "north": "zone:blocks/truss_turn",
-        "south": "zone:blocks/truss_turn",
-        "west": "zone:blocks/truss_turn",
-        "east": "zone:blocks/truss_turn",
+        "north": "zone:blocks/truss",
+        "south": "zone:blocks/truss",
+        "west": "zone:blocks/truss",
+        "east": "zone:blocks/truss",
         "particle": "zone:blocks/truss"
     }
 }

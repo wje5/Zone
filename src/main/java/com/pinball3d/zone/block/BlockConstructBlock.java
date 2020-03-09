@@ -1,11 +1,17 @@
 package com.pinball3d.zone.block;
 
+import java.util.Random;
+
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public class BlockConstructBlock extends BlockRotatedPillar {
 	public static final PropertyEnum<BlockLog.EnumAxis> LOG_AXIS = PropertyEnum.<BlockLog.EnumAxis>create("axis",
@@ -35,5 +41,20 @@ public class BlockConstructBlock extends BlockRotatedPillar {
 		default:
 			return state;
 		}
+	}
+
+	@Override
+	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+		return new ItemStack(Item.getItemFromBlock(BlockLoader.construct_block_all));
+	}
+
+	@Override
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		return Item.getItemFromBlock(BlockLoader.construct_block_all);
+	}
+
+	@Override
+	protected ItemStack getSilkTouchDrop(IBlockState state) {
+		return new ItemStack(Item.getItemFromBlock(BlockLoader.construct_block_all));
 	}
 }
