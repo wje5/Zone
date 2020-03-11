@@ -1,6 +1,8 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
+import com.pinball3d.zone.Zone;
+import com.pinball3d.zone.inventory.GuiElementLoader;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -35,7 +37,8 @@ public class BlockControllerMainframe extends Block {
 			pos = pos.add(0, 2, 0);
 			Block block = worldIn.getBlockState(pos).getBlock();
 			if (block == BlockLoader.processing_center) {
-				System.out.println(((BlockProcessingCenter) block).isFullStructure(worldIn, pos));
+				playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_SYSTEM, worldIn, pos.getX(), pos.getY(),
+						pos.getZ());
 			}
 		}
 		return true;

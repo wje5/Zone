@@ -13,6 +13,7 @@ public class TileEntityLoader {
 		registerTileEntity(TECentrifuge.class, "Centrifuge");
 		registerTileEntity(TENode.class, "Node");
 		registerTileEntity(TECrystallizer.class, "Crystallizer");
+		registerTileEntity(TEProcessingCenter.class, "ProcessingCenter");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

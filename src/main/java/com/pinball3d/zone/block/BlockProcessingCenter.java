@@ -17,6 +17,7 @@ public class BlockProcessingCenter extends Block {
 		super(Material.IRON);
 		setHardness(100.0F);
 		setResistance(2500.0F);
+		setLightLevel(1.0F);
 		setRegistryName("zone:processing_center");
 		setUnlocalizedName("processing_center");
 		setCreativeTab(TabZone.tab);
