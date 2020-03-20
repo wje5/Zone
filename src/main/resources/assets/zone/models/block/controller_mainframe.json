@@ -1,9 +1,9 @@
 {
     "parent": "block/orientable",
     "textures": {
-        "top": "zone:blocks/structure_block",
-        "front": "zone:blocks/controller_mainframe",
-        "side": "zone:blocks/structure_block",
-        "down": "zone:blocks/structure_block"
+        "top": "zone:blocks/controller_mainframe",
+        "front": "zone:blocks/cluster_operation_module_animated",
+        "side": "zone:blocks/cluster_operation_module_animated",
+        "down": "zone:blocks/cluster_operation_module_top"
     }
 }

@@ -1,4 +1,4 @@
-package com.pinball3d.zone.inventory;
+package com.pinball3d.zone.sphinx;
 
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 

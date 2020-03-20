@@ -4,7 +4,6 @@ import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.tileentity.TECentrifuge;
-import com.pinball3d.zone.tileentity.TEGrinder;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -55,7 +54,7 @@ public class BlockCentrifuge extends BlockContainer {
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		if (!keepInventory) {
-			TEGrinder te = (TEGrinder) worldIn.getTileEntity(pos);
+			TECentrifuge te = (TECentrifuge) worldIn.getTileEntity(pos);
 			IItemHandler input = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 			IItemHandler energy = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
 			IItemHandler output = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);

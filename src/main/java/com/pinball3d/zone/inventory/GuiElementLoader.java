@@ -1,6 +1,8 @@
 package com.pinball3d.zone.inventory;
 
 import com.pinball3d.zone.Zone;
+import com.pinball3d.zone.sphinx.ContainerSphinxSystem;
+import com.pinball3d.zone.sphinx.GuiContainerSphinxSystem;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;

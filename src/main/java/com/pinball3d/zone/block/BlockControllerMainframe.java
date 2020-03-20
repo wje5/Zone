@@ -33,6 +33,8 @@ public class BlockControllerMainframe extends Block {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
+			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_SYSTEM, worldIn, pos.getX(), pos.getY(),
+					pos.getZ());
 			pos = pos.offset(state.getValue(FACING).getOpposite(), 3);
 			pos = pos.add(0, 2, 0);
 			Block block = worldIn.getBlockState(pos).getBlock();
