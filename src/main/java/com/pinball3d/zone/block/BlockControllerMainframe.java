@@ -1,14 +1,14 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
-import com.pinball3d.zone.Zone;
-import com.pinball3d.zone.inventory.GuiElementLoader;
+import com.pinball3d.zone.sphinx.ScreenSphinxSystem;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
@@ -33,14 +33,12 @@ public class BlockControllerMainframe extends Block {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
-			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_SYSTEM, worldIn, pos.getX(), pos.getY(),
-					pos.getZ());
 			pos = pos.offset(state.getValue(FACING).getOpposite(), 3);
 			pos = pos.add(0, 2, 0);
 			Block block = worldIn.getBlockState(pos).getBlock();
-			if (block == BlockLoader.processing_center) {
-				playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_SYSTEM, worldIn, pos.getX(), pos.getY(),
-						pos.getZ());
+			if (block == BlockLoader.processing_center
+					&& ((BlockProcessingCenter) block).isFullStructure(worldIn, pos)) {
+				Minecraft.getMinecraft().displayGuiScreen(new ScreenSphinxSystem());
 			}
 		}
 		return true;

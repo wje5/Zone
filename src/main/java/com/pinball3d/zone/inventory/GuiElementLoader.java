@@ -1,8 +1,6 @@
 package com.pinball3d.zone.inventory;
 
 import com.pinball3d.zone.Zone;
-import com.pinball3d.zone.sphinx.ContainerSphinxSystem;
-import com.pinball3d.zone.sphinx.GuiContainerSphinxSystem;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +15,6 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int ALLOY_SMELTER = 4;
 	public static final int CENTRIFUGE = 5;
 	public static final int CRYSTALLIZER = 6;
-	public static final int SPHINX_SYSTEM = 7;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -38,8 +35,6 @@ public class GuiElementLoader implements IGuiHandler {
 			return new ContainerCentrifuge(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case CRYSTALLIZER:
 			return new ContainerCrystallizer(player, world.getTileEntity(new BlockPos(x, y, z)));
-		case SPHINX_SYSTEM:
-			return new ContainerSphinxSystem(player, world.getTileEntity(new BlockPos(x, y, z)));
 		}
 		return null;
 	}
@@ -63,9 +58,6 @@ public class GuiElementLoader implements IGuiHandler {
 		case CRYSTALLIZER:
 			return new GuiContainerCrystallizer(
 					new ContainerCrystallizer(player, world.getTileEntity(new BlockPos(x, y, z))));
-		case SPHINX_SYSTEM:
-			return new GuiContainerSphinxSystem(
-					new ContainerSphinxSystem(player, world.getTileEntity(new BlockPos(x, y, z))));
 		}
 		return null;
 	}

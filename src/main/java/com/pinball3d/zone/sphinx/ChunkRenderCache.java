@@ -1,8 +1,7 @@
 package com.pinball3d.zone.sphinx;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.World;
 
 public class ChunkRenderCache {
 	private static int highest, lowest;
@@ -13,14 +12,25 @@ public class ChunkRenderCache {
 		lowest = 0;
 	}
 
-	public ChunkRenderCache(Chunk chunk) {
-		for (int x = chunk.x * 16; x < chunk.x * 16 + 16; x++) {
-			for (int z = chunk.z * 16; z < chunk.z * 16 + 16; z++) {
-				int y = chunk.getHeightValue(x - chunk.x * 16, z - chunk.z * 16) - 1;
-				BlockPos pos = new BlockPos(x, y, z);
-				IBlockState state = chunk.getBlockState(pos);
-				int height = chunk.getHeight(pos);
-				heightMap[(x - chunk.x * 16) * 16 + (z - chunk.z * 16)] = height;
+	private ChunkRenderCache() {
+
+	}
+
+	public static ChunkRenderCache create(int chunkX, int chunkZ) {
+		ChunkRenderCache cache = new ChunkRenderCache();
+		World world = Minecraft.getMinecraft().player.world;
+		boolean flag = true;
+		for (int x = chunkX * 16; x < chunkX * 16 + 16; x++) {
+			for (int z = chunkZ * 16; z < chunkZ * 16 + 16; z++) {
+				int height = world.getHeight(x, z);
+				if (height == 0 && flag) {
+					flag = false;
+					ChunkRenderCache data = ClientMapDataHandler.getData(chunkX, chunkZ);
+					if (data != null) {
+						return data;
+					}
+				}
+				cache.heightMap[(x - chunkX * 16) * 16 + (z - chunkZ * 16)] = height;
 				if (height > highest) {
 					highest = height;
 				}
@@ -29,6 +39,10 @@ public class ChunkRenderCache {
 				}
 			}
 		}
+		if (flag) {
+			ClientMapDataHandler.setData(chunkX, chunkZ, cache);
+		}
+		return cache;
 	}
 
 	public int getColor(int x, int z) {

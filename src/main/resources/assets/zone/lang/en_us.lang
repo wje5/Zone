@@ -37,6 +37,7 @@ item.display_screen.name=Display Screen
 item.amplify_unit.name=Amplify Unit
 item.energy.name=Energy
 item.construct_block.name=Construct Block
+item.terminal.name=Terminal
 item.crushed_iron_ore.name=Crushed Iron Ore
 item.crushed_gold_ore.name=Crushed Gold Ore
 item.crushed_diamond_ore.name=Crushed Diamond Ore
