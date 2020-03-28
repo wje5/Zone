@@ -25,7 +25,7 @@ public class ChunkRenderCache {
 				int height = world.getHeight(x, z);
 				if (height == 0 && flag) {
 					flag = false;
-					ChunkRenderCache data = ClientMapDataHandler.getData(chunkX, chunkZ);
+					ChunkRenderCache data = ClientMapDataHandler.getData(world.provider.getDimension(), chunkX, chunkZ);
 					if (data != null) {
 						return data;
 					}
@@ -40,7 +40,7 @@ public class ChunkRenderCache {
 			}
 		}
 		if (flag) {
-			ClientMapDataHandler.setData(chunkX, chunkZ, cache);
+			ClientMapDataHandler.setData(world.provider.getDimension(), chunkX, chunkZ, cache);
 		}
 		return cache;
 	}

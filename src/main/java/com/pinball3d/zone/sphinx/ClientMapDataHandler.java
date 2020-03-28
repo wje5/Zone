@@ -10,21 +10,30 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class ClientMapDataHandler {
-	private static Map<Long, ChunkRenderCache> mapCache = new HashMap<Long, ChunkRenderCache>();
+	private static Map<Integer, Map<Long, ChunkRenderCache>> mapCache = new HashMap<Integer, Map<Long, ChunkRenderCache>>();
 
-	public static void setData(int x, int z, ChunkRenderCache cache) {
-		mapCache.put(x * 30000000L + z, cache);
+	public static void setData(int worldId, int x, int z, ChunkRenderCache cache) {
+		getMap(worldId).put(x * 30000000L + z, cache);
 	}
 
-	public static ChunkRenderCache getData(int x, int z) {
-		return mapCache.get(x * 30000000L + z);
+	public static ChunkRenderCache getData(int worldId, int x, int z) {
+		return getMap(worldId).get(x * 30000000L + z);
+	}
+
+	private static Map<Long, ChunkRenderCache> getMap(int worldId) {
+		Map<Long, ChunkRenderCache> map = mapCache.get(worldId);
+		if (map == null) {
+			map = new HashMap<Long, ChunkRenderCache>();
+			mapCache.put(worldId, map);
+		}
+		return map;
 	}
 
 	@SubscribeEvent
 	public static void onChunkLoad(ChunkEvent.Load event) {
 		if (event.getWorld().isRemote) {
 			ChunkPos pos = event.getChunk().getPos();
-			if (!mapCache.containsKey(pos.x * 30000000L + pos.z)) {
+			if (!getMap(event.getWorld().provider.getDimension()).containsKey(pos.x * 30000000L + pos.z)) {
 				ChunkRenderCache.create(pos.x, pos.z);
 			}
 		}
