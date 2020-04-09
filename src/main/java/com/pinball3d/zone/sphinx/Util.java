@@ -3,6 +3,7 @@ package com.pinball3d.zone.sphinx;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -42,5 +43,28 @@ public class Util {
 		bufferbuilder.pos(x, y, 0).tex(u * f, v * f).endVertex();
 		tessellator.draw();
 		GlStateManager.popMatrix();
+	}
+
+	public static void drawBorder(int x, int y, int width, int height, int lineWidth, int color) {
+		Gui.drawRect(x, y, x + width, y + lineWidth, color);
+		Gui.drawRect(x, y + height - lineWidth, x + width, y + height, color);
+		Gui.drawRect(x, y + lineWidth, x + lineWidth, y + height - lineWidth, color);
+		Gui.drawRect(x + width - lineWidth, y + lineWidth, x + width, y + height - lineWidth, color);
+	}
+
+	/**
+	 * 1:is lower case valid 2:is number valid
+	 * 
+	 */
+	public static boolean isValidChar(char input, int flag) {
+		String lowerCase = "abcdefghijklmnopqrstuvwxyz";
+		String number = "1234567890";
+		if (lowerCase.contains(String.valueOf(input))) {
+			return flag % 2 == 1;
+		}
+		if (number.contains(String.valueOf(input))) {
+			return flag >= 2;
+		}
+		return false;
 	}
 }

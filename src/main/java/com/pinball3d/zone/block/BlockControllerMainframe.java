@@ -1,7 +1,7 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
-import com.pinball3d.zone.sphinx.ScreenSphinxSystem;
+import com.pinball3d.zone.sphinx.ScreenSphinxController;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -32,14 +32,11 @@ public class BlockControllerMainframe extends Block {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (!worldIn.isRemote) {
-			pos = pos.offset(state.getValue(FACING).getOpposite(), 3);
-			pos = pos.add(0, 2, 0);
-			Block block = worldIn.getBlockState(pos).getBlock();
-			if (block == BlockLoader.processing_center
-					&& ((BlockProcessingCenter) block).isFullStructure(worldIn, pos)) {
-				Minecraft.getMinecraft().displayGuiScreen(new ScreenSphinxSystem());
-			}
+		pos = pos.offset(state.getValue(FACING).getOpposite(), 3);
+		pos = pos.add(0, 2, 0);
+		Block block = worldIn.getBlockState(pos).getBlock();
+		if (block == BlockLoader.processing_center && ((BlockProcessingCenter) block).isFullStructure(worldIn, pos)) {
+			Minecraft.getMinecraft().displayGuiScreen(new ScreenSphinxController());
 		}
 		return true;
 	}

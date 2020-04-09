@@ -38,6 +38,7 @@ item.amplify_unit.name=Amplify Unit
 item.energy.name=Energy
 item.construct_block.name=Construct Block
 item.terminal.name=Terminal
+item.psp.name=PSP
 item.crushed_iron_ore.name=Crushed Iron Ore
 item.crushed_gold_ore.name=Crushed Gold Ore
 item.crushed_diamond_ore.name=Crushed Diamond Ore
@@ -108,3 +109,7 @@ container.elec_furnace=Electric Furnace
 container.alloy_smelter=Alloy Smelter
 container.centrifuge=Centrifuge
 container.crystallizer=Crystallizer
+
+sphinx.network_config=Network Config
+sphinx.connect_to_network=Connect To %1$s
+sphinx.sphinx_init_wizard=Sphinx System Initialization Wizard

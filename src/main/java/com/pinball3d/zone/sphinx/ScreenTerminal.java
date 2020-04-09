@@ -1,16 +1,20 @@
 package com.pinball3d.zone.sphinx;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -23,16 +27,18 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
-public class ScreenSphinxSystem extends GuiScreen {
+public class ScreenTerminal extends GuiScreen implements IParent {
 	protected Map<Long, ChunkRenderCache> mapCache = new HashMap<Long, ChunkRenderCache>();
 	private static BufferBuilder bufferbuilder;
 	private int lastMouseX, lastMouseY;
+	private int clickX, clickY;
 	private int xOffset, yOffset;
 	private PointerPlayer pointerPlayer;
 	private Map<Integer, PointerLiving> livings = new HashMap<Integer, PointerLiving>();
 	public static final int size = 1;
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private Set<TexturedButton> components = new HashSet<TexturedButton>();
+	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 
 	@Override
 	public void initGui() {
@@ -46,11 +52,26 @@ public class ScreenSphinxSystem extends GuiScreen {
 		super.initGui();
 	}
 
+	@Override
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		if (keyCode == Keyboard.KEY_ESCAPE) {
+			if (subscreens.empty()) {
+				super.keyTyped(typedChar, keyCode);
+			} else if (subscreens.peek().onQuit()) {
+				subscreens.pop();
+			}
+		} else {
+			if (!subscreens.empty()) {
+				subscreens.peek().keyTyped(typedChar, keyCode);
+			}
+		}
+	}
+
 	private void applyComponents() {
-		components.add(new TexturedButton(width - 10, 2, TEXTURE, 0, 16, 32, 26, 0.25F, new Runnable() {
+		components.add(new TexturedButton(this, width - 10, 2, TEXTURE, 0, 16, 32, 26, 0.25F, new Runnable() {
 			@Override
 			public void run() {
-				System.out.println(1);
+				subscreens.push(new SubscreenNetworkConfig((ScreenTerminal) mc.currentScreen));
 			}
 		}));
 	}
@@ -63,7 +84,12 @@ public class ScreenSphinxSystem extends GuiScreen {
 		}
 		drawMap();
 		drawPointer();
-		Util.drawTexture(TEXTURE, width - 10, 2, 0, 16, 32, 26, 0.25F);
+		components.forEach(e -> {
+			e.doRender(mouseX, mouseY);
+		});
+		subscreens.forEach(e -> {
+			e.doRender(mouseX, mouseY);
+		});
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 
@@ -85,8 +111,8 @@ public class ScreenSphinxSystem extends GuiScreen {
 				: (getRenderOffsetX() + width - 1) / 16 * size;
 		int yEnd = getRenderOffsetY() + height - 1 < 0 ? (getRenderOffsetY() + height - 1) / 16 * size - 1
 				: (getRenderOffsetY() + height - 1) / 16 * size;
-		for (int i = xChunk; i <= xEnd; i++) {
-			for (int j = yChunk; j <= yEnd; j++) {
+		for (int i = xChunk; i <= xEnd + 1; i++) {
+			for (int j = yChunk; j <= yEnd + 1; j++) {
 				drawChunk(getCache(i, j), i * 16 * size - getRenderOffsetX(), j * 16 * size - getRenderOffsetY());
 			}
 		}
@@ -182,8 +208,7 @@ public class ScreenSphinxSystem extends GuiScreen {
 	}
 
 	private void drawGrid(int x, int y) {
-		int color = 0xC8C0C0C0;
-		color = 0x48C0C0C0;
+		int color = 0x48C0C0C0;
 		drawRect(x + size * 16 - 1, y, x + size * 16, y + size * 16, color);
 		drawRect(x, y + size * 16 - 1, x + size * 16 - 1, y + size * 16, color);
 	}
@@ -199,22 +224,90 @@ public class ScreenSphinxSystem extends GuiScreen {
 
 	@Override
 	protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-		if (clickedMouseButton == 0) {
-			if (lastMouseX > 0 && lastMouseY > 0) {
-				xOffset = xOffset - (mouseX - lastMouseX);
-				yOffset = yOffset - (mouseY - lastMouseY);
+		int moveX = lastMouseX > 0 ? mouseX - lastMouseX : 0;
+		int moveY = lastMouseY > 0 ? mouseY - lastMouseY : 0;
+		lastMouseX = mouseX;
+		lastMouseY = mouseY;
+		if (!subscreens.empty()) {
+			Subscreen screen = subscreens.peek();
+			if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y && mouseY <= screen.y + height) {
+				screen.onDrag(mouseX - screen.x, mouseY - screen.y, moveX, moveY, clickedMouseButton != 1);
 			}
-			lastMouseX = mouseX;
-			lastMouseY = mouseY;
+			return;
 		}
-		super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+		if (clickedMouseButton != 1) {
+			if (lastMouseX > 0 && lastMouseY > 0) {
+				xOffset = xOffset - moveX;
+				yOffset = yOffset - moveY;
+			}
+		}
+	}
+
+	@Override
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+		clickX = mouseX;
+		clickY = mouseY;
+		super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
+		if ((clickX == -1 || Math.abs(mouseX - clickX) < 5) && (clickY == -1 || Math.abs(mouseY - clickY) < 5)) {
+			if (subscreens.empty()) {
+				components.forEach(e -> {
+					int x = mouseX - e.x;
+					int y = mouseY - e.y;
+					if (x >= 0 && x <= e.width && y >= 0 && y <= e.height) {
+						e.onClickScreen(x, y, state != 1);
+					}
+				});
+			} else {
+				Subscreen screen = subscreens.peek();
+				if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y
+						&& mouseY <= screen.y + height) {
+					screen.onClick(mouseX - screen.x, mouseY - screen.y, state != 1);
+				}
+			}
+		}
 		lastMouseX = -1;
 		lastMouseY = -1;
-		components.forEach(e -> e.onClickScreen(mouseX, mouseY, state == 0));
+		clickX = -1;
+		clickY = -1;
 		super.mouseReleased(mouseX, mouseY, state);
+	}
+
+	@Override
+	public int getWidth() {
+		return width;
+	}
+
+	@Override
+	public int getHeight() {
+		return height;
+	}
+
+	@Override
+	public int getXOffset() {
+		return 0;
+	}
+
+	@Override
+	public int getYOffset() {
+		return 0;
+	}
+
+	@Override
+	public FontRenderer getFontRenderer() {
+		return fontRenderer;
+	}
+
+	@Override
+	public void putScreen(Subscreen screen) {
+		subscreens.push(screen);
+	}
+
+	@Override
+	public void quitScreen(Subscreen screen) {
+		subscreens.remove(screen);
 	}
 }

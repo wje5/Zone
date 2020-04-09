@@ -177,7 +177,7 @@ public class BlockProcessingCenter extends Block {
 				|| world.getBlockState(pos.add(0, 1, 0)).getBlock() != Blocks.AIR) {
 			return false;
 		}
-		Block block = BlockLoader.clarity_glass;
+		Block block = BlockLoader.charged_glass;
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				if (world.getBlockState(pos.add(-2, i, j)).getBlock() != block
