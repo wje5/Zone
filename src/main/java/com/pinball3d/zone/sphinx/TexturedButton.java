@@ -4,7 +4,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class TexturedButton extends Component {
 	protected ResourceLocation texture;
-	protected int width, height, u, v, uWidth, vHeight;
+	protected int u, v, uWidth, vHeight;
 	protected Runnable event;
 
 	public TexturedButton(IParent parent, int x, int y, ResourceLocation texture, int uWidth, int vHeight, float scale,
@@ -23,8 +23,6 @@ public class TexturedButton extends Component {
 		this.x = x;
 		this.y = y;
 		this.texture = texture;
-		this.width = width;
-		this.height = height;
 		this.u = u;
 		this.v = v;
 		this.uWidth = uWidth;

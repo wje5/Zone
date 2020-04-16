@@ -61,7 +61,11 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 				subscreens.pop();
 			}
 		} else {
-			if (!subscreens.empty()) {
+			if (subscreens.empty()) {
+				components.forEach(e -> {
+					e.onKeyTyped(typedChar, keyCode);
+				});
+			} else {
 				subscreens.peek().keyTyped(typedChar, keyCode);
 			}
 		}

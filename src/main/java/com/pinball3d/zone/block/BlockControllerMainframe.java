@@ -2,6 +2,7 @@ package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.sphinx.ScreenSphinxController;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -36,7 +37,8 @@ public class BlockControllerMainframe extends Block {
 		pos = pos.add(0, 2, 0);
 		Block block = worldIn.getBlockState(pos).getBlock();
 		if (block == BlockLoader.processing_center && ((BlockProcessingCenter) block).isFullStructure(worldIn, pos)) {
-			Minecraft.getMinecraft().displayGuiScreen(new ScreenSphinxController());
+			Minecraft.getMinecraft()
+					.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos)));
 		}
 		return true;
 	}

@@ -1,5 +1,7 @@
 package com.pinball3d.zone.sphinx;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -34,14 +36,17 @@ public class SubscreenConnectToNetwork extends Subscreen {
 
 	@Override
 	public void keyTyped(char typedChar, int keyCode) {
-		typedChar = Character.toLowerCase(typedChar);
 		if (!subscreens.empty()) {
 			subscreens.peek().keyTyped(typedChar, keyCode);
 		} else {
-			if (Util.isValidChar(typedChar, 3)) {
+			if (keyCode == Keyboard.KEY_BACK && input.length() >= 1) {
+				input = input.substring(0, input.length() - 1);
+			}
+			if (Util.isValidChar(typedChar, 7)) {
 				input += typedChar;
 				if (input.length() >= 8) {
 					parent.quitScreen(this);
+					System.out.println(input);
 				}
 			}
 		}

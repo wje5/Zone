@@ -1,6 +1,9 @@
 package com.pinball3d.zone.sphinx;
 
+import net.minecraft.client.Minecraft;
+
 public class Component {
+	public static Minecraft mc = Minecraft.getMinecraft();
 	public int x, y;
 	protected int width, height;
 	protected IParent parent;
@@ -34,6 +37,10 @@ public class Component {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
+
+	}
+
+	public void onKeyTyped(char typedChar, int keyCode) {
 
 	}
 }

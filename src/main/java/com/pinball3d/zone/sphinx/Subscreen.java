@@ -114,9 +114,17 @@ public class Subscreen implements IParent {
 	}
 
 	public void keyTyped(char typedChar, int keyCode) {
-		if (!subscreens.empty()) {
+		if (subscreens.empty()) {
+			components.forEach(e -> {
+				e.onKeyTyped(typedChar, keyCode);
+			});
+		} else {
 			subscreens.peek().keyTyped(typedChar, keyCode);
 		}
+	}
+
+	public Subscreen getScreen() {
+		return this;
 	}
 
 	@Override

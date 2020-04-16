@@ -13,6 +13,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -39,6 +40,11 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private Set<TexturedButton> components = new HashSet<TexturedButton>();
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
+	public TEProcessingCenter tileentity;
+
+	public ScreenSphinxController(TEProcessingCenter te) {
+		tileentity = te;
+	}
 
 	@Override
 	public void initGui() {
@@ -49,7 +55,10 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 		yOffset = pos.getZ();
 		pointerPlayer = new PointerPlayer(xOffset, yOffset);
 		updateLiving();
-		subscreens.add(new SubscreenSphinxInitWizard(this));
+		System.out.println(tileentity.needInit());
+		if (tileentity.needInit()) {
+			subscreens.add(new SubscreenSphinxInitWizard(this));
+		}
 		super.initGui();
 	}
 
@@ -62,20 +71,24 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 				subscreens.pop();
 			}
 		} else {
-			if (!subscreens.empty()) {
+			if (subscreens.empty()) {
+				components.forEach(e -> {
+					e.onKeyTyped(typedChar, keyCode);
+				});
+			} else {
 				subscreens.peek().keyTyped(typedChar, keyCode);
 			}
 		}
 	}
 
 	private void applyComponents() {
-		components.add(new TexturedButton(this, width - 20, 2, TEXTURE, 0, 67, 32, 32, 0.25F, new Runnable() {
+		components.add(new TexturedButton(this, width - 20, 2, TEXTURE, 0, 68, 32, 32, 0.25F, new Runnable() {
 			@Override
 			public void run() {
 
 			}
 		}));
-		components.add(new TexturedButton(this, width - 8, 3, TEXTURE, 0, 41, 24, 26, 0.25F, new Runnable() {
+		components.add(new TexturedButton(this, width - 8, 3, TEXTURE, 0, 42, 24, 26, 0.25F, new Runnable() {
 			@Override
 			public void run() {
 

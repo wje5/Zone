@@ -53,17 +53,21 @@ public class Util {
 	}
 
 	/**
-	 * 1:is lower case valid 2:is number valid
+	 * 1:is lower case valid 2:is upper valid 4:is number valid
 	 * 
 	 */
 	public static boolean isValidChar(char input, int flag) {
 		String lowerCase = "abcdefghijklmnopqrstuvwxyz";
+		String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		String number = "1234567890";
 		if (lowerCase.contains(String.valueOf(input))) {
 			return flag % 2 == 1;
 		}
+		if (upperCase.contains(String.valueOf(input))) {
+			return flag % 4 >= 2;
+		}
 		if (number.contains(String.valueOf(input))) {
-			return flag >= 2;
+			return flag >= 4;
 		}
 		return false;
 	}

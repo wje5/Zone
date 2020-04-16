@@ -1,18 +1,21 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
-public class BlockProcessingCenter extends Block {
+public class BlockProcessingCenter extends BlockContainer {
 	public BlockProcessingCenter() {
 		super(Material.IRON);
 		setHardness(100.0F);
@@ -190,5 +193,10 @@ public class BlockProcessingCenter extends Block {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public TileEntity createNewTileEntity(World worldIn, int meta) {
+		return new TEProcessingCenter();
 	}
 }

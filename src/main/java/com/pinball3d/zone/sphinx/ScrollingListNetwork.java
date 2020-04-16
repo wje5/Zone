@@ -15,8 +15,9 @@ public class ScrollingListNetwork extends Component {
 		super(parent, x, y, width, height);
 		this.parent = parent;
 		this.lineHeight = 25;
-		String[] s = new String[] { "Phantomhive", "1234567890", "１２３４５６７８９０", "上大人孔乙己化三千可知礼也", "そ～ですか？", "バカ野郎！",
-				"Phantomhive", "Phantomhive", "Phantomhive", "Phantomhive", "Phantomhive", "", "", "", "", "" };
+		String[] s = new String[] { "1232132131", "1234567890", "dlink19", "Muv-Luv", "Network", "AaBbCcDdEe",
+				"AaBbCcDdEe", "AaBbCcDdEe", "AaBbCcDdEe", "AaBbCcDdEe", "AaBbCcDdEe", "AaBbCcDdEe", "AaBbCcDdEe",
+				"AaBbCcDdEe", "AaBbCcDdEe", "Muv-Luv" };
 		for (int i = 0; i < s.length; i++) {
 			list.add(new ListBar(s[i], width, lineHeight));
 			length += lineHeight;
@@ -58,8 +59,8 @@ public class ScrollingListNetwork extends Component {
 			ListBar bar = it.next();
 			yOffset += bar.height;
 			if (yOffset >= y + scrollingDistance && yOffset < y + scrollingDistance + bar.height) {
-				parent.putScreen(new SubscreenConnectToNetwork((SubscreenNetworkConfig) parent, bar.name,
-						x + this.x - parent.getXOffset(), y + this.y - parent.getYOffset()));
+				parent.putScreen(new SubscreenConnectToNetwork(parent, bar.name, x + this.x - parent.getXOffset(),
+						y + this.y - parent.getYOffset()));
 				return;
 			}
 		}

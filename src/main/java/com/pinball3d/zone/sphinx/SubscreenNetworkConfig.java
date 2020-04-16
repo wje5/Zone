@@ -13,7 +13,7 @@ public class SubscreenNetworkConfig extends Subscreen {
 
 	public SubscreenNetworkConfig(IParent parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		components.add(new ScrollingListNetwork(this, x + 16, y + 24, 268, 170));
+		components.add(new ScrollingListNetwork(this, this.x + 16, this.y + 24, 268, 170));
 	}
 
 	@Override

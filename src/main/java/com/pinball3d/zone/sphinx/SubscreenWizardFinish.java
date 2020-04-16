@@ -4,27 +4,22 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
-public class SubscreenSphinxInitWizard extends Subscreen {
+public class SubscreenWizardFinish extends Subscreen {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 
-	public SubscreenSphinxInitWizard(IParent parent) {
-		this(parent, parent.getWidth() / 2 - 150, parent.getHeight() / 2 - 100);
+	public SubscreenWizardFinish(IParent parent, String adminPassword, String name, String loginPassword) {
+		this(parent, parent.getWidth() / 2 - 150, parent.getHeight() / 2 - 100, adminPassword, name, loginPassword);
 	}
 
-	public SubscreenSphinxInitWizard(IParent parent, int x, int y) {
+	public SubscreenWizardFinish(IParent parent, int x, int y, String adminPassword, String name,
+			String loginPassword) {
 		super(parent, x, y, 300, 200, true);
-		components.add(new MultilineText(this, this.x + 27, this.y + 35, 250, I18n.format("sphinx.init_wizard")));
-		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.next"), new Runnable() {
+		components.add(new MultilineText(this, this.x + 27, this.y + 35, 250, I18n.format("sphinx.finish_wizard")));
+		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.finish"), new Runnable() {
 			@Override
 			public void run() {
 				parent.quitScreen(getScreen());
-				parent.putScreen(new SubscreenWizardSetAdminPassword(parent));
-			}
-		}));
-		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenQuitWizard(getScreen()));
+				((ScreenSphinxController) parent).tileentity.saveWizardData(adminPassword, name, loginPassword);
 			}
 		}));
 	}
