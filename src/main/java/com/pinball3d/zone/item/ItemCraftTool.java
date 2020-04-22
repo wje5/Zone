@@ -1,7 +1,9 @@
 package com.pinball3d.zone.item;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber
 public class ItemCraftTool extends ZoneItem {
 	public ItemCraftTool(String name) {
 		super(name);

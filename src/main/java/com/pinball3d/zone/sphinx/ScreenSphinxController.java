@@ -55,7 +55,6 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 		yOffset = pos.getZ();
 		pointerPlayer = new PointerPlayer(xOffset, yOffset);
 		updateLiving();
-		System.out.println(tileentity.needInit());
 		if (tileentity.needInit()) {
 			subscreens.add(new SubscreenSphinxInitWizard(this));
 		}

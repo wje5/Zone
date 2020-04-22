@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.pinball3d.zone.block.BlockLoader;
+import com.pinball3d.zone.block.BlockProcessingCenter;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
+
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 
 public class ScrollingListNetwork extends Component {
 	protected int length, lineHeight, scrollingDistance;
@@ -15,13 +21,26 @@ public class ScrollingListNetwork extends Component {
 		super(parent, x, y, width, height);
 		this.parent = parent;
 		this.lineHeight = 25;
-		String[] s = new String[] { "1232132131", "1234567890", "dlink19", "Muv-Luv", "Network", "AaBbCcDdEe",
-				"AaBbCcDdEe", "AaBbCcDdEe", "AaBbCcDdEe", "AaBbCcDdEe", "AaBbCcDdEe", "AaBbCcDdEe", "AaBbCcDdEe",
-				"AaBbCcDdEe", "AaBbCcDdEe", "Muv-Luv" };
-		for (int i = 0; i < s.length; i++) {
-			list.add(new ListBar(s[i], width, lineHeight));
-			length += lineHeight;
+		List<TEProcessingCenter> l = new ArrayList<TEProcessingCenter>();
+		BlockPos pos = mc.player.getPosition();
+		for (int i = pos.getX() - 12; i <= pos.getX() + 12; i++) {
+			for (int j = pos.getY() - 12; j <= pos.getY() + 12; j++) {
+				for (int k = pos.getZ() - 12; k <= pos.getZ() + 12; k++) {
+					BlockPos blockpos = new BlockPos(i, j, k);
+					Block block = mc.player.world.getBlockState(blockpos).getBlock();
+					if (block == BlockLoader.processing_center) {
+						BlockProcessingCenter center = (BlockProcessingCenter) block;
+						if (center.isFullStructure(mc.world, blockpos)) {
+							l.add((TEProcessingCenter) mc.world.getTileEntity(blockpos));
+						}
+					}
+				}
+			}
 		}
+		l.forEach(e -> {
+			list.add(new ListBar(e, width, lineHeight));
+			length += lineHeight;
+		});
 	}
 
 	@Override
@@ -59,8 +78,8 @@ public class ScrollingListNetwork extends Component {
 			ListBar bar = it.next();
 			yOffset += bar.height;
 			if (yOffset >= y + scrollingDistance && yOffset < y + scrollingDistance + bar.height) {
-				parent.putScreen(new SubscreenConnectToNetwork(parent, bar.name, x + this.x - parent.getXOffset(),
-						y + this.y - parent.getYOffset()));
+				parent.putScreen(new SubscreenConnectToNetwork(parent, bar.tileentity.getName(),
+						x + this.x - parent.getXOffset(), y + this.y - parent.getYOffset()));
 				return;
 			}
 		}
@@ -68,12 +87,12 @@ public class ScrollingListNetwork extends Component {
 	}
 
 	public class ListBar {
-		protected String name;
+		protected TEProcessingCenter tileentity;
 		protected int width;
 		protected int height;
 
-		public ListBar(String name, int width, int height) {
-			this.name = name;
+		public ListBar(TEProcessingCenter tileentity, int width, int height) {
+			this.tileentity = tileentity;
 			this.width = width;
 			this.height = height;
 		}
@@ -92,7 +111,7 @@ public class ScrollingListNetwork extends Component {
 			Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/icons.png"), x + 7, y + upCut, 0,
 					16 + upCut * 2, 32, 26 - (upCut + downCut) * 2, 0.5F);
 			if (upCut < 4 && downCut < 4) {
-				parent.getFontRenderer().drawString(name, x + 30, y + 3, 0xFF1ECCDE);
+				parent.getFontRenderer().drawString(tileentity.getName(), x + 30, y + 3, 0xFF1ECCDE);
 			}
 		}
 	}

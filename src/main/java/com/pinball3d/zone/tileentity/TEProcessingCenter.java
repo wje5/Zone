@@ -1,13 +1,13 @@
 package com.pinball3d.zone.tileentity;
 
-import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ITickable;
 
 public class TEProcessingCenter extends TileEntity implements ITickable {
-	private String name = "";
-	private String adminPassword = "";
-	private String loginPassword = "";
+	private String name;
+	private String adminPassword;
+	private String loginPassword;
 
 	public TEProcessingCenter() {
 
@@ -17,35 +17,45 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		return name == "";
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public void saveWizardData(String adminPassword, String name, String loginPassword) {
 		this.adminPassword = adminPassword;
 		this.name = name;
 		this.loginPassword = loginPassword;
 		markDirty();
-
 	}
 
 	@Override
-	public void tick() {
-
+	public void update() {
+		markDirty();
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		NBTTagCompound tag = compound.getCompoundTag("sphinx");
-		name = tag.getString("name");
-		adminPassword = tag.getString("adminPassword");
-		loginPassword = tag.getString("loginPassword");
+		name = compound.getString("name");
+		adminPassword = compound.getString("adminPassword");
+		loginPassword = compound.getString("loginPassword");
 		super.readFromNBT(compound);
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setString("name", name);
-		tag.setString("adminPassword", adminPassword);
-		tag.setString("loginPassword", loginPassword);
-		compound.setTag("sphinx", tag);
+		compound.setString("name", name);
+		compound.setString("adminPassword", adminPassword);
+		compound.setString("loginPassword", loginPassword);
 		return super.writeToNBT(compound);
+	}
+
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
+	}
+
+	@Override
+	public void handleUpdateTag(NBTTagCompound tag) {
+		this.readFromNBT(tag);
 	}
 }

@@ -46,7 +46,6 @@ public class SubscreenConnectToNetwork extends Subscreen {
 				input += typedChar;
 				if (input.length() >= 8) {
 					parent.quitScreen(this);
-					System.out.println(input);
 				}
 			}
 		}

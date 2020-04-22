@@ -37,10 +37,13 @@ public class BlockControllerMainframe extends Block {
 		pos = pos.add(0, 2, 0);
 		Block block = worldIn.getBlockState(pos).getBlock();
 		if (block == BlockLoader.processing_center && ((BlockProcessingCenter) block).isFullStructure(worldIn, pos)) {
-			Minecraft.getMinecraft()
-					.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos)));
+			if (worldIn.isRemote) {
+				Minecraft.getMinecraft()
+						.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos)));
+			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
