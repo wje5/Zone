@@ -38,7 +38,7 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 	private Map<Integer, PointerLiving> livings = new HashMap<Integer, PointerLiving>();
 	public static final int size = 1;
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
-	private Set<TexturedButton> components = new HashSet<TexturedButton>();
+	private Set<Component> components = new HashSet<Component>();
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	public TEProcessingCenter tileentity;
 
@@ -90,7 +90,9 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 		components.add(new TexturedButton(this, width - 8, 3, TEXTURE, 0, 42, 24, 26, 0.25F, new Runnable() {
 			@Override
 			public void run() {
-
+//				mc.displayGuiScreen(null);
+//				BlockProcessingCenter.setState(false, tileentity.getWorld(), tileentity.getPos());
+				subscreens.push(new SubscreenShutdownSphinx((ScreenSphinxController) mc.currentScreen));
 			}
 		}));
 	}
@@ -106,9 +108,15 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);
 		});
-		subscreens.forEach(e -> {
-			e.doRender(mouseX, mouseY);
-		});
+		Iterator<Subscreen> it = subscreens.iterator();
+		while (it.hasNext()) {
+			Subscreen screen = it.next();
+			if (screen.dead) {
+				it.remove();
+			} else {
+				screen.doRender(mouseX, mouseY);
+			}
+		}
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 

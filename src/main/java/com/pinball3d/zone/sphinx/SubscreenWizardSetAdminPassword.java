@@ -14,14 +14,14 @@ public class SubscreenWizardSetAdminPassword extends Subscreen {
 
 	public SubscreenWizardSetAdminPassword(IParent parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		components.add(box1 = new TextInputBox(this, x + 30, y + 50, 100, new Runnable() {
+		components.add(box1 = new TextInputBox(this, x + 30, y + 50, 100, 8, new Runnable() {
 			@Override
 			public void run() {
 				box1.isFocus = true;
 				box2.isFocus = false;
 			}
 		}));
-		components.add(box2 = new TextInputBox(this, x + 30, y + 90, 100, new Runnable() {
+		components.add(box2 = new TextInputBox(this, x + 30, y + 90, 100, 8, new Runnable() {
 			@Override
 			public void run() {
 				box1.isFocus = false;
@@ -38,7 +38,7 @@ public class SubscreenWizardSetAdminPassword extends Subscreen {
 		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.next"), new Runnable() {
 			@Override
 			public void run() {
-				if (box1.text.length() >= 4 && box2.text.length() >= 4 && box1.text.equals(box2.text)) {
+				if (box1.text.length() == 8 && box1.text.equals(box2.text)) {
 					parent.quitScreen(getScreen());
 					parent.putScreen(new SubscreenWizardSetLoginPassword(parent, box1.text));
 				}
@@ -80,7 +80,7 @@ public class SubscreenWizardSetAdminPassword extends Subscreen {
 		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
 		parent.getFontRenderer().drawString(I18n.format("sphinx.set_admin_password"), x + 30, y + 35, 0xFF1ECCDE);
 		parent.getFontRenderer().drawString(I18n.format("sphinx.confirm_admin_password"), x + 30, y + 75, 0xFF1ECCDE);
-		if (box1.text.length() > 0 && box1.text.length() < 4) {
+		if (box1.text.length() > 0 && box1.text.length() != 8) {
 			parent.getFontRenderer().drawString(I18n.format("sphinx.password_length_error"), x + 30, y + 115,
 					0xFFDA2D2D);
 		} else if (box1.text.length() > 0 && box2.text.length() > 0 && !box1.text.equals(box2.text)) {

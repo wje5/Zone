@@ -7,8 +7,7 @@
   ],
   "key": {
     "#": {
-      "item": "minecraft:iron_bars",
-      "data": 0
+      "item": "zone:etherium_bars"
     },
     "*": {
       "item": "zone:clarity_glass"

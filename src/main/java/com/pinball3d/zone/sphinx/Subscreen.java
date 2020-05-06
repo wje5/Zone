@@ -20,6 +20,7 @@ public class Subscreen implements IParent {
 	protected Set<Component> components = new HashSet<Component>();
 	protected Component draggingComponent;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
+	public boolean dead;
 
 	public Subscreen(IParent parent, int x, int y, int width, int height, boolean rendercover) {
 		this.parent = parent;
@@ -40,9 +41,15 @@ public class Subscreen implements IParent {
 			e.doRender(mouseX, mouseY);
 		});
 		doRenderForeground(mouseX, mouseY);
-		subscreens.forEach(e -> {
-			e.doRender(mouseX, mouseY);
-		});
+		Iterator<Subscreen> it = subscreens.iterator();
+		while (it.hasNext()) {
+			Subscreen screen = it.next();
+			if (screen.dead) {
+				it.remove();
+			} else {
+				screen.doRender(mouseX, mouseY);
+			}
+		}
 	}
 
 	public void doRenderForeground(int mouseX, int mouseY) {

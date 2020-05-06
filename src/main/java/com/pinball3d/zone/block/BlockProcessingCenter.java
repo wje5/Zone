@@ -1,5 +1,7 @@
 package com.pinball3d.zone.block;
 
+import java.util.Random;
+
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
@@ -9,6 +11,8 @@ import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
@@ -17,12 +21,14 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 public class BlockProcessingCenter extends BlockContainer {
-	public BlockProcessingCenter() {
+	private static boolean keepInventory;
+
+	public BlockProcessingCenter(boolean on) {
 		super(Material.IRON);
 		setHardness(100.0F);
 		setResistance(2500.0F);
-		setLightLevel(1.0F);
-		setRegistryName("zone:processing_center");
+		setLightLevel(on ? 1F : 0F);
+		setRegistryName("zone:processing_center" + (on ? "_light" : ""));
 		setUnlocalizedName("processing_center");
 		setCreativeTab(TabZone.tab);
 	}
@@ -199,9 +205,40 @@ public class BlockProcessingCenter extends BlockContainer {
 		return true;
 	}
 
+	public static void setState(boolean active, World worldIn, BlockPos pos) {
+		IBlockState iblockstate = worldIn.getBlockState(pos);
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+		keepInventory = true;
+
+		if (active) {
+			worldIn.setBlockState(pos, BlockLoader.processing_center_light.getDefaultState(), 3);
+			worldIn.setBlockState(pos, BlockLoader.processing_center_light.getDefaultState(), 3);
+		} else {
+			worldIn.setBlockState(pos, BlockLoader.processing_center.getDefaultState(), 3);
+			worldIn.setBlockState(pos, BlockLoader.processing_center.getDefaultState(), 3);
+		}
+
+		keepInventory = false;
+
+		if (tileentity != null) {
+			tileentity.validate();
+			worldIn.setTileEntity(pos, tileentity);
+		}
+	}
+
 	@Override
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
+	}
+
+	@Override
+	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+		return new ItemStack(BlockLoader.processing_center);
+	}
+
+	@Override
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		return Item.getItemFromBlock(BlockLoader.processing_center);
 	}
 
 	@Override

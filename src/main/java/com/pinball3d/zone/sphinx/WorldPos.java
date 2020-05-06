@@ -37,6 +37,10 @@ public class WorldPos {
 		return pos;
 	}
 
+	public int getDim() {
+		return dim;
+	}
+
 	public IBlockState getBlockState(MinecraftServer server) {
 		return getWorld(server).getBlockState(pos);
 	}

@@ -2,6 +2,7 @@ package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.sphinx.ScreenSphinxController;
+import com.pinball3d.zone.sphinx.ScreenSphinxOff;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.block.Block;
@@ -36,8 +37,11 @@ public class BlockControllerMainframe extends Block {
 		pos = pos.offset(state.getValue(FACING).getOpposite(), 3);
 		pos = pos.add(0, 2, 0);
 		Block block = worldIn.getBlockState(pos).getBlock();
-		if (block == BlockLoader.processing_center && ((BlockProcessingCenter) block).isFullStructure(worldIn, pos)) {
-			if (worldIn.isRemote) {
+		if (block instanceof BlockProcessingCenter && ((BlockProcessingCenter) block).isFullStructure(worldIn, pos)) {
+			if (block == BlockLoader.processing_center) {
+				Minecraft.getMinecraft()
+						.displayGuiScreen(new ScreenSphinxOff((TEProcessingCenter) worldIn.getTileEntity(pos)));
+			} else if (worldIn.isRemote) {
 				Minecraft.getMinecraft()
 						.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos)));
 			}

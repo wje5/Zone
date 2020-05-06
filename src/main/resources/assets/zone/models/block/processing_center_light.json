@@ -1,6 +1,6 @@
 {
     "parent": "block/cube_all",
     "textures": {
-        "all": "zone:blocks/processing_center"
+        "all": "zone:blocks/processing_center_light"
     }
 }

@@ -7,13 +7,15 @@ import net.minecraft.client.gui.Gui;
 
 public class TextInputBox extends Component {
 	public String text = "";
+	public int maxLength;
 	protected Runnable event;
 	public boolean isFocus;
 
-	public TextInputBox(IParent parent, int x, int y, int width, Runnable onClick) {
+	public TextInputBox(IParent parent, int x, int y, int width, int maxLength, Runnable onClick) {
 		super(parent, x, y, width, 13);
 		this.x = x;
 		this.y = y;
+		this.maxLength = maxLength;
 		event = onClick;
 	}
 
@@ -29,7 +31,7 @@ public class TextInputBox extends Component {
 			if (keyCode == Keyboard.KEY_BACK && text.length() >= 1) {
 				text = text.substring(0, text.length() - 1);
 			}
-			if (Util.isValidChar(typedChar, 7) && text.length() < 12) {
+			if (Util.isValidChar(typedChar, 7) && text.length() < maxLength) {
 				text += typedChar;
 			}
 		}

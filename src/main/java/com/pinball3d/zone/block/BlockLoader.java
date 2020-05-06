@@ -25,7 +25,7 @@ public class BlockLoader {
 			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light;
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
-			processing_center, truss;
+			processing_center, processing_center_light, truss;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -56,7 +56,8 @@ public class BlockLoader {
 		register(registry, construct_block_all = new BlockConstructBlockAll());
 		register(registry, cluster_operation_module = new BlockClusterOperationModule());
 		register(registry, controller_mainframe = new BlockControllerMainframe());
-		register(registry, processing_center = new BlockProcessingCenter());
+		register(registry, processing_center = new BlockProcessingCenter(false));
+		register(registry, processing_center_light = new BlockProcessingCenter(true));
 		register(registry, truss = new BlockTruss());
 	}
 

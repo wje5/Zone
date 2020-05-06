@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "#*+",
-    "+-+",
+    "*-*",
     "+*#"
   ],
   "key": {
@@ -10,7 +10,7 @@
       "item": "minecraft:prismarine_crystals"
     },
     "*": {
-      "item": "zone:clarity_glass_pane"
+      "item": "zone:charged_glass_pane"
     },
     "+": {
       "item": "zone:induction_tube"

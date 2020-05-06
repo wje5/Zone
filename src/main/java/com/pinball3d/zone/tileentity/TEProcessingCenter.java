@@ -5,9 +5,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 
 public class TEProcessingCenter extends TileEntity implements ITickable {
-	private String name;
-	private String adminPassword;
-	private String loginPassword;
+	private String name = "";
+	private String adminPassword = "";
+	private String loginPassword = "";
 
 	public TEProcessingCenter() {
 
@@ -19,6 +19,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 
 	public String getName() {
 		return name;
+	}
+
+	public boolean isCorrectAdminPassword(String password) {
+		return password.equals(adminPassword);
+	}
+
+	public boolean isCorrectLoginPassword(String password) {
+		return password.equals(loginPassword);
 	}
 
 	public void saveWizardData(String adminPassword, String name, String loginPassword) {
