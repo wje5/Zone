@@ -2,6 +2,7 @@ package com.pinball3d.zone.entity;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.ProjectileHelper;
@@ -13,6 +14,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -27,12 +29,12 @@ public class EntityBullet extends Entity {
 
 	public EntityBullet(World worldIn) {
 		super(worldIn);
-		this.setSize(1.0F, 1.0F);
+		this.setSize(0.02F, 0.02F);
 	}
 
 	public EntityBullet(World worldIn, double x, double y, double z, double accelX, double accelY, double accelZ) {
 		super(worldIn);
-		this.setSize(1.0F, 1.0F);
+		this.setSize(0.02F, 0.02F);
 		this.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
 		this.setPosition(x, y, z);
 		double d0 = MathHelper.sqrt(accelX * accelX + accelY * accelY + accelZ * accelZ);
@@ -44,7 +46,7 @@ public class EntityBullet extends Entity {
 	public EntityBullet(World worldIn, EntityLivingBase shooter, double accelX, double accelY, double accelZ) {
 		super(worldIn);
 		this.shootingEntity = shooter;
-		this.setSize(1.0F, 1.0F);
+		this.setSize(0.02F, 0.02F);
 		this.setLocationAndAngles(shooter.posX, shooter.posY, shooter.posZ, shooter.rotationYaw, shooter.rotationPitch);
 		this.setPosition(this.posX, this.posY, this.posZ);
 		this.motionX = 0.0D;
@@ -87,8 +89,8 @@ public class EntityBullet extends Entity {
 			RayTraceResult raytraceresult = ProjectileHelper.forwardsRaycast(this, true, this.ticksInAir >= 25,
 					this.shootingEntity);
 
-			if (raytraceresult != null && raytraceresult.entityHit != null
-					&& !raytraceresult.entityHit.equals(this.shootingEntity)
+			if (raytraceresult != null
+					&& !(raytraceresult.entityHit != null && raytraceresult.entityHit.equals(this.shootingEntity))
 					&& !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
 				this.onImpact(raytraceresult);
 			}
@@ -123,14 +125,23 @@ public class EntityBullet extends Entity {
 	}
 
 	protected void onImpact(RayTraceResult result) {
-		if (!this.world.isRemote) {
-			if (result.entityHit != null) {
-				result.entityHit.attackEntityFrom(causeBulletDamage(this, this.shootingEntity), 5.0F);
-			}
+		if (result.entityHit instanceof EntityBullet) {
+			return;
 		}
-		this.world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, this.posX - this.motionX * 0.25D,
-				this.posY - this.motionY * 0.25D, this.posZ - this.motionZ * 0.25D, this.motionX, this.motionY,
-				this.motionZ);
+		if (result.typeOfHit == Type.BLOCK) {
+			if (world.isRemote) {
+				for (int i = 0; i < 5; i++) {
+					double x = rand.nextDouble() / 2 - 0.25D + result.hitVec.x;
+					double z = rand.nextDouble() / 2 - 0.25D + result.hitVec.z;
+					world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, result.hitVec.y, z, 0, 0.1, 0,
+							Block.getStateId(world.getBlockState(result.getBlockPos())));
+				}
+			}
+
+		} else if (!world.isRemote) {
+			result.entityHit.attackEntityFrom(causeBulletDamage(this, shootingEntity), 8.0F);
+		}
+
 		this.setDead();
 	}
 
@@ -181,7 +192,7 @@ public class EntityBullet extends Entity {
 
 	@Override
 	public float getCollisionBorderSize() {
-		return 1.0F;
+		return 0.02F;
 	}
 
 	@Override
@@ -196,7 +207,6 @@ public class EntityBullet extends Entity {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
 	public boolean shouldRenderInPass(int pass) {
 		return false;
 	}

@@ -14,6 +14,6 @@ public class EntityLoader {
 	@SubscribeEvent
 	public static void onEntityRegistation(RegistryEvent.Register<EntityEntry> event) {
 		event.getRegistry().register(EntityEntryBuilder.create().entity(EntityBullet.class)
-				.id(new ResourceLocation("zone", "bullet"), 233).name("Bullet").tracker(256, 1, false).build());
+				.id(new ResourceLocation("zone", "bullet"), 233).name("Bullet").tracker(64, 1, false).build());
 	}
 }

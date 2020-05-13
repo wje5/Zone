@@ -1,6 +1,7 @@
 package com.pinball3d.zone.item;
 
 import com.pinball3d.zone.psp.ItemPSP;
+import com.pinball3d.zone.render.TEISRMachineGun;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -122,22 +123,42 @@ public class ItemLoader {
 		register(registry, tiny_pile_stone_dust = new ZoneItem("tiny_pile_stone_dust"));
 		register(registry, tiny_pile_etherium_dust = new ZoneItem("tiny_pile_etherium_dust"));
 		register(registry, tiny_pile_clarity_glass_dust = new ZoneItem("tiny_pile_clarity_glass_dust"));
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			registerTEISR();
+		}
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {
+		register(registry, item, true);
+	}
+
+	private static void register(IForgeRegistry<Item> registry, Item item, boolean flag) {
 		registry.register(item);
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+		if (flag && FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 			registerRender(item);
 		}
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item, ModelResourceLocation model) {
-		// working
+		registry.register(item);
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			registerRender(item, model);
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	private static void registerRender(Item item) {
 		ModelResourceLocation model = new ModelResourceLocation(item.getRegistryName(), "inventory");
 		ModelLoader.setCustomModelResourceLocation(item, 0, model);
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static void registerRender(Item item, ModelResourceLocation model) {
+		ModelLoader.setCustomModelResourceLocation(item, 0, model);
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static void registerTEISR() {
+		ItemLoader.machine_gun.setTileEntityItemStackRenderer(new TEISRMachineGun());
 	}
 }

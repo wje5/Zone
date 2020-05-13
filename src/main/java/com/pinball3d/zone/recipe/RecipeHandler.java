@@ -48,6 +48,8 @@ public class RecipeHandler {
 				200));
 		register(new RecipeGrinder(new ItemStack(Items.QUARTZ), new ItemStack(ItemLoader.tiny_pile_quartz_dust, 8),
 				200));
+		register(new RecipeGrinder(new ItemStack(ItemLoader.quartz_circuit_board),
+				new ItemStack(ItemLoader.tiny_pile_quartz_dust, 8), 200));
 		register(new RecipeGrinder(new ItemStack(Items.IRON_NUGGET), new ItemStack(ItemLoader.tiny_pile_iron_dust, 1),
 				200));
 		register(new RecipeGrinder(new ItemStack(Items.GOLD_NUGGET), new ItemStack(ItemLoader.tiny_pile_gold_dust, 1),

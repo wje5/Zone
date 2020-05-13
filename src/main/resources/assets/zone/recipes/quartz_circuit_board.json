@@ -15,6 +15,7 @@
     }
   },
   "result": {
-    "item": "zone:quartz_circuit_board"
+    "item": "zone:quartz_circuit_board",
+    "count": 3
   }
 }

@@ -39,6 +39,7 @@ item.energy.name=Energy
 item.construct_block.name=Construct Block
 item.terminal.name=Terminal
 item.psp.name=PSP
+item.machine_gun.name=Bren MK1
 item.crushed_iron_ore.name=Crushed Iron Ore
 item.crushed_gold_ore.name=Crushed Gold Ore
 item.crushed_diamond_ore.name=Crushed Diamond Ore
