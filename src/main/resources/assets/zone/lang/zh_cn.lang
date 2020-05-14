@@ -132,4 +132,4 @@ sphinx.set_system_name=设定系统名称
 sphinx.set_login_password=设定系统登录密码
 sphinx.confirm_login_password=确认系统登录密码
 sphinx.finish_wizard=史芬斯©初始化向导已完成|||单击完成以退出向导。
-sphinx.shutdown_sphinx=如果您现在关闭，您的机器将无法工作。|您可以在任何时候重启系统而无需重新进行初始化。|关闭系统？
+sphinx.shutdown_sphinx=如果您现在关闭，您的机器将无法工作。|您可以在任何时候重启系统而无需重新 进行初始化。|关闭系统？

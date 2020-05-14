@@ -50,7 +50,7 @@ public class ItemMachineGun extends ZoneItem {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
-		if (handIn == EnumHand.MAIN_HAND) {
+		if (handIn == EnumHand.MAIN_HAND && player.getHeldItem(EnumHand.OFF_HAND).isEmpty()) {
 			player.setActiveHand(handIn);
 		}
 		return new ActionResult<ItemStack>(EnumActionResult.FAIL, player.getHeldItem(handIn));

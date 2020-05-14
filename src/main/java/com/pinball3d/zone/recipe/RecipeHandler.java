@@ -58,6 +58,53 @@ public class RecipeHandler {
 				new ItemStack(ItemLoader.tiny_pile_etherium_dust, 8), 200));
 		register(new RecipeGrinder(new ItemStack(BlockLoader.clarity_glass),
 				new ItemStack(ItemLoader.tiny_pile_clarity_glass_dust, 8), 200));
+		register(
+				new RecipeGrinder(new ItemStack(Blocks.STONE), new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.COBBLESTONE), new ItemStack(ItemLoader.tiny_pile_stone_dust, 8),
+				200));
+		register(new RecipeGrinder(new ItemStack(Blocks.STONEBRICK), new ItemStack(ItemLoader.tiny_pile_stone_dust, 8),
+				200));
+		register(new RecipeGrinder(new ItemStack(Blocks.STONEBRICK, 1, 1),
+				new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.STONEBRICK, 1, 2),
+				new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.STONEBRICK, 1, 3),
+				new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.STONE_STAIRS),
+				new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.STONE_BRICK_STAIRS),
+				new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.FURNACE), new ItemStack(ItemLoader.stone_dust, 7), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.IRON_BARS), new ItemStack(ItemLoader.small_pile_iron_dust),
+				200));
+		register(new RecipeGrinder(new ItemStack(Blocks.COBBLESTONE_WALL),
+				new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.COBBLESTONE_WALL, 1, 1),
+				new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.OBSERVER), new ItemStack(ItemLoader.stone_dust, 5), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.STONE_PRESSURE_PLATE),
+				new ItemStack(ItemLoader.small_pile_stone_dust, 6), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE),
+				new ItemStack(ItemLoader.small_pile_iron_dust, 6), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE),
+				new ItemStack(ItemLoader.small_pile_gold_dust, 6), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.HOPPER), new ItemStack(ItemLoader.iron_dust, 4), 200));
+		register(
+				new RecipeGrinder(new ItemStack(Blocks.LEVER), new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.STONE_BUTTON),
+				new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.IRON_TRAPDOOR), new ItemStack(ItemLoader.iron_dust, 3), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.DROPPER), new ItemStack(ItemLoader.stone_dust, 6), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.DISPENSER), new ItemStack(ItemLoader.stone_dust, 6), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.IRON_DOOR), new ItemStack(ItemLoader.small_pile_iron_dust, 6),
+				200));
+		register(new RecipeGrinder(new ItemStack(Items.MINECART), new ItemStack(ItemLoader.iron_dust, 4), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.RAIL), new ItemStack(ItemLoader.small_pile_iron_dust), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.GOLDEN_RAIL), new ItemStack(ItemLoader.gold_dust, 5), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.DETECTOR_RAIL), new ItemStack(ItemLoader.iron_dust, 5), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.ACTIVATOR_RAIL), new ItemStack(ItemLoader.iron_dust, 5), 200));
+		register(new RecipeGrinder(new ItemStack(Items.BUCKET), new ItemStack(ItemLoader.iron_dust, 2), 200));
+
 		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.iron_dust), new ItemStack(ItemLoader.gold_dust),
 				new ItemStack(ItemLoader.quartz_dust), new ItemStack(ItemLoader.etherium), 200));
 		register(new RecipeAlloySmelter(new ItemStack(Items.SLIME_BALL), new ItemStack(ItemLoader.emerald_dust),
@@ -65,6 +112,7 @@ public class RecipeHandler {
 		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.clarity_glass_dust),
 				new ItemStack(ItemLoader.diamond_dust), new ItemStack(ItemLoader.energy_group),
 				new ItemStack(BlockLoader.charged_glass), 200));
+
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_iron_ore),
 				new ItemStack(ItemLoader.tiny_pile_iron_dust), new ItemStack(ItemLoader.tiny_pile_iron_dust),
 				new ItemStack(ItemLoader.small_pile_stone_dust), 100));
