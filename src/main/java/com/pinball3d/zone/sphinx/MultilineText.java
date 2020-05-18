@@ -41,12 +41,9 @@ public class MultilineText extends Component {
 		Iterator<String> it = list.iterator();
 		while (it.hasNext()) {
 			String i = it.next();
-			System.out.println(renderer.getStringWidth(s + i));
 			if (renderer.getStringWidth(s + i) <= width) {
-				System.out.println(s);
 				s = s + i + " ";
 			} else {
-				System.out.println("{" + s);
 				temp.add(s);
 				s = i + " ";
 			}

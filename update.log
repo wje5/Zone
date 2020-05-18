@@ -24,3 +24,32 @@ Fixed machine bottom texture.
 #1.1.0
 Now grinder can handles blaze rod.
 Add Sphinx System.
+Add a large amount of items!
+
+#1.1.1
+Hotfix TENode in server crash.
+
+#1.1.2
+Hotfix MessageWizardData in server crash
+Hotfix ItemMachineGun in server crash
+
+#1.1.3
+Hotfix BlockControllerMainframe in server crash
+
+#1.1.4
+Hotfix ItemTerminal in server crash
+
+#1.1.5
+Hotfix ItemFC in server crash
+
+#1.1.6
+Hotfix Grinder recipe
+
+#1.1.7
+Hotfix Bren MK1 in server crash
+Hotfix destroy working machine can't drop machine itself
+Adds some recipes
+
+#1.2.0
+Fix some grinder recipe
+Adds JEI plugin

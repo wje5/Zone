@@ -96,13 +96,16 @@ public class RecipeHandler {
 		register(new RecipeGrinder(new ItemStack(Blocks.IRON_TRAPDOOR), new ItemStack(ItemLoader.iron_dust, 3), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.DROPPER), new ItemStack(ItemLoader.stone_dust, 6), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.DISPENSER), new ItemStack(ItemLoader.stone_dust, 6), 200));
-		register(new RecipeGrinder(new ItemStack(Blocks.IRON_DOOR), new ItemStack(ItemLoader.small_pile_iron_dust, 6),
+		register(new RecipeGrinder(new ItemStack(Items.IRON_DOOR), new ItemStack(ItemLoader.small_pile_iron_dust, 6),
 				200));
 		register(new RecipeGrinder(new ItemStack(Items.MINECART), new ItemStack(ItemLoader.iron_dust, 4), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.RAIL), new ItemStack(ItemLoader.small_pile_iron_dust), 200));
-		register(new RecipeGrinder(new ItemStack(Blocks.GOLDEN_RAIL), new ItemStack(ItemLoader.gold_dust, 5), 200));
-		register(new RecipeGrinder(new ItemStack(Blocks.DETECTOR_RAIL), new ItemStack(ItemLoader.iron_dust, 5), 200));
-		register(new RecipeGrinder(new ItemStack(Blocks.ACTIVATOR_RAIL), new ItemStack(ItemLoader.iron_dust, 5), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.GOLDEN_RAIL), new ItemStack(ItemLoader.small_pile_gold_dust, 5),
+				200));
+		register(new RecipeGrinder(new ItemStack(Blocks.DETECTOR_RAIL),
+				new ItemStack(ItemLoader.small_pile_iron_dust, 5), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.ACTIVATOR_RAIL),
+				new ItemStack(ItemLoader.small_pile_iron_dust, 5), 200));
 		register(new RecipeGrinder(new ItemStack(Items.BUCKET), new ItemStack(ItemLoader.iron_dust, 2), 200));
 
 		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.iron_dust), new ItemStack(ItemLoader.gold_dust),
@@ -141,6 +144,10 @@ public class RecipeHandler {
 				400));
 		register(new RecipeCrystallizer(new ItemStack(Items.BLAZE_POWDER, 16), new ItemStack(ItemLoader.blaze_crystal),
 				400));
+		register(new RecipeCrystallizer(new ItemStack(ItemLoader.diamond_dust, 1), new ItemStack(Items.DIAMOND), 400));
+		register(new RecipeCrystallizer(new ItemStack(ItemLoader.emerald_dust, 1), new ItemStack(Items.EMERALD), 400));
+		register(new RecipeCrystallizer(new ItemStack(ItemLoader.lapis_dust, 1), new ItemStack(Items.DYE, 1, 4), 400));
+		register(new RecipeCrystallizer(new ItemStack(ItemLoader.quartz_dust, 1), new ItemStack(Items.QUARTZ), 400));
 	}
 
 	public static void register(Recipe recipe) {
@@ -157,6 +164,10 @@ public class RecipeHandler {
 			}
 		}
 		return null;
+	}
+
+	public static Set<Recipe> getRecipes(Type type) {
+		return map.get(type);
 	}
 
 	public static boolean match(Recipe recipe, List<ItemStack> inputs) {

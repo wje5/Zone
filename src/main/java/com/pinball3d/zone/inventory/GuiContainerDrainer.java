@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiContainerDrainer extends GuiContainer {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/drainer.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/drainer.png");
 
 	protected ContainerDrainer container;
 

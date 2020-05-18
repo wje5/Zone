@@ -4,7 +4,10 @@ import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -44,9 +47,22 @@ public class MessageWizardData implements IMessage {
 	public static class Handler implements IMessageHandler<MessageWizardData, IMessage> {
 		@Override
 		public IMessage onMessage(MessageWizardData message, MessageContext ctx) {
-			TEProcessingCenter te = (TEProcessingCenter) message.pos
-					.getTileEntity(Minecraft.getMinecraft().getIntegratedServer());
-			te.saveWizardData(message.adminPassword, message.name, message.loginPassword);
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
+				@Override
+				public void run() {
+					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+					World world = message.pos.getWorld(server);
+					if (!world.isAreaLoaded(message.pos.getPos(), 5)) {
+						return;
+					}
+					TileEntity te = message.pos.getTileEntity(FMLCommonHandler.instance().getMinecraftServerInstance());
+					if (te instanceof TEProcessingCenter) {
+						((TEProcessingCenter) te).saveWizardData(message.adminPassword, message.name,
+								message.loginPassword);
+					}
+				}
+			});
+
 			return null;
 		}
 	}

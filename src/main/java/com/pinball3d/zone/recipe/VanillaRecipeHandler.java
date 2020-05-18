@@ -18,5 +18,7 @@ public class VanillaRecipeHandler {
 		GameRegistry.addSmelting(new ItemStack(ItemLoader.tiny_pile_iron_dust), new ItemStack(Items.IRON_NUGGET), 0F);
 		GameRegistry.addSmelting(new ItemStack(ItemLoader.tiny_pile_gold_dust), new ItemStack(Items.GOLD_NUGGET), 0F);
 		GameRegistry.addSmelting(new ItemStack(ItemLoader.etherium_dust), new ItemStack(ItemLoader.etherium), 0F);
+		GameRegistry.addSmelting(new ItemStack(ItemLoader.clarity_glass_dust), new ItemStack(BlockLoader.clarity_glass),
+				0F);
 	}
 }

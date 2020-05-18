@@ -3,6 +3,8 @@ package com.pinball3d.zone.item;
 import org.lwjgl.input.Mouse;
 
 import com.pinball3d.zone.entity.EntityBullet;
+import com.pinball3d.zone.network.MessageBullet;
+import com.pinball3d.zone.network.NetworkHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -19,6 +21,8 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod.EventBusSubscriber
 public class ItemMachineGun extends ZoneItem {
@@ -31,9 +35,9 @@ public class ItemMachineGun extends ZoneItem {
 
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		if (isSelected && entityIn instanceof EntityPlayer) {
+		if (worldIn.isRemote && isSelected && entityIn instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityIn;
-			if (player.getHeldItem(EnumHand.OFF_HAND).isEmpty() && Mouse.isButtonDown(0)) {
+			if (player.getHeldItem(EnumHand.OFF_HAND).isEmpty() && isMouseLeftDown()) {
 				Vec3d vec3d = player.getLook(1.0F);
 				EntityBullet bullet = new EntityBullet(worldIn, player, 0, 0, 0);
 				bullet.posX = player.posX + vec3d.x * 1.0D;
@@ -43,9 +47,17 @@ public class ItemMachineGun extends ZoneItem {
 				bullet.motionY = vec3d.y * 20 + player.motionY;
 				bullet.motionZ = vec3d.z * 20 + player.motionZ;
 				worldIn.spawnEntity(bullet);
+				NetworkHandler.instance.sendToServer(new MessageBullet(player, player.posX + vec3d.x * 1.0D,
+						player.posY + vec3d.y * 1.0D + player.height / 2.0F + 0.5D, player.posZ + vec3d.z * 1.0D,
+						vec3d.x * 20 + player.motionX, vec3d.y * 20 + player.motionY, vec3d.z * 20 + player.motionZ));
 			}
 		}
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public boolean isMouseLeftDown() {
+		return Mouse.isButtonDown(0);
 	}
 
 	@Override
@@ -61,6 +73,7 @@ public class ItemMachineGun extends ZoneItem {
 		return 72000;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onMousePolling(MouseEvent event) {
 		if (Minecraft.getMinecraft().player.getHeldItem(EnumHand.MAIN_HAND).getItem() == ItemLoader.machine_gun
@@ -69,6 +82,7 @@ public class ItemMachineGun extends ZoneItem {
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onFOVUpdate(FOVUpdateEvent event) {
 		if (event.getEntity().getHeldItem(EnumHand.MAIN_HAND).getItem() == ItemLoader.machine_gun) {
@@ -85,6 +99,7 @@ public class ItemMachineGun extends ZoneItem {
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onRenderGameOverlay(RenderGameOverlayEvent.Pre event) {
 		if (event.getType() == ElementType.CROSSHAIRS && Minecraft.getMinecraft().player.getHeldItem(EnumHand.MAIN_HAND)

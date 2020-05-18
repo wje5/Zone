@@ -18,6 +18,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockControllerMainframe extends Block {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
@@ -34,20 +36,29 @@ public class BlockControllerMainframe extends Block {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+
 		pos = pos.offset(state.getValue(FACING).getOpposite(), 3);
 		pos = pos.add(0, 2, 0);
 		Block block = worldIn.getBlockState(pos).getBlock();
 		if (block instanceof BlockProcessingCenter && ((BlockProcessingCenter) block).isFullStructure(worldIn, pos)) {
-			if (block == BlockLoader.processing_center) {
-				Minecraft.getMinecraft()
-						.displayGuiScreen(new ScreenSphinxOff((TEProcessingCenter) worldIn.getTileEntity(pos)));
-			} else if (worldIn.isRemote) {
-				Minecraft.getMinecraft()
-						.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos)));
+			if (worldIn.isRemote) {
+				openScreen(worldIn, pos);
 			}
 			return true;
 		}
 		return false;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void openScreen(World worldIn, BlockPos pos) {
+		Block block = worldIn.getBlockState(pos).getBlock();
+		if (block == BlockLoader.processing_center) {
+			Minecraft.getMinecraft()
+					.displayGuiScreen(new ScreenSphinxOff((TEProcessingCenter) worldIn.getTileEntity(pos)));
+		} else {
+			Minecraft.getMinecraft()
+					.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos)));
+		}
 	}
 
 	@Override

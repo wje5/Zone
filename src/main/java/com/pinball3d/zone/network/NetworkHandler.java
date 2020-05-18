@@ -1,6 +1,5 @@
 package com.pinball3d.zone.network;
 
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -12,8 +11,9 @@ public class NetworkHandler {
 
 	private static int nextID = 0;
 
-	public NetworkHandler(FMLPreInitializationEvent event) {
+	public NetworkHandler() {
 		registerMessage(MessageWizardData.Handler.class, MessageWizardData.class, Side.SERVER);
+		registerMessage(MessageBullet.Handler.class, MessageBullet.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

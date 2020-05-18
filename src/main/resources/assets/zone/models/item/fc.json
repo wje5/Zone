@@ -1,6 +1,6 @@
 {
     "parent": "builtin/generated",
     "textures": {
-        "layer0": "zone:items/psp"
+        "layer0": "zone:items/fc"
     }
 }

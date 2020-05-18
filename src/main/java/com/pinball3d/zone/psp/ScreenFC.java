@@ -5,7 +5,7 @@ import com.pinball3d.zone.sphinx.Util;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 
-public class ScreenPSP extends GuiScreen {
+public class ScreenFC extends GuiScreen {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/psp/border.png");
 	private static final ResourceLocation TEXTURE_2 = new ResourceLocation("zone:textures/gui/psp/border_2.png");
 

@@ -8,8 +8,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemTerminal extends ZoneItem {
 	public ItemTerminal() {
@@ -19,8 +20,14 @@ public class ItemTerminal extends ZoneItem {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		BlockPos pos = playerIn.getPosition();
-		Minecraft.getMinecraft().displayGuiScreen(new ScreenTerminal());
+		if (worldIn.isRemote) {
+			openScreen();
+		}
 		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void openScreen() {
+		Minecraft.getMinecraft().displayGuiScreen(new ScreenTerminal());
 	}
 }

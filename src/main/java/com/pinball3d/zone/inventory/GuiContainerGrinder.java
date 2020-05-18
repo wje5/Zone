@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiContainerGrinder extends GuiContainer {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/grinder.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/grinder.png");
 
 	protected ContainerGrinder container;
 

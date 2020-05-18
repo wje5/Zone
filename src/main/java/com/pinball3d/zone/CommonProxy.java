@@ -14,7 +14,7 @@ public class CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
 		TabZone.init();
 		TileEntityLoader.init();
-		new NetworkHandler(event);
+		new NetworkHandler();
 	}
 
 	public void init(FMLInitializationEvent event) {

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiContainerAlloySmelter extends GuiContainer {
-	private static final ResourceLocation TEXTURE = new ResourceLocation(
+	public static final ResourceLocation TEXTURE = new ResourceLocation(
 			"zone:textures/gui/container/alloy_smelter.png");
 
 	protected ContainerAlloySmelter container;

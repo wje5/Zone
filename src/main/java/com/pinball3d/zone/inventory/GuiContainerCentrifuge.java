@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiContainerCentrifuge extends GuiContainer {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/centrifuge.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/centrifuge.png");
 
 	protected ContainerCentrifuge container;
 
