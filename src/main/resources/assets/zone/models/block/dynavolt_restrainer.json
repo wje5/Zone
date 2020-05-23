@@ -1,0 +1,7 @@
+{
+    "parent": "block/cube_column",
+    "textures": {
+        "end": "zone:blocks/dynavolt_restrainer",
+        "side": "zone:blocks/construct_block_all"
+    }
+}

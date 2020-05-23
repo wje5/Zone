@@ -8,10 +8,10 @@
   ],
   "key": {
     "#": {
-      "item": "zone:tiny_pile_diamond_dust"
+      "item": "zone:tiny_pile_netherrack_dust"
     }
   },
   "result": {
-    "item": "zone:diamond_dust"
+    "item": "zone:netherrack_dust"
   }
 }

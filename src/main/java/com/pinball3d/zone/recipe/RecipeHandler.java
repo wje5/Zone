@@ -58,6 +58,8 @@ public class RecipeHandler {
 				new ItemStack(ItemLoader.tiny_pile_etherium_dust, 8), 200));
 		register(new RecipeGrinder(new ItemStack(BlockLoader.clarity_glass),
 				new ItemStack(ItemLoader.tiny_pile_clarity_glass_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(BlockLoader.clarity_glass_pane),
+				new ItemStack(ItemLoader.small_pile_clarity_glass_dust), 200));
 		register(
 				new RecipeGrinder(new ItemStack(Blocks.STONE), new ItemStack(ItemLoader.tiny_pile_stone_dust, 8), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.COBBLESTONE), new ItemStack(ItemLoader.tiny_pile_stone_dust, 8),
@@ -107,6 +109,8 @@ public class RecipeHandler {
 		register(new RecipeGrinder(new ItemStack(Blocks.ACTIVATOR_RAIL),
 				new ItemStack(ItemLoader.small_pile_iron_dust, 5), 200));
 		register(new RecipeGrinder(new ItemStack(Items.BUCKET), new ItemStack(ItemLoader.iron_dust, 2), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.NETHERRACK),
+				new ItemStack(ItemLoader.small_pile_netherrack_dust, 8), 200));
 
 		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.iron_dust), new ItemStack(ItemLoader.gold_dust),
 				new ItemStack(ItemLoader.quartz_dust), new ItemStack(ItemLoader.etherium), 200));
@@ -138,8 +142,8 @@ public class RecipeHandler {
 				new ItemStack(ItemLoader.small_pile_lapis_dust), new ItemStack(ItemLoader.small_pile_lapis_dust),
 				new ItemStack(ItemLoader.small_pile_stone_dust), 100));
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_quartz_ore),
-				new ItemStack(ItemLoader.small_pile_quartz_dust), new ItemStack(ItemLoader.small_pile_quartz_dust),
-				new ItemStack(ItemLoader.small_pile_stone_dust), 100));
+				new ItemStack(ItemLoader.tiny_pile_quartz_dust), new ItemStack(ItemLoader.tiny_pile_quartz_dust),
+				new ItemStack(ItemLoader.small_pile_netherrack_dust), 100));
 		register(new RecipeCrystallizer(new ItemStack(Items.REDSTONE, 16), new ItemStack(ItemLoader.redstone_crystal),
 				400));
 		register(new RecipeCrystallizer(new ItemStack(Items.BLAZE_POWDER, 16), new ItemStack(ItemLoader.blaze_crystal),

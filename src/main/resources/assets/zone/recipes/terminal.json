@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+-+",
+    "#O#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:etherium_plate_riveted"
+    },
+    "*": {
+      "item": "zone:display_screen"
+    },
+    "+": {
+      "item": "zone:smoothing_unit"
+    },
+    "-": {
+      "item": "zone:advenced_circuit_board"
+    },
+    "O": {
+      "item": "zone:amplify_unit"
+    }
+  },
+  "result": {
+    "item": "zone:terminal"
+  }
+}

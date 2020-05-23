@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "normal": { "model": "zone:transmission_module" }
+    }
+}

@@ -14,6 +14,7 @@ public class TileEntityLoader {
 		registerTileEntity(TENode.class, "Node");
 		registerTileEntity(TECrystallizer.class, "Crystallizer");
 		registerTileEntity(TEProcessingCenter.class, "ProcessingCenter");
+		registerTileEntity(TETransmissionModule.class, "TransmissionModule");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

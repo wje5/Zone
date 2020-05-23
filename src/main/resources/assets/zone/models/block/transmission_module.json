@@ -1,0 +1,7 @@
+{
+    "parent": "block/cube_top",
+    "textures": {
+        "top": "zone:blocks/transmission_module",
+        "side": "zone:blocks/etherium_hull"
+    }
+}

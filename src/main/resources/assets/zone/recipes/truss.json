@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "#+#",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:etherium_plate_riveted"
+    },
+    "*": {
+      "item": "minecraft:piston"
+    },
+    "+": {
+      "item": "zone:etherium_frame"
+    }
+  },
+  "result": {
+    "item": "zone:truss"
+  }
+}

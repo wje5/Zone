@@ -31,15 +31,15 @@ public class ItemLoader {
 			crushed_redstone_ore, crushed_coal_ore, crushed_lapis_ore, crushed_quartz_ore;
 
 	public static Item iron_dust, gold_dust, diamond_dust, emerald_dust, coal_dust, lapis_dust, quartz_dust, stone_dust,
-			etherium_dust, clarity_glass_dust;
+			netherrack_dust, etherium_dust, clarity_glass_dust;
 
 	public static Item small_pile_iron_dust, small_pile_gold_dust, small_pile_diamond_dust, small_pile_emerald_dust,
 			small_pile_redstone_dust, small_pile_coal_dust, small_pile_lapis_dust, small_pile_quartz_dust,
-			small_pile_stone_dust, small_pile_etherium_dust, small_pile_clarity_glass_dust;
+			small_pile_stone_dust, small_pile_netherrack_dust, small_pile_etherium_dust, small_pile_clarity_glass_dust;
 
 	public static Item tiny_pile_iron_dust, tiny_pile_gold_dust, tiny_pile_diamond_dust, tiny_pile_emerald_dust,
 			tiny_pile_redstone_dust, tiny_pile_coal_dust, tiny_pile_lapis_dust, tiny_pile_quartz_dust,
-			tiny_pile_stone_dust, tiny_pile_etherium_dust, tiny_pile_clarity_glass_dust;
+			tiny_pile_stone_dust, tiny_pile_netherrack_dust, tiny_pile_etherium_dust, tiny_pile_clarity_glass_dust;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -99,6 +99,7 @@ public class ItemLoader {
 		register(registry, lapis_dust = new ZoneItem("lapis_dust"));
 		register(registry, quartz_dust = new ZoneItem("quartz_dust"));
 		register(registry, stone_dust = new ZoneItem("stone_dust"));
+		register(registry, netherrack_dust = new ZoneItem("netherrack_dust"));
 		register(registry, etherium_dust = new ZoneItem("etherium_dust"));
 		register(registry, clarity_glass_dust = new ZoneItem("clarity_glass_dust"));
 		register(registry, small_pile_iron_dust = new ZoneItem("small_pile_iron_dust"));
@@ -110,6 +111,7 @@ public class ItemLoader {
 		register(registry, small_pile_lapis_dust = new ZoneItem("small_pile_lapis_dust"));
 		register(registry, small_pile_quartz_dust = new ZoneItem("small_pile_quartz_dust"));
 		register(registry, small_pile_stone_dust = new ZoneItem("small_pile_stone_dust"));
+		register(registry, small_pile_netherrack_dust = new ZoneItem("small_pile_netherrack_dust"));
 		register(registry, small_pile_etherium_dust = new ZoneItem("small_pile_etherium_dust"));
 		register(registry, small_pile_clarity_glass_dust = new ZoneItem("small_pile_clarity_glass_dust"));
 		register(registry, tiny_pile_iron_dust = new ZoneItem("tiny_pile_iron_dust"));
@@ -121,6 +123,7 @@ public class ItemLoader {
 		register(registry, tiny_pile_lapis_dust = new ZoneItem("tiny_pile_lapis_dust"));
 		register(registry, tiny_pile_quartz_dust = new ZoneItem("tiny_pile_quartz_dust"));
 		register(registry, tiny_pile_stone_dust = new ZoneItem("tiny_pile_stone_dust"));
+		register(registry, tiny_pile_netherrack_dust = new ZoneItem("tiny_pile_netherrack_dust"));
 		register(registry, tiny_pile_etherium_dust = new ZoneItem("tiny_pile_etherium_dust"));
 		register(registry, tiny_pile_clarity_glass_dust = new ZoneItem("tiny_pile_clarity_glass_dust"));
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
