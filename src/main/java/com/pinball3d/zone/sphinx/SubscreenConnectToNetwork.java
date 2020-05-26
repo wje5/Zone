@@ -13,8 +13,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
 public class SubscreenConnectToNetwork extends Subscreen {
-	private static final ResourceLocation TEXTURE = new ResourceLocation(
-			"zone:textures/gui/sphinx/connect_to_network.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private String input = "";
 	public TEProcessingCenter tileentity;
 	private long quit;
@@ -34,7 +33,7 @@ public class SubscreenConnectToNetwork extends Subscreen {
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
 		Gui.drawRect(x, y, x + width, y + height, 0xAF282828);
-		Util.drawTexture(TEXTURE, x + 8, y + 8, 36, 36, 0.5F);
+		Util.drawTexture(TEXTURE, x + 8, y + 8, 48, 0, 36, 36, 0.5F);
 		parent.getFontRenderer().drawString(I18n.format("sphinx.connect_to_network", tileentity.getName()), x + 35,
 				y + 4, 0xFF1ECCDE);
 		if (quit > 0) {
@@ -42,7 +41,7 @@ public class SubscreenConnectToNetwork extends Subscreen {
 					y + 20, 0xFF1ECCDE);
 		} else {
 			for (int i = 0; i < input.length(); i++) {
-				Util.drawTexture(TEXTURE, x + 35 + i * 16, y + 18, 36, 0, 21, 21, 0.5F);
+				Util.drawTexture(TEXTURE, x + 35 + i * 16, y + 18, 0, 118, 21, 21, 0.5F);
 			}
 		}
 

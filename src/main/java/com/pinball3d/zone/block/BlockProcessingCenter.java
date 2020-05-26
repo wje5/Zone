@@ -228,6 +228,8 @@ public class BlockProcessingCenter extends BlockContainer {
 			tileentity.validate();
 			worldIn.setTileEntity(pos, tileentity);
 		}
+
+		System.out.println(worldIn.isRemote);
 	}
 
 	@Override

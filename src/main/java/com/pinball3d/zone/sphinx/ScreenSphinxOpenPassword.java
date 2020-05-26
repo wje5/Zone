@@ -6,18 +6,16 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
-import com.pinball3d.zone.network.MessageOpenSphinx;
-import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
-public class ScreenSphinxOff extends GuiScreen implements IParent {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons_2.png");
+public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
+	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	private String input = "";
 	private Set<Component> components = new HashSet<Component>();
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	private int lastMouseX, lastMouseY;
@@ -25,7 +23,7 @@ public class ScreenSphinxOff extends GuiScreen implements IParent {
 	private int xOffset, yOffset;
 	public TEProcessingCenter tileentity;
 
-	public ScreenSphinxOff(TEProcessingCenter te) {
+	public ScreenSphinxOpenPassword(TEProcessingCenter te) {
 		tileentity = te;
 	}
 
@@ -36,21 +34,19 @@ public class ScreenSphinxOff extends GuiScreen implements IParent {
 	}
 
 	private void applyComponents() {
-		components.add(new TexturedButton(this, width / 2 - 29, height / 2 - 32, TEXTURE, 0, 0, 232, 256, 0.25F,
-				new Runnable() {
-					@Override
-					public void run() {
-						NetworkHandler.instance.sendToServer(new MessageOpenSphinx("",
-								new WorldPos(tileentity.getPos(), tileentity.getWorld()), new NBTTagCompound()));
-						tileentity.open();
-						mc.displayGuiScreen(new ScreenLoadSphinx(tileentity));
-					}
-				}));
+
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
+		Gui.drawRect(width / 2 - 50, height / 2 - 13, width / 2 + 50, height / 2 - 12, 0xFF20E6EF);
+		Gui.drawRect(width / 2 - 50, height / 2 + 11, width / 2 + 50, height / 2 + 12, 0xFF20E6EF);
+		Gui.drawRect(width / 2 - 50, height / 2 - 12, width / 2 - 49, height / 2 + 11, 0xFF20E6EF);
+		Gui.drawRect(width / 2 + 49, height / 2 - 12, width / 2 + 50, height / 2 + 11, 0xFF20E6EF);
+		for (int i = 0; i < input.length(); i++) {
+			Util.drawTexture(TEXTURE, width / 2 - 15 + i * 16, y + 18, 0, 118, 21, 21, 0.5F);
+		}
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);
 		});

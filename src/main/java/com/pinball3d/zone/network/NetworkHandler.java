@@ -14,6 +14,8 @@ public class NetworkHandler {
 	public NetworkHandler() {
 		registerMessage(MessageWizardData.Handler.class, MessageWizardData.class, Side.SERVER);
 		registerMessage(MessageBullet.Handler.class, MessageBullet.class, Side.SERVER);
+		registerMessage(MessageOpenSphinx.Handler.class, MessageOpenSphinx.class, Side.SERVER);
+		registerMessage(MessageShutdownSphinx.Handler.class, MessageShutdownSphinx.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(
