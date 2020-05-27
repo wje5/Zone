@@ -27,6 +27,7 @@ public class SubscreenWizardFinish extends Subscreen {
 				te.saveWizardData(adminPassword, name, loginPassword);
 				NetworkHandler.instance.sendToServer(new MessageWizardData(new WorldPos(te.getPos(), te.getWorld()),
 						adminPassword, name, loginPassword));
+				((ScreenSphinxController) parent).password = adminPassword;
 			}
 		}));
 	}

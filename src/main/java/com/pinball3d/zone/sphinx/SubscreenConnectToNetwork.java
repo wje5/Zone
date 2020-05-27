@@ -37,8 +37,7 @@ public class SubscreenConnectToNetwork extends Subscreen {
 		parent.getFontRenderer().drawString(I18n.format("sphinx.connect_to_network", tileentity.getName()), x + 35,
 				y + 4, 0xFF1ECCDE);
 		if (quit > 0) {
-			parent.getFontRenderer().drawString(I18n.format("sphinx.password_incorrect", tileentity.getName()), x + 35,
-					y + 20, 0xFF1ECCDE);
+			parent.getFontRenderer().drawString(I18n.format("sphinx.password_incorrect"), x + 35, y + 20, 0xFF1ECCDE);
 		} else {
 			for (int i = 0; i < input.length(); i++) {
 				Util.drawTexture(TEXTURE, x + 35 + i * 16, y + 18, 0, 118, 21, 21, 0.5F);

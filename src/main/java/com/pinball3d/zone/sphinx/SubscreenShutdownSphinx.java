@@ -24,8 +24,9 @@ public class SubscreenShutdownSphinx extends Subscreen {
 			@Override
 			public void run() {
 				TEProcessingCenter tileentity = ((ScreenSphinxController) parent).tileentity;
-				NetworkHandler.instance.sendToServer(new MessageShutdownSphinx("aaaaaaaa",
-						new WorldPos(tileentity.getPos(), tileentity.getWorld()), new NBTTagCompound()));
+				NetworkHandler.instance
+						.sendToServer(new MessageShutdownSphinx(((ScreenSphinxController) parent).password,
+								new WorldPos(tileentity.getPos(), tileentity.getWorld()), new NBTTagCompound()));
 				tileentity.shutdown();
 				mc.displayGuiScreen(null);
 

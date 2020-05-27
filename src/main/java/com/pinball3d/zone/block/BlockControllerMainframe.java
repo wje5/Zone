@@ -60,15 +60,18 @@ public class BlockControllerMainframe extends Block {
 			if (te.needInit()) {
 				mc.displayGuiScreen(new ScreenSphinxOff((TEProcessingCenter) worldIn.getTileEntity(pos)));
 			} else {
-				mc.displayGuiScreen(new ScreenSphinxOpenPassword((TEProcessingCenter) worldIn.getTileEntity(pos)));
+				mc.displayGuiScreen(
+						new ScreenSphinxOpenPassword((TEProcessingCenter) worldIn.getTileEntity(pos), true));
 			}
 		} else {
 			if (te.isLoading()) {
 				mc.displayGuiScreen(new ScreenLoadSphinx((TEProcessingCenter) worldIn.getTileEntity(pos)));
+			} else if (te.needInit()) {
+				mc.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos), ""));
 			} else {
-				mc.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos)));
+				mc.displayGuiScreen(
+						new ScreenSphinxOpenPassword((TEProcessingCenter) worldIn.getTileEntity(pos), false));
 			}
-
 		}
 	}
 

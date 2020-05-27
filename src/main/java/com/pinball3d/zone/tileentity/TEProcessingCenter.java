@@ -48,10 +48,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		return blockType == BlockLoader.processing_center && loadTick > 0;
 	}
 
+	public int getLoadTick() {
+		return loadTick;
+	}
+
 	public void open() {
-		System.out.println(world.isRemote + "" + loadTick);
 		if (blockType == BlockLoader.processing_center && loadTick <= 0) {
 			loadTick = 256;
+			BlockProcessingCenter.setState(true, world, pos);
 		}
 	}
 
@@ -71,7 +75,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		if (loadTick > 0) {
 			loadTick--;
 			if (loadTick == 0) {
-				BlockProcessingCenter.setState(true, world, pos);
 				on = true;
 			}
 		}

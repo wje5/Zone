@@ -36,13 +36,14 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 	private int xOffset, yOffset;
 	private PointerPlayer pointerPlayer;
 	private Map<Integer, PointerLiving> livings = new HashMap<Integer, PointerLiving>();
-	public static final int size = 1;
+	public String password;
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private Set<Component> components = new HashSet<Component>();
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	public TEProcessingCenter tileentity;
 
-	public ScreenSphinxController(TEProcessingCenter te) {
+	public ScreenSphinxController(TEProcessingCenter te, String password) {
+		this.password = password;
 		tileentity = te;
 	}
 
@@ -130,15 +131,15 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
 				GlStateManager.DestFactor.ZERO);
 		BlockPos pos = mc.player.getPosition();
-		int xChunk = getRenderOffsetX() < 0 ? getRenderOffsetX() / 16 * size - 1 : getRenderOffsetX() / 16 * size;
-		int yChunk = getRenderOffsetY() < 0 ? getRenderOffsetY() / 16 * size - 1 : getRenderOffsetY() / 16 * size;
-		int xEnd = getRenderOffsetX() + width - 1 < 0 ? (getRenderOffsetX() + width - 1) / 16 * size - 1
-				: (getRenderOffsetX() + width - 1) / 16 * size;
-		int yEnd = getRenderOffsetY() + height - 1 < 0 ? (getRenderOffsetY() + height - 1) / 16 * size - 1
-				: (getRenderOffsetY() + height - 1) / 16 * size;
+		int xChunk = getRenderOffsetX() < 0 ? getRenderOffsetX() / 16 - 1 : getRenderOffsetX() / 16;
+		int yChunk = getRenderOffsetY() < 0 ? getRenderOffsetY() / 16 - 1 : getRenderOffsetY() / 16;
+		int xEnd = getRenderOffsetX() + width - 1 < 0 ? (getRenderOffsetX() + width - 1) / 16 - 1
+				: (getRenderOffsetX() + width - 1) / 16;
+		int yEnd = getRenderOffsetY() + height - 1 < 0 ? (getRenderOffsetY() + height - 1) / 16 - 1
+				: (getRenderOffsetY() + height - 1) / 16;
 		for (int i = xChunk; i <= xEnd + 1; i++) {
 			for (int j = yChunk; j <= yEnd + 1; j++) {
-				drawChunk(getCache(i, j), i * 16 * size - getRenderOffsetX(), j * 16 * size - getRenderOffsetY());
+				drawChunk(getCache(i, j), i * 16 - getRenderOffsetX(), j * 16 - getRenderOffsetY());
 			}
 		}
 		GlStateManager.popMatrix();
@@ -192,12 +193,12 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 	}
 
 	private int getRenderOffsetX() {
-		int xRenderRange = width / 2 / size;
+		int xRenderRange = width / 2;
 		return xOffset - xRenderRange + 1;
 	}
 
 	private int getRenderOffsetY() {
-		int yRenderRange = height / 2 / size;
+		int yRenderRange = height / 2;
 		return yOffset - yRenderRange + 1;
 	}
 
@@ -214,7 +215,7 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				applyQuad(cache.getColor(x, z), xOffset + x * size, zOffset + z * size);
+				applyQuad(cache.getColor(x, z), xOffset + x, zOffset + z);
 			}
 		}
 		tessellator.draw();
@@ -226,16 +227,16 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 		float r = (color >> 16) / 255F;
 		float g = ((color >> 8) & 0x0000FF) / 255F;
 		float b = (color & 0x0000FF) / 255F;
-		bufferbuilder.pos(x, y + size, 0).color(r, g, b, 1.0F).endVertex();
-		bufferbuilder.pos(x + size, y + size, 0).color(r, g, b, 1.0F).endVertex();
-		bufferbuilder.pos(x + size, y, 0).color(r, g, b, 1.0F).endVertex();
+		bufferbuilder.pos(x, y + 1, 0).color(r, g, b, 1.0F).endVertex();
+		bufferbuilder.pos(x + 1, y + 1, 0).color(r, g, b, 1.0F).endVertex();
+		bufferbuilder.pos(x + 1, y, 0).color(r, g, b, 1.0F).endVertex();
 		bufferbuilder.pos(x, y, 0).color(r, g, b, 1.0F).endVertex();
 	}
 
 	private void drawGrid(int x, int y) {
 		int color = 0x48C0C0C0;
-		drawRect(x + size * 16 - 1, y, x + size * 16, y + size * 16, color);
-		drawRect(x, y + size * 16 - 1, x + size * 16 - 1, y + size * 16, color);
+		drawRect(x + 15, y, x + 16, y + 16, color);
+		drawRect(x, y + 15, x + 15, y + 16, color);
 	}
 
 	public ChunkRenderCache getCache(int x, int z) {

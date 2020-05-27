@@ -6,25 +6,34 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
+import org.lwjgl.input.Keyboard;
+
+import com.pinball3d.zone.network.MessageOpenSphinx;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private String input = "";
+	private boolean incorrect;
 	private Set<Component> components = new HashSet<Component>();
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
 	private int xOffset, yOffset;
+	private boolean flag, flag2;
 	public TEProcessingCenter tileentity;
 
-	public ScreenSphinxOpenPassword(TEProcessingCenter te) {
+	public ScreenSphinxOpenPassword(TEProcessingCenter te, boolean flag) {
 		tileentity = te;
+		this.flag = flag;
 	}
 
 	@Override
@@ -38,14 +47,67 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	}
 
 	@Override
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		if (keyCode == Keyboard.KEY_ESCAPE) {
+			if (subscreens.empty()) {
+				super.keyTyped(typedChar, keyCode);
+			} else if (subscreens.peek().onQuit()) {
+				subscreens.pop();
+			}
+		} else {
+			if (subscreens.empty()) {
+				components.forEach(e -> {
+					e.onKeyTyped(typedChar, keyCode);
+				});
+				if (keyCode == Keyboard.KEY_RETURN) {
+					if (input.length() == 8 && tileentity.isCorrectAdminPassword(input)) {
+						if (flag) {
+							NetworkHandler.instance.sendToServer(new MessageOpenSphinx(input,
+									new WorldPos(tileentity.getPos(), tileentity.getWorld()), new NBTTagCompound()));
+							tileentity.open();
+							mc.displayGuiScreen(new ScreenLoadSphinx(tileentity));
+						} else {
+							mc.displayGuiScreen(new ScreenSphinxController(tileentity, input));
+						}
+					} else {
+						input = "";
+						incorrect = true;
+					}
+				} else {
+					if (keyCode == Keyboard.KEY_BACK) {
+						if (input.length() >= 1) {
+							input = input.substring(0, input.length() - 1);
+						}
+						incorrect = false;
+					}
+					if (input.length() < 8 && Util.isValidChar(typedChar, 7)) {
+						input += typedChar;
+						incorrect = false;
+					}
+				}
+			} else {
+				subscreens.peek().keyTyped(typedChar, keyCode);
+			}
+		}
+	}
+
+	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
-		Gui.drawRect(width / 2 - 50, height / 2 - 13, width / 2 + 50, height / 2 - 12, 0xFF20E6EF);
-		Gui.drawRect(width / 2 - 50, height / 2 + 11, width / 2 + 50, height / 2 + 12, 0xFF20E6EF);
-		Gui.drawRect(width / 2 - 50, height / 2 - 12, width / 2 - 49, height / 2 + 11, 0xFF20E6EF);
-		Gui.drawRect(width / 2 + 49, height / 2 - 12, width / 2 + 50, height / 2 + 11, 0xFF20E6EF);
-		for (int i = 0; i < input.length(); i++) {
-			Util.drawTexture(TEXTURE, width / 2 - 15 + i * 16, y + 18, 0, 118, 21, 21, 0.5F);
+		Gui.drawRect(width / 2 - 64, height / 2 - 8, width / 2 + 64, height / 2 - 7, 0xFF20E6EF);
+		Gui.drawRect(width / 2 - 64, height / 2 + 7, width / 2 + 64, height / 2 + 8, 0xFF20E6EF);
+		Gui.drawRect(width / 2 - 64, height / 2 - 7, width / 2 - 63, height / 2 + 7, 0xFF20E6EF);
+		Gui.drawRect(width / 2 + 63, height / 2 - 7, width / 2 + 64, height / 2 + 7, 0xFF20E6EF);
+		String text = I18n.format("sphinx.input_admin_password");
+		FontRenderer renderer = getFontRenderer();
+		renderer.drawString(text, width / 2 - renderer.getStringWidth(text) / 2, height / 2 - 20, 0xFF1ECCDE);
+		if (incorrect && input.length() == 0) {
+			text = I18n.format("sphinx.password_incorrect");
+			renderer.drawString(text, width / 2 - renderer.getStringWidth(text) / 2, height / 2 - 4, 0xFF1ECCDE);
+		} else {
+			for (int i = 0; i < input.length(); i++) {
+				Util.drawTexture(TEXTURE, width / 2 - 61 + i * 16, height / 2 - 5, 0, 118, 21, 21, 0.5F);
+			}
 		}
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);

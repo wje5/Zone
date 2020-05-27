@@ -16,12 +16,18 @@ public class ScreenLoadSphinx extends GuiScreen {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		if (!tileentity.isLoading()) {
-			mc.displayGuiScreen(new ScreenSphinxController(tileentity));
+			if (tileentity.needInit()) {
+				mc.displayGuiScreen(new ScreenSphinxController(tileentity, ""));
+			} else {
+				mc.displayGuiScreen(new ScreenSphinxOpenPassword(tileentity, false));
+			}
 			return;
 		}
 		Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
-		Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/sphinx_load_0.png"), width / 2 - 29,
-				height / 2 - 32, 0, 0, 256, 256, 0.25F);
+		Util.drawTexture(
+				new ResourceLocation(
+						"zone:textures/gui/sphinx/sphinx_load_" + (256 - tileentity.getLoadTick()) % 12 + ".png"),
+				width / 2 - 29, height / 2 - 32, 0, 0, 256, 256, 0.25F);
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 
