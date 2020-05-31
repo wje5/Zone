@@ -13,12 +13,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -26,6 +30,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod.EventBusSubscriber
 public class ItemMachineGun extends ZoneItem {
+	public static final SoundEvent SOUND = new SoundEvent(new ResourceLocation("zone:machine_gun"));
+
 	public ItemMachineGun() {
 		super("machine_gun");
 		setMaxStackSize(1);
@@ -37,19 +43,23 @@ public class ItemMachineGun extends ZoneItem {
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		if (worldIn.isRemote && isSelected && entityIn instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityIn;
-			if (player.getHeldItem(EnumHand.OFF_HAND).isEmpty() && isMouseLeftDown()) {
-				Vec3d vec3d = player.getLook(1.0F);
-				EntityBullet bullet = new EntityBullet(worldIn, player, 0, 0, 0);
-				bullet.posX = player.posX + vec3d.x * 1.0D;
-				bullet.posY = player.posY + vec3d.y * 1.0D + player.height / 2.0F + 0.5D;
-				bullet.posZ = player.posZ + vec3d.z * 1.0D;
-				bullet.motionX = vec3d.x * 20 + player.motionX;
-				bullet.motionY = vec3d.y * 20 + player.motionY;
-				bullet.motionZ = vec3d.z * 20 + player.motionZ;
-				worldIn.spawnEntity(bullet);
-				NetworkHandler.instance.sendToServer(new MessageBullet(player, player.posX + vec3d.x * 1.0D,
-						player.posY + vec3d.y * 1.0D + player.height / 2.0F + 0.5D, player.posZ + vec3d.z * 1.0D,
-						vec3d.x * 20 + player.motionX, vec3d.y * 20 + player.motionY, vec3d.z * 20 + player.motionZ));
+			if (Minecraft.getMinecraft().currentScreen == null) {
+				if (player.getHeldItem(EnumHand.OFF_HAND).isEmpty() && isMouseLeftDown()) {
+					Vec3d vec3d = player.getLook(1.0F);
+					EntityBullet bullet = new EntityBullet(worldIn, player, 0, 0, 0);
+					bullet.posX = player.posX + vec3d.x * 1.0D;
+					bullet.posY = player.posY + vec3d.y * 1.0D + player.height / 2.0F + 0.5D;
+					bullet.posZ = player.posZ + vec3d.z * 1.0D;
+					bullet.motionX = vec3d.x * 20 + player.motionX;
+					bullet.motionY = vec3d.y * 20 + player.motionY;
+					bullet.motionZ = vec3d.z * 20 + player.motionZ;
+					worldIn.spawnEntity(bullet);
+					NetworkHandler.instance.sendToServer(new MessageBullet(player, player.posX + vec3d.x * 1.0D,
+							player.posY + vec3d.y * 1.0D + player.height / 2.0F + 0.5D, player.posZ + vec3d.z * 1.0D,
+							vec3d.x * 20 + player.motionX, vec3d.y * 20 + player.motionY,
+							vec3d.z * 20 + player.motionZ));
+					worldIn.playSound(player, player.getPosition(), SOUND, SoundCategory.PLAYERS, 1.0F, 1.0F);
+				}
 			}
 		}
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
@@ -76,8 +86,10 @@ public class ItemMachineGun extends ZoneItem {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onMousePolling(MouseEvent event) {
-		if (Minecraft.getMinecraft().player.getHeldItem(EnumHand.MAIN_HAND).getItem() == ItemLoader.machine_gun
-				&& event.getButton() == 0) {
+		Minecraft mc = Minecraft.getMinecraft();
+		EntityPlayer player = mc.player;
+		if (player.getHeldItem(EnumHand.MAIN_HAND).getItem() == ItemLoader.machine_gun && event.getButton() == 0
+				&& mc.currentScreen == null) {
 			event.setCanceled(true);
 		}
 	}
@@ -106,5 +118,10 @@ public class ItemMachineGun extends ZoneItem {
 				.getItem() == ItemLoader.machine_gun) {
 			event.setCanceled(true);
 		}
+	}
+
+	@SubscribeEvent
+	public static void onSoundEvenrRegistration(RegistryEvent.Register<SoundEvent> event) {
+		event.getRegistry().register(SOUND.setRegistryName(new ResourceLocation("zone:machine_gun")));
 	}
 }

@@ -102,7 +102,7 @@ public class RecipeHandler {
 				200));
 		register(new RecipeGrinder(new ItemStack(Items.MINECART), new ItemStack(ItemLoader.iron_dust, 4), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.RAIL), new ItemStack(ItemLoader.small_pile_iron_dust), 200));
-		register(new RecipeGrinder(new ItemStack(Blocks.GOLDEN_RAIL), new ItemStack(ItemLoader.small_pile_gold_dust, 5),
+		register(new RecipeGrinder(new ItemStack(Blocks.GOLDEN_RAIL), new ItemStack(ItemLoader.tiny_pile_gold_dust, 8),
 				200));
 		register(new RecipeGrinder(new ItemStack(Blocks.DETECTOR_RAIL),
 				new ItemStack(ItemLoader.small_pile_iron_dust, 5), 200));

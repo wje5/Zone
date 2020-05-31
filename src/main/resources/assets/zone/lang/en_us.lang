@@ -140,3 +140,4 @@ sphinx.confirm_login_password=Confirm sphinx login password
 sphinx.finish_wizard=Completing the Sphinx© Init Wizard|||Click Finish to exit Wizard.
 sphinx.shutdown_sphinx=If you shutdown now, your machines will cannot work.|You can restart sphinx without init.|Shutdown sphinx?
 sphinx.input_admin_password=Enter your administrator password
+sphinx.no_network=Not connected to network

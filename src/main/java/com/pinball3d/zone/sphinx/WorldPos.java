@@ -54,9 +54,12 @@ public class WorldPos {
 	}
 
 	public static WorldPos load(NBTTagCompound tag) {
-		NBTTagCompound subtag = tag.getCompoundTag("worldpos");
-		return new WorldPos(subtag.getInteger("x"), subtag.getInteger("y"), subtag.getInteger("z"),
-				subtag.getInteger("dim"));
+		if (tag.hasKey("worldpos")) {
+			NBTTagCompound subtag = tag.getCompoundTag("worldpos");
+			return new WorldPos(subtag.getInteger("x"), subtag.getInteger("y"), subtag.getInteger("z"),
+					subtag.getInteger("dim"));
+		}
+		return null;
 	}
 
 	public NBTTagCompound save(NBTTagCompound tag) {

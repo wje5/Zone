@@ -8,14 +8,12 @@ import java.util.List;
 
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
-import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
@@ -27,6 +25,13 @@ public class ScrollingListNetwork extends Component {
 		super(parent, x, y, width, height);
 		this.parent = parent;
 		this.lineHeight = 25;
+		refresh();
+	}
+
+	public void refresh() {
+		list = new ArrayList<ListBar>();
+		length = 0;
+		scrollingDistance = 0;
 		List<TEProcessingCenter> l = new ArrayList<TEProcessingCenter>();
 		BlockPos pos = mc.player.getPosition();
 		for (int i = pos.getX() - 12; i <= pos.getX() + 12; i++) {
@@ -38,7 +43,7 @@ public class ScrollingListNetwork extends Component {
 						BlockProcessingCenter center = (BlockProcessingCenter) block;
 						if (center.isFullStructure(mc.world, blockpos)) {
 							TEProcessingCenter te = (TEProcessingCenter) mc.world.getTileEntity(blockpos);
-							if (!te.needInit()) {
+							if (!te.needInit() && !te.isLoading()) {
 								l.add(te);
 							}
 						}
@@ -46,35 +51,39 @@ public class ScrollingListNetwork extends Component {
 				}
 			}
 		}
-		ItemStack stack = mc.player.getHeldItem(EnumHand.MAIN_HAND);
-		if (stack.getItem() != ItemLoader.terminal) {
-			stack = mc.player.getHeldItem(EnumHand.OFF_HAND);
-		}
-		NBTTagCompound tag = stack.getTagCompound();
-		if (tag == null) {
-			tag = new NBTTagCompound();
-			stack.setTagCompound(tag);
-		}
-		WorldPos worldpos = WorldPos.load(tag);
-		Collections.sort(l, new Comparator<TEProcessingCenter>() {
-			@Override
-			public int compare(TEProcessingCenter o1, TEProcessingCenter o2) {
-				if (o1.getWorld().provider.getDimension() == worldpos.getDim()
-						&& o1.getPos().equals(worldpos.getPos())) {
-					return -1;
-				}
-				if (o2.getWorld().provider.getDimension() == worldpos.getDim()
-						&& o2.getPos().equals(worldpos.getPos())) {
-					return 1;
-				}
-				return mc.player.getDistanceSqToCenter(o1.getPos()) > mc.player.getDistanceSqToCenter(o2.getPos()) ? 1
-						: -1;
+		ItemStack stack = parent.getTerminal();
+		WorldPos worldpos;
+		if (stack != ItemStack.EMPTY) {
+			NBTTagCompound tag = stack.getTagCompound();
+			if (tag == null) {
+				tag = new NBTTagCompound();
+				stack.setTagCompound(tag);
 			}
-		});
+			worldpos = WorldPos.load(tag);
+		} else {
+			worldpos = parent.getNeedNetworkTileEntity().getNetwork();
+		}
+		if (worldpos != null) {
+			Collections.sort(l, new Comparator<TEProcessingCenter>() {
+				@Override
+				public int compare(TEProcessingCenter o1, TEProcessingCenter o2) {
+					if (o1.getWorld().provider.getDimension() == worldpos.getDim()
+							&& o1.getPos().equals(worldpos.getPos())) {
+						return -1;
+					}
+					if (o2.getWorld().provider.getDimension() == worldpos.getDim()
+							&& o2.getPos().equals(worldpos.getPos())) {
+						return 1;
+					}
+					return mc.player.getDistanceSqToCenter(o1.getPos()) > mc.player.getDistanceSqToCenter(o2.getPos())
+							? 1
+							: -1;
+				}
+			});
+		}
 		l.forEach(e -> {
-			list.add(new ListBar(e,
-					e.getWorld().provider.getDimension() == worldpos.getDim() && e.getPos().equals(worldpos.getPos()),
-					width, lineHeight));
+			list.add(new ListBar(e, worldpos != null && e.getWorld().provider.getDimension() == worldpos.getDim()
+					&& e.getPos().equals(worldpos.getPos()), width, lineHeight));
 			length += lineHeight;
 		});
 	}
@@ -132,7 +141,6 @@ public class ScrollingListNetwork extends Component {
 			this.selected = selected;
 			this.width = width;
 			this.height = height;
-			System.out.println(selected);
 		}
 
 		public void doRender(int x, int y, int upCut, int downCut, boolean flag) {

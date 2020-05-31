@@ -2,14 +2,16 @@ package com.pinball3d.zone.sphinx;
 
 import org.lwjgl.input.Keyboard;
 
-import com.pinball3d.zone.item.ItemLoader;
+import com.pinball3d.zone.network.MessageConnectToNetwork;
+import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class SubscreenConnectToNetwork extends Subscreen {
@@ -65,16 +67,23 @@ public class SubscreenConnectToNetwork extends Subscreen {
 				if (input.length() >= 8) {
 					if (tileentity.isCorrectLoginPassword(input)) {
 						parent.quitScreen(this);
-						ItemStack stack = mc.player.getHeldItem(EnumHand.MAIN_HAND);
-						if (stack.getItem() != ItemLoader.terminal) {
-							stack = mc.player.getHeldItem(EnumHand.OFF_HAND);
+						ItemStack stack = parent.getTerminal();
+						if (stack != ItemStack.EMPTY) {
+							NBTTagCompound tag = stack.getTagCompound();
+							if (tag == null) {
+								tag = new NBTTagCompound();
+							}
+							new WorldPos(tileentity.getPos(), tileentity.getWorld()).save(tag);
+							stack.setTagCompound(tag);
+						} else {
+
+							INeedNetwork te = parent.getNeedNetworkTileEntity();
+							WorldPos pos1 = new WorldPos(tileentity.getPos(), tileentity.getWorld());
+							WorldPos pos2 = new WorldPos(((TileEntity) te).getPos(), ((TileEntity) te).getWorld());
+							NetworkHandler.instance.sendToServer(new MessageConnectToNetwork(pos1, pos2));
+							te.connect(new WorldPos(tileentity.getPos(), tileentity.getWorld()));
 						}
-						NBTTagCompound tag = stack.getTagCompound();
-						if (tag == null) {
-							tag = new NBTTagCompound();
-						}
-						new WorldPos(tileentity.getPos(), tileentity.getWorld()).save(tag);
-						stack.setTagCompound(tag);
+						((SubscreenNetworkConfig) parent).refresh();
 					} else {
 						quit = mc.world.getTotalWorldTime();
 					}

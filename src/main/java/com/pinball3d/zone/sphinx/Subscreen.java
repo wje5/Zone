@@ -5,9 +5,12 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
+import com.pinball3d.zone.tileentity.INeedNetwork;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.item.ItemStack;
 
 public class Subscreen implements IParent {
 	public static int displayWidth = Minecraft.getMinecraft().displayWidth / 2;
@@ -167,5 +170,15 @@ public class Subscreen implements IParent {
 	@Override
 	public void quitScreen(Subscreen screen) {
 		subscreens.remove(screen);
+	}
+
+	@Override
+	public ItemStack getTerminal() {
+		return parent.getTerminal();
+	}
+
+	@Override
+	public INeedNetwork getNeedNetworkTileEntity() {
+		return parent.getNeedNetworkTileEntity();
 	}
 }

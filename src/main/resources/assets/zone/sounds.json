@@ -1,0 +1,7 @@
+{
+    "machine_gun": {
+        "sounds": [
+            "zone:machine_gun"
+        ]
+    }
+}

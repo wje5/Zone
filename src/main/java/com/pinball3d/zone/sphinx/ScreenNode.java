@@ -13,6 +13,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
+import com.pinball3d.zone.tileentity.INeedNetwork;
+import com.pinball3d.zone.tileentity.TENode;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -25,14 +27,11 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
-public class ScreenTerminal extends GuiScreen implements IParent {
+public class ScreenNode extends GuiScreen implements IParent {
 	protected Map<Long, ChunkRenderCache> mapCache = new HashMap<Long, ChunkRenderCache>();
 	private static BufferBuilder bufferbuilder;
 	private int lastMouseX, lastMouseY;
@@ -45,10 +44,10 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			"zone:textures/gui/sphinx/no_network.png");
 	private Set<Component> components = new HashSet<Component>();
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
-	public ItemStack stack;
+	public TENode tileentity;
 
-	public ScreenTerminal(ItemStack stack) {
-		this.stack = stack;
+	public ScreenNode(TENode te) {
+		tileentity = te;
 	}
 
 	@Override
@@ -86,42 +85,38 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 		components.add(new ButtonNetworkConfig(this, width - 10, 2, new Runnable() {
 			@Override
 			public void run() {
-				subscreens.push(new SubscreenNetworkConfig((ScreenTerminal) mc.currentScreen));
+				subscreens.push(new SubscreenNetworkConfig((ScreenNode) mc.currentScreen));
 			}
-		}, true));
+		}, false));
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		if (checkItem()) {
-			updatePlayer();
-			if (mc.player.ticksExisted % 20 == 0) {
-				updateLiving();
-			}
-			if (isConnected()) {
-				drawMap();
-				drawPointer();
-			} else {
-				Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
-				Util.drawTexture(TEXTURE_NO_NETWORK, width / 2 - 32, height / 2 - 32, 256, 256, 0.25F);
-				String text = I18n.format("sphinx.no_network");
-				fontRenderer.drawString(text, width / 2 - fontRenderer.getStringWidth(text) / 2, height / 2 + 45,
-						0xFFE0E0E0);
-			}
-			components.forEach(e -> {
-				e.doRender(mouseX, mouseY);
-			});
-			Iterator<Subscreen> it = subscreens.iterator();
-			while (it.hasNext()) {
-				Subscreen screen = it.next();
-				if (screen.dead) {
-					it.remove();
-				} else {
-					screen.doRender(mouseX, mouseY);
-				}
-			}
+		updatePlayer();
+		if (mc.player.ticksExisted % 20 == 0) {
+			updateLiving();
+		}
+		if (isConnected()) {
+			drawMap();
+			drawPointer();
 		} else {
-			mc.displayGuiScreen(null);
+			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
+			Util.drawTexture(TEXTURE_NO_NETWORK, width / 2 - 32, height / 2 - 32, 256, 256, 0.25F);
+			String text = I18n.format("sphinx.no_network");
+			fontRenderer.drawString(text, width / 2 - fontRenderer.getStringWidth(text) / 2, height / 2 + 45,
+					0xFFE0E0E0);
+		}
+		components.forEach(e -> {
+			e.doRender(mouseX, mouseY);
+		});
+		Iterator<Subscreen> it = subscreens.iterator();
+		while (it.hasNext()) {
+			Subscreen screen = it.next();
+			if (screen.dead) {
+				it.remove();
+			} else {
+				screen.doRender(mouseX, mouseY);
+			}
 		}
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
@@ -131,18 +126,8 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 		return false;
 	}
 
-	private boolean checkItem() {
-		return mc.player.getHeldItem(EnumHand.MAIN_HAND) == stack || mc.player.getHeldItem(EnumHand.OFF_HAND) == stack;
-	}
-
 	public boolean isConnected() {
-		NBTTagCompound tag = stack.getTagCompound();
-		if (tag == null) {
-			tag = new NBTTagCompound();
-			stack.setTagCompound(tag);
-		}
-		WorldPos worldpos = WorldPos.load(tag);
-		return worldpos != null;
+		return tileentity.getNetwork() != null;
 	}
 
 	private void drawMap() {
@@ -359,7 +344,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	}
 
 	@Override
-	public ItemStack getTerminal() {
-		return stack;
+	public INeedNetwork getNeedNetworkTileEntity() {
+		return tileentity;
 	}
 }

@@ -1,5 +1,18 @@
 {
+    "forge_marker": 1,
+    "defaults": {
+        "model": "zone:node.obj",
+        "custom": {
+            "flip-v": true
+        }
+    },
     "variants": {
-        "normal": { "model": "zone:node" }
+        "facing": {
+            "north": {"transform": {"scale": 0.08,"translation": [0, -0.45, 0]}},
+            "south": {"transform": {"scale": 0.08,"rotation": {"y": 180},"translation": [0, -0.45, 0]}},
+            "west": {"transform": {"scale": 0.08,"rotation": {"y": 90},"translation": [0, -0.45, 0]}},
+            "east": {"transform": {"scale": 0.08,"rotation": {"y": -90},"translation": [0, -0.45, 0]}}
+        },
+        "inventory": [{"transform": {"scale": 0.08,"translation": [0, -0.35, 0],"rotation": {"y": 180}}}]
     }
 }

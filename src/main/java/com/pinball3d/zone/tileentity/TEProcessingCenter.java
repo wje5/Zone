@@ -30,6 +30,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void shutdown() {
 		on = false;
 		BlockProcessingCenter.setState(false, world, pos);
+		markDirty();
 	}
 
 	public String getName() {
@@ -56,6 +57,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		if (blockType == BlockLoader.processing_center && loadTick <= 0) {
 			loadTick = 256;
 			BlockProcessingCenter.setState(true, world, pos);
+			markDirty();
 		}
 	}
 
