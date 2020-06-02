@@ -17,7 +17,16 @@ public class ClientMapDataHandler {
 	}
 
 	public static ChunkRenderCache getData(int worldId, int x, int z) {
-		return getMap(worldId).get(x * 30000000L + z);
+		ChunkRenderCache data = getMap(worldId).get(x * 30000000L + z);
+		if (data == null) {
+			data = ChunkRenderCache.create(x, z);
+			if (data == null) {
+				return null;
+			} else {
+				setData(worldId, x, z, data);
+			}
+		}
+		return data;
 	}
 
 	private static Map<Long, ChunkRenderCache> getMap(int worldId) {
@@ -33,8 +42,13 @@ public class ClientMapDataHandler {
 	public static void onChunkLoad(ChunkEvent.Load event) {
 		if (event.getWorld().isRemote) {
 			ChunkPos pos = event.getChunk().getPos();
-			if (!getMap(event.getWorld().provider.getDimension()).containsKey(pos.x * 30000000L + pos.z)) {
-				ChunkRenderCache.create(pos.x, pos.z);
+			int dim = event.getWorld().provider.getDimension();
+			if (!getMap(dim).containsKey(pos.x * 30000000L + pos.z)) {
+				ChunkRenderCache data = ChunkRenderCache.create(pos.x, pos.z);
+				if (data != null) {
+					setData(dim, pos.x, pos.z, data);
+					System.out.println(data);
+				}
 			}
 		}
 	}

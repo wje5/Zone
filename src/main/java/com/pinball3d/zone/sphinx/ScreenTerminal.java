@@ -99,7 +99,8 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 				updateLiving();
 			}
 			if (isConnected()) {
-				drawMap();
+				MapHandler.instance.draw(width, height, xOffset, yOffset);
+//				drawMap();
 				drawPointer();
 			} else {
 				Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
@@ -236,7 +237,12 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
-				applyQuad(cache.getColor(x, z), xOffset + x, zOffset + z);
+				if (cache == null) {
+					applyQuad(0xFF000000, xOffset + x, zOffset + z);
+				} else {
+					applyQuad(cache.getColor(x, z), xOffset + x, zOffset + z);
+				}
+
 			}
 		}
 		tessellator.draw();
@@ -261,12 +267,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	}
 
 	public ChunkRenderCache getCache(int x, int z) {
-		ChunkRenderCache cache = mapCache.get(x * 30000000L + z);
-		if (cache == null) {
-			cache = ChunkRenderCache.create(x, z);
-			mapCache.put(x * 30000000L + z, cache);
-		}
-		return cache;
+		return ClientMapDataHandler.getData(mc.player.world.provider.getDimension(), x, z);
 	}
 
 	@Override

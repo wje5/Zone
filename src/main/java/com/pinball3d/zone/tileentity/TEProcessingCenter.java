@@ -1,9 +1,14 @@
 package com.pinball3d.zone.tileentity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
+import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 
@@ -14,6 +19,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	private String adminPassword = "";
 	private String loginPassword = "";
 	private int loadTick;
+	private Set<WorldPos> nodes = new HashSet<WorldPos>();
 
 	public TEProcessingCenter() {
 
@@ -92,6 +98,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		adminPassword = compound.getString("adminPassword");
 		loginPassword = compound.getString("loginPassword");
 		loadTick = compound.getInteger("loadTick");
+		NBTTagList list = compound.getTagList("nodes", 9);
+		list.forEach(e -> {
+			nodes.add(WorldPos.load((NBTTagCompound) e));
+		});
 		super.readFromNBT(compound);
 	}
 
@@ -102,6 +112,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		compound.setString("adminPassword", adminPassword);
 		compound.setString("loginPassword", loginPassword);
 		compound.setInteger("loadTick", loadTick);
+		NBTTagList list = new NBTTagList();
+		nodes.forEach(e -> {
+			list.appendTag(e.save(new NBTTagCompound()));
+		});
 		return super.writeToNBT(compound);
 	}
 
