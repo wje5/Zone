@@ -4,40 +4,27 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
-
-import com.google.common.base.Predicate;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 
 public class ScreenTerminal extends GuiScreen implements IParent {
 	protected Map<Long, ChunkRenderCache> mapCache = new HashMap<Long, ChunkRenderCache>();
 	private static BufferBuilder bufferbuilder;
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
-	private int xOffset, yOffset;
 	private PointerPlayer pointerPlayer;
 	private Map<Integer, PointerLiving> livings = new HashMap<Integer, PointerLiving>();
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
@@ -54,12 +41,6 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	@Override
 	public void initGui() {
 		applyComponents();
-		ChunkRenderCache.init();
-		BlockPos pos = mc.player.getPosition();
-		xOffset = pos.getX();
-		yOffset = pos.getZ();
-		pointerPlayer = new PointerPlayer(xOffset, yOffset);
-		updateLiving();
 		super.initGui();
 	}
 
@@ -94,14 +75,8 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		if (checkItem()) {
-			updatePlayer();
-			if (mc.player.ticksExisted % 20 == 0) {
-				updateLiving();
-			}
 			if (isConnected()) {
-				MapHandler.instance.draw(width, height, xOffset, yOffset);
-//				drawMap();
-				drawPointer();
+				MapHandler.draw(getNetwork(), width, height);
 			} else {
 				Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
 				Util.drawTexture(TEXTURE_NO_NETWORK, width / 2 - 32, height / 2 - 32, 256, 256, 0.25F);
@@ -137,137 +112,17 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	}
 
 	public boolean isConnected() {
+		return getNetwork() != null;
+	}
+
+	public WorldPos getNetwork() {
 		NBTTagCompound tag = stack.getTagCompound();
 		if (tag == null) {
 			tag = new NBTTagCompound();
 			stack.setTagCompound(tag);
 		}
 		WorldPos worldpos = WorldPos.load(tag);
-		return worldpos != null;
-	}
-
-	private void drawMap() {
-		GlStateManager.pushMatrix();
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
-				GlStateManager.DestFactor.ZERO);
-		BlockPos pos = mc.player.getPosition();
-		int xChunk = getRenderOffsetX() < 0 ? getRenderOffsetX() / 16 - 1 : getRenderOffsetX() / 16;
-		int yChunk = getRenderOffsetY() < 0 ? getRenderOffsetY() / 16 - 1 : getRenderOffsetY() / 16;
-		int xEnd = getRenderOffsetX() + width - 1 < 0 ? (getRenderOffsetX() + width - 1) / 16 - 1
-				: (getRenderOffsetX() + width - 1) / 16;
-		int yEnd = getRenderOffsetY() + height - 1 < 0 ? (getRenderOffsetY() + height - 1) / 16 - 1
-				: (getRenderOffsetY() + height - 1) / 16;
-		for (int i = xChunk; i <= xEnd + 1; i++) {
-			for (int j = yChunk; j <= yEnd + 1; j++) {
-				drawChunk(getCache(i, j), i * 16 - getRenderOffsetX(), j * 16 - getRenderOffsetY());
-			}
-		}
-		GlStateManager.popMatrix();
-	}
-
-	private void drawPointer() {
-		GlStateManager.pushMatrix();
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		Iterator<PointerLiving> it = livings.values().iterator();
-		while (it.hasNext()) {
-			PointerLiving pointer = it.next();
-			pointer.doRender(getRenderOffsetX(), getRenderOffsetY());
-		}
-		pointerPlayer.doRender(getRenderOffsetX(), getRenderOffsetY());
-		GlStateManager.popMatrix();
-	}
-
-	private void updatePlayer() {
-		BlockPos pos = mc.player.getPosition();
-		pointerPlayer.x = pos.getX();
-		pointerPlayer.z = pos.getZ();
-	}
-
-	private void updateLiving() {
-		Predicate selector = new Predicate<Entity>() {
-			@Override
-			public boolean apply(Entity input) {
-				return input instanceof EntityLiving;
-			};
-		};
-		int x = getRenderOffsetX();
-		int y = getRenderOffsetY();
-		List<Entity> entitys = mc.player.world.getEntitiesInAABBexcluding(mc.player,
-				new AxisAlignedBB(x, -100, y, x + width, 1000, y + height), selector);
-		Iterator<Entity> it = entitys.iterator();
-		Map<Integer, PointerLiving> temp = new HashMap<Integer, PointerLiving>();
-		while (it.hasNext()) {
-			EntityLiving entity = (EntityLiving) it.next();
-			PointerLiving pointer = livings.get(entity.getEntityId());
-			if (pointer == null) {
-				BlockPos pos = entity.getPosition();
-				pointer = new PointerLiving(pos.getX(), pos.getZ(), entity instanceof IMob);
-			} else {
-				BlockPos pos = entity.getPosition();
-				pointer.x = pos.getX();
-				pointer.z = pos.getZ();
-			}
-			temp.put(entity.getEntityId(), pointer);
-		}
-		livings = temp;
-	}
-
-	private int getRenderOffsetX() {
-		int xRenderRange = width / 2;
-		return xOffset - xRenderRange + 1;
-	}
-
-	private int getRenderOffsetY() {
-		int yRenderRange = height / 2;
-		return yOffset - yRenderRange + 1;
-	}
-
-	private void drawChunk(ChunkRenderCache cache, int xOffset, int zOffset) {
-		GlStateManager.pushMatrix();
-		Tessellator tessellator = Tessellator.getInstance();
-		bufferbuilder = tessellator.getBuffer();
-		GlStateManager.enableBlend();
-		GlStateManager.disableTexture2D();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
-				GlStateManager.DestFactor.ZERO);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-		for (int x = 0; x < 16; x++) {
-			for (int z = 0; z < 16; z++) {
-				if (cache == null) {
-					applyQuad(0xFF000000, xOffset + x, zOffset + z);
-				} else {
-					applyQuad(cache.getColor(x, z), xOffset + x, zOffset + z);
-				}
-
-			}
-		}
-		tessellator.draw();
-		GlStateManager.popMatrix();
-		drawGrid(xOffset, zOffset);
-	}
-
-	private void applyQuad(int color, int x, int y) {
-		float r = (color >> 16) / 255F;
-		float g = ((color >> 8) & 0x0000FF) / 255F;
-		float b = (color & 0x0000FF) / 255F;
-		bufferbuilder.pos(x, y + 1, 0).color(r, g, b, 1.0F).endVertex();
-		bufferbuilder.pos(x + 1, y + 1, 0).color(r, g, b, 1.0F).endVertex();
-		bufferbuilder.pos(x + 1, y, 0).color(r, g, b, 1.0F).endVertex();
-		bufferbuilder.pos(x, y, 0).color(r, g, b, 1.0F).endVertex();
-	}
-
-	private void drawGrid(int x, int y) {
-		int color = 0x48C0C0C0;
-		drawRect(x + 16 - 1, y, x + 16, y + 16, color);
-		drawRect(x, y + 16 - 1, x + 16 - 1, y + 16, color);
-	}
-
-	public ChunkRenderCache getCache(int x, int z) {
-		return ClientMapDataHandler.getData(mc.player.world.provider.getDimension(), x, z);
+		return worldpos;
 	}
 
 	@Override
@@ -285,8 +140,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 		}
 		if (clickedMouseButton != 1) {
 			if (lastMouseX > 0 && lastMouseY > 0) {
-				xOffset = xOffset - moveX;
-				yOffset = yOffset - moveY;
+				MapHandler.instance.dragMap(-moveX, -moveY);
 			}
 		}
 	}

@@ -49,9 +49,6 @@ public class ChunkRenderCache {
 		int range = highest - lowest + 1;
 		int f = (int) (255F / range * color);
 		int r = (f / 16) ^ 2;
-		if (r > 180) {
-			System.out.println(color);
-		}
 		return r * 0x010000 + f * 0x000100 + f;
 	}
 }
