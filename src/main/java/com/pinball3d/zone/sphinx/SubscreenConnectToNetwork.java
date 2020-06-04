@@ -76,7 +76,6 @@ public class SubscreenConnectToNetwork extends Subscreen {
 							new WorldPos(tileentity.getPos(), tileentity.getWorld()).save(tag);
 							stack.setTagCompound(tag);
 						} else {
-
 							INeedNetwork te = parent.getNeedNetworkTileEntity();
 							WorldPos pos1 = new WorldPos(tileentity.getPos(), tileentity.getWorld());
 							WorldPos pos2 = new WorldPos(((TileEntity) te).getPos(), ((TileEntity) te).getWorld());

@@ -21,7 +21,9 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber
 public class MapHandler {
 	private static BufferBuilder bufferbuilder;
 	private int xOffset, yOffset;
@@ -29,11 +31,12 @@ public class MapHandler {
 	private Map<Integer, PointerLiving> livings;
 	private PointerProcessingCenter pointerProcessingCenter;
 	public WorldPos network;
+	private int dim;
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	public static Minecraft mc = Minecraft.getMinecraft();
-	public static MapHandler instance;
+	private static MapHandler instance;
 
-	public MapHandler(WorldPos netWork) {
+	private MapHandler(WorldPos netWork) {
 		ChunkRenderCache.init();
 		this.network = netWork;
 		livings = new HashMap<Integer, PointerLiving>();
@@ -41,14 +44,15 @@ public class MapHandler {
 		xOffset = pos.getX();
 		yOffset = pos.getZ();
 		pointerPlayer = new PointerPlayer(xOffset, yOffset);
+		dim = mc.player.world.provider.getDimension();
 		pointerProcessingCenter = new PointerProcessingCenter(network.getPos().getX(), network.getPos().getZ());
 	}
 
-	public boolean checkNetwork(WorldPos network) {
+	private boolean checkNetwork(WorldPos network) {
 		return network.equals(this.network);
 	}
 
-	public static void changeNetwork(WorldPos network) {
+	private static void changeNetwork(WorldPos network) {
 		instance = new MapHandler(network);
 	}
 
@@ -58,19 +62,29 @@ public class MapHandler {
 		}
 		instance.updatePlayer();
 		instance.updateLiving();
+		instance.updateProcessingCenter();
 		instance.drawMap(width, height);
 		instance.drawPointer(width, height);
 	}
 
-	public void dragMap(int dragX, int dragY) {
-		xOffset += dragX;
-		yOffset += dragY;
+	public static void dragMap(int dragX, int dragY) {
+		if (instance != null) {
+			instance.xOffset += dragX;
+			instance.yOffset += dragY;
+		}
+
 	}
 
 	private void updatePlayer() {
 		BlockPos pos = mc.player.getPosition();
 		pointerPlayer.x = pos.getX();
 		pointerPlayer.z = pos.getZ();
+		int temp = mc.player.world.provider.getDimension();
+		if (temp != dim) {
+			xOffset = pos.getX();
+			yOffset = pos.getZ();
+		}
+		dim = temp;
 	}
 
 	private void updateLiving() {

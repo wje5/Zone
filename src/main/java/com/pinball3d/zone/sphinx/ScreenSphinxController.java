@@ -111,7 +111,7 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 		}
 		if (clickedMouseButton != 1) {
 			if (lastMouseX > 0 && lastMouseY > 0) {
-				MapHandler.instance.dragMap(-moveX, -moveY);
+				MapHandler.dragMap(-moveX, -moveY);
 			}
 		}
 	}

@@ -45,7 +45,7 @@ public class ChunkRenderCache {
 		if (lowest == 0 || height < lowest) {
 			lowest = height;
 		}
-		int color = height - lowest;
+		int color = height - lowest == 0 ? 1 : height - lowest;
 		int range = highest - lowest + 1;
 		int f = (int) (255F / range * color);
 		int r = (f / 16) ^ 2;
