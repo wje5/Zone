@@ -3,6 +3,7 @@ package com.pinball3d.zone.sphinx;
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.network.MessageConnectToNetwork;
+import com.pinball3d.zone.network.MessageTerminalConnectToNetwork;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
@@ -69,18 +70,22 @@ public class SubscreenConnectToNetwork extends Subscreen {
 						parent.quitScreen(this);
 						ItemStack stack = parent.getTerminal();
 						if (stack != ItemStack.EMPTY) {
+							WorldPos pos = new WorldPos(tileentity.getPos(), tileentity.getWorld());
+							NetworkHandler.instance
+									.sendToServer(new MessageTerminalConnectToNetwork(pos, mc.player.getName()));
 							NBTTagCompound tag = stack.getTagCompound();
 							if (tag == null) {
 								tag = new NBTTagCompound();
 							}
-							new WorldPos(tileentity.getPos(), tileentity.getWorld()).save(tag);
+							tag.setUniqueId("network", tileentity.getUUID());
 							stack.setTagCompound(tag);
 						} else {
 							INeedNetwork te = parent.getNeedNetworkTileEntity();
 							WorldPos pos1 = new WorldPos(tileentity.getPos(), tileentity.getWorld());
 							WorldPos pos2 = new WorldPos(((TileEntity) te).getPos(), ((TileEntity) te).getWorld());
 							NetworkHandler.instance.sendToServer(new MessageConnectToNetwork(pos1, pos2));
-							te.connect(new WorldPos(tileentity.getPos(), tileentity.getWorld()));
+							te.connect(pos1);
+							tileentity.addNode(pos2);
 						}
 						((SubscreenNetworkConfig) parent).refresh();
 					} else {

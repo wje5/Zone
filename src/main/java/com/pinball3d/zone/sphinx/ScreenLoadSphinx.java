@@ -13,8 +13,19 @@ public class ScreenLoadSphinx extends GuiScreen {
 		tileentity = te;
 	}
 
+	public boolean checkTileentity() {
+		if (tileentity == null) {
+			mc.displayGuiScreen(null);
+			return false;
+		}
+		return true;
+	}
+
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		if (!checkTileentity()) {
+			return;
+		}
 		if (!tileentity.isLoading()) {
 			if (tileentity.needInit()) {
 				mc.displayGuiScreen(new ScreenSphinxController(tileentity, ""));

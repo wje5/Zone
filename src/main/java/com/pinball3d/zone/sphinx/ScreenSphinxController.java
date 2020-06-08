@@ -30,8 +30,20 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 		tileentity = te;
 	}
 
+	public boolean checkTileentity() {
+		if (tileentity == null) {
+			mc.displayGuiScreen(null);
+			return false;
+		}
+		return true;
+	}
+
 	@Override
 	public void initGui() {
+		if (tileentity == null) {
+			mc.displayGuiScreen(null);
+			return;
+		}
 		applyComponents();
 		if (tileentity.needInit()) {
 			subscreens.add(new SubscreenSphinxInitWizard(this));
@@ -75,6 +87,9 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		if (!checkTileentity()) {
+			return;
+		}
 		MapHandler.draw(new WorldPos(tileentity.getPos(), tileentity.getWorld()), width, height);
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);

@@ -5,7 +5,6 @@ import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -45,7 +44,7 @@ public abstract class MessageSphinx implements IMessage {
 	public abstract void run(MessageContext ctx);
 
 	public TEProcessingCenter getTileEntity() {
-		TileEntity te = pos.getTileEntity(FMLCommonHandler.instance().getMinecraftServerInstance());
+		TileEntity te = pos.getTileEntity();
 		if (te instanceof TEProcessingCenter) {
 			return (TEProcessingCenter) te;
 		}
@@ -64,12 +63,11 @@ public abstract class MessageSphinx implements IMessage {
 	}
 
 	public boolean doCheck(MessageSphinx message) {
-		MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-		World world = message.pos.getWorld(server);
+		World world = message.pos.getWorld();
 		if (!world.isAreaLoaded(message.pos.getPos(), 5)) {
 			return false;
 		}
-		TileEntity tileentity = message.pos.getTileEntity(FMLCommonHandler.instance().getMinecraftServerInstance());
+		TileEntity tileentity = message.pos.getTileEntity();
 		if (tileentity instanceof TEProcessingCenter) {
 			TEProcessingCenter te = (TEProcessingCenter) tileentity;
 			if (te.isCorrectAdminPassword(message.password)) {

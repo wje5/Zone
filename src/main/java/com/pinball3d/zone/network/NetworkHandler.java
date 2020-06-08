@@ -17,6 +17,10 @@ public class NetworkHandler {
 		registerMessage(MessageOpenSphinx.Handler.class, MessageOpenSphinx.class, Side.SERVER);
 		registerMessage(MessageShutdownSphinx.Handler.class, MessageShutdownSphinx.class, Side.SERVER);
 		registerMessage(MessageConnectToNetwork.Handler.class, MessageConnectToNetwork.class, Side.SERVER);
+		registerMessage(MessageTerminalConnectToNetwork.Handler.class, MessageTerminalConnectToNetwork.class,
+				Side.SERVER);
+		registerMessage(MessageRegisterSphinx.Handler.class, MessageRegisterSphinx.class, Side.SERVER);
+		registerMessage(MessageSendUUIDToClient.Handler.class, MessageSendUUIDToClient.class, Side.CLIENT);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

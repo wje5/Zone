@@ -29,8 +29,19 @@ public class ScreenSphinxOff extends GuiScreen implements IParent {
 		tileentity = te;
 	}
 
+	public boolean checkTileentity() {
+		if (tileentity == null) {
+			mc.displayGuiScreen(null);
+			return false;
+		}
+		return true;
+	}
+
 	@Override
 	public void initGui() {
+		if (!checkTileentity()) {
+			return;
+		}
 		applyComponents();
 		super.initGui();
 	}
@@ -50,6 +61,9 @@ public class ScreenSphinxOff extends GuiScreen implements IParent {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		if (!checkTileentity()) {
+			return;
+		}
 		Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);

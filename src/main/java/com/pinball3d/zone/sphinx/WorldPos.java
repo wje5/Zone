@@ -3,10 +3,10 @@ package com.pinball3d.zone.sphinx;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class WorldPos {
 	private BlockPos pos;
@@ -29,8 +29,8 @@ public class WorldPos {
 		this.dim = dim;
 	}
 
-	public World getWorld(MinecraftServer server) {
-		return server.getWorld(dim);
+	public World getWorld() {
+		return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim);
 	}
 
 	public BlockPos getPos() {
@@ -41,12 +41,12 @@ public class WorldPos {
 		return dim;
 	}
 
-	public IBlockState getBlockState(MinecraftServer server) {
-		return getWorld(server).getBlockState(pos);
+	public IBlockState getBlockState() {
+		return getWorld().getBlockState(pos);
 	}
 
-	public TileEntity getTileEntity(MinecraftServer server) {
-		return getWorld(server).getTileEntity(pos);
+	public TileEntity getTileEntity() {
+		return getWorld().getTileEntity(pos);
 	}
 
 	public static WorldPos readFromByte(ByteBuf from) {
@@ -86,5 +86,20 @@ public class WorldPos {
 		}
 		WorldPos o = (WorldPos) obj;
 		return o.dim == dim && o.pos.getX() == pos.getX() && o.pos.getY() == pos.getY() && o.pos.getZ() == pos.getZ();
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = result * 31 + pos.getX();
+		result = result * 31 + pos.getY();
+		result = result * 31 + pos.getZ();
+		result = result * 31 + dim;
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "dim:" + dim + " pos:" + pos;
 	}
 }

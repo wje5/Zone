@@ -2,15 +2,19 @@ package com.pinball3d.zone.tileentity;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
+import com.pinball3d.zone.network.MessageRegisterSphinx;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.World;
 
 public class TEProcessingCenter extends TileEntity implements ITickable {
 	private boolean on;
@@ -20,6 +24,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	private String loginPassword = "";
 	private int loadTick;
 	private Set<WorldPos> nodes = new HashSet<WorldPos>();
+	private UUID uuid;
 
 	public TEProcessingCenter() {
 
@@ -77,18 +82,55 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		}
 	}
 
+	public void addNode(WorldPos pos) {
+		nodes.forEach(e -> {
+			if (e.equals(pos)) {
+				return;
+			}
+		});
+		nodes.add(pos);
+	}
+
+	public Set<WorldPos> getNodes() {
+		return nodes;
+	}
+
+	public UUID getUUID() {
+		return uuid;
+	}
+
+	public void setUUID(UUID uuid) {
+		this.uuid = uuid;
+	}
+
 	@Override
 	public void update() {
 		markDirty();
+		if (!((BlockProcessingCenter) blockType).isFullStructure(world, pos)) {
+			shutdown();
+			return;
+		}
+		if (uuid == null) {
+			if (!world.isRemote) {
+				NetworkHandler.instance.sendToServer(new MessageRegisterSphinx(new WorldPos(getPos(), world)));
+			}
+		}
 		if (loadTick > 0) {
 			loadTick--;
 			if (loadTick == 0) {
 				on = true;
 			}
 		}
-		if (!((BlockProcessingCenter) blockType).isFullStructure(world, pos)) {
-			shutdown();
+		if (!on) {
+			return;
 		}
+		updateDevice();
+	}
+
+	public void updateDevice() {
+		nodes.forEach(e -> {
+			World world = e.getWorld();// TODO
+		});
 	}
 
 	@Override
@@ -102,6 +144,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		list.forEach(e -> {
 			nodes.add(WorldPos.load((NBTTagCompound) e));
 		});
+		uuid = compound.getUniqueId("uuid");
 		super.readFromNBT(compound);
 	}
 
@@ -116,6 +159,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		nodes.forEach(e -> {
 			list.appendTag(e.save(new NBTTagCompound()));
 		});
+		if (uuid != null) {
+			compound.setUniqueId("uuid", uuid);
+		}
 		return super.writeToNBT(compound);
 	}
 

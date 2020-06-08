@@ -44,15 +44,16 @@ public class MessageConnectToNetwork implements IMessage {
 				@Override
 				public void run() {
 					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					World world = message.needNetwork.getWorld(server);
+					World world = message.needNetwork.getWorld();
 					if (!world.isAreaLoaded(message.needNetwork.getPos(), 5)) {
 						return;
 					}
-					TileEntity te = message.needNetwork.getTileEntity(server);
-					TileEntity te2 = message.network.getTileEntity(server);
+					TileEntity te = message.needNetwork.getTileEntity();
+					TileEntity te2 = message.network.getTileEntity();
 
 					if (te instanceof INeedNetwork && te2 instanceof TEProcessingCenter) {
 						((INeedNetwork) te).connect(message.network);
+						((TEProcessingCenter) te2).addNode(message.needNetwork);
 					}
 				}
 			});

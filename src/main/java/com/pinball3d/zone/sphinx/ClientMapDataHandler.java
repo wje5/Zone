@@ -3,12 +3,6 @@ package com.pinball3d.zone.sphinx;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.util.math.ChunkPos;
-import net.minecraftforge.event.world.ChunkEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-@Mod.EventBusSubscriber
 public class ClientMapDataHandler {
 	private static Map<Integer, Map<Long, ChunkRenderCache>> mapCache = new HashMap<Integer, Map<Long, ChunkRenderCache>>();
 
@@ -36,20 +30,5 @@ public class ClientMapDataHandler {
 			mapCache.put(worldId, map);
 		}
 		return map;
-	}
-
-	@SubscribeEvent
-	public static void onChunkLoad(ChunkEvent.Load event) {
-		if (event.getWorld().isRemote) {
-			ChunkPos pos = event.getChunk().getPos();
-			int dim = event.getWorld().provider.getDimension();
-			if (!getMap(dim).containsKey(pos.x * 30000000L + pos.z)) {
-				ChunkRenderCache data = ChunkRenderCache.create(pos.x, pos.z);
-				if (data != null) {
-					setData(dim, pos.x, pos.z, data);
-					System.out.println(data);
-				}
-			}
-		}
 	}
 }

@@ -36,8 +36,19 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 		this.flag = flag;
 	}
 
+	public boolean checkTileentity() {
+		if (tileentity == null) {
+			mc.displayGuiScreen(null);
+			return false;
+		}
+		return true;
+	}
+
 	@Override
 	public void initGui() {
+		if (!checkTileentity()) {
+			return;
+		}
 		applyComponents();
 		super.initGui();
 	}
@@ -93,6 +104,9 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		if (!checkTileentity()) {
+			return;
+		}
 		Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
 		Gui.drawRect(width / 2 - 64, height / 2 - 8, width / 2 + 64, height / 2 - 7, 0xFF20E6EF);
 		Gui.drawRect(width / 2 - 64, height / 2 + 7, width / 2 + 64, height / 2 + 8, 0xFF20E6EF);

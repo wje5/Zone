@@ -10,6 +10,9 @@ import java.util.Stack;
 
 import org.lwjgl.input.Keyboard;
 
+import com.pinball3d.zone.block.BlockProcessingCenter;
+import com.pinball3d.zone.item.ItemLoader;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -40,6 +43,9 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 
 	@Override
 	public void initGui() {
+		if (!checkItem()) {
+			return;
+		}
 		applyComponents();
 		super.initGui();
 	}
@@ -74,31 +80,31 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		if (checkItem()) {
-			if (isConnected()) {
-				MapHandler.draw(getNetwork(), width, height);
-			} else {
-				Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
-				Util.drawTexture(TEXTURE_NO_NETWORK, width / 2 - 32, height / 2 - 32, 256, 256, 0.25F);
-				String text = I18n.format("sphinx.no_network");
-				fontRenderer.drawString(text, width / 2 - fontRenderer.getStringWidth(text) / 2, height / 2 + 45,
-						0xFFE0E0E0);
-			}
-			components.forEach(e -> {
-				e.doRender(mouseX, mouseY);
-			});
-			Iterator<Subscreen> it = subscreens.iterator();
-			while (it.hasNext()) {
-				Subscreen screen = it.next();
-				if (screen.dead) {
-					it.remove();
-				} else {
-					screen.doRender(mouseX, mouseY);
-				}
-			}
-		} else {
-			mc.displayGuiScreen(null);
+		if (!checkItem()) {
+			return;
 		}
+		if (isConnected()) {
+			MapHandler.draw(getNetwork(), width, height);
+		} else {
+			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
+			Util.drawTexture(TEXTURE_NO_NETWORK, width / 2 - 32, height / 2 - 32, 256, 256, 0.25F);
+			String text = I18n.format("sphinx.no_network");
+			fontRenderer.drawString(text, width / 2 - fontRenderer.getStringWidth(text) / 2, height / 2 + 45,
+					0xFFE0E0E0);
+		}
+		components.forEach(e -> {
+			e.doRender(mouseX, mouseY);
+		});
+		Iterator<Subscreen> it = subscreens.iterator();
+		while (it.hasNext()) {
+			Subscreen screen = it.next();
+			if (screen.dead) {
+				it.remove();
+			} else {
+				screen.doRender(mouseX, mouseY);
+			}
+		}
+
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 
@@ -108,11 +114,33 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	}
 
 	private boolean checkItem() {
-		return mc.player.getHeldItem(EnumHand.MAIN_HAND) == stack || mc.player.getHeldItem(EnumHand.OFF_HAND) == stack;
+		if (mc.player.getHeldItem(EnumHand.MAIN_HAND).getItem() == ItemLoader.terminal
+				|| mc.player.getHeldItem(EnumHand.OFF_HAND).getItem() == ItemLoader.terminal) {
+			return true;
+		} else {
+			mc.displayGuiScreen(null);
+			return false;
+		}
 	}
 
 	public boolean isConnected() {
-		return getNetwork() != null;
+		if (getNetwork() != null) {
+			if (getNetwork().getBlockState().getBlock() instanceof BlockProcessingCenter) {
+				return true;
+			} else {
+				resetNetwork();
+			}
+		}
+		return false;
+	}
+
+	public void resetNetwork() {
+		NBTTagCompound tag = stack.getTagCompound();
+		if (tag == null) {
+			tag = new NBTTagCompound();
+			stack.setTagCompound(tag);
+		}
+		tag.removeTag("network");
 	}
 
 	public WorldPos getNetwork() {
@@ -121,7 +149,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			tag = new NBTTagCompound();
 			stack.setTagCompound(tag);
 		}
-		WorldPos worldpos = WorldPos.load(tag);
+		WorldPos worldpos = GlobalNetworkData.getData(mc.player.world).getNetwork(tag.getUniqueId("network"));
 		return worldpos;
 	}
 

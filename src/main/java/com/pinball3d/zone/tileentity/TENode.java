@@ -5,7 +5,6 @@ import com.pinball3d.zone.sphinx.WorldPos;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class TENode extends TileEntity implements ITickable, INeedNetwork {
 	private WorldPos network;
@@ -50,7 +49,7 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 
 	@Override
 	public void connect(WorldPos pos) {
-		TileEntity te = pos.getTileEntity(FMLCommonHandler.instance().getMinecraftServerInstance());
+		TileEntity te = pos.getTileEntity();
 		if (te instanceof TEProcessingCenter) {
 			network = pos;
 			this.markDirty();

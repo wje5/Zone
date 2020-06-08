@@ -51,11 +51,11 @@ public class MessageWizardData implements IMessage {
 				@Override
 				public void run() {
 					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					World world = message.pos.getWorld(server);
+					World world = message.pos.getWorld();
 					if (!world.isAreaLoaded(message.pos.getPos(), 5)) {
 						return;
 					}
-					TileEntity te = message.pos.getTileEntity(FMLCommonHandler.instance().getMinecraftServerInstance());
+					TileEntity te = message.pos.getTileEntity();
 					if (te instanceof TEProcessingCenter) {
 						((TEProcessingCenter) te).saveWizardData(message.adminPassword, message.name,
 								message.loginPassword);

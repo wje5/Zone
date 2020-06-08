@@ -1,13 +1,16 @@
 package com.pinball3d.zone.sphinx;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -29,7 +32,8 @@ public class MapHandler {
 	private int xOffset, yOffset;
 	private PointerPlayer pointerPlayer;
 	private Map<Integer, PointerLiving> livings;
-	private PointerProcessingCenter pointerProcessingCenter;
+	private PointerProcessingCenter processingCenter;
+	private Set<PointerNode> nodes;
 	public WorldPos network;
 	private int dim;
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
@@ -45,7 +49,8 @@ public class MapHandler {
 		yOffset = pos.getZ();
 		pointerPlayer = new PointerPlayer(xOffset, yOffset);
 		dim = mc.player.world.provider.getDimension();
-		pointerProcessingCenter = new PointerProcessingCenter(network.getPos().getX(), network.getPos().getZ());
+		processingCenter = new PointerProcessingCenter(network.getPos().getX(), network.getPos().getZ());
+		nodes = new HashSet<PointerNode>();
 	}
 
 	private boolean checkNetwork(WorldPos network) {
@@ -63,6 +68,7 @@ public class MapHandler {
 		instance.updatePlayer();
 		instance.updateLiving();
 		instance.updateProcessingCenter();
+		instance.updateNodes();
 		instance.drawMap(width, height);
 		instance.drawPointer(width, height);
 	}
@@ -116,12 +122,24 @@ public class MapHandler {
 	private void updateProcessingCenter() {
 		if (network.getDim() == mc.player.dimension) {
 			BlockPos pos = network.getPos();
-			pointerProcessingCenter.x = pos.getX();
-			pointerProcessingCenter.z = pos.getZ();
-			pointerProcessingCenter.valid = true;
+			processingCenter.x = pos.getX();
+			processingCenter.z = pos.getZ();
+			processingCenter.valid = true;
 		} else {
-			pointerProcessingCenter.valid = false;
+			processingCenter.valid = false;
 		}
+	}
+
+	private void updateNodes() {
+		TEProcessingCenter te = (TEProcessingCenter) network.getTileEntity();
+		Set<WorldPos> set = te.getNodes();
+		nodes = new HashSet<PointerNode>();
+		set.forEach(e -> {
+			if (e.getDim() == mc.player.dimension) {
+				BlockPos pos = e.getPos();
+				nodes.add(new PointerNode(pos.getX(), pos.getZ()));
+			}
+		});
 	}
 
 	private void drawMap(int width, int height) {
@@ -207,8 +225,11 @@ public class MapHandler {
 			PointerLiving pointer = it.next();
 			pointer.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		}
-		pointerProcessingCenter.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+		processingCenter.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		pointerPlayer.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+		nodes.forEach(e -> {
+			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+		});
 		GlStateManager.popMatrix();
 	}
 }
