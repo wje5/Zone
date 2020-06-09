@@ -2,14 +2,9 @@ package com.pinball3d.zone.network;
 
 import java.util.UUID;
 
-import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.WorldPos;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -47,16 +42,17 @@ public class MessageSendUUIDToClient implements IMessage {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					World world = message.worldpos.getWorld();
-					if (!world.isAreaLoaded(message.worldpos.getPos(), 5)) {
-						return;
-					}
-					TileEntity te = message.worldpos.getTileEntity();
-					if (te instanceof TEProcessingCenter) {
-						((TEProcessingCenter) te).setUUID(message.uuid);
-						GlobalNetworkData.getData(te.getWorld()).setUUID(message.worldpos, message.uuid);
-					}
+//					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+//					World world = message.worldpos.getWorld();
+//					if (!world.isAreaLoaded(message.worldpos.getPos(), 5)) {
+//						return;
+//					}
+//					TileEntity te = message.worldpos.getTileEntity();
+//					if (te instanceof TEProcessingCenter) {
+//						((TEProcessingCenter) te).setUUID(message.uuid);
+//						GlobalNetworkData.getData(te.getWorld()).setUUID(message.worldpos, message.uuid);
+//					}
+//					TODO
 				}
 			});
 			return null;

@@ -34,6 +34,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	private static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");
 	private Set<Component> components = new HashSet<Component>();
+	private WorldPos worldpos;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	public ItemStack stack;
 
@@ -149,8 +150,10 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			tag = new NBTTagCompound();
 			stack.setTagCompound(tag);
 		}
-		WorldPos worldpos = GlobalNetworkData.getData(mc.player.world).getNetwork(tag.getUniqueId("network"));
-		return worldpos;
+//		WorldPos worldpos = GlobalNetworkData.getData(mc.player.world).getNetwork(tag.getUniqueId("network"));
+//		TODO
+//		return worldpos;
+		return null;
 	}
 
 	@Override

@@ -21,6 +21,9 @@ public class NetworkHandler {
 				Side.SERVER);
 		registerMessage(MessageRegisterSphinx.Handler.class, MessageRegisterSphinx.class, Side.SERVER);
 		registerMessage(MessageSendUUIDToClient.Handler.class, MessageSendUUIDToClient.class, Side.CLIENT);
+		registerMessage(MessageRequestNetworkData.Handler.class, MessageRequestNetworkData.class, Side.SERVER);
+		registerMessage(MessageUpdateNetworkDataToClient.Handler.class, MessageUpdateNetworkDataToClient.class,
+				Side.CLIENT);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

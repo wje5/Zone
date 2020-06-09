@@ -1,5 +1,6 @@
 package com.pinball3d.zone.item;
 
+import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.ScreenTerminal;
 
 import net.minecraft.client.Minecraft;
@@ -22,6 +23,9 @@ public class ItemTerminal extends ZoneItem {
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		if (worldIn.isRemote) {
 			openScreen(playerIn.getHeldItem(handIn));
+		} else {
+			GlobalNetworkData.getData(worldIn);
+			// FIXME
 		}
 		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
 	}
