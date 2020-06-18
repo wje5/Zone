@@ -2,56 +2,59 @@ package com.pinball3d.zone.network;
 
 import java.util.UUID;
 
+import com.pinball3d.zone.sphinx.ScreenTerminal;
 import com.pinball3d.zone.sphinx.WorldPos;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageSendUUIDToClient implements IMessage {
+public class MessageSendNetworkDataToTerminal implements IMessage {
 	WorldPos worldpos;
 	UUID uuid;
 
-	public MessageSendUUIDToClient() {
+	public MessageSendNetworkDataToTerminal() {
 
 	}
 
-	public MessageSendUUIDToClient(WorldPos worldpos, UUID uuid) {
+	public MessageSendNetworkDataToTerminal(WorldPos worldpos, UUID uuid) {
 		this.worldpos = worldpos;
 		this.uuid = uuid;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		worldpos = WorldPos.readFromByte(buf);
+		if (!buf.readBoolean()) {
+			worldpos = WorldPos.readFromByte(buf);
+		}
 		uuid = new UUID(buf.readLong(), buf.readLong());
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		worldpos.writeToByte(buf);
+		if (worldpos == null) {
+			buf.writeBoolean(true);
+		} else {
+			buf.writeBoolean(false);
+			worldpos.writeToByte(buf);
+		}
 		buf.writeLong(uuid.getMostSignificantBits());
 		buf.writeLong(uuid.getLeastSignificantBits());
 	}
 
-	public static class Handler implements IMessageHandler<MessageSendUUIDToClient, IMessage> {
+	public static class Handler implements IMessageHandler<MessageSendNetworkDataToTerminal, IMessage> {
 		@Override
-		public IMessage onMessage(MessageSendUUIDToClient message, MessageContext ctx) {
+		public IMessage onMessage(MessageSendNetworkDataToTerminal message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
-					World world = message.worldpos.getWorld();
-					if (!world.isAreaLoaded(message.worldpos.getPos(), 5)) {
-						return;
-					}
-					TileEntity te = message.worldpos.getTileEntity();
-					if (te instanceof TEProcessingCenter) {
-						((TEProcessingCenter) te).setUUID(message.uuid);
+					GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+					if (screen instanceof ScreenTerminal) {
+						((ScreenTerminal) screen).setWorldPos(message.worldpos, message.uuid);
 					}
 				}
 			});

@@ -111,6 +111,10 @@ public class RecipeHandler {
 		register(new RecipeGrinder(new ItemStack(Items.BUCKET), new ItemStack(ItemLoader.iron_dust, 2), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.NETHERRACK),
 				new ItemStack(ItemLoader.small_pile_netherrack_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.HARDENED_CLAY),
+				new ItemStack(ItemLoader.small_pile_clay_dust, 14), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, 32767),
+				new ItemStack(ItemLoader.small_pile_clay_dust, 14), 200));
 
 		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.iron_dust), new ItemStack(ItemLoader.gold_dust),
 				new ItemStack(ItemLoader.quartz_dust), new ItemStack(ItemLoader.etherium), 200));
@@ -119,6 +123,8 @@ public class RecipeHandler {
 		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.clarity_glass_dust),
 				new ItemStack(ItemLoader.diamond_dust), new ItemStack(ItemLoader.energy_group),
 				new ItemStack(BlockLoader.charged_glass), 200));
+		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.stone_dust), new ItemStack(ItemLoader.netherrack_dust),
+				new ItemStack(ItemLoader.clay_dust), new ItemStack(BlockLoader.reinforced_stone), 200));
 
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_iron_ore),
 				new ItemStack(ItemLoader.tiny_pile_iron_dust), new ItemStack(ItemLoader.tiny_pile_iron_dust),

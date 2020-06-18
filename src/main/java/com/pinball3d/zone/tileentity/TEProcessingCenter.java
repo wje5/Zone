@@ -6,15 +6,18 @@ import java.util.UUID;
 
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
-import com.pinball3d.zone.network.MessageRegisterSphinx;
-import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.WorldPos;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 public class TEProcessingCenter extends TileEntity implements ITickable {
 	private boolean on;
@@ -103,6 +106,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		this.uuid = uuid;
 	}
 
+	public boolean isPointInRange(int dim, double x, double y, double z) {
+		if (world.provider.getDimension() != dim) {
+			return false;
+		}
+		if (Math.sqrt(pos.distanceSq(x, y, z)) < 25) {
+			System.out.println(Math.sqrt(pos.distanceSq(x, y, z)));
+		}
+		return false;
+	}
+
 	@Override
 	public void update() {
 		markDirty();
@@ -112,7 +125,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		}
 		if (uuid == null) {
 			if (!world.isRemote) {
-				NetworkHandler.instance.sendToServer(new MessageRegisterSphinx(new WorldPos(getPos(), world)));
+				setUUID(GlobalNetworkData.getData(world).getUUID(new WorldPos(getPos(), world)));
+				IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
+				world.notifyBlockUpdate(pos, state, state,
+						Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
 			}
 		}
 		if (loadTick > 0) {
@@ -144,7 +160,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		list.forEach(e -> {
 			nodes.add(WorldPos.load((NBTTagCompound) e));
 		});
-		uuid = compound.getUniqueId("uuid");
+		if (compound.hasKey("uuidMost")) {
+			uuid = compound.getUniqueId("uuid");
+		}
 		super.readFromNBT(compound);
 	}
 
@@ -166,12 +184,31 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	}
 
 	@Override
+	public SPacketUpdateTileEntity getUpdatePacket() {
+		return new SPacketUpdateTileEntity(pos, 1, getUpdateTag());
+	}
+
+	@Override
+	public void onDataPacket(NetworkManager manager, SPacketUpdateTileEntity packet) {
+		handleUpdateTag(packet.getNbtCompound());
+	}
+
+	public NBTTagCompound writeNetworkData(NBTTagCompound tag) {
+		return tag;
+	}
+
+	public void readNetworkData(NBTTagCompound tag) {
+
+	}
+
+	@Override
 	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
+		return writeNetworkData(writeToNBT(new NBTTagCompound()));
 	}
 
 	@Override
 	public void handleUpdateTag(NBTTagCompound tag) {
-		this.readFromNBT(tag);
+		readFromNBT(tag);
+		readNetworkData(tag);
 	}
 }

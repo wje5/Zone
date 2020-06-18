@@ -2,11 +2,13 @@ package com.pinball3d.zone.sphinx;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class WorldPos {
 	private BlockPos pos;
@@ -30,7 +32,17 @@ public class WorldPos {
 	}
 
 	public World getWorld() {
-		return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim);
+		FMLCommonHandler handler = FMLCommonHandler.instance();
+		if (handler.getEffectiveSide() == Side.SERVER) {
+			return handler.getMinecraftServerInstance().getWorld(dim);
+		} else {
+			World world = Minecraft.getMinecraft().world;
+			if (world.provider.getDimension() == dim) {
+				return Minecraft.getMinecraft().world;
+			} else {
+				throw new RuntimeException("DRRRRRRRRR!");
+			}
+		}
 	}
 
 	public BlockPos getPos() {

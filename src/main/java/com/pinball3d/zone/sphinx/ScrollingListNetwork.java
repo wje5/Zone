@@ -61,7 +61,7 @@ public class ScrollingListNetwork extends Component {
 			}
 			worldpos = WorldPos.load(tag);
 		} else {
-			worldpos = parent.getNeedNetworkTileEntity().getNetwork();
+			worldpos = parent.getNeedNetworkTileEntity().getNetworkPos();
 		}
 		if (worldpos != null) {
 			Collections.sort(l, new Comparator<TEProcessingCenter>() {

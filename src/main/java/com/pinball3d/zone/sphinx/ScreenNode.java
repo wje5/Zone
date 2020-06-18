@@ -84,8 +84,8 @@ public class ScreenNode extends GuiScreen implements IParent {
 		if (!checkTileentity()) {
 			return;
 		}
-		if (isConnected()) {
-			MapHandler.draw(tileentity.getNetwork(), width, height);
+		if (tileentity.isConnected()) {
+			MapHandler.draw(tileentity.getNetworkPos(), width, height);
 		} else {
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
 			Util.drawTexture(TEXTURE_NO_NETWORK, width / 2 - 32, height / 2 - 32, 256, 256, 0.25F);
@@ -114,7 +114,7 @@ public class ScreenNode extends GuiScreen implements IParent {
 	}
 
 	public boolean isConnected() {
-		return tileentity.getNetwork() != null;
+		return tileentity.isConnected();
 	}
 
 	@Override

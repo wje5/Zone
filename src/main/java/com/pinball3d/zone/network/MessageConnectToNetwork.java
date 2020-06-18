@@ -1,5 +1,8 @@
 package com.pinball3d.zone.network;
 
+import java.util.UUID;
+
+import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
@@ -52,7 +55,8 @@ public class MessageConnectToNetwork implements IMessage {
 					TileEntity te2 = message.network.getTileEntity();
 
 					if (te instanceof INeedNetwork && te2 instanceof TEProcessingCenter) {
-						((INeedNetwork) te).connect(message.network);
+						UUID uuid = GlobalNetworkData.getData(world).getUUID(message.network);
+						((INeedNetwork) te).connect(uuid);
 						((TEProcessingCenter) te2).addNode(message.needNetwork);
 					}
 				}

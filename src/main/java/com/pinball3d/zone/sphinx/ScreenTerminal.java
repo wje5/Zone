@@ -7,11 +7,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.UUID;
 
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.item.ItemLoader;
+import com.pinball3d.zone.network.MessageTerminalRequestNetworkData;
+import com.pinball3d.zone.network.NetworkHandler;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -35,6 +38,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			"zone:textures/gui/sphinx/no_network.png");
 	private Set<Component> components = new HashSet<Component>();
 	private WorldPos worldpos;
+	private boolean flag;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	public ItemStack stack;
 
@@ -141,19 +145,41 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			tag = new NBTTagCompound();
 			stack.setTagCompound(tag);
 		}
-		tag.removeTag("network");
+		tag.removeTag("networkMost");
+		tag.removeTag("networkLeast");
 	}
 
 	public WorldPos getNetwork() {
+		if (!flag) {
+			NBTTagCompound tag = stack.getTagCompound();
+			if (tag == null) {
+				tag = new NBTTagCompound();
+				stack.setTagCompound(tag);
+			}
+			if (tag.hasKey("networkMost")) {
+				NetworkHandler.instance.sendToServer(
+						new MessageTerminalRequestNetworkData(tag.getUniqueId("network"), mc.player.getName()));
+			}
+			return null;
+		}
+		return worldpos;
+	}
+
+	public void setWorldPos(WorldPos pos, UUID uuid) {
 		NBTTagCompound tag = stack.getTagCompound();
 		if (tag == null) {
 			tag = new NBTTagCompound();
 			stack.setTagCompound(tag);
 		}
-//		WorldPos worldpos = GlobalNetworkData.getData(mc.player.world).getNetwork(tag.getUniqueId("network"));
-//		TODO
-//		return worldpos;
-		return null;
+		if (tag.hasKey("networkMost")) {
+			if (tag.getUniqueId("network").equals(uuid)) {
+				if (pos == null) {
+					resetNetwork();
+				}
+				worldpos = pos;
+				flag = true;
+			}
+		}
 	}
 
 	@Override

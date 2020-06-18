@@ -1,0 +1,7 @@
+{
+    "parent": "block/pane_side_alt",
+    "textures": {
+        "edge": "zone:blocks/firm_glass_pane_top",
+        "pane": "zone:blocks/firm_glass"
+    }
+}

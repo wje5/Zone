@@ -3,7 +3,6 @@ package com.pinball3d.zone.block;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
-import com.pinball3d.zone.tileentity.TEDrainer;
 import com.pinball3d.zone.tileentity.TETransmissionModule;
 
 import net.minecraft.block.Block;
@@ -45,7 +44,7 @@ public class BlockTransmissionModule extends BlockContainer {
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		TEDrainer te = (TEDrainer) worldIn.getTileEntity(pos);
+		TETransmissionModule te = (TETransmissionModule) worldIn.getTileEntity(pos);
 
 		IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 

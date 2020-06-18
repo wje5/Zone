@@ -54,14 +54,13 @@ public class GlobalNetworkData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
-		NBTTagList list = nbt.getTagList("data", 9);
+		NBTTagList list = nbt.getTagList("data", 10);
 		map = new HashMap<UUID, WorldPos>();
 		list.forEach(e -> {
 			UUID uuid = ((NBTTagCompound) e).getUniqueId("uuid");
 			WorldPos pos = WorldPos.load((NBTTagCompound) e);
 			setUUID(pos, uuid);
 		});
-		System.out.println(nbt);
 	}
 
 	@Override
@@ -74,7 +73,6 @@ public class GlobalNetworkData extends WorldSavedData {
 			list.appendTag(tag);
 		});
 		nbt.setTag("data", list);
-		System.out.println(nbt);
 		return nbt;
 	}
 }

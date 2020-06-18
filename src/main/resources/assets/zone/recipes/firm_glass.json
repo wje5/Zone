@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "*#*",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:iron_bars"
+    },
+    "*": {
+      "item": "zone:clarity_glass"
+    }
+  },
+  "result": {
+    "item": "zone:firm_glass",
+    "count": 4
+  }
+}
