@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class SubscreenNetworkConfig extends Subscreen {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
-	private ScrollingListNetwork list;
+	public ScrollingListNetwork list;
 
 	public SubscreenNetworkConfig(IParent parent) {
 		this(parent, parent.getWidth() / 2 - 150, parent.getHeight() / 2 - 100);

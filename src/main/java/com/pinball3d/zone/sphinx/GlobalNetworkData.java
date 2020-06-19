@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.pinball3d.zone.block.BlockProcessingCenter;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
@@ -25,10 +27,12 @@ public class GlobalNetworkData extends WorldSavedData {
 
 	public void setUUID(WorldPos pos, UUID uuid) {
 		map.put(uuid, pos);
+		checkData();
 		markDirty();
 	}
 
 	public UUID getUUID(WorldPos pos) {
+		checkData();
 		if (map.containsValue(pos)) {
 			Iterator<Entry<UUID, WorldPos>> it = map.entrySet().iterator();
 			while (it.hasNext()) {
@@ -43,12 +47,27 @@ public class GlobalNetworkData extends WorldSavedData {
 		return uuid;
 	}
 
+	public void checkData() {
+		Iterator<Entry<UUID, WorldPos>> it = map.entrySet().iterator();
+		while (it.hasNext()) {
+			WorldPos pos = it.next().getValue();
+			if (!(pos.getBlockState().getBlock() instanceof BlockProcessingCenter)) {
+				it.remove();
+			}
+		}
+	}
+
+	public Map<UUID, WorldPos> getNetworks() {
+		return map;
+	}
+
 	public static GlobalNetworkData getData(World world) {
 		WorldSavedData data = world.getMapStorage().getOrLoadData(GlobalNetworkData.class, "GlobalNetworkData");
 		if (data == null) {
 			data = new GlobalNetworkData("GlobalNetworkData");
 			world.getMapStorage().setData("GlobalNetworkData", data);
 		}
+		((GlobalNetworkData) data).checkData();
 		return (GlobalNetworkData) data;
 	}
 
@@ -61,10 +80,12 @@ public class GlobalNetworkData extends WorldSavedData {
 			WorldPos pos = WorldPos.load((NBTTagCompound) e);
 			setUUID(pos, uuid);
 		});
+		checkData();
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+		checkData();
 		NBTTagList list = new NBTTagList();
 		map.forEach((k, v) -> {
 			NBTTagCompound tag = new NBTTagCompound();

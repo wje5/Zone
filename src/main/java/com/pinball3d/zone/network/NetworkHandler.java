@@ -19,12 +19,14 @@ public class NetworkHandler {
 		registerMessage(MessageConnectToNetwork.Handler.class, MessageConnectToNetwork.class, Side.SERVER);
 		registerMessage(MessageTerminalConnectToNetwork.Handler.class, MessageTerminalConnectToNetwork.class,
 				Side.SERVER);
-		registerMessage(MessageRegisterSphinx.Handler.class, MessageRegisterSphinx.class, Side.SERVER);
-		registerMessage(MessageSendUUIDToClient.Handler.class, MessageSendUUIDToClient.class, Side.CLIENT);
 		registerMessage(MessageTerminalRequestNetworkData.Handler.class, MessageTerminalRequestNetworkData.class,
 				Side.SERVER);
 		registerMessage(MessageSendNetworkDataToTerminal.Handler.class, MessageSendNetworkDataToTerminal.class,
 				Side.CLIENT);
+		registerMessage(MessageTerminalRequestValidNetworks.Handler.class, MessageTerminalRequestValidNetworks.class,
+				Side.SERVER);
+		registerMessage(MessageSendValidNetworkDataToTerminal.Handler.class,
+				MessageSendValidNetworkDataToTerminal.class, Side.CLIENT);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

@@ -8,6 +8,8 @@ import java.util.List;
 
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
+import com.pinball3d.zone.network.MessageTerminalRequestValidNetworks;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.block.Block;
@@ -25,7 +27,31 @@ public class ScrollingListNetwork extends Component {
 		super(parent, x, y, width, height);
 		this.parent = parent;
 		this.lineHeight = 25;
-		refresh();
+		NetworkHandler.instance.sendToServer(new MessageTerminalRequestValidNetworks(mc.player));
+	}
+
+	public void setData(List<WorldPos> data) {
+		list = new ArrayList<ListBar>();
+		ItemStack stack = parent.getTerminal();
+		WorldPos worldpos;
+		if (stack != ItemStack.EMPTY) {
+			NBTTagCompound tag = stack.getTagCompound();
+			if (tag == null) {
+				tag = new NBTTagCompound();
+				stack.setTagCompound(tag);
+			}
+			worldpos = WorldPos.load(tag);
+		} else {
+			worldpos = parent.getNeedNetworkTileEntity().getNetworkPos();
+		}
+		System.out.println(worldpos);
+		data.forEach(e -> {
+			list.add(new ListBar((TEProcessingCenter) e.getTileEntity(),
+					worldpos != null && e.getWorld().provider.getDimension() == worldpos.getDim()
+							&& e.getPos().equals(worldpos.getPos()),
+					width, lineHeight));
+			length += lineHeight;
+		});
 	}
 
 	public void refresh() {
@@ -34,6 +60,7 @@ public class ScrollingListNetwork extends Component {
 		scrollingDistance = 0;
 		List<TEProcessingCenter> l = new ArrayList<TEProcessingCenter>();
 		BlockPos pos = mc.player.getPosition();
+
 		for (int i = pos.getX() - 12; i <= pos.getX() + 12; i++) {
 			for (int j = pos.getY() - 12; j <= pos.getY() + 12; j++) {
 				for (int k = pos.getZ() - 12; k <= pos.getZ() + 12; k++) {

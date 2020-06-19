@@ -111,7 +111,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			return false;
 		}
 		if (Math.sqrt(pos.distanceSq(x, y, z)) < 25) {
-			System.out.println(Math.sqrt(pos.distanceSq(x, y, z)));
+			return true;
 		}
 		return false;
 	}

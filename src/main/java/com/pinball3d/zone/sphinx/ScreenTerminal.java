@@ -130,7 +130,8 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 
 	public boolean isConnected() {
 		if (getNetwork() != null) {
-			if (getNetwork().getBlockState().getBlock() instanceof BlockProcessingCenter) {
+			if (getNetwork().getDim() == mc.world.provider.getDimension()
+					&& getNetwork().getBlockState().getBlock() instanceof BlockProcessingCenter) {
 				return true;
 			} else {
 				resetNetwork();
@@ -157,8 +158,8 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 				stack.setTagCompound(tag);
 			}
 			if (tag.hasKey("networkMost")) {
-				NetworkHandler.instance.sendToServer(
-						new MessageTerminalRequestNetworkData(tag.getUniqueId("network"), mc.player.getName()));
+				NetworkHandler.instance
+						.sendToServer(new MessageTerminalRequestNetworkData(tag.getUniqueId("network"), mc.player));
 			}
 			return null;
 		}
