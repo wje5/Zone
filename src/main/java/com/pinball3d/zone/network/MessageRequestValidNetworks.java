@@ -15,15 +15,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageTerminalRequestValidNetworks implements IMessage {
+public class MessageRequestValidNetworks implements IMessage {
 	String name;
 	int dim;
 
-	public MessageTerminalRequestValidNetworks() {
+	public MessageRequestValidNetworks() {
 
 	}
 
-	public MessageTerminalRequestValidNetworks(EntityPlayer player) {
+	public MessageRequestValidNetworks(EntityPlayer player) {
 		name = player.getName();
 		dim = player.dimension;
 	}
@@ -40,9 +40,9 @@ public class MessageTerminalRequestValidNetworks implements IMessage {
 		buf.writeInt(dim);
 	}
 
-	public static class Handler implements IMessageHandler<MessageTerminalRequestValidNetworks, IMessage> {
+	public static class Handler implements IMessageHandler<MessageRequestValidNetworks, IMessage> {
 		@Override
-		public IMessage onMessage(MessageTerminalRequestValidNetworks message, MessageContext ctx) {
+		public IMessage onMessage(MessageRequestValidNetworks message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
@@ -50,7 +50,7 @@ public class MessageTerminalRequestValidNetworks implements IMessage {
 					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
 					List<WorldPos> list = SphinxUtil.getValidNetworks(player.dimension, player.posX, player.posY,
 							player.posZ);
-					NetworkHandler.instance.sendTo(new MessageSendValidNetworkDataToTerminal(list), player);
+					NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(list), player);
 				}
 			});
 			return null;

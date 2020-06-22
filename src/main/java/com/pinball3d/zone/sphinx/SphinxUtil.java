@@ -20,7 +20,7 @@ public class SphinxUtil {
 		List<WorldPos> list = new ArrayList<WorldPos>();
 		map.forEach((uuid, pos) -> {
 			TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-			if (te.isPointInRange(dim, x, y, z)) {
+			if (te.isOn() && !te.needInit() && te.isPointInRange(dim, x, y, z)) {
 				list.add(pos);
 			}
 		});

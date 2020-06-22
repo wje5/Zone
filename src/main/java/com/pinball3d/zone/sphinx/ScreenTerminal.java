@@ -15,6 +15,7 @@ import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.network.MessageTerminalRequestNetworkData;
 import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -37,7 +38,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	private static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");
 	private Set<Component> components = new HashSet<Component>();
-	private WorldPos worldpos;
+	public WorldPos worldpos;
 	private boolean flag;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	public ItemStack stack;
@@ -131,7 +132,8 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	public boolean isConnected() {
 		if (getNetwork() != null) {
 			if (getNetwork().getDim() == mc.world.provider.getDimension()
-					&& getNetwork().getBlockState().getBlock() instanceof BlockProcessingCenter) {
+					&& getNetwork().getBlockState().getBlock() instanceof BlockProcessingCenter
+					&& ((TEProcessingCenter) (getNetwork().getTileEntity())).isOn()) {
 				return true;
 			} else {
 				resetNetwork();

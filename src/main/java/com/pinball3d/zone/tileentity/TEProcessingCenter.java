@@ -1,8 +1,10 @@
 package com.pinball3d.zone.tileentity;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
@@ -16,7 +18,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 public class TEProcessingCenter extends TileEntity implements ITickable {
@@ -94,6 +95,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		nodes.add(pos);
 	}
 
+	public void removeNode(WorldPos pos) {
+		nodes.remove(pos);
+	}
+
 	public Set<WorldPos> getNodes() {
 		return nodes;
 	}
@@ -112,6 +117,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		}
 		if (Math.sqrt(pos.distanceSq(x, y, z)) < 25) {
 			return true;
+		}
+		Consumer<WorldPos> k = e -> {
+		};
+		Iterator<WorldPos> it = nodes.iterator();
+		while (it.hasNext()) {
+			if (((TENode) it.next().getTileEntity()).isPointInRange(dim, x, y, z)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -145,7 +158,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 
 	public void updateDevice() {
 		nodes.forEach(e -> {
-			World world = e.getWorld();// TODO
+			// TODO
 		});
 	}
 
@@ -156,6 +169,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		adminPassword = compound.getString("adminPassword");
 		loginPassword = compound.getString("loginPassword");
 		loadTick = compound.getInteger("loadTick");
+		on = compound.getBoolean("on");
 		NBTTagList list = compound.getTagList("nodes", 9);
 		list.forEach(e -> {
 			nodes.add(WorldPos.load((NBTTagCompound) e));
@@ -173,6 +187,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		compound.setString("adminPassword", adminPassword);
 		compound.setString("loginPassword", loginPassword);
 		compound.setInteger("loadTick", loadTick);
+		compound.setBoolean("on", on);
 		NBTTagList list = new NBTTagList();
 		nodes.forEach(e -> {
 			list.appendTag(e.save(new NBTTagCompound()));

@@ -6,6 +6,7 @@ import com.pinball3d.zone.network.MessageConnectToNetwork;
 import com.pinball3d.zone.network.MessageTerminalConnectToNetwork;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.INeedNetwork;
+import com.pinball3d.zone.tileentity.TENode;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.Gui;
@@ -86,6 +87,14 @@ public class SubscreenConnectToNetwork extends Subscreen {
 							NetworkHandler.instance.sendToServer(new MessageConnectToNetwork(pos1, pos2));
 							te.connect(tileentity.getUUID());
 							tileentity.addNode(pos2);
+						}
+						if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
+							((ScreenTerminal) ((SubscreenNetworkConfig) parent).parent).worldpos = new WorldPos(
+									tileentity.getPos(), tileentity.getWorld());
+						} else {
+							TENode tenode = ((ScreenNode) ((SubscreenNetworkConfig) parent).parent).tileentity;
+							tenode.setWorldPos(new WorldPos(tileentity.getPos(), tileentity.getWorld()),
+									tenode.getNetwork());
 						}
 						((SubscreenNetworkConfig) parent).refresh();
 					} else {

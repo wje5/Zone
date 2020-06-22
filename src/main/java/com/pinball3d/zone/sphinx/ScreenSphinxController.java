@@ -74,7 +74,7 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 		components.add(new TexturedButton(this, width - 20, 2, TEXTURE, 0, 68, 32, 32, 0.25F, new Runnable() {
 			@Override
 			public void run() {
-
+				subscreens.push(new SubscreenSphinxConfig((ScreenSphinxController) mc.currentScreen));
 			}
 		}));
 		components.add(new TexturedButton(this, width - 8, 3, TEXTURE, 0, 42, 24, 26, 0.25F, new Runnable() {

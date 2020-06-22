@@ -32,6 +32,19 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 			world.notifyBlockUpdate(pos, state, state,
 					Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
 		}
+		if (worldpos != null) {
+			if (worldpos.getTileEntity() != null && !((TEProcessingCenter) worldpos.getTileEntity()).isOn()
+					&& !world.isRemote) {
+				((TEProcessingCenter) worldpos.getTileEntity()).removeNode(new WorldPos(pos, world));
+			}
+			network = null;
+			worldpos = null;
+			if (!world.isRemote) {
+				IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
+				world.notifyBlockUpdate(pos, state, state,
+						Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+			}
+		}
 	}
 
 	@Override
@@ -68,6 +81,16 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 				resetNetwork();
 			}
 		}
+	}
+
+	public boolean isPointInRange(int dim, double x, double y, double z) {
+		if (world.provider.getDimension() != dim) {
+			return false;
+		}
+		if (Math.sqrt(pos.distanceSq(x, y, z)) < 25) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

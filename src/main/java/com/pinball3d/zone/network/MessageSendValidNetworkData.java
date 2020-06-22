@@ -3,6 +3,7 @@ package com.pinball3d.zone.network;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pinball3d.zone.sphinx.ScreenNode;
 import com.pinball3d.zone.sphinx.ScreenTerminal;
 import com.pinball3d.zone.sphinx.SubscreenNetworkConfig;
 import com.pinball3d.zone.sphinx.WorldPos;
@@ -18,14 +19,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageSendValidNetworkDataToTerminal implements IMessage {
+public class MessageSendValidNetworkData implements IMessage {
 	List<WorldPos> list = new ArrayList<WorldPos>();
 
-	public MessageSendValidNetworkDataToTerminal() {
+	public MessageSendValidNetworkData() {
 
 	}
 
-	public MessageSendValidNetworkDataToTerminal(List<WorldPos> list) {
+	public MessageSendValidNetworkData(List<WorldPos> list) {
 		this.list = list;
 	}
 
@@ -49,15 +50,22 @@ public class MessageSendValidNetworkDataToTerminal implements IMessage {
 		ByteBufUtils.writeTag(buf, tag);
 	}
 
-	public static class Handler implements IMessageHandler<MessageSendValidNetworkDataToTerminal, IMessage> {
+	public static class Handler implements IMessageHandler<MessageSendValidNetworkData, IMessage> {
 		@Override
-		public IMessage onMessage(MessageSendValidNetworkDataToTerminal message, MessageContext ctx) {
+		public IMessage onMessage(MessageSendValidNetworkData message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
 					GuiScreen screen = Minecraft.getMinecraft().currentScreen;
 					if (screen instanceof ScreenTerminal) {
 						ScreenTerminal terminal = (ScreenTerminal) screen;
+						if (!terminal.subscreens.empty()
+								&& terminal.subscreens.get(0) instanceof SubscreenNetworkConfig) {
+							((SubscreenNetworkConfig) terminal.subscreens.get(0)).list.setData(message.list);
+						}
+					}
+					if (screen instanceof ScreenNode) {
+						ScreenNode terminal = (ScreenNode) screen;
 						if (!terminal.subscreens.empty()
 								&& terminal.subscreens.get(0) instanceof SubscreenNetworkConfig) {
 							((SubscreenNetworkConfig) terminal.subscreens.get(0)).list.setData(message.list);

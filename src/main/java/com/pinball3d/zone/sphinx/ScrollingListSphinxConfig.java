@@ -4,73 +4,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.pinball3d.zone.network.MessageRequestValidNetworks;
-import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.Gui;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class ScrollingListNetwork extends Component {
+public class ScrollingListSphinxConfig extends Component {
 	protected int length, lineHeight, scrollingDistance;
 	protected List<ListBar> list = new ArrayList<ListBar>();
-	protected List<WorldPos> data = new ArrayList<WorldPos>();
 
-	public ScrollingListNetwork(IParent parent, int x, int y, int width, int height) {
+	public ScrollingListSphinxConfig(IParent parent, int x, int y, int width, int height) {
 		super(parent, x, y, width, height);
 		this.parent = parent;
 		this.lineHeight = 25;
-		NetworkHandler.instance.sendToServer(new MessageRequestValidNetworks(mc.player));
-	}
-
-	public void setData(List<WorldPos> data) {
-		this.data = data;
-		refresh();
-	}
-
-	public void sort() {
-		WorldPos worldpos;
-		if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
-			worldpos = ((ScreenTerminal) ((SubscreenNetworkConfig) parent).parent).worldpos;
-		} else {
-			worldpos = ((ScreenNode) ((SubscreenNetworkConfig) parent).parent).tileentity.getNetworkPos();
-		}
-		List<WorldPos> temp = new ArrayList<WorldPos>();
-		data.forEach(e -> {
-			if (worldpos != null && e.getWorld().provider.getDimension() == worldpos.getDim()
-					&& e.getPos().equals(worldpos.getPos())) {
-				temp.add(e);
-			}
-		});
-		data.forEach(e -> {
-			if (!(worldpos != null && e.getWorld().provider.getDimension() == worldpos.getDim()
-					&& e.getPos().equals(worldpos.getPos()))) {
-				temp.add(e);
-			}
-		});
-		data = temp;
-	}
-
-	public void refresh() {
-		sort();
-		list = new ArrayList<ListBar>();
-		length = 0;
-		scrollingDistance = 0;
-		ItemStack stack = parent.getTerminal();
-		WorldPos worldpos;
-		if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
-			worldpos = ((ScreenTerminal) ((SubscreenNetworkConfig) parent).parent).worldpos;
-		} else {
-			worldpos = ((ScreenNode) ((SubscreenNetworkConfig) parent).parent).tileentity.getNetworkPos();
-		}
-		data.forEach(e -> {
-			list.add(new ListBar((TEProcessingCenter) e.getTileEntity(),
-					worldpos != null && e.getWorld().provider.getDimension() == worldpos.getDim()
-							&& e.getPos().equals(worldpos.getPos()),
-					width, lineHeight));
-			length += lineHeight;
-		});
 	}
 
 	@Override

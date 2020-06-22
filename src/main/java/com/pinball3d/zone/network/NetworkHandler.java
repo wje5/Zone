@@ -23,10 +23,8 @@ public class NetworkHandler {
 				Side.SERVER);
 		registerMessage(MessageSendNetworkDataToTerminal.Handler.class, MessageSendNetworkDataToTerminal.class,
 				Side.CLIENT);
-		registerMessage(MessageTerminalRequestValidNetworks.Handler.class, MessageTerminalRequestValidNetworks.class,
-				Side.SERVER);
-		registerMessage(MessageSendValidNetworkDataToTerminal.Handler.class,
-				MessageSendValidNetworkDataToTerminal.class, Side.CLIENT);
+		registerMessage(MessageRequestValidNetworks.Handler.class, MessageRequestValidNetworks.class, Side.SERVER);
+		registerMessage(MessageSendValidNetworkData.Handler.class, MessageSendValidNetworkData.class, Side.CLIENT);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(
