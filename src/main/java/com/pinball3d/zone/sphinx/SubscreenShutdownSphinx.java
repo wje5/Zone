@@ -35,7 +35,7 @@ public class SubscreenShutdownSphinx extends Subscreen {
 		components.add(new TextButton(this, this.x + 120, this.y + 75, I18n.format("sphinx.no"), new Runnable() {
 			@Override
 			public void run() {
-				parent.quitScreen(getScreen());
+				parent.quitScreen(SubscreenShutdownSphinx.this);
 			}
 		}));
 	}

@@ -151,7 +151,6 @@ public class ScrollingListNetwork extends Component {
 				Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/icons.png"), x + 240, y + upCut, 0,
 						100 + upCut * 2, 24, 18 - (upCut + downCut) * 2, 0.5F);
 			}
-
 		}
 	}
 }

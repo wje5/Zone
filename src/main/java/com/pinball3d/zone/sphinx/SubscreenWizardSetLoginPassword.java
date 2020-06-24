@@ -41,7 +41,7 @@ public class SubscreenWizardSetLoginPassword extends Subscreen {
 		components.add(new TextButton(this, this.x + 150, this.y + 175, I18n.format("sphinx.back"), new Runnable() {
 			@Override
 			public void run() {
-				parent.quitScreen(getScreen());
+				parent.quitScreen(SubscreenWizardSetLoginPassword.this);
 				parent.putScreen(new SubscreenWizardSetAdminPassword(parent));
 			}
 		}));
@@ -49,7 +49,7 @@ public class SubscreenWizardSetLoginPassword extends Subscreen {
 			@Override
 			public void run() {
 				if (box1.text.length() >= 4 && box2.text.length() == 8 && box2.text.equals(box3.text)) {
-					parent.quitScreen(getScreen());
+					parent.quitScreen(SubscreenWizardSetLoginPassword.this);
 					parent.putScreen(new SubscreenWizardFinish(parent, adminPassword, box1.text, box2.text));
 				}
 			}
@@ -57,7 +57,7 @@ public class SubscreenWizardSetLoginPassword extends Subscreen {
 		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), new Runnable() {
 			@Override
 			public void run() {
-				subscreens.push(new SubscreenQuitWizard(getScreen()));
+				subscreens.push(new SubscreenQuitWizard(SubscreenWizardSetLoginPassword.this));
 			}
 		}));
 	}
@@ -88,7 +88,7 @@ public class SubscreenWizardSetLoginPassword extends Subscreen {
 		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
 		parent.getFontRenderer().drawString(I18n.format("sphinx.sphinx_init_wizard"), x + 15, y + 8, 0xFF1ECCDE);
 		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
-		parent.getFontRenderer().drawString(I18n.format("sphinx.set_system_name"), x + 30, y + 35, 0xFF1ECCDE);
+		parent.getFontRenderer().drawString(I18n.format("sphinx.set_sphinx_name"), x + 30, y + 35, 0xFF1ECCDE);
 		parent.getFontRenderer().drawString(I18n.format("sphinx.set_login_password"), x + 30, y + 75, 0xFF1ECCDE);
 		parent.getFontRenderer().drawString(I18n.format("sphinx.confirm_login_password"), x + 30, y + 115, 0xFF1ECCDE);
 		if (box1.text.length() > 0 && box1.text.length() < 4) {

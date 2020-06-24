@@ -4,19 +4,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
-
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
 
-public class ScrollingListSphinxConfig extends Component {
+public class ScrollingList extends Component {
 	protected int length, lineHeight, scrollingDistance;
 	protected List<ListBar> list = new ArrayList<ListBar>();
 
-	public ScrollingListSphinxConfig(IParent parent, int x, int y, int width, int height) {
+	public ScrollingList(IParent parent, int x, int y, int width, int height) {
 		super(parent, x, y, width, height);
 		this.parent = parent;
 		this.lineHeight = 25;
+	}
+
+	public void addListBar(String name, Runnable onClick, int u, int v, int uWidth, int vHeight, float scale) {
+		list.add(new ListBar(width, lineHeight, name, onClick, u, v, uWidth, vHeight, scale));
+		length += lineHeight;
 	}
 
 	@Override
@@ -54,24 +57,31 @@ public class ScrollingListSphinxConfig extends Component {
 			ListBar bar = it.next();
 			yOffset += bar.height;
 			if (yOffset >= y + scrollingDistance && yOffset < y + scrollingDistance + bar.height) {
-				parent.putScreen(new SubscreenConnectToNetwork(parent, bar.tileentity, x + this.x - parent.getXOffset(),
-						y + this.y - parent.getYOffset()));
+				bar.event.run();
 				return;
 			}
 		}
 	}
 
 	public class ListBar {
-		protected TEProcessingCenter tileentity;
-		protected boolean selected;
+		protected String name;
 		protected int width;
 		protected int height;
+		protected Runnable event;
+		protected int u, v, uWidth, vHeight;
+		protected float scale;
 
-		public ListBar(TEProcessingCenter tileentity, boolean selected, int width, int height) {
-			this.tileentity = tileentity;
-			this.selected = selected;
+		public ListBar(int width, int height, String name, Runnable onClick, int u, int v, int uWidth, int vHeight,
+				float scale) {
 			this.width = width;
 			this.height = height;
+			this.name = name;
+			event = onClick;
+			this.u = u;
+			this.v = v;
+			this.uWidth = uWidth;
+			this.vHeight = vHeight;
+			this.scale = scale;
 		}
 
 		public void doRender(int x, int y, int upCut, int downCut, boolean flag) {
@@ -82,21 +92,15 @@ public class ScrollingListSphinxConfig extends Component {
 					Gui.drawRect(x, a, x + width, b, 0x4FFFFFFF);
 				}
 			}
-			y += 6;
-			upCut = upCut - 6 > 0 ? upCut - 6 : 0;
-			downCut = downCut - 6 > 0 ? downCut - 6 : 0;
-			Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/icons.png"), x + 7, y + upCut, 0,
-					16 + upCut * 2, 32, 26 - (upCut + downCut) * 2, 0.5F);
-			if (upCut < 4 && downCut < 4) {
-				parent.getFontRenderer().drawString(tileentity.getName(), x + 30, y + 3, 0xFF1ECCDE);
+			if (upCut < 10 && downCut < 10) {
+				parent.getFontRenderer().drawString(name, x + 30, y + 9, 0xFF1ECCDE);
 			}
-			if (selected) {
-				y += 2;
-				upCut = upCut - 2 > 0 ? upCut - 2 : 0;
-				downCut = downCut - 2 > 0 ? downCut - 2 : 0;
-				Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/icons.png"), x + 240, y + upCut, 0,
-						100 + upCut * 2, 24, 18 - (upCut + downCut) * 2, 0.5F);
-			}
+			int d = (int) ((height - (vHeight * scale)) / 2);
+			y += d;
+			upCut = upCut - d > 0 ? upCut - d : 0;
+			downCut = downCut - d > 0 ? downCut - d : 0;
+			Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/icons.png"), x + 7, y + upCut, u,
+					v + upCut * 2, uWidth, vHeight - (upCut + downCut) * 2, scale);
 
 		}
 	}

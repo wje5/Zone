@@ -20,27 +20,30 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageTerminalConnectToNetwork implements IMessage {
 	WorldPos network;
-	String name;
+	String name, password;
 
 	public MessageTerminalConnectToNetwork() {
 
 	}
 
-	public MessageTerminalConnectToNetwork(WorldPos network, String name) {
+	public MessageTerminalConnectToNetwork(WorldPos network, String name, String password) {
 		this.network = network;
 		this.name = name;
+		this.password = password;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		network = WorldPos.readFromByte(buf);
 		name = ByteBufUtils.readUTF8String(buf);
+		password = ByteBufUtils.readUTF8String(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		network.writeToByte(buf);
 		ByteBufUtils.writeUTF8String(buf, name);
+		ByteBufUtils.writeUTF8String(buf, password);
 	}
 
 	public static class Handler implements IMessageHandler<MessageTerminalConnectToNetwork, IMessage> {
@@ -71,6 +74,7 @@ public class MessageTerminalConnectToNetwork implements IMessage {
 								tag = new NBTTagCompound();
 							}
 							tag.setUniqueId("network", ((TEProcessingCenter) te).getUUID());
+							tag.setString("password", message.password);
 							stack.setTagCompound(tag);
 						}
 					}

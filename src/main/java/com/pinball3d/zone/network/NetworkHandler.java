@@ -25,6 +25,9 @@ public class NetworkHandler {
 				Side.CLIENT);
 		registerMessage(MessageRequestValidNetworks.Handler.class, MessageRequestValidNetworks.class, Side.SERVER);
 		registerMessage(MessageSendValidNetworkData.Handler.class, MessageSendValidNetworkData.class, Side.CLIENT);
+		registerMessage(MessageChangePassword.Handler.class, MessageChangePassword.class, Side.SERVER);
+		registerMessage(MessageChangeAdminPassword.Handler.class, MessageChangeAdminPassword.class, Side.SERVER);
+		registerMessage(MessageChangeName.Handler.class, MessageChangeName.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

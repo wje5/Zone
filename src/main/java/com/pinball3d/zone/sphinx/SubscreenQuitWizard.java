@@ -24,7 +24,7 @@ public class SubscreenQuitWizard extends Subscreen {
 		components.add(new TextButton(this, this.x + 120, this.y + 75, I18n.format("sphinx.no"), new Runnable() {
 			@Override
 			public void run() {
-				parent.quitScreen(getScreen());
+				parent.quitScreen(SubscreenQuitWizard.this);
 			}
 		}));
 	}
@@ -34,6 +34,5 @@ public class SubscreenQuitWizard extends Subscreen {
 		super.doRenderBackground(mouseX, mouseY);
 		Gui.drawRect(x, y, x + width, y + height, 0xAF282828);
 		Util.drawBorder(x, y, width, height, 1, 0xFF1ECCDE);
-//		parent.getFontRenderer().drawString(I18n.format("sphinx.connect_to_network", name), x + 35, y + 4, 0xFF1ECCDE);
 	}
 }

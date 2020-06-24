@@ -56,7 +56,7 @@ public class MessageWizardData implements IMessage {
 						return;
 					}
 					TileEntity te = message.pos.getTileEntity();
-					if (te instanceof TEProcessingCenter) {
+					if (te instanceof TEProcessingCenter && ((TEProcessingCenter) te).needInit()) {
 						((TEProcessingCenter) te).saveWizardData(message.adminPassword, message.name,
 								message.loginPassword);
 					}

@@ -26,7 +26,7 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 	@Override
 	public void update() {
 		markDirty();
-		if (!world.isRemote && worldpos == null) {
+		if (!world.isRemote && network != null && worldpos == null) {
 			worldpos = GlobalNetworkData.getData(world).getNetwork(network);
 			IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
 			world.notifyBlockUpdate(pos, state, state,
@@ -36,10 +36,8 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 			if (worldpos.getTileEntity() != null && !((TEProcessingCenter) worldpos.getTileEntity()).isOn()
 					&& !world.isRemote) {
 				((TEProcessingCenter) worldpos.getTileEntity()).removeNode(new WorldPos(pos, world));
-			}
-			network = null;
-			worldpos = null;
-			if (!world.isRemote) {
+				network = null;
+				worldpos = null;
 				IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
 				world.notifyBlockUpdate(pos, state, state,
 						Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
@@ -114,6 +112,7 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 		if (worldpos != null) {
 			worldpos.save(tag);
 		}
+		System.out.println(tag);
 		return tag;
 	}
 

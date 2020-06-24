@@ -133,10 +133,6 @@ public class Subscreen implements IParent {
 		}
 	}
 
-	public Subscreen getScreen() {
-		return this;
-	}
-
 	@Override
 	public int getWidth() {
 		return width;

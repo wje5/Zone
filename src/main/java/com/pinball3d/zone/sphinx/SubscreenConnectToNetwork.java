@@ -73,12 +73,13 @@ public class SubscreenConnectToNetwork extends Subscreen {
 						if (stack != ItemStack.EMPTY) {
 							WorldPos pos = new WorldPos(tileentity.getPos(), tileentity.getWorld());
 							NetworkHandler.instance
-									.sendToServer(new MessageTerminalConnectToNetwork(pos, mc.player.getName()));
+									.sendToServer(new MessageTerminalConnectToNetwork(pos, mc.player.getName(), input));
 							NBTTagCompound tag = stack.getTagCompound();
 							if (tag == null) {
 								tag = new NBTTagCompound();
 							}
 							tag.setUniqueId("network", tileentity.getUUID());
+							tag.setString("password", input);
 							stack.setTagCompound(tag);
 						} else {
 							INeedNetwork te = parent.getNeedNetworkTileEntity();

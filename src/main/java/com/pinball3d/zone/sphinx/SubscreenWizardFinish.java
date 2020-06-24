@@ -22,7 +22,7 @@ public class SubscreenWizardFinish extends Subscreen {
 		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.finish"), new Runnable() {
 			@Override
 			public void run() {
-				parent.quitScreen(getScreen());
+				parent.quitScreen(SubscreenWizardFinish.this);
 				TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
 				te.saveWizardData(adminPassword, name, loginPassword);
 				NetworkHandler.instance.sendToServer(new MessageWizardData(new WorldPos(te.getPos(), te.getWorld()),

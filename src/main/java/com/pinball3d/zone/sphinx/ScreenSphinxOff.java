@@ -17,7 +17,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
 public class ScreenSphinxOff extends GuiScreen implements IParent {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons_2.png");
+//	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons_2.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/sphinx.png");
 	private Set<Component> components = new HashSet<Component>();
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	private int lastMouseX, lastMouseY;
@@ -47,7 +48,7 @@ public class ScreenSphinxOff extends GuiScreen implements IParent {
 	}
 
 	private void applyComponents() {
-		components.add(new TexturedButton(this, width / 2 - 29, height / 2 - 32, TEXTURE, 0, 0, 232, 256, 0.25F,
+		components.add(new TexturedButton(this, width / 2 - 32, height / 2 - 25, TEXTURE, 0, 0, 255, 202, 0.25F,
 				new Runnable() {
 					@Override
 					public void run() {

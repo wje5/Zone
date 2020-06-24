@@ -134,10 +134,17 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			if (getNetwork().getDim() == mc.world.provider.getDimension()
 					&& getNetwork().getBlockState().getBlock() instanceof BlockProcessingCenter
 					&& ((TEProcessingCenter) (getNetwork().getTileEntity())).isOn()) {
-				return true;
-			} else {
-				resetNetwork();
+				NBTTagCompound tag = stack.getTagCompound();
+				if (tag == null) {
+					tag = new NBTTagCompound();
+					stack.setTagCompound(tag);
+				}
+				String password = tag.getString("password");
+				if (((TEProcessingCenter) (getNetwork().getTileEntity())).isCorrectLoginPassword(password)) {
+					return true;
+				}
 			}
+			resetNetwork();
 		}
 		return false;
 	}

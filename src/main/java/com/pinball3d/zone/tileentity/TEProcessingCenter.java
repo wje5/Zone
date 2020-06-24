@@ -86,6 +86,27 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		}
 	}
 
+	public void setAdminPassword(String password) {
+		if (password.length() == 8) {
+			adminPassword = password;
+			markDirty();
+		}
+	}
+
+	public void setPassword(String password) {
+		if (password.length() == 8) {
+			loginPassword = password;
+			markDirty();
+		}
+	}
+
+	public void setName(String name) {
+		if (name.length() >= 4) {
+			this.name = name;
+			markDirty();
+		}
+	}
+
 	public void addNode(WorldPos pos) {
 		nodes.forEach(e -> {
 			if (e.equals(pos)) {
@@ -93,10 +114,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			}
 		});
 		nodes.add(pos);
+		markDirty();
 	}
 
 	public void removeNode(WorldPos pos) {
 		nodes.remove(pos);
+		markDirty();
 	}
 
 	public Set<WorldPos> getNodes() {
@@ -109,6 +132,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 
 	public void setUUID(UUID uuid) {
 		this.uuid = uuid;
+		markDirty();
 	}
 
 	public boolean isPointInRange(int dim, double x, double y, double z) {
