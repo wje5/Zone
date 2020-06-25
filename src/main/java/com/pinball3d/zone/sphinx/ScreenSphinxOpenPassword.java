@@ -21,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	private static final ResourceLocation SPHINX = new ResourceLocation("zone:textures/gui/sphinx/sphinx.png");
 	private String input = "";
 	private boolean incorrect;
 	private Set<Component> components = new HashSet<Component>();
@@ -107,20 +108,37 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 		if (!checkTileentity()) {
 			return;
 		}
+		int xOffset = -64;
+		int yOffset = 30;
 		Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
-		Gui.drawRect(width / 2 - 64, height / 2 - 8, width / 2 + 64, height / 2 - 7, 0xFF20E6EF);
-		Gui.drawRect(width / 2 - 64, height / 2 + 7, width / 2 + 64, height / 2 + 8, 0xFF20E6EF);
-		Gui.drawRect(width / 2 - 64, height / 2 - 7, width / 2 - 63, height / 2 + 7, 0xFF20E6EF);
-		Gui.drawRect(width / 2 + 63, height / 2 - 7, width / 2 + 64, height / 2 + 7, 0xFF20E6EF);
+		Gui.drawRect(width / 2 + xOffset, height / 2 - 8 + yOffset, width / 2 + xOffset + 128, height / 2 - 7 + yOffset,
+				0xFF20E6EF);
+		Gui.drawRect(width / 2 + xOffset, height / 2 + 7 + yOffset, width / 2 + xOffset + 128, height / 2 + 8 + yOffset,
+				0xFF20E6EF);
+		Gui.drawRect(width / 2 + xOffset, height / 2 - 7 + yOffset, width / 2 + xOffset + 1, height / 2 + 7 + yOffset,
+				0xFF20E6EF);
+		Gui.drawRect(width / 2 + xOffset + 127, height / 2 - 7 + yOffset, width / 2 + xOffset + 128,
+				height / 2 + 7 + yOffset, 0xFF20E6EF);
+
+		int w = 30;
+		Gui.drawRect(width / 2 + 70, height / 2 - 8 + yOffset, width / 2 + 70 + w, height / 2 - 7 + yOffset,
+				0xFF20E6EF);
+		Gui.drawRect(width / 2 + 70, height / 2 + 7 + yOffset, width / 2 + 70 + w, height / 2 + 8 + yOffset,
+				0xFF20E6EF);
+		Gui.drawRect(width / 2 + 70, height / 2 - 7 + yOffset, width / 2 + 71, height / 2 + 7 + yOffset, 0xFF20E6EF);
+		Gui.drawRect(width / 2 + 69 + w, height / 2 - 7 + yOffset, width / 2 + 70 + w, height / 2 + 7 + yOffset,
+				0xFF20E6EF);
+		Util.drawTexture(SPHINX, width / 2 - 32, height / 2 - 45, 0, 0, 255, 202, 0.25F);
 		String text = I18n.format("sphinx.input_admin_password");
 		FontRenderer renderer = getFontRenderer();
-		renderer.drawString(text, width / 2 - renderer.getStringWidth(text) / 2, height / 2 - 20, 0xFF1ECCDE);
+		renderer.drawString(text, width / 2 - renderer.getStringWidth(text) / 2, height / 2 - 20 + yOffset, 0xFF1ECCDE);
 		if (incorrect && input.length() == 0) {
 			text = I18n.format("sphinx.password_incorrect");
-			renderer.drawString(text, width / 2 - renderer.getStringWidth(text) / 2, height / 2 - 4, 0xFF1ECCDE);
+			renderer.drawString(text, width / 2 - renderer.getStringWidth(text) / 2, height / 2 - 4 + yOffset,
+					0xFF1ECCDE);
 		} else {
 			for (int i = 0; i < input.length(); i++) {
-				Util.drawTexture(TEXTURE, width / 2 - 61 + i * 16, height / 2 - 5, 0, 118, 21, 21, 0.5F);
+				Util.drawTexture(TEXTURE, width / 2 - 61 + i * 16, height / 2 - 5 + yOffset, 0, 118, 21, 21, 0.5F);
 			}
 		}
 		components.forEach(e -> {
