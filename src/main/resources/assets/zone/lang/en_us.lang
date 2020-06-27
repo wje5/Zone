@@ -35,6 +35,7 @@ item.smoothing_unit.name=Smoothing Unit
 item.blaze_crystal.name=Blaze Crystal
 item.display_screen.name=Display Screen
 item.amplify_unit.name=Amplify Unit
+item.network_adapter.name=Network Adapter
 item.energy.name=Energy
 item.construct_block.name=Construct Block
 item.terminal.name=Terminal
@@ -114,6 +115,7 @@ tile.processing_center.name=Processing Center
 tile.truss.name=Truss
 tile.dynavolt_restrainer.name=Dynavolt Restrainer
 tile.transmission_module.name=Transmission Module
+tile.storage_panel.name=Storage Panel
 
 container.drainer=Drainer
 container.grinder=Grinder

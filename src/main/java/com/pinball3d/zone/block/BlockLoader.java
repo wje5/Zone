@@ -26,7 +26,7 @@ public class BlockLoader {
 			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light;
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
-			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module;
+			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module, storage_panel;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -65,6 +65,7 @@ public class BlockLoader {
 		register(registry, truss = new BlockTruss());
 		register(registry, dynavolt_restrainer = new BlockDynavoltRestrainer());
 		register(registry, transmission_module = new BlockTransmissionModule());
+		register(registry, storage_panel = new BlockStoragePanel());
 	}
 
 	private static void register(IForgeRegistry<Block> registry, Block block) {
@@ -101,6 +102,7 @@ public class BlockLoader {
 		registerItem(registry, truss);
 		registerItem(registry, dynavolt_restrainer);
 		registerItem(registry, transmission_module);
+		registerItem(registry, storage_panel);
 	}
 
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {

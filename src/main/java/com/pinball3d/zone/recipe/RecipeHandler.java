@@ -43,6 +43,8 @@ public class RecipeHandler {
 				200));
 		register(new RecipeGrinder(new ItemStack(Items.DIAMOND), new ItemStack(ItemLoader.tiny_pile_diamond_dust, 8),
 				200));
+		register(new RecipeGrinder(new ItemStack(Items.EMERALD), new ItemStack(ItemLoader.tiny_pile_emerald_dust, 8),
+				200));
 		register(new RecipeGrinder(new ItemStack(Items.COAL), new ItemStack(ItemLoader.tiny_pile_coal_dust, 8), 200));
 		register(new RecipeGrinder(new ItemStack(Items.DYE, 1, 4), new ItemStack(ItemLoader.tiny_pile_lapis_dust, 8),
 				200));

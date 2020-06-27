@@ -48,6 +48,7 @@ public class ScreenSphinxOff extends GuiScreen implements IParent {
 	}
 
 	private void applyComponents() {
+		components = new HashSet<Component>();
 		components.add(new TexturedButton(this, width / 2 - 32, height / 2 - 25, TEXTURE, 0, 0, 255, 202, 0.25F,
 				new Runnable() {
 					@Override

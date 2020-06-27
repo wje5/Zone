@@ -35,6 +35,7 @@ item.smoothing_unit.name=滤波元件
 item.blaze_crystal.name=烈焰水晶
 item.display_screen.name=显示屏
 item.amplify_unit.name=增幅元件
+item.network_adapter.name=网络适配器
 item.energy.name=能量
 item.construct_block.name=结构方块
 item.terminal.name=终端
@@ -114,6 +115,7 @@ tile.processing_center.name=处理中枢
 tile.truss.name=桁架
 tile.dynavolt_restrainer.name=涌流束能器
 tile.transmission_module.name=输导模块
+tile.storage_panel.name=仓储面板
 
 container.drainer=收集器
 container.grinder=研磨机

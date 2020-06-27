@@ -8,6 +8,7 @@ public class ItemCraftTool extends ZoneItem {
 		setMaxStackSize(1);
 		setMaxDamage(60);
 		setContainerItem(this);
+		setNoRepair();
 	}
 
 	@Override

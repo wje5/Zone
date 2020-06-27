@@ -71,6 +71,7 @@ public class ScreenNode extends GuiScreen implements IParent {
 	}
 
 	private void applyComponents() {
+		components = new HashSet<Component>();
 		components.add(new ButtonNetworkConfig(this, width - 10, 2, new Runnable() {
 			@Override
 			public void run() {

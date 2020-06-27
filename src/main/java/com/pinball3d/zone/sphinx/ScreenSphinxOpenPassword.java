@@ -55,7 +55,27 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	}
 
 	private void applyComponents() {
-
+		components = new HashSet<Component>();
+		components.add(new TexturedButton(this, width / 2 + 52, height / 2 + 22, TEXTURE, 32, 36, 60, 32, 0.5F,
+				new Runnable() {
+					@Override
+					public void run() {
+						if ((input.length() == 8 || input.length() == 0) && tileentity.isCorrectAdminPassword(input)) {
+							if (flag) {
+								NetworkHandler.instance.sendToServer(new MessageOpenSphinx(input,
+										new WorldPos(tileentity.getPos(), tileentity.getWorld()),
+										new NBTTagCompound()));
+								tileentity.open();
+								mc.displayGuiScreen(new ScreenLoadSphinx(tileentity));
+							} else {
+								mc.displayGuiScreen(new ScreenSphinxController(tileentity, input));
+							}
+						} else {
+							input = "";
+							incorrect = true;
+						}
+					}
+				}));
 	}
 
 	@Override
@@ -72,7 +92,7 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 					e.onKeyTyped(typedChar, keyCode);
 				});
 				if (keyCode == Keyboard.KEY_RETURN) {
-					if (input.length() == 8 && tileentity.isCorrectAdminPassword(input)) {
+					if ((input.length() == 8 || input.length() == 0) && tileentity.isCorrectAdminPassword(input)) {
 						if (flag) {
 							NetworkHandler.instance.sendToServer(new MessageOpenSphinx(input,
 									new WorldPos(tileentity.getPos(), tileentity.getWorld()), new NBTTagCompound()));
@@ -108,7 +128,7 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 		if (!checkTileentity()) {
 			return;
 		}
-		int xOffset = -64;
+		int xOffset = -82;
 		int yOffset = 30;
 		Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
 		Gui.drawRect(width / 2 + xOffset, height / 2 - 8 + yOffset, width / 2 + xOffset + 128, height / 2 - 7 + yOffset,
@@ -120,25 +140,27 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 		Gui.drawRect(width / 2 + xOffset + 127, height / 2 - 7 + yOffset, width / 2 + xOffset + 128,
 				height / 2 + 7 + yOffset, 0xFF20E6EF);
 
-		int w = 30;
-		Gui.drawRect(width / 2 + 70, height / 2 - 8 + yOffset, width / 2 + 70 + w, height / 2 - 7 + yOffset,
-				0xFF20E6EF);
-		Gui.drawRect(width / 2 + 70, height / 2 + 7 + yOffset, width / 2 + 70 + w, height / 2 + 8 + yOffset,
-				0xFF20E6EF);
-		Gui.drawRect(width / 2 + 70, height / 2 - 7 + yOffset, width / 2 + 71, height / 2 + 7 + yOffset, 0xFF20E6EF);
-		Gui.drawRect(width / 2 + 69 + w, height / 2 - 7 + yOffset, width / 2 + 70 + w, height / 2 + 7 + yOffset,
-				0xFF20E6EF);
+//		int w = 30;
+//		Gui.drawRect(width / 2 + xOffset + 134, height / 2 - 8 + yOffset, width / 2 + xOffset + 134 + w,
+//				height / 2 - 7 + yOffset, 0xFF20E6EF);
+//		Gui.drawRect(width / 2 + xOffset + 134, height / 2 + 7 + yOffset, width / 2 + xOffset + 134 + w,
+//				height / 2 + 8 + yOffset, 0xFF20E6EF);
+//		Gui.drawRect(width / 2 + xOffset + 134, height / 2 - 7 + yOffset, width / 2 + xOffset + 135,
+//				height / 2 + 7 + yOffset, 0xFF20E6EF);
+//		Gui.drawRect(width / 2 + xOffset + 133 + w, height / 2 - 7 + yOffset, width / 2 + xOffset + 134 + w,
+//				height / 2 + 7 + yOffset, 0xFF20E6EF);
 		Util.drawTexture(SPHINX, width / 2 - 32, height / 2 - 45, 0, 0, 255, 202, 0.25F);
 		String text = I18n.format("sphinx.input_admin_password");
 		FontRenderer renderer = getFontRenderer();
 		renderer.drawString(text, width / 2 - renderer.getStringWidth(text) / 2, height / 2 - 20 + yOffset, 0xFF1ECCDE);
 		if (incorrect && input.length() == 0) {
 			text = I18n.format("sphinx.password_incorrect");
-			renderer.drawString(text, width / 2 - renderer.getStringWidth(text) / 2, height / 2 - 4 + yOffset,
-					0xFF1ECCDE);
+			renderer.drawString(text, width / 2 - renderer.getStringWidth(text) / 2 + xOffset + 64,
+					height / 2 - 4 + yOffset, 0xFF1ECCDE);
 		} else {
 			for (int i = 0; i < input.length(); i++) {
-				Util.drawTexture(TEXTURE, width / 2 - 61 + i * 16, height / 2 - 5 + yOffset, 0, 118, 21, 21, 0.5F);
+				Util.drawTexture(TEXTURE, width / 2 + xOffset + 3 + i * 16, height / 2 - 5 + yOffset, 0, 118, 21, 21,
+						0.5F);
 			}
 		}
 		components.forEach(e -> {

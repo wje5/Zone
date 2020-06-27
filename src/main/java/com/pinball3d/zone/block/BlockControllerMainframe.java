@@ -2,8 +2,6 @@ package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.sphinx.ScreenLoadSphinx;
-import com.pinball3d.zone.sphinx.ScreenSphinxController;
-import com.pinball3d.zone.sphinx.ScreenSphinxOff;
 import com.pinball3d.zone.sphinx.ScreenSphinxOpenPassword;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
@@ -57,22 +55,20 @@ public class BlockControllerMainframe extends Block {
 		Minecraft mc = Minecraft.getMinecraft();
 		TEProcessingCenter te = (TEProcessingCenter) worldIn.getTileEntity(pos);
 		if (block == BlockLoader.processing_center) {
-			if (te.needInit()) {
-				mc.displayGuiScreen(new ScreenSphinxOff((TEProcessingCenter) worldIn.getTileEntity(pos)));
-			} else {
-				mc.displayGuiScreen(
-						new ScreenSphinxOpenPassword((TEProcessingCenter) worldIn.getTileEntity(pos), true));
-			}
+			mc.displayGuiScreen(new ScreenSphinxOpenPassword((TEProcessingCenter) worldIn.getTileEntity(pos), true));
 		} else {
 			if (te.isLoading()) {
 				mc.displayGuiScreen(new ScreenLoadSphinx((TEProcessingCenter) worldIn.getTileEntity(pos)));
-			} else if (te.needInit()) {
-				mc.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos), ""));
-			} else {
+			}
+//			else if (te.needInit()) {
+//				mc.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos), ""));
+//			}
+			else {
 				mc.displayGuiScreen(
 						new ScreenSphinxOpenPassword((TEProcessingCenter) worldIn.getTileEntity(pos), false));
 			}
 		}
+
 	}
 
 	@Override

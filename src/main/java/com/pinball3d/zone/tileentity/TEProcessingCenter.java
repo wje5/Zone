@@ -61,7 +61,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	}
 
 	public boolean isLoading() {
-		return blockType == BlockLoader.processing_center && loadTick > 0;
+		return loadTick > 0;
 	}
 
 	public int getLoadTick() {
