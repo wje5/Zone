@@ -28,6 +28,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	private String loginPassword = "";
 	private int loadTick;
 	private Set<WorldPos> nodes = new HashSet<WorldPos>();
+	private Set<WorldPos> storages = new HashSet<WorldPos>();
 	private UUID uuid;
 
 	public TEProcessingCenter() {
@@ -194,7 +195,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		loginPassword = compound.getString("loginPassword");
 		loadTick = compound.getInteger("loadTick");
 		on = compound.getBoolean("on");
-		NBTTagList list = compound.getTagList("nodes", 9);
+		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
 			nodes.add(WorldPos.load((NBTTagCompound) e));
 		});
@@ -216,6 +217,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		nodes.forEach(e -> {
 			list.appendTag(e.save(new NBTTagCompound()));
 		});
+		compound.setTag("nodes", list);
 		if (uuid != null) {
 			compound.setUniqueId("uuid", uuid);
 		}

@@ -14,11 +14,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.util.Constants;
 
-public class TENode extends TileEntity implements ITickable, INeedNetwork {
+public class TEStoragePanel extends TileEntity implements ITickable, INeedNetwork {
 	private WorldPos worldpos;
 	private UUID network;
 
-	public TENode() {
+	public TEStoragePanel() {
 
 	}
 

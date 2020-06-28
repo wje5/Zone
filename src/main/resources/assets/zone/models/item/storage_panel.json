@@ -1,3 +1,6 @@
 {
-    "parent": "zone:block/storage_panel"
+    "parent": "builtin/generated",
+    "textures": {
+        "layer0": "zone:blocks/storage_panel"
+    }
 }
