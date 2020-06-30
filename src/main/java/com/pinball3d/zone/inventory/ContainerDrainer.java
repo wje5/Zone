@@ -1,6 +1,5 @@
 package com.pinball3d.zone.inventory;
 
-import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.tileentity.TEDrainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +22,7 @@ public class ContainerDrainer extends Container {
 		addSlotToContainer(new SlotItemHandler(energy, 0, 80, 30) {
 			@Override
 			public boolean isItemValid(ItemStack stack) {
-				return stack.getItem() == ItemLoader.energy;
+				return false;
 			}
 		});
 		for (int i = 0; i < 3; ++i) {

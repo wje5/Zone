@@ -8,8 +8,8 @@ import net.minecraft.block.material.Material;
 public class BlockReinforcedStone extends Block {
 	public BlockReinforcedStone() {
 		super(Material.ROCK);
-		setHardness(3.5F);
-		setResistance(7.0F);
+		setHardness(35F);
+		setResistance(100.0F);
 		setRegistryName("zone:reinforced_stone");
 		setUnlocalizedName("reinforced_stone");
 		setCreativeTab(TabZone.tab);

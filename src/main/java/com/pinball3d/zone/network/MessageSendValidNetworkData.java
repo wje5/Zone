@@ -3,7 +3,7 @@ package com.pinball3d.zone.network;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pinball3d.zone.sphinx.ScreenNode;
+import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
 import com.pinball3d.zone.sphinx.ScreenTerminal;
 import com.pinball3d.zone.sphinx.SubscreenNetworkConfig;
 import com.pinball3d.zone.sphinx.WorldPos;
@@ -64,11 +64,10 @@ public class MessageSendValidNetworkData implements IMessage {
 							((SubscreenNetworkConfig) terminal.subscreens.get(0)).list.setData(message.list);
 						}
 					}
-					if (screen instanceof ScreenNode) {
-						ScreenNode terminal = (ScreenNode) screen;
-						if (!terminal.subscreens.empty()
-								&& terminal.subscreens.get(0) instanceof SubscreenNetworkConfig) {
-							((SubscreenNetworkConfig) terminal.subscreens.get(0)).list.setData(message.list);
+					if (screen instanceof ScreenNeedNetwork) {
+						ScreenNeedNetwork s = (ScreenNeedNetwork) screen;
+						if (!s.subscreens.empty() && s.subscreens.get(0) instanceof SubscreenNetworkConfig) {
+							((SubscreenNetworkConfig) s.subscreens.get(0)).list.setData(message.list);
 						}
 					}
 				}

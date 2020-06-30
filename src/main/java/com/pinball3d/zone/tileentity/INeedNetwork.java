@@ -12,4 +12,6 @@ public interface INeedNetwork {
 	public void setWorldPos(WorldPos pos, UUID uuid);
 
 	public WorldPos getNetworkPos();
+
+	public boolean isConnected();
 }

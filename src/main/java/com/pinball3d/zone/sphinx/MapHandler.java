@@ -24,9 +24,7 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber
 public class MapHandler {
 	private static BufferBuilder bufferbuilder;
 	private int xOffset, yOffset;

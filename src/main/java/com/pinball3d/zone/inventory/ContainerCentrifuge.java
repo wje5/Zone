@@ -33,9 +33,24 @@ public class ContainerCentrifuge extends Container {
 			}
 		});
 		addSlotToContainer(new SlotItemHandler(input, 0, 39, 17));
-		addSlotToContainer(new SlotItemHandler(output, 0, 95, 35));
-		addSlotToContainer(new SlotItemHandler(output, 1, 113, 35));
-		addSlotToContainer(new SlotItemHandler(output, 2, 131, 35));
+		addSlotToContainer(new SlotItemHandler(output, 0, 95, 35) {
+			@Override
+			public boolean isItemValid(ItemStack stack) {
+				return false;
+			}
+		});
+		addSlotToContainer(new SlotItemHandler(output, 1, 113, 35) {
+			@Override
+			public boolean isItemValid(ItemStack stack) {
+				return false;
+			}
+		});
+		addSlotToContainer(new SlotItemHandler(output, 2, 131, 35) {
+			@Override
+			public boolean isItemValid(ItemStack stack) {
+				return false;
+			}
+		});
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));

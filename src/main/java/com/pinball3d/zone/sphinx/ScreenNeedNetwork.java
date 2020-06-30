@@ -9,7 +9,6 @@ import java.util.Stack;
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.tileentity.INeedNetwork;
-import com.pinball3d.zone.tileentity.TENode;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -18,19 +17,18 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
-public class ScreenNode extends GuiScreen implements IParent {
+public class ScreenNeedNetwork extends GuiScreen implements IParent {
 	private static BufferBuilder bufferbuilder;
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
-	private PointerPlayer pointerPlayer;
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");
 	private Set<Component> components = new HashSet<Component>();
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
-	public TENode tileentity;
+	public INeedNetwork tileentity;
 
-	public ScreenNode(TENode te) {
+	public ScreenNeedNetwork(INeedNetwork te) {
 		tileentity = te;
 	}
 
@@ -75,7 +73,7 @@ public class ScreenNode extends GuiScreen implements IParent {
 		components.add(new ButtonNetworkConfig(this, width - 10, 2, new Runnable() {
 			@Override
 			public void run() {
-				subscreens.push(new SubscreenNetworkConfig((ScreenNode) mc.currentScreen));
+				subscreens.push(new SubscreenNetworkConfig((ScreenNeedNetwork) mc.currentScreen));
 			}
 		}, false));
 	}

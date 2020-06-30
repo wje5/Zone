@@ -8,8 +8,8 @@ public class ButtonNetworkConfig extends TexturedButton {
 
 	public ButtonNetworkConfig(IParent parent, int x, int y, Runnable onClick, boolean flag) {
 		super(parent, x, y, TEXTURE, 0, 16, 32,
-				(flag ? ((ScreenTerminal) parent).isConnected() : ((ScreenNode) parent).isConnected()) ? 26 : 32, 0.25F,
-				onClick);
+				(flag ? ((ScreenTerminal) parent).isConnected() : ((ScreenNeedNetwork) parent).isConnected()) ? 26 : 32,
+				0.25F, onClick);
 		this.flag = flag;
 	}
 
@@ -19,7 +19,7 @@ public class ButtonNetworkConfig extends TexturedButton {
 		if (flag) {
 			connected = ((ScreenTerminal) parent).isConnected();
 		} else {
-			connected = ((ScreenNode) parent).isConnected();
+			connected = ((ScreenNeedNetwork) parent).isConnected();
 		}
 		Util.drawTexture(texture, x, y, width, connected ? 6 : 8, connected ? 0 : 84, connected ? 16 : 0, uWidth,
 				connected ? 26 : 32);

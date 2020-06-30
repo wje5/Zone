@@ -34,7 +34,7 @@ public class ScrollingListNetwork extends Component {
 		if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
 			worldpos = ((ScreenTerminal) ((SubscreenNetworkConfig) parent).parent).worldpos;
 		} else {
-			worldpos = ((ScreenNode) ((SubscreenNetworkConfig) parent).parent).tileentity.getNetworkPos();
+			worldpos = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity.getNetworkPos();
 		}
 		List<WorldPos> temp = new ArrayList<WorldPos>();
 		data.forEach(e -> {
@@ -62,7 +62,7 @@ public class ScrollingListNetwork extends Component {
 		if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
 			worldpos = ((ScreenTerminal) ((SubscreenNetworkConfig) parent).parent).worldpos;
 		} else {
-			worldpos = ((ScreenNode) ((SubscreenNetworkConfig) parent).parent).tileentity.getNetworkPos();
+			worldpos = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity.getNetworkPos();
 		}
 		data.forEach(e -> {
 			list.add(new ListBar((TEProcessingCenter) e.getTileEntity(),

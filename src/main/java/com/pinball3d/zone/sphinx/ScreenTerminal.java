@@ -32,8 +32,6 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	private static BufferBuilder bufferbuilder;
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
-	private PointerPlayer pointerPlayer;
-	private Map<Integer, PointerLiving> livings = new HashMap<Integer, PointerLiving>();
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");

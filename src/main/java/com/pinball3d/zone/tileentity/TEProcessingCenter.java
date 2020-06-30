@@ -182,9 +182,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	}
 
 	public void updateDevice() {
-		nodes.forEach(e -> {
-			// TODO
-		});
+		Iterator<WorldPos> it = nodes.iterator();
+		while (it.hasNext()) {
+			WorldPos pos = it.next();
+			if (pos.getBlockState().getBlock() != BlockLoader.node) {
+				it.remove();
+			}
+		}
 	}
 
 	@Override

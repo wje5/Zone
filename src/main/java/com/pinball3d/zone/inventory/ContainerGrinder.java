@@ -33,7 +33,12 @@ public class ContainerGrinder extends Container {
 			}
 		});
 		addSlotToContainer(new SlotItemHandler(input, 0, 56, 17));
-		addSlotToContainer(new SlotItemHandler(output, 0, 116, 35));
+		addSlotToContainer(new SlotItemHandler(output, 0, 116, 35) {
+			@Override
+			public boolean isItemValid(ItemStack stack) {
+				return false;
+			}
+		});
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
