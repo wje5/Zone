@@ -28,6 +28,7 @@ public class NetworkHandler {
 		registerMessage(MessageChangePassword.Handler.class, MessageChangePassword.class, Side.SERVER);
 		registerMessage(MessageChangeAdminPassword.Handler.class, MessageChangeAdminPassword.class, Side.SERVER);
 		registerMessage(MessageChangeName.Handler.class, MessageChangeName.class, Side.SERVER);
+		registerMessage(MessageOpenIOPanelGui.Handler.class, MessageOpenIOPanelGui.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

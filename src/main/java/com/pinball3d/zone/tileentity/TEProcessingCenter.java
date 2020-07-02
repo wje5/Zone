@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.sphinx.IDevice;
 import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.WorldPos;
 
@@ -125,11 +126,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				return;
 			}
 		});
-		if (pos.getTileEntity() instanceof TENode) {
+		TileEntity te = pos.getTileEntity();
+		if (te instanceof TENode) {
 			nodes.add(pos);
-		} else if (pos.getTileEntity() instanceof IStorable) {
+		} else if (te instanceof IStorable) {
 			storages.add(pos);
-		} else {
+		} else if (te instanceof IDevice) {
 			devices.add(pos);
 		}
 		markDirty();
@@ -221,6 +223,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				it.remove();
 			}
 		}
+		it = devices.iterator();
+		while (it.hasNext()) {
+			WorldPos pos = it.next();
+			if (!(pos.getTileEntity() instanceof IDevice)) {
+				it.remove();
+			}
+		}
 	}
 
 	@Override
@@ -234,6 +243,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
 			nodes.add(WorldPos.load((NBTTagCompound) e));
+		});
+		list = compound.getTagList("storges", 10);
+		list.forEach(e -> {
+			storages.add(WorldPos.load((NBTTagCompound) e));
+		});
+		list = compound.getTagList("devices", 10);
+		list.forEach(e -> {
+			devices.add(WorldPos.load((NBTTagCompound) e));
 		});
 		if (compound.hasKey("uuidMost")) {
 			uuid = compound.getUniqueId("uuid");
@@ -249,11 +266,21 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		compound.setString("loginPassword", loginPassword);
 		compound.setInteger("loadTick", loadTick);
 		compound.setBoolean("on", on);
-		NBTTagList list = new NBTTagList();
+		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {
-			list.appendTag(e.save(new NBTTagCompound()));
+			nodeList.appendTag(e.save(new NBTTagCompound()));
 		});
-		compound.setTag("nodes", list);
+		compound.setTag("nodes", nodeList);
+		NBTTagList storgeList = new NBTTagList();
+		storages.forEach(e -> {
+			storgeList.appendTag(e.save(new NBTTagCompound()));
+		});
+		compound.setTag("storges", storgeList);
+		NBTTagList deviceList = new NBTTagList();
+		devices.forEach(e -> {
+			deviceList.appendTag(e.save(new NBTTagCompound()));
+		});
+		compound.setTag("devices", deviceList);
 		if (uuid != null) {
 			compound.setUniqueId("uuid", uuid);
 		}

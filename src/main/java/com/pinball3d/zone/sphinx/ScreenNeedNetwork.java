@@ -21,10 +21,10 @@ public class ScreenNeedNetwork extends GuiScreen implements IParent {
 	private static BufferBuilder bufferbuilder;
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
-	private static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
+	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	public static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");
-	private Set<Component> components = new HashSet<Component>();
+	protected Set<Component> components = new HashSet<Component>();
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	public INeedNetwork tileentity;
 
@@ -68,7 +68,7 @@ public class ScreenNeedNetwork extends GuiScreen implements IParent {
 		}
 	}
 
-	private void applyComponents() {
+	protected void applyComponents() {
 		components = new HashSet<Component>();
 		components.add(new ButtonNetworkConfig(this, width - 10, 2, new Runnable() {
 			@Override

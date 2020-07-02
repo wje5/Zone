@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.sphinx.IDevice;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
@@ -19,7 +20,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable {
+public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, IDevice {
 	private WorldPos worldpos;
 	private UUID network;
 	private IItemHandler inv;
