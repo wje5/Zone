@@ -1,7 +1,6 @@
 package com.pinball3d.zone.inventory;
 
-import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.tileentity.TETransmissionModule;
+import com.pinball3d.zone.tileentity.TEIOPanel;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -13,31 +12,25 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ContainerTransmissionModule extends Container {
-	private IItemHandler energy;
-	protected TETransmissionModule tileEntity;
+public class ContainerIOPanel extends Container {
+	private IItemHandler inv;
+	protected TEIOPanel tileEntity;
 
-	public ContainerTransmissionModule(EntityPlayer player, TileEntity tileEntity) {
-		this.tileEntity = (TETransmissionModule) tileEntity;
-		energy = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 3; ++j) {
-				addSlotToContainer(new SlotItemHandler(energy, j + i * 3, 62 + j * 18, 17 + i * 18) {
-					@Override
-					public boolean isItemValid(ItemStack stack) {
-						return stack.getItem() == ItemLoader.energy;
-					}
-				});
+	public ContainerIOPanel(EntityPlayer player, TileEntity tileEntity) {
+		this.tileEntity = (TEIOPanel) tileEntity;
+		inv = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+		for (int i = 0; i < 6; ++i) {
+			for (int j = 0; j < 9; ++j) {
+				addSlotToContainer(new SlotItemHandler(inv, j + i * 9, 8 + j * 19, 10 + i * 19));
 			}
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
-				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 19, 129 + i * 19));
 			}
 		}
-
 		for (int i = 0; i < 9; ++i) {
-			addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 142));
+			addSlotToContainer(new Slot(player.inventory, i, 8 + i * 19, 189));
 		}
 	}
 
@@ -49,15 +42,15 @@ public class ContainerTransmissionModule extends Container {
 		}
 		ItemStack newStack = slot.getStack(), oldStack = newStack.copy();
 		boolean isMerged = false;
-		if (index <= 8) {
-			isMerged = mergeItemStack(newStack, 9, 45, true);
-		} else if (index >= 9 && index < 36) {
-			isMerged = mergeItemStack(newStack, 0, 9, false);
+		if (index <= 53) {
+			isMerged = mergeItemStack(newStack, 54, 90, true);
+		} else if (index >= 54 && index < 81) {
+			isMerged = mergeItemStack(newStack, 0, 54, false);
 			if (!isMerged) {
-				isMerged = mergeItemStack(newStack, 36, 45, false);
+				isMerged = mergeItemStack(newStack, 81, 90, false);
 			}
-		} else if (index >= 36) {
-			isMerged = mergeItemStack(newStack, 0, 36, false);
+		} else if (index >= 81) {
+			isMerged = mergeItemStack(newStack, 0, 81, false);
 		}
 		if (!isMerged) {
 			return ItemStack.EMPTY;

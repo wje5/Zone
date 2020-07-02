@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "zone:io_panel" },
+        "facing=south": { "model": "zone:io_panel", "y": 180 },
+        "facing=west":  { "model": "zone:io_panel", "y": 270 },
+        "facing=east":  { "model": "zone:io_panel", "y": 90 }
+    }
+}

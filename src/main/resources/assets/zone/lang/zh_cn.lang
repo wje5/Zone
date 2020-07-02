@@ -117,6 +117,7 @@ tile.dynavolt_restrainer.name=涌流束能器
 tile.transmission_module.name=输导模块
 tile.storage_panel.name=仓储面板
 tile.storage_chest.name=存储箱
+tile.io_panel.name=IO面板
 
 container.drainer=收集器
 container.grinder=研磨机

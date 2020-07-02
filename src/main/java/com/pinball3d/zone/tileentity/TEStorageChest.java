@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
@@ -19,7 +20,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class TEStorageChest extends TileEntity implements INeedNetwork, ITickable {
+public class TEStorageChest extends TileEntity implements INeedNetwork, ITickable, IStorable {
 	private WorldPos worldpos;
 	private UUID network;
 	private IItemHandler inv;
@@ -41,7 +42,7 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 		if (worldpos != null) {
 			if (worldpos.getTileEntity() != null && !((TEProcessingCenter) worldpos.getTileEntity()).isOn()
 					&& !world.isRemote) {
-				((TEProcessingCenter) worldpos.getTileEntity()).removeNode(new WorldPos(pos, world));
+				((TEProcessingCenter) worldpos.getTileEntity()).removeNeedNetwork(new WorldPos(pos, world));
 				network = null;
 				worldpos = null;
 				IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());

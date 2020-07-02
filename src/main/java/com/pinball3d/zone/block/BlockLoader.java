@@ -27,7 +27,7 @@ public class BlockLoader {
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module, storage_panel,
-			storage_chest;
+			storage_chest, io_panel;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -68,6 +68,7 @@ public class BlockLoader {
 		register(registry, transmission_module = new BlockTransmissionModule());
 		register(registry, storage_panel = new BlockStoragePanel());
 		register(registry, storage_chest = new BlockStorageChest());
+		register(registry, io_panel = new BlockIOPanel());
 	}
 
 	private static void register(IForgeRegistry<Block> registry, Block block) {
@@ -106,6 +107,7 @@ public class BlockLoader {
 		registerItem(registry, transmission_module);
 		registerItem(registry, storage_panel);
 		registerItem(registry, storage_chest);
+		registerItem(registry, io_panel);
 	}
 
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {

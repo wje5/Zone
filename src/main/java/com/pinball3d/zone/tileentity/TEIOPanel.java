@@ -11,15 +11,22 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
-public class TEStoragePanel extends TileEntity implements ITickable, INeedNetwork {
+public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable {
 	private WorldPos worldpos;
 	private UUID network;
+	private IItemHandler inv;
 
-	public TEStoragePanel() {
-
+	public TEIOPanel() {
+		super();
+		inv = new ItemStackHandler(54);
 	}
 
 	@Override
@@ -45,50 +52,19 @@ public class TEStoragePanel extends TileEntity implements ITickable, INeedNetwor
 	}
 
 	@Override
-	public UUID getNetwork() {
-		return network;
-	}
-
-	@Override
-	public boolean isConnected() {
-		if (getNetworkPos() != null) {
-			if (getNetworkPos().getBlockState().getBlock() instanceof BlockProcessingCenter) {
-				return true;
-			} else {
-				resetNetwork();
-			}
-		}
-		return false;
-	}
-
-	public void resetNetwork() {
-		network = null;
-		worldpos = null;
-	}
-
-	@Override
-	public WorldPos getNetworkPos() {
-		return worldpos;
-	}
-
-	@Override
-	public void setWorldPos(WorldPos pos, UUID uuid) {
-		if (uuid.equals(network)) {
-			worldpos = pos;
-			if (worldpos == null) {
-				resetNetwork();
-			}
-		}
-	}
-
-	public boolean isPointInRange(int dim, double x, double y, double z) {
-		if (world.provider.getDimension() != dim) {
-			return false;
-		}
-		if (Math.sqrt(pos.distanceSq(x, y, z)) < 25) {
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
 			return true;
 		}
-		return false;
+		return super.hasCapability(capability, facing);
+	}
+
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
+			return (T) inv;
+		}
+		return super.getCapability(capability, facing);
 	}
 
 	@Override
@@ -147,5 +123,42 @@ public class TEStoragePanel extends TileEntity implements ITickable, INeedNetwor
 	@Override
 	public void connect(UUID uuid) {
 		network = uuid;
+	}
+
+	@Override
+	public UUID getNetwork() {
+		return network;
+	}
+
+	@Override
+	public void setWorldPos(WorldPos pos, UUID uuid) {
+		if (uuid.equals(network)) {
+			worldpos = pos;
+			if (worldpos == null) {
+				resetNetwork();
+			}
+		}
+	}
+
+	@Override
+	public WorldPos getNetworkPos() {
+		return worldpos;
+	}
+
+	public void resetNetwork() {
+		network = null;
+		worldpos = null;
+	}
+
+	@Override
+	public boolean isConnected() {
+		if (getNetworkPos() != null) {
+			if (getNetworkPos().getBlockState().getBlock() instanceof BlockProcessingCenter) {
+				return true;
+			} else {
+				resetNetwork();
+			}
+		}
+		return false;
 	}
 }

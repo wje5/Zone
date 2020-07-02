@@ -117,6 +117,7 @@ tile.dynavolt_restrainer.name=Dynavolt Restrainer
 tile.transmission_module.name=Transmission Module
 tile.storage_panel.name=Storage Panel
 tile.storage_chest.name=Storage Chest
+tile.io_panel.name=IO Panel
 
 container.drainer=Drainer
 container.grinder=Grinder

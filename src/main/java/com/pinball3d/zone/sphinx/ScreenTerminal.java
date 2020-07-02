@@ -132,7 +132,9 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 		if (getNetwork() != null) {
 			if (getNetwork().getDim() == mc.world.provider.getDimension()
 					&& getNetwork().getBlockState().getBlock() instanceof BlockProcessingCenter
-					&& ((TEProcessingCenter) (getNetwork().getTileEntity())).isOn()) {
+					&& ((TEProcessingCenter) (getNetwork().getTileEntity())).isOn()
+					&& ((TEProcessingCenter) (getNetwork().getTileEntity())).isPointInRange(
+							mc.world.provider.getDimension(), mc.player.posX, mc.player.posY, mc.player.posZ)) {
 				NBTTagCompound tag = stack.getTagCompound();
 				if (tag == null) {
 					tag = new NBTTagCompound();

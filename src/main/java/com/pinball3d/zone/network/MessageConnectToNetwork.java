@@ -57,7 +57,7 @@ public class MessageConnectToNetwork implements IMessage {
 					if (te instanceof INeedNetwork && te2 instanceof TEProcessingCenter) {
 						UUID uuid = GlobalNetworkData.getData(world).getUUID(message.network);
 						((INeedNetwork) te).connect(uuid);
-						((TEProcessingCenter) te2).addNode(message.needNetwork);
+						((TEProcessingCenter) te2).addNeedNetwork(message.needNetwork);
 					}
 				}
 			});

@@ -32,6 +32,8 @@ public class MapHandler {
 	private Map<Integer, PointerLiving> livings;
 	private PointerProcessingCenter processingCenter;
 	private Set<PointerNode> nodes;
+	private Set<PointerStorage> storges;
+	private Set<PointerDevice> devices;
 	public WorldPos network;
 	private int dim;
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
@@ -49,6 +51,8 @@ public class MapHandler {
 		dim = mc.player.world.provider.getDimension();
 		processingCenter = new PointerProcessingCenter(network.getPos().getX(), network.getPos().getZ());
 		nodes = new HashSet<PointerNode>();
+		storges = new HashSet<PointerStorage>();
+		devices = new HashSet<PointerDevice>();
 	}
 
 	private boolean checkNetwork(WorldPos network) {
@@ -83,6 +87,7 @@ public class MapHandler {
 		BlockPos pos = mc.player.getPosition();
 		pointerPlayer.x = pos.getX();
 		pointerPlayer.z = pos.getZ();
+		pointerPlayer.angle = mc.player.rotationYaw;
 		int temp = mc.player.world.provider.getDimension();
 		if (temp != dim) {
 			xOffset = pos.getX();
@@ -122,9 +127,8 @@ public class MapHandler {
 			BlockPos pos = network.getPos();
 			processingCenter.x = pos.getX();
 			processingCenter.z = pos.getZ();
-			processingCenter.valid = true;
 		} else {
-			processingCenter.valid = false;
+			processingCenter = null;
 		}
 	}
 
@@ -136,6 +140,22 @@ public class MapHandler {
 			if (e.getDim() == mc.player.dimension) {
 				BlockPos pos = e.getPos();
 				nodes.add(new PointerNode(pos.getX(), pos.getZ()));
+			}
+		});
+		set = te.getStorages();
+		storges = new HashSet<PointerStorage>();
+		set.forEach(e -> {
+			if (e.getDim() == mc.player.dimension) {
+				BlockPos pos = e.getPos();
+				storges.add(new PointerStorage(pos.getX(), pos.getZ()));
+			}
+		});
+		set = te.getDevices();
+		devices = new HashSet<PointerDevice>();
+		set.forEach(e -> {
+			if (e.getDim() == mc.player.dimension) {
+				BlockPos pos = e.getPos();
+				devices.add(new PointerDevice(pos.getX(), pos.getZ()));
 			}
 		});
 	}
@@ -223,9 +243,17 @@ public class MapHandler {
 			PointerLiving pointer = it.next();
 			pointer.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		}
-		processingCenter.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+		if (processingCenter != null) {
+			processingCenter.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+		}
 		pointerPlayer.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		nodes.forEach(e -> {
+			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+		});
+		storges.forEach(e -> {
+			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+		});
+		devices.forEach(e -> {
 			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		});
 		GlStateManager.popMatrix();

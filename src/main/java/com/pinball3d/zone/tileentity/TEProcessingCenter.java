@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
@@ -29,6 +29,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	private int loadTick;
 	private Set<WorldPos> nodes = new HashSet<WorldPos>();
 	private Set<WorldPos> storages = new HashSet<WorldPos>();
+	private Set<WorldPos> devices = new HashSet<WorldPos>();
 	private UUID uuid;
 
 	public TEProcessingCenter() {
@@ -108,23 +109,49 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		}
 	}
 
-	public void addNode(WorldPos pos) {
+	public void addNeedNetwork(WorldPos pos) {
 		nodes.forEach(e -> {
 			if (e.equals(pos)) {
 				return;
 			}
 		});
-		nodes.add(pos);
+		storages.forEach(e -> {
+			if (e.equals(pos)) {
+				return;
+			}
+		});
+		devices.forEach(e -> {
+			if (e.equals(pos)) {
+				return;
+			}
+		});
+		if (pos.getTileEntity() instanceof TENode) {
+			nodes.add(pos);
+		} else if (pos.getTileEntity() instanceof IStorable) {
+			storages.add(pos);
+		} else {
+			devices.add(pos);
+		}
 		markDirty();
 	}
 
-	public void removeNode(WorldPos pos) {
+	public void removeNeedNetwork(WorldPos pos) {
 		nodes.remove(pos);
+		storages.remove(pos);
+		devices.remove(pos);
 		markDirty();
 	}
 
 	public Set<WorldPos> getNodes() {
 		return nodes;
+	}
+
+	public Set<WorldPos> getStorages() {
+		return storages;
+	}
+
+	public Set<WorldPos> getDevices() {
+		return devices;
 	}
 
 	public UUID getUUID() {
@@ -143,8 +170,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		if (Math.sqrt(pos.distanceSq(x, y, z)) < 25) {
 			return true;
 		}
-		Consumer<WorldPos> k = e -> {
-		};
 		Iterator<WorldPos> it = nodes.iterator();
 		while (it.hasNext()) {
 			if (((TENode) it.next().getTileEntity()).isPointInRange(dim, x, y, z)) {
@@ -186,6 +211,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		while (it.hasNext()) {
 			WorldPos pos = it.next();
 			if (pos.getBlockState().getBlock() != BlockLoader.node) {
+				it.remove();
+			}
+		}
+		it = storages.iterator();
+		while (it.hasNext()) {
+			WorldPos pos = it.next();
+			if (!(pos.getTileEntity() instanceof IStorable)) {
 				it.remove();
 			}
 		}
