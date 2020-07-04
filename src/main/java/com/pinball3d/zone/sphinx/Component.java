@@ -5,8 +5,8 @@ import net.minecraft.client.Minecraft;
 public class Component {
 	public static Minecraft mc = Minecraft.getMinecraft();
 	public int x, y;
-	protected int width, height;
-	protected IParent parent;
+	public int width, height;
+	public IParent parent;
 
 	public Component(IParent parent, int x, int y, int width, int height) {
 		this.parent = parent;

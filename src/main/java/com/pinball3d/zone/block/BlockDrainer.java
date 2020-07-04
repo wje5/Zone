@@ -45,7 +45,7 @@ public class BlockDrainer extends BlockContainer {
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		TEDrainer te = (TEDrainer) worldIn.getTileEntity(pos);
 
-		IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+		IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
 
 		for (int i = handler.getSlots() - 1; i >= 0; --i) {
 			if (handler.getStackInSlot(i) != null) {

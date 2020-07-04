@@ -12,7 +12,11 @@ public class TextInputBox extends Component {
 	public boolean isFocus;
 
 	public TextInputBox(IParent parent, int x, int y, int width, int maxLength, Runnable onClick) {
-		super(parent, x, y, width, 13);
+		this(parent, x, y, width, 13, maxLength, onClick);
+	}
+
+	public TextInputBox(IParent parent, int x, int y, int width, int height, int maxLength, Runnable onClick) {
+		super(parent, x, y, width, height);
 		this.x = x;
 		this.y = y;
 		this.maxLength = maxLength;

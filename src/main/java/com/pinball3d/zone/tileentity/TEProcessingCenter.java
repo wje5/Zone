@@ -48,6 +48,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void shutdown() {
 		on = false;
 		BlockProcessingCenter.setState(false, world, pos);
+		loadTick = 0;
 		markDirty();
 	}
 
@@ -72,7 +73,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	}
 
 	public void open() {
-		if (blockType == BlockLoader.processing_center && loadTick <= 0) {
+		if (!on && loadTick <= 0) {
 			loadTick = 256;
 			BlockProcessingCenter.setState(true, world, pos);
 			markDirty();
@@ -202,10 +203,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				on = true;
 			}
 		}
+		updateDevice();
 		if (!on) {
 			return;
 		}
-		updateDevice();
 	}
 
 	public void updateDevice() {

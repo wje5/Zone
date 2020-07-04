@@ -238,11 +238,11 @@ public class MapHandler {
 	private void drawPointer(int width, int height) {
 		GlStateManager.pushMatrix();
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		Iterator<PointerLiving> it = livings.values().iterator();
-		while (it.hasNext()) {
-			PointerLiving pointer = it.next();
-			pointer.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
-		}
+//		Iterator<PointerLiving> it = livings.values().iterator();
+//		while (it.hasNext()) {
+//			PointerLiving pointer = it.next();
+//			pointer.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+//		}
 		if (processingCenter != null) {
 			processingCenter.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		}

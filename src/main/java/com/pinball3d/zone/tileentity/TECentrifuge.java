@@ -84,6 +84,14 @@ public class TECentrifuge extends ZoneMachine {
 	}
 
 	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
+			return true;
+		}
+		return super.hasCapability(capability, facing);
+	}
+
+	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
 			switch (facing) {

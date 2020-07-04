@@ -15,7 +15,7 @@ public class ScreenIOPanel extends ScreenNeedNetwork {
 	@Override
 	protected void applyComponents() {
 		super.applyComponents();
-		components.add(new TexturedButton(this, width - 20, 2, TEXTURE, 149, 0, 13, 13, 0.5F, new Runnable() {
+		components.add(new TexturedButton(this, width - 20, 2, TEXTURE, 32, 68, 32, 32, 0.25F, new Runnable() {
 			@Override
 			public void run() {
 				BlockPos pos = ((TileEntity) tileentity).getPos();

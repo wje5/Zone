@@ -23,11 +23,12 @@ import net.minecraftforge.items.ItemStackHandler;
 public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, IDevice {
 	private WorldPos worldpos;
 	private UUID network;
-	private IItemHandler inv;
+	private IItemHandler inv, global;
 
 	public TEIOPanel() {
 		super();
 		inv = new ItemStackHandler(54);
+		global = new ItemStackHandler(36);
 	}
 
 	@Override
@@ -50,6 +51,10 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 						Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
 			}
 		}
+	}
+
+	public IItemHandler getGlobalInv() {
+		return global;
 	}
 
 	@Override

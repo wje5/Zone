@@ -13,24 +13,40 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class ContainerIOPanel extends Container {
-	private IItemHandler inv;
+	private IItemHandler inv, global;
 	protected TEIOPanel tileEntity;
 
 	public ContainerIOPanel(EntityPlayer player, TileEntity tileEntity) {
 		this.tileEntity = (TEIOPanel) tileEntity;
 		inv = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+		global = this.tileEntity.getGlobalInv();
 		for (int i = 0; i < 6; ++i) {
 			for (int j = 0; j < 9; ++j) {
-				addSlotToContainer(new SlotItemHandler(inv, j + i * 9, 8 + j * 19, 10 + i * 19));
+				addSlotToContainer(new SlotItemHandler(inv, j + i * 9, 54 + j * 19, 10 + i * 19));
+			}
+		}
+		for (int i = 0; i < 9; ++i) {
+			for (int j = 0; j < 4; ++j) {
+				addSlotToContainer(new SlotItemHandler(global, j + i * 4, j * 19 - 38, 29 + i * 19) {
+					@Override
+					public boolean isItemValid(ItemStack stack) {
+						return false;
+					}
+
+					@Override
+					public boolean canTakeStack(EntityPlayer playerIn) {
+						return false;
+					}
+				});
 			}
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
-				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 19, 129 + i * 19));
+				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 54 + j * 19, 129 + i * 19));
 			}
 		}
 		for (int i = 0; i < 9; ++i) {
-			addSlotToContainer(new Slot(player.inventory, i, 8 + i * 19, 189));
+			addSlotToContainer(new Slot(player.inventory, i, 54 + i * 19, 189));
 		}
 	}
 
