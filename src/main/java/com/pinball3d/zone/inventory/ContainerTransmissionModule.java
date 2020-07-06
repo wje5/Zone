@@ -19,7 +19,7 @@ public class ContainerTransmissionModule extends Container {
 
 	public ContainerTransmissionModule(EntityPlayer player, TileEntity tileEntity) {
 		this.tileEntity = (TETransmissionModule) tileEntity;
-		energy = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+		energy = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
 				addSlotToContainer(new SlotItemHandler(energy, j + i * 3, 62 + j * 18, 17 + i * 18) {

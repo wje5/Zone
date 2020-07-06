@@ -41,7 +41,6 @@ public class ZoneMachine extends TileEntity implements ITickable {
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		compound.setTag("energy", energy.serializeNBT());
-
 		return compound;
 	}
 
@@ -63,9 +62,25 @@ public class ZoneMachine extends TileEntity implements ITickable {
 
 	public boolean tryUseEnergy(boolean simulate) {
 		for (int i = 0; i < energy.getSlots(); i++) {
-			if (energy.getStackInSlot(0).getItem() == ItemLoader.energy
+			if (energy.getStackInSlot(i).getItem() == ItemLoader.energy
 					&& !energy.extractItem(i, 1, simulate).isEmpty()) {
 				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean tryUseEnergy(int amount, boolean simulate) {
+		if (!simulate && !tryUseEnergy(amount, true)) {
+			return false;
+		}
+		for (int i = 0; i < energy.getSlots(); i++) {
+			if (energy.getStackInSlot(i).getItem() == ItemLoader.energy) {
+				ItemStack stack = energy.extractItem(i, amount, simulate);
+				amount -= stack.getCount();
+				if (amount <= 0) {
+					return true;
+				}
 			}
 		}
 		return false;

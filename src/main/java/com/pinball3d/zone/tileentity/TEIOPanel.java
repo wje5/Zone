@@ -1,13 +1,17 @@
 package com.pinball3d.zone.tileentity;
 
+import java.util.Iterator;
 import java.util.UUID;
 
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.IDevice;
+import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -49,6 +53,29 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 				IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
 				world.notifyBlockUpdate(pos, state, state,
 						Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+			}
+		}
+		if (!world.isRemote) {
+			updateGlobalStorges();
+		}
+	}
+
+	public void updateGlobalStorges() {
+		if (worldpos != null) {
+			StorageWrapper wrapper = ((TEProcessingCenter) worldpos.getTileEntity()).getNetworkUseableItems();
+			global = new ItemStackHandler(36);
+			int index = 0;
+			Iterator<HugeItemStack> it = wrapper.storges.iterator();
+			while (it.hasNext()) {
+				ItemStack stack = it.next().stack.copy();
+				stack.setCount(1);
+				global.insertItem(index++, stack, false);
+			}
+			Iterator<ItemStack> it2 = wrapper.other.iterator();
+			while (it2.hasNext()) {
+				ItemStack stack = it2.next().copy();
+				stack.setCount(1);
+				global.insertItem(index++, stack, false);// TODO
 			}
 		}
 	}

@@ -27,10 +27,14 @@ public class ScreenLoadSphinx extends GuiScreen {
 			return;
 		}
 		if (!tileentity.isLoading()) {
-			if (tileentity.needInit()) {
-				mc.displayGuiScreen(new ScreenSphinxController(tileentity, ""));
+			if (tileentity.isOn()) {
+				if (tileentity.needInit()) {
+					mc.displayGuiScreen(new ScreenSphinxController(tileentity, ""));
+				} else {
+					mc.displayGuiScreen(new ScreenSphinxOpenPassword(tileentity, false));
+				}
 			} else {
-				mc.displayGuiScreen(new ScreenSphinxOpenPassword(tileentity, false));
+				mc.displayGuiScreen(null);
 			}
 			return;
 		}

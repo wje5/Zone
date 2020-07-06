@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.IStorable;
+import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
@@ -17,13 +18,12 @@ import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class TEStorageChest extends TileEntity implements INeedNetwork, ITickable, IStorable {
 	private WorldPos worldpos;
 	private UUID network;
-	private IItemHandler inv;
+	private ItemStackHandler inv;
 
 	public TEStorageChest() {
 		super();
@@ -73,6 +73,7 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 		if (compound.hasKey("networkMost")) {
 			network = compound.getUniqueId("network");
 		}
+		inv.deserializeNBT(compound.getCompoundTag("inv"));
 		super.readFromNBT(compound);
 	}
 
@@ -81,6 +82,7 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 		if (network != null) {
 			compound.setUniqueId("network", network);
 		}
+		compound.setTag("inv", inv.serializeNBT());
 		return super.writeToNBT(compound);
 
 	}
@@ -161,5 +163,10 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public StorageWrapper getStorges() {
+		return new StorageWrapper(inv);
 	}
 }

@@ -80,6 +80,21 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	}
 
 	@Override
+	protected void renderHoveredToolTip(int p_191948_1_, int p_191948_2_) {
+		GlStateManager.pushMatrix();
+		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
+		GlStateManager.disableBlend();
+		GlStateManager.translate(0, 0, 250);
+		fontRenderer.drawStringWithShadow("1111111111111111", 0, 100, 0xFFFFFFFF);
+		GlStateManager.enableLighting();
+		GlStateManager.enableDepth();
+		GlStateManager.enableBlend();
+		GlStateManager.popMatrix();
+		super.renderHoveredToolTip(p_191948_1_, p_191948_2_);
+	}
+
+	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);

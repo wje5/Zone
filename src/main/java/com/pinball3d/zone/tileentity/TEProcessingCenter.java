@@ -10,6 +10,7 @@ import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.IDevice;
 import com.pinball3d.zone.sphinx.IStorable;
+import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
@@ -19,6 +20,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 public class TEProcessingCenter extends TileEntity implements ITickable {
@@ -28,6 +30,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	private String adminPassword = "";
 	private String loginPassword = "";
 	private int loadTick;
+	private int energyTick;
 	private Set<WorldPos> nodes = new HashSet<WorldPos>();
 	private Set<WorldPos> storages = new HashSet<WorldPos>();
 	private Set<WorldPos> devices = new HashSet<WorldPos>();
@@ -49,6 +52,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		on = false;
 		BlockProcessingCenter.setState(false, world, pos);
 		loadTick = 0;
+		energyTick = 0;
 		markDirty();
 	}
 
@@ -182,6 +186,25 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		return false;
 	}
 
+	public boolean consumeEnergy(int amount) {
+		BlockPos p = pos.add(0, -3, 0);
+		if (world.getBlockState(p).getBlock() == BlockLoader.transmission_module) {
+			return ((TETransmissionModule) world.getTileEntity(p)).tryUseEnergy(amount, false);
+		}
+		return false;
+	}
+
+	public StorageWrapper getNetworkUseableItems() {
+		StorageWrapper wrapper = new StorageWrapper();
+		storages.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (te instanceof IStorable) {
+				wrapper.merge(((IStorable) te).getStorges());
+			}
+		});
+		return wrapper;
+	}
+
 	@Override
 	public void update() {
 		markDirty();
@@ -197,16 +220,30 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 						Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
 			}
 		}
+		updateDevice();
 		if (loadTick > 0) {
-			loadTick--;
-			if (loadTick == 0) {
-				on = true;
+			if (consumeEnergy(1)) {
+				loadTick--;
+				if (loadTick == 0) {
+					on = true;
+				}
+			} else {
+				shutdown();
 			}
 		}
-		updateDevice();
 		if (!on) {
 			return;
 		}
+		while (energyTick <= 0) {
+			if (consumeEnergy(1)) {
+				energyTick += 10;
+			} else {
+				shutdown();
+				break;
+			}
+		}
+		energyTick--;
+
 	}
 
 	public void updateDevice() {
@@ -240,6 +277,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		adminPassword = compound.getString("adminPassword");
 		loginPassword = compound.getString("loginPassword");
 		loadTick = compound.getInteger("loadTick");
+		energyTick = compound.getInteger("energyTick");
 		on = compound.getBoolean("on");
 		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
@@ -266,6 +304,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		compound.setString("adminPassword", adminPassword);
 		compound.setString("loginPassword", loginPassword);
 		compound.setInteger("loadTick", loadTick);
+		compound.setInteger("energyTick", energyTick);
 		compound.setBoolean("on", on);
 		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {

@@ -91,6 +91,10 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 		if (!checkTileentity()) {
 			return;
 		}
+		if (!tileentity.isOn()) {
+			mc.displayGuiScreen(null);
+			return;
+		}
 		MapHandler.draw(new WorldPos(tileentity.getPos(), tileentity.getWorld()), width, height);
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);
