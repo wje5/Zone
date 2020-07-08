@@ -7,6 +7,8 @@ import java.util.TreeSet;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.items.IItemHandler;
 
 public class StorageWrapper {
@@ -123,5 +125,32 @@ public class StorageWrapper {
 	@Override
 	public String toString() {
 		return "SW{storges:" + storges + " other:" + other + "}";
+	}
+
+	public void readFromNBT(NBTTagCompound tag) {
+		NBTTagList storgelist = tag.getTagList("storges", 10);
+		storges.clear();
+		storgelist.forEach(e -> {
+			storges.add(new HugeItemStack((NBTTagCompound) e));
+		});
+		NBTTagList otherlist = tag.getTagList("other", 10);
+		other.clear();
+		otherlist.forEach(e -> {
+			other.add(new ItemStack((NBTTagCompound) e));
+		});
+	}
+
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		NBTTagList storgelist = new NBTTagList();
+		storges.forEach(e -> {
+			storgelist.appendTag(e.writeToNBT(new NBTTagCompound()));
+		});
+		tag.setTag("storges", storgelist);
+		NBTTagList otherlist = new NBTTagList();
+		other.forEach(e -> {
+			otherlist.appendTag(e.writeToNBT(new NBTTagCompound()));
+		});
+		tag.setTag("other", otherlist);
+		return tag;
 	}
 }

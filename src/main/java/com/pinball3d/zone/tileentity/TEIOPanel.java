@@ -28,6 +28,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 	private WorldPos worldpos;
 	private UUID network;
 	private IItemHandler inv, global;
+	public StorageWrapper storges = new StorageWrapper();
 
 	public TEIOPanel() {
 		super();
@@ -75,8 +76,13 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 			while (it2.hasNext()) {
 				ItemStack stack = it2.next().copy();
 				stack.setCount(1);
-				global.insertItem(index++, stack, false);// TODO
+				global.insertItem(index++, stack, false);
 			}
+			storges = wrapper;
+			markDirty();
+			IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
+			world.notifyBlockUpdate(pos, state, state,
+					Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
 		}
 	}
 
@@ -121,6 +127,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		if (worldpos != null) {
 			worldpos.save(tag);
 		}
+		tag.setTag("storges", storges.writeToNBT(new NBTTagCompound()));
 		return tag;
 	}
 
@@ -130,6 +137,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		} else {
 			worldpos = null;
 		}
+		storges.readFromNBT(tag.getCompoundTag("storges"));
 	}
 
 	@Override
@@ -156,6 +164,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 	@Override
 	public void connect(UUID uuid) {
 		network = uuid;
+		markDirty();
 	}
 
 	@Override
@@ -181,6 +190,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 	public void resetNetwork() {
 		network = null;
 		worldpos = null;
+		markDirty();
 	}
 
 	@Override

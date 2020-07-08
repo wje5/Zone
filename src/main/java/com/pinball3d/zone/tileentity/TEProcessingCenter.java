@@ -48,12 +48,19 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		return on;
 	}
 
+	public void callUpdate() {
+		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
+		world.notifyBlockUpdate(pos, state, state,
+				Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+	}
+
 	public void shutdown() {
 		on = false;
 		BlockProcessingCenter.setState(false, world, pos);
 		loadTick = 0;
 		energyTick = 0;
 		markDirty();
+		callUpdate();
 	}
 
 	public String getName() {
@@ -81,6 +88,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			loadTick = 256;
 			BlockProcessingCenter.setState(true, world, pos);
 			markDirty();
+			callUpdate();
 		}
 	}
 
@@ -90,6 +98,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			this.name = name;
 			this.loginPassword = loginPassword;
 			init = true;
+			callUpdate();
 			markDirty();
 		}
 	}
@@ -97,6 +106,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void setAdminPassword(String password) {
 		if (password.length() == 8) {
 			adminPassword = password;
+			callUpdate();
 			markDirty();
 		}
 	}
@@ -104,6 +114,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void setPassword(String password) {
 		if (password.length() == 8) {
 			loginPassword = password;
+			callUpdate();
 			markDirty();
 		}
 	}
@@ -111,6 +122,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void setName(String name) {
 		if (name.length() >= 4) {
 			this.name = name;
+			callUpdate();
 			markDirty();
 		}
 	}
@@ -139,6 +151,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		} else if (te instanceof IDevice) {
 			devices.add(pos);
 		}
+		callUpdate();
 		markDirty();
 	}
 
@@ -146,6 +159,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		nodes.remove(pos);
 		storages.remove(pos);
 		devices.remove(pos);
+		callUpdate();
 		markDirty();
 	}
 
@@ -168,6 +182,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void setUUID(UUID uuid) {
 		this.uuid = uuid;
 		markDirty();
+		callUpdate();
 	}
 
 	public boolean isPointInRange(int dim, double x, double y, double z) {
@@ -208,6 +223,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	@Override
 	public void update() {
 		markDirty();
+		if (world.isRemote) {
+			if (loadTick > 0) {
+				loadTick--;
+			}
+			return;
+		}
 		if (!((BlockProcessingCenter) blockType).isFullStructure(world, pos)) {
 			shutdown();
 			return;
@@ -215,9 +236,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		if (uuid == null) {
 			if (!world.isRemote) {
 				setUUID(GlobalNetworkData.getData(world).getUUID(new WorldPos(getPos(), world)));
-				IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
-				world.notifyBlockUpdate(pos, state, state,
-						Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+				callUpdate();
 			}
 		}
 		updateDevice();
@@ -226,6 +245,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				loadTick--;
 				if (loadTick == 0) {
 					on = true;
+					callUpdate();
 				}
 			} else {
 				shutdown();
@@ -354,5 +374,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void handleUpdateTag(NBTTagCompound tag) {
 		readFromNBT(tag);
 		readNetworkData(tag);
+		System.out.println(tag);
 	}
 }

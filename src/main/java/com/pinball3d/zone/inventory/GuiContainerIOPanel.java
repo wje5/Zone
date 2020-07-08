@@ -9,6 +9,7 @@ import java.util.Stack;
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.sphinx.Component;
+import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.IParent;
 import com.pinball3d.zone.sphinx.MapHandler;
 import com.pinball3d.zone.sphinx.ScreenIOPanel;
@@ -79,19 +80,52 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		}
 	}
 
+	public static String transferString(int count) {
+		if (count < 1000) {
+			return String.valueOf(count);
+		}
+		if (count < 100000) {
+			return (count / 1000) + "K";
+		}
+		if (count < 1000000) {
+			return "<1M";
+		}
+		if (count < 100000000) {
+			return (count / 1000000) + "M";
+		}
+		if (count < 1000000000) {
+			return "<1G";
+		}
+		return (count / 1000000000) + "G";
+	}
+
 	@Override
 	protected void renderHoveredToolTip(int p_191948_1_, int p_191948_2_) {
+		int offsetX = (width - 184) / 2 - 46, offsetY = (height - ySize) / 2;
 		GlStateManager.pushMatrix();
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
 		GlStateManager.disableBlend();
 		GlStateManager.translate(0, 0, 250);
-		fontRenderer.drawStringWithShadow("1111111111111111", 0, 100, 0xFFFFFFFF);
+		int i = 0;
+		Iterator<HugeItemStack> it = container.tileEntity.storges.storges.iterator();
+		while (it.hasNext()) {
+			HugeItemStack hugestack = it.next();
+			int count = hugestack.count;
+			if (count != 1) {
+				String text = transferString((int) Math.pow(2, count));
+				int x = (i % 4) * 19 - 38 + offsetX;
+				int y = (i / 4) * 19 + 29 + offsetY;
+				fontRenderer.drawStringWithShadow(text, x + 17 - fontRenderer.getStringWidth(text), y + 9, 0xFFFFFFFF);
+			}
+			i++;
+		}
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
 		GlStateManager.popMatrix();
 		super.renderHoveredToolTip(p_191948_1_, p_191948_2_);
+		System.out.println();
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class ContainerIOPanel extends Container {
-	private IItemHandler inv, global;
+	public IItemHandler inv, global;
 	protected TEIOPanel tileEntity;
 
 	public ContainerIOPanel(EntityPlayer player, TileEntity tileEntity) {

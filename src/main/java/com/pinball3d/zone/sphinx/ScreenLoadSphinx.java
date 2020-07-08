@@ -1,7 +1,9 @@
 package com.pinball3d.zone.sphinx;
 
+import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
@@ -18,6 +20,12 @@ public class ScreenLoadSphinx extends GuiScreen {
 			mc.displayGuiScreen(null);
 			return false;
 		}
+		if (tileentity.isInvalid()) {
+			if (Minecraft.getMinecraft().world.getBlockState(tileentity.getPos())
+					.getBlock() instanceof BlockProcessingCenter) {
+				tileentity = (TEProcessingCenter) Minecraft.getMinecraft().world.getTileEntity(tileentity.getPos());
+			}
+		}
 		return true;
 	}
 
@@ -26,6 +34,7 @@ public class ScreenLoadSphinx extends GuiScreen {
 		if (!checkTileentity()) {
 			return;
 		}
+		System.out.println(tileentity.getLoadTick());
 		if (!tileentity.isLoading()) {
 			if (tileentity.isOn()) {
 				if (tileentity.needInit()) {
