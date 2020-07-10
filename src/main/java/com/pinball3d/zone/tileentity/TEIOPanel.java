@@ -29,6 +29,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 	private UUID network;
 	private IItemHandler inv, global;
 	public StorageWrapper storges = new StorageWrapper();
+	public int page = 1;
 
 	public TEIOPanel() {
 		super();
@@ -36,24 +37,40 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		global = new ItemStackHandler(36);
 	}
 
+	public void callUpdate() {
+		markDirty();
+		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
+		world.notifyBlockUpdate(pos, state, state,
+				Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+	}
+
+	public void pageUp() {
+		if (page > 1) {
+			page--;
+			callUpdate();
+		}
+	}
+
+	public void pageDown() {
+		int maxpage = (storges.storges.size() + storges.other.size() - 1) / 36 + 1;
+		if (page < maxpage) {
+			page++;
+			callUpdate();
+		}
+	}
+
 	@Override
 	public void update() {
 		markDirty();
 		if (!world.isRemote && network != null && worldpos == null) {
 			worldpos = GlobalNetworkData.getData(world).getNetwork(network);
-			IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
-			world.notifyBlockUpdate(pos, state, state,
-					Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+			callUpdate();
 		}
 		if (worldpos != null) {
 			if (worldpos.getTileEntity() != null && !((TEProcessingCenter) worldpos.getTileEntity()).isOn()
 					&& !world.isRemote) {
 				((TEProcessingCenter) worldpos.getTileEntity()).removeNeedNetwork(new WorldPos(pos, world));
-				network = null;
-				worldpos = null;
-				IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
-				world.notifyBlockUpdate(pos, state, state,
-						Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+				disconnect();
 			}
 		}
 		if (!world.isRemote) {
@@ -63,26 +80,55 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 
 	public void updateGlobalStorges() {
 		if (worldpos != null) {
+			int maxpage = (storges.storges.size() + storges.other.size() - 1) / 36 + 1;
 			StorageWrapper wrapper = ((TEProcessingCenter) worldpos.getTileEntity()).getNetworkUseableItems();
-			global = new ItemStackHandler(36);
+			for (int i = 0; i < 36; i++) {
+				global.extractItem(i, 64, false);
+			}
 			int index = 0;
+			int offset = (page - 1) * 36;
 			Iterator<HugeItemStack> it = wrapper.storges.iterator();
 			while (it.hasNext()) {
+				if (offset > 0) {
+					offset--;
+					it.next();
+					continue;
+				}
 				ItemStack stack = it.next().stack.copy();
 				stack.setCount(1);
-				global.insertItem(index++, stack, false);
+				if (index < 36) {
+					global.insertItem(index, stack, false);
+				}
+				index++;
 			}
 			Iterator<ItemStack> it2 = wrapper.other.iterator();
 			while (it2.hasNext()) {
+				if (offset > 0) {
+					offset--;
+					it2.next();
+					continue;
+				}
 				ItemStack stack = it2.next().copy();
 				stack.setCount(1);
-				global.insertItem(index++, stack, false);
+				if (index < 36) {
+					global.insertItem(index, stack, false);
+				}
+				index++;
 			}
 			storges = wrapper;
 			markDirty();
-			IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
-			world.notifyBlockUpdate(pos, state, state,
-					Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+			if ((storges.storges.size() + storges.other.size() - 1) / 36 + 1 != maxpage) {
+				callUpdate();
+			}
+		}
+		int maxpage = (storges.storges.size() + storges.other.size() - 1) / 36 + 1;
+		if (page > maxpage) {
+			page = maxpage;
+			callUpdate();
+		}
+		if (page < 1) {
+			page = 1;
+			callUpdate();
 		}
 	}
 
@@ -111,6 +157,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		if (compound.hasKey("networkMost")) {
 			network = compound.getUniqueId("network");
 		}
+		page = compound.getInteger("page");
 		super.readFromNBT(compound);
 	}
 
@@ -119,6 +166,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		if (network != null) {
 			compound.setUniqueId("network", network);
 		}
+		compound.setInteger("page", page);
 		return super.writeToNBT(compound);
 
 	}
@@ -177,7 +225,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		if (uuid.equals(network)) {
 			worldpos = pos;
 			if (worldpos == null) {
-				resetNetwork();
+				disconnect();
 			}
 		}
 	}
@@ -187,10 +235,12 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		return worldpos;
 	}
 
-	public void resetNetwork() {
+	@Override
+	public void disconnect() {
 		network = null;
 		worldpos = null;
 		markDirty();
+		callUpdate();
 	}
 
 	@Override
@@ -199,7 +249,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 			if (getNetworkPos().getBlockState().getBlock() instanceof BlockProcessingCenter) {
 				return true;
 			} else {
-				resetNetwork();
+				disconnect();
 			}
 		}
 		return false;

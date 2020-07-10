@@ -10,16 +10,18 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class ContainerIOPanel extends Container {
+
 	public IItemHandler inv, global;
 	protected TEIOPanel tileEntity;
 
 	public ContainerIOPanel(EntityPlayer player, TileEntity tileEntity) {
 		this.tileEntity = (TEIOPanel) tileEntity;
 		inv = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-		global = this.tileEntity.getGlobalInv();
+		global = new ItemStackHandler(36);
 		for (int i = 0; i < 6; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				addSlotToContainer(new SlotItemHandler(inv, j + i * 9, 54 + j * 19, 10 + i * 19));

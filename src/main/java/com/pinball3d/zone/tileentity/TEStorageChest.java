@@ -33,23 +33,25 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 	@Override
 	public void update() {
 		markDirty();
-		if (!world.isRemote && network != null && worldpos == null) {
+		if (world.isRemote) {
+			return;
+		}
+		if (network != null && worldpos == null) {
 			worldpos = GlobalNetworkData.getData(world).getNetwork(network);
-			IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
-			world.notifyBlockUpdate(pos, state, state,
-					Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+			callUpdate();
 		}
 		if (worldpos != null) {
-			if (worldpos.getTileEntity() != null && !((TEProcessingCenter) worldpos.getTileEntity()).isOn()
-					&& !world.isRemote) {
+			if (worldpos.getTileEntity() != null && !((TEProcessingCenter) worldpos.getTileEntity()).isOn()) {
 				((TEProcessingCenter) worldpos.getTileEntity()).removeNeedNetwork(new WorldPos(pos, world));
-				network = null;
-				worldpos = null;
-				IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
-				world.notifyBlockUpdate(pos, state, state,
-						Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+				disconnect();
 			}
 		}
+	}
+
+	public void callUpdate() {
+		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
+		world.notifyBlockUpdate(pos, state, state,
+				Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
 	}
 
 	@Override
@@ -138,8 +140,9 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 		if (uuid.equals(network)) {
 			worldpos = pos;
 			if (worldpos == null) {
-				resetNetwork();
+				disconnect();
 			}
+			markDirty();
 		}
 	}
 
@@ -148,9 +151,12 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 		return worldpos;
 	}
 
-	public void resetNetwork() {
+	@Override
+	public void disconnect() {
 		network = null;
 		worldpos = null;
+		markDirty();
+		callUpdate();
 	}
 
 	@Override
@@ -159,7 +165,7 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 			if (getNetworkPos().getBlockState().getBlock() instanceof BlockProcessingCenter) {
 				return true;
 			} else {
-				resetNetwork();
+				disconnect();
 			}
 		}
 		return false;

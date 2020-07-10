@@ -22,14 +22,18 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 
 	}
 
+	public void callUpdate() {
+		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
+		world.notifyBlockUpdate(pos, state, state,
+				Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+	}
+
 	@Override
 	public void update() {
 		markDirty();
 		if (!world.isRemote && network != null && worldpos == null) {
 			worldpos = GlobalNetworkData.getData(world).getNetwork(network);
-			IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
-			world.notifyBlockUpdate(pos, state, state,
-					Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+			callUpdate();
 		}
 		if (worldpos != null) {
 			if (worldpos.getTileEntity() != null && !((TEProcessingCenter) worldpos.getTileEntity()).isOn()
@@ -37,9 +41,7 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 				((TEProcessingCenter) worldpos.getTileEntity()).removeNeedNetwork(new WorldPos(pos, world));
 				network = null;
 				worldpos = null;
-				IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
-				world.notifyBlockUpdate(pos, state, state,
-						Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+				callUpdate();
 			}
 		}
 	}
@@ -55,15 +57,18 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 			if (getNetworkPos().getBlockState().getBlock() instanceof BlockProcessingCenter) {
 				return true;
 			} else {
-				resetNetwork();
+				disconnect();
 			}
 		}
 		return false;
 	}
 
-	public void resetNetwork() {
+	@Override
+	public void disconnect() {
 		network = null;
 		worldpos = null;
+		markDirty();
+		callUpdate();
 	}
 
 	@Override
@@ -76,8 +81,9 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 		if (uuid.equals(network)) {
 			worldpos = pos;
 			if (worldpos == null) {
-				resetNetwork();
+				disconnect();
 			}
+			markDirty();
 		}
 	}
 
@@ -147,5 +153,6 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 	@Override
 	public void connect(UUID uuid) {
 		network = uuid;
+		markDirty();
 	}
 }

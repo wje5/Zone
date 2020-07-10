@@ -21,6 +21,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 public class TEProcessingCenter extends TileEntity implements ITickable {
@@ -49,6 +50,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	}
 
 	public void callUpdate() {
+		markDirty();
 		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
 		world.notifyBlockUpdate(pos, state, state,
 				Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
@@ -201,6 +203,24 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		return false;
 	}
 
+	public boolean isDeviceInRange(World world, BlockPos pos) {
+		if (this.world.provider.getDimension() != world.provider.getDimension()) {
+			return false;
+		}
+		if (Math.sqrt(this.pos.distanceSq(pos.getX(), pos.getY(), pos.getZ())) < 25) {
+			return true;
+		}
+		Iterator<WorldPos> it = nodes.iterator();
+		while (it.hasNext()) {
+			TENode te = (TENode) it.next().getTileEntity();
+			if (!te.getPos().equals(pos)
+					&& te.isPointInRange(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean consumeEnergy(int amount) {
 		BlockPos p = pos.add(0, -3, 0);
 		if (world.getBlockState(p).getBlock() == BlockLoader.transmission_module) {
@@ -218,6 +238,77 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			}
 		});
 		return wrapper;
+	}
+
+	public void updateNode() {
+		boolean flag = false;
+		Set<WorldPos> temp = new HashSet<WorldPos>();
+		do {
+			Iterator<WorldPos> it = nodes.iterator();
+			while (it.hasNext()) {
+				flag = false;
+				WorldPos i = it.next();
+				if (i == null || i.getBlockState().getBlock() != BlockLoader.node) {
+					continue;
+				}
+				if (!temp.contains(i) && i.getDim() == world.provider.getDimension()) {
+					if (Math.sqrt(pos.distanceSq(i.getPos().getX(), i.getPos().getY(), i.getPos().getZ())) < 25) {
+						flag = true;
+						temp.add(i);
+					} else {
+						Iterator<WorldPos> it2 = temp.iterator();
+						while (it2.hasNext()) {
+							WorldPos nodepos = it2.next();
+							if (nodepos.getBlockState().getBlock() == BlockLoader.node
+									&& ((TENode) nodepos.getTileEntity()).isPointInRange(i.getDim(), i.getPos().getX(),
+											i.getPos().getY(), i.getPos().getZ())) {
+								flag = true;
+								temp.add(i);
+								break;
+							}
+						}
+					}
+				}
+			}
+		} while (flag);
+		if (!temp.equals(nodes)) {
+			nodes = temp;
+			markDirty();
+			callUpdate();
+		}
+	}
+
+	public void updateDevice() {
+		boolean flag = false;
+		updateNode();
+		Iterator<WorldPos> it = storages.iterator();
+		while (it.hasNext()) {
+			WorldPos pos = it.next();
+			if (!(pos.getTileEntity() instanceof IStorable)) {
+				it.remove();
+				flag = true;
+			} else if (!isDeviceInRange(pos.getWorld(), pos.getPos())) {
+				it.remove();
+				((INeedNetwork) pos.getTileEntity()).disconnect();
+				flag = true;
+			}
+		}
+		it = devices.iterator();
+		while (it.hasNext()) {
+			WorldPos pos = it.next();
+			if (!(pos.getTileEntity() instanceof IDevice)) {
+				it.remove();
+				flag = true;
+			} else if (!isDeviceInRange(pos.getWorld(), pos.getPos())) {
+				it.remove();
+				((INeedNetwork) pos.getTileEntity()).disconnect();
+				flag = true;
+			}
+		}
+		if (flag) {
+			markDirty();
+			callUpdate();
+		}
 	}
 
 	@Override
@@ -245,6 +336,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				loadTick--;
 				if (loadTick == 0) {
 					on = true;
+					nodes.clear();
+					storages.clear();
+					devices.clear();
 					callUpdate();
 				}
 			} else {
@@ -263,31 +357,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			}
 		}
 		energyTick--;
-
-	}
-
-	public void updateDevice() {
-		Iterator<WorldPos> it = nodes.iterator();
-		while (it.hasNext()) {
-			WorldPos pos = it.next();
-			if (pos.getBlockState().getBlock() != BlockLoader.node) {
-				it.remove();
-			}
-		}
-		it = storages.iterator();
-		while (it.hasNext()) {
-			WorldPos pos = it.next();
-			if (!(pos.getTileEntity() instanceof IStorable)) {
-				it.remove();
-			}
-		}
-		it = devices.iterator();
-		while (it.hasNext()) {
-			WorldPos pos = it.next();
-			if (!(pos.getTileEntity() instanceof IDevice)) {
-				it.remove();
-			}
-		}
 	}
 
 	@Override
@@ -299,14 +368,17 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		loadTick = compound.getInteger("loadTick");
 		energyTick = compound.getInteger("energyTick");
 		on = compound.getBoolean("on");
+		nodes.clear();
 		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
 			nodes.add(WorldPos.load((NBTTagCompound) e));
 		});
+		storages.clear();
 		list = compound.getTagList("storges", 10);
 		list.forEach(e -> {
 			storages.add(WorldPos.load((NBTTagCompound) e));
 		});
+		devices.clear();
 		list = compound.getTagList("devices", 10);
 		list.forEach(e -> {
 			devices.add(WorldPos.load((NBTTagCompound) e));
@@ -374,6 +446,5 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void handleUpdateTag(NBTTagCompound tag) {
 		readFromNBT(tag);
 		readNetworkData(tag);
-		System.out.println(tag);
 	}
 }

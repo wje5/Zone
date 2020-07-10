@@ -14,4 +14,6 @@ public interface INeedNetwork {
 	public WorldPos getNetworkPos();
 
 	public boolean isConnected();
+
+	public void disconnect();
 }

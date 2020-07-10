@@ -84,12 +84,7 @@ public class StorageWrapper {
 			return;
 		}
 		if (stack.getMaxStackSize() <= 1) {
-			if (!other.add(stack)) {
-				System.out.println(other);
-				System.out.println(stack.equals(other.toArray()[0]));
-				System.out.println(other.contains(stack));
-				System.out.println("#####");
-			}
+			other.add(stack);
 		} else {
 			Iterator<HugeItemStack> it = storges.iterator();
 			while (it.hasNext()) {

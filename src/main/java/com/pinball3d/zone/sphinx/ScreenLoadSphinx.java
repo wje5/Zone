@@ -34,7 +34,6 @@ public class ScreenLoadSphinx extends GuiScreen {
 		if (!checkTileentity()) {
 			return;
 		}
-		System.out.println(tileentity.getLoadTick());
 		if (!tileentity.isLoading()) {
 			if (tileentity.isOn()) {
 				if (tileentity.needInit()) {

@@ -139,16 +139,6 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 				0xFF20E6EF);
 		Gui.drawRect(width / 2 + xOffset + 127, height / 2 - 7 + yOffset, width / 2 + xOffset + 128,
 				height / 2 + 7 + yOffset, 0xFF20E6EF);
-
-//		int w = 30;
-//		Gui.drawRect(width / 2 + xOffset + 134, height / 2 - 8 + yOffset, width / 2 + xOffset + 134 + w,
-//				height / 2 - 7 + yOffset, 0xFF20E6EF);
-//		Gui.drawRect(width / 2 + xOffset + 134, height / 2 + 7 + yOffset, width / 2 + xOffset + 134 + w,
-//				height / 2 + 8 + yOffset, 0xFF20E6EF);
-//		Gui.drawRect(width / 2 + xOffset + 134, height / 2 - 7 + yOffset, width / 2 + xOffset + 135,
-//				height / 2 + 7 + yOffset, 0xFF20E6EF);
-//		Gui.drawRect(width / 2 + xOffset + 133 + w, height / 2 - 7 + yOffset, width / 2 + xOffset + 134 + w,
-//				height / 2 + 7 + yOffset, 0xFF20E6EF);
 		Util.drawTexture(SPHINX, width / 2 - 32, height / 2 - 45, 0, 0, 255, 202, 0.25F);
 		String text = I18n.format("sphinx.input_admin_password");
 		FontRenderer renderer = getFontRenderer();

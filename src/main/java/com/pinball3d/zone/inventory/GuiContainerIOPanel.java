@@ -8,6 +8,8 @@ import java.util.Stack;
 
 import org.lwjgl.input.Keyboard;
 
+import com.pinball3d.zone.network.MessageIOPanelPageChange;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.Component;
 import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.IParent;
@@ -15,6 +17,8 @@ import com.pinball3d.zone.sphinx.MapHandler;
 import com.pinball3d.zone.sphinx.ScreenIOPanel;
 import com.pinball3d.zone.sphinx.Subscreen;
 import com.pinball3d.zone.sphinx.TextInputBox;
+import com.pinball3d.zone.sphinx.TexturedButton;
+import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -28,6 +32,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/io_panel.png");
 	public static final ResourceLocation TEXTURE2 = new ResourceLocation("zone:textures/gui/sphinx/io_panel_2.png");
+	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	protected ContainerIOPanel container;
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
@@ -56,6 +61,21 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 				box.isFocus = true;
 			}
 		}));
+		int offsetX = width / 2 - 184, offsetY = (height - ySize) / 2;
+		components.add(new TexturedButton(this, offsetX + 15, offsetY + 201, ICONS, 92, 32, 5, 9, 1.0F, new Runnable() {
+			@Override
+			public void run() {
+				NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(
+						new WorldPos(container.tileEntity.getPos(), container.tileEntity.getWorld()), true));
+			}
+		}));
+		components.add(new TexturedButton(this, offsetX + 70, offsetY + 201, ICONS, 97, 32, 5, 9, 1.0F, new Runnable() {
+			@Override
+			public void run() {
+				NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(
+						new WorldPos(container.tileEntity.getPos(), container.tileEntity.getWorld()), false));
+			}
+		}));
 	}
 
 	@Override
@@ -78,6 +98,11 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 				screen.doRender(mouseX, mouseY);
 			}
 		}
+		int page = container.tileEntity.page;
+		int maxpage = (container.tileEntity.storges.storges.size() + container.tileEntity.storges.other.size() - 1) / 36
+				+ 1;
+		String text = page + "/" + maxpage;
+		fontRenderer.drawString(text, offsetX - 47 - fontRenderer.getStringWidth(text) / 2, offsetY + 202, 0xFF1ECCDE);
 	}
 
 	public static String transferString(int count) {
@@ -109,11 +134,19 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		GlStateManager.translate(0, 0, 250);
 		int i = 0;
 		Iterator<HugeItemStack> it = container.tileEntity.storges.storges.iterator();
+		int offset = (container.tileEntity.page - 1) * 36;
 		while (it.hasNext()) {
 			HugeItemStack hugestack = it.next();
+			if (offset > 0) {
+				offset--;
+				continue;
+			}
+			if (i >= 36) {
+				break;
+			}
 			int count = hugestack.count;
 			if (count != 1) {
-				String text = transferString((int) Math.pow(2, count));
+				String text = transferString(count);
 				int x = (i % 4) * 19 - 38 + offsetX;
 				int y = (i / 4) * 19 + 29 + offsetY;
 				fontRenderer.drawStringWithShadow(text, x + 17 - fontRenderer.getStringWidth(text), y + 9, 0xFFFFFFFF);
@@ -125,7 +158,6 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		GlStateManager.enableBlend();
 		GlStateManager.popMatrix();
 		super.renderHoveredToolTip(p_191948_1_, p_191948_2_);
-		System.out.println();
 	}
 
 	@Override
