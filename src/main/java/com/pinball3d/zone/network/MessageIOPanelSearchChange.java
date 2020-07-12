@@ -12,38 +12,37 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageIOPanelPageChange implements IMessage {
-	String name;
+public class MessageIOPanelSearchChange implements IMessage {
+	String name, search;
 	int world;
-	boolean flag;
 
-	public MessageIOPanelPageChange() {
+	public MessageIOPanelSearchChange() {
 
 	}
 
-	public MessageIOPanelPageChange(EntityPlayer player, boolean flag) {
+	public MessageIOPanelSearchChange(EntityPlayer player, String text) {
 		name = player.getName();
 		world = player.world.provider.getDimension();
-		this.flag = flag;
+		search = text;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		name = ByteBufUtils.readUTF8String(buf);
 		world = buf.readInt();
-		flag = buf.readBoolean();
+		search = ByteBufUtils.readUTF8String(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		ByteBufUtils.writeUTF8String(buf, name);
 		buf.writeInt(world);
-		buf.writeBoolean(flag);
+		ByteBufUtils.writeUTF8String(buf, search);
 	}
 
-	public static class Handler implements IMessageHandler<MessageIOPanelPageChange, IMessage> {
+	public static class Handler implements IMessageHandler<MessageIOPanelSearchChange, IMessage> {
 		@Override
-		public IMessage onMessage(MessageIOPanelPageChange message, MessageContext ctx) {
+		public IMessage onMessage(MessageIOPanelSearchChange message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
@@ -52,12 +51,7 @@ public class MessageIOPanelPageChange implements IMessage {
 					EntityPlayer player = world.getPlayerEntityByName(message.name);
 					if (player != null && player.openContainer instanceof ContainerIOPanel) {
 						ContainerIOPanel container = (ContainerIOPanel) player.openContainer;
-						if (message.flag) {
-							container.page = container.page - 1 < 1 ? 1 : container.page - 1;
-						} else {
-							container.page = container.page + 1 > container.maxPage ? container.maxPage
-									: container.page + 1;
-						}
+						container.search = message.search;
 					}
 				}
 			});

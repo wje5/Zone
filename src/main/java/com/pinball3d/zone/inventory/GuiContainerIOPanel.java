@@ -9,18 +9,19 @@ import java.util.Stack;
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.network.MessageIOPanelPageChange;
+import com.pinball3d.zone.network.MessageIOPanelSearchChange;
+import com.pinball3d.zone.network.MessageUpdateIOPanelGui;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.Component;
-import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.IParent;
 import com.pinball3d.zone.sphinx.MapHandler;
 import com.pinball3d.zone.sphinx.ScreenIOPanel;
 import com.pinball3d.zone.sphinx.Subscreen;
 import com.pinball3d.zone.sphinx.TextInputBox;
 import com.pinball3d.zone.sphinx.TexturedButton;
-import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -65,15 +66,22 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		components.add(new TexturedButton(this, offsetX + 15, offsetY + 201, ICONS, 92, 32, 5, 9, 1.0F, new Runnable() {
 			@Override
 			public void run() {
-				NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(
-						new WorldPos(container.tileEntity.getPos(), container.tileEntity.getWorld()), true));
+				NetworkHandler.instance
+						.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, true));
 			}
 		}));
 		components.add(new TexturedButton(this, offsetX + 70, offsetY + 201, ICONS, 97, 32, 5, 9, 1.0F, new Runnable() {
 			@Override
 			public void run() {
-				NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(
-						new WorldPos(container.tileEntity.getPos(), container.tileEntity.getWorld()), false));
+				NetworkHandler.instance
+						.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, false));
+			}
+		}));
+		components.add(new TexturedButton(this, offsetX + 67, offsetY + 7, ICONS, 92, 41, 15, 15, 1.0F, new Runnable() {
+			@Override
+			public void run() {
+				NetworkHandler.instance
+						.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));
 			}
 		}));
 	}
@@ -98,10 +106,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 				screen.doRender(mouseX, mouseY);
 			}
 		}
-		int page = container.tileEntity.page;
-		int maxpage = (container.tileEntity.storges.storges.size() + container.tileEntity.storges.other.size() - 1) / 36
-				+ 1;
-		String text = page + "/" + maxpage;
+		String text = container.page + "/" + container.maxPage;
 		fontRenderer.drawString(text, offsetX - 47 - fontRenderer.getStringWidth(text) / 2, offsetY + 202, 0xFF1ECCDE);
 	}
 
@@ -132,26 +137,13 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		GlStateManager.disableDepth();
 		GlStateManager.disableBlend();
 		GlStateManager.translate(0, 0, 250);
-		int i = 0;
-		Iterator<HugeItemStack> it = container.tileEntity.storges.storges.iterator();
-		int offset = (container.tileEntity.page - 1) * 36;
-		while (it.hasNext()) {
-			HugeItemStack hugestack = it.next();
-			if (offset > 0) {
-				offset--;
-				continue;
-			}
-			if (i >= 36) {
-				break;
-			}
-			int count = hugestack.count;
-			if (count != 1) {
-				String text = transferString(count);
+		for (int i = 0; i < 36; i++) {
+			if (container.list[i] > 1) {
+				String text = transferString(container.list[i]);
 				int x = (i % 4) * 19 - 38 + offsetX;
 				int y = (i / 4) * 19 + 29 + offsetY;
 				fontRenderer.drawStringWithShadow(text, x + 17 - fontRenderer.getStringWidth(text), y + 9, 0xFFFFFFFF);
 			}
-			i++;
 		}
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
@@ -162,9 +154,10 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		this.drawDefaultBackground();
+		NetworkHandler.instance.sendToServer(new MessageUpdateIOPanelGui(Minecraft.getMinecraft().player));
+		drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		this.renderHoveredToolTip(mouseX, mouseY);
+		renderHoveredToolTip(mouseX, mouseY);
 	}
 
 	@Override
@@ -236,6 +229,11 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 				components.forEach(e -> {
 					e.onKeyTyped(typedChar, keyCode);
 				});
+				if (keyCode == Keyboard.KEY_RETURN && box.isFocus) {
+					NetworkHandler.instance
+							.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));
+					box.isFocus = false;
+				}
 			} else {
 				subscreens.peek().keyTyped(typedChar, keyCode);
 			}

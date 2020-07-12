@@ -30,6 +30,8 @@ public class NetworkHandler {
 		registerMessage(MessageChangeName.Handler.class, MessageChangeName.class, Side.SERVER);
 		registerMessage(MessageOpenIOPanelGui.Handler.class, MessageOpenIOPanelGui.class, Side.SERVER);
 		registerMessage(MessageIOPanelPageChange.Handler.class, MessageIOPanelPageChange.class, Side.SERVER);
+		registerMessage(MessageUpdateIOPanelGui.Handler.class, MessageUpdateIOPanelGui.class, Side.SERVER);
+		registerMessage(MessageIOPanelSearchChange.Handler.class, MessageIOPanelSearchChange.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

@@ -53,7 +53,6 @@ public class MessageConnectToNetwork implements IMessage {
 					}
 					TileEntity te = message.needNetwork.getTileEntity();
 					TileEntity te2 = message.network.getTileEntity();
-
 					if (te instanceof INeedNetwork && te2 instanceof TEProcessingCenter) {
 						UUID uuid = GlobalNetworkData.getData(world).getUUID(message.network);
 						((INeedNetwork) te).connect(uuid);

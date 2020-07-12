@@ -14,51 +14,53 @@ import net.minecraftforge.items.IItemHandler;
 public class StorageWrapper {
 	public Set<HugeItemStack> storges;
 	public Set<ItemStack> other;
+	public static Comparator<HugeItemStack> hugeStackComparator = new Comparator<HugeItemStack>() {
+		@Override
+		public int compare(HugeItemStack o1, HugeItemStack o2) {
+			int a = Item.getIdFromItem(o1.stack.getItem());
+			int b = Item.getIdFromItem(o2.stack.getItem());
+			if (a > b) {
+				return 1;
+			} else if (b > a) {
+				return -1;
+			} else {
+				int c = o1.stack.getItemDamage();
+				int d = o2.stack.getItemDamage();
+				if (c > d) {
+					return 1;
+				} else if (d > c) {
+					return -1;
+				}
+				return o1.stack.hashCode() > o2.stack.hashCode() ? 1
+						: o1.stack.hashCode() < o2.stack.hashCode() ? -1 : 0;
+			}
+		};
+	};
+	public static Comparator<ItemStack> stackComparator = new Comparator<ItemStack>() {
+		@Override
+		public int compare(ItemStack o1, ItemStack o2) {
+			int a = Item.getIdFromItem(o1.getItem());
+			int b = Item.getIdFromItem(o2.getItem());
+			if (a > b) {
+				return 1;
+			} else if (b > a) {
+				return -1;
+			} else {
+				int c = o1.getItemDamage();
+				int d = o2.getItemDamage();
+				if (c > d) {
+					return 1;
+				} else if (d > c) {
+					return -1;
+				}
+				return o1.hashCode() > o2.hashCode() ? 1 : o1.hashCode() < o2.hashCode() ? -1 : 0;
+			}
+		}
+	};
 
 	public StorageWrapper() {
-		storges = new TreeSet<HugeItemStack>(new Comparator<HugeItemStack>() {
-			@Override
-			public int compare(HugeItemStack o1, HugeItemStack o2) {
-				int a = Item.getIdFromItem(o1.stack.getItem());
-				int b = Item.getIdFromItem(o2.stack.getItem());
-				if (a > b) {
-					return 1;
-				} else if (b > a) {
-					return -1;
-				} else {
-					int c = o1.stack.getItemDamage();
-					int d = o2.stack.getItemDamage();
-					if (c > d) {
-						return 1;
-					} else if (d > c) {
-						return -1;
-					}
-					return o1.stack.hashCode() > o2.stack.hashCode() ? 1
-							: o1.stack.hashCode() < o2.stack.hashCode() ? -1 : 0;
-				}
-			};
-		});
-		other = new TreeSet<ItemStack>(new Comparator<ItemStack>() {
-			@Override
-			public int compare(ItemStack o1, ItemStack o2) {
-				int a = Item.getIdFromItem(o1.getItem());
-				int b = Item.getIdFromItem(o2.getItem());
-				if (a > b) {
-					return 1;
-				} else if (b > a) {
-					return -1;
-				} else {
-					int c = o1.getItemDamage();
-					int d = o2.getItemDamage();
-					if (c > d) {
-						return 1;
-					} else if (d > c) {
-						return -1;
-					}
-					return o1.hashCode() > o2.hashCode() ? 1 : o1.hashCode() < o2.hashCode() ? -1 : 0;
-				}
-			};
-		});
+		storges = new TreeSet<HugeItemStack>(hugeStackComparator);
+		other = new TreeSet<ItemStack>(stackComparator);
 	}
 
 	public StorageWrapper(ItemStack stack) {

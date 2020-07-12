@@ -1,17 +1,13 @@
 package com.pinball3d.zone.tileentity;
 
-import java.util.Iterator;
 import java.util.UUID;
 
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
-import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.IDevice;
-import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -27,14 +23,11 @@ import net.minecraftforge.items.ItemStackHandler;
 public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, IDevice {
 	private WorldPos worldpos;
 	private UUID network;
-	private IItemHandler inv, global;
-	public StorageWrapper storges = new StorageWrapper();
-	public int page = 1;
+	private IItemHandler inv;
 
 	public TEIOPanel() {
 		super();
 		inv = new ItemStackHandler(54);
-		global = new ItemStackHandler(36);
 	}
 
 	public void callUpdate() {
@@ -42,21 +35,6 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
 		world.notifyBlockUpdate(pos, state, state,
 				Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
-	}
-
-	public void pageUp() {
-		if (page > 1) {
-			page--;
-			callUpdate();
-		}
-	}
-
-	public void pageDown() {
-		int maxpage = (storges.storges.size() + storges.other.size() - 1) / 36 + 1;
-		if (page < maxpage) {
-			page++;
-			callUpdate();
-		}
 	}
 
 	@Override
@@ -73,67 +51,6 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 				disconnect();
 			}
 		}
-		if (!world.isRemote) {
-			updateGlobalStorges();
-		}
-	}
-
-	public void updateGlobalStorges() {
-		if (worldpos != null) {
-			int maxpage = (storges.storges.size() + storges.other.size() - 1) / 36 + 1;
-			StorageWrapper wrapper = ((TEProcessingCenter) worldpos.getTileEntity()).getNetworkUseableItems();
-			for (int i = 0; i < 36; i++) {
-				global.extractItem(i, 64, false);
-			}
-			int index = 0;
-			int offset = (page - 1) * 36;
-			Iterator<HugeItemStack> it = wrapper.storges.iterator();
-			while (it.hasNext()) {
-				if (offset > 0) {
-					offset--;
-					it.next();
-					continue;
-				}
-				ItemStack stack = it.next().stack.copy();
-				stack.setCount(1);
-				if (index < 36) {
-					global.insertItem(index, stack, false);
-				}
-				index++;
-			}
-			Iterator<ItemStack> it2 = wrapper.other.iterator();
-			while (it2.hasNext()) {
-				if (offset > 0) {
-					offset--;
-					it2.next();
-					continue;
-				}
-				ItemStack stack = it2.next().copy();
-				stack.setCount(1);
-				if (index < 36) {
-					global.insertItem(index, stack, false);
-				}
-				index++;
-			}
-			storges = wrapper;
-			markDirty();
-			if ((storges.storges.size() + storges.other.size() - 1) / 36 + 1 != maxpage) {
-				callUpdate();
-			}
-		}
-		int maxpage = (storges.storges.size() + storges.other.size() - 1) / 36 + 1;
-		if (page > maxpage) {
-			page = maxpage;
-			callUpdate();
-		}
-		if (page < 1) {
-			page = 1;
-			callUpdate();
-		}
-	}
-
-	public IItemHandler getGlobalInv() {
-		return global;
 	}
 
 	@Override
@@ -157,7 +74,6 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		if (compound.hasKey("networkMost")) {
 			network = compound.getUniqueId("network");
 		}
-		page = compound.getInteger("page");
 		super.readFromNBT(compound);
 	}
 
@@ -166,7 +82,6 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		if (network != null) {
 			compound.setUniqueId("network", network);
 		}
-		compound.setInteger("page", page);
 		return super.writeToNBT(compound);
 
 	}
@@ -175,7 +90,6 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		if (worldpos != null) {
 			worldpos.save(tag);
 		}
-		tag.setTag("storges", storges.writeToNBT(new NBTTagCompound()));
 		return tag;
 	}
 
@@ -185,7 +99,6 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		} else {
 			worldpos = null;
 		}
-		storges.readFromNBT(tag.getCompoundTag("storges"));
 	}
 
 	@Override
