@@ -6,8 +6,10 @@ import java.util.TreeSet;
 
 import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.StorageWrapper;
+import com.pinball3d.zone.sphinx.SubscreenIOPanelRequest;
 import com.pinball3d.zone.tileentity.TEIOPanel;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -30,6 +32,7 @@ public class ContainerIOPanel extends Container {
 	public int maxPage = 1;
 	public int[] list = new int[36];
 	public String search = "";
+	public int x, y;
 
 	public ContainerIOPanel(EntityPlayer player, TileEntity tileEntity) {
 		this.tileEntity = (TEIOPanel) tileEntity;
@@ -50,6 +53,16 @@ public class ContainerIOPanel extends Container {
 
 					@Override
 					public boolean canTakeStack(EntityPlayer playerIn) {
+						if (tileEntity.getWorld().isRemote) {
+							Minecraft mc = Minecraft.getMinecraft();
+							if (mc.currentScreen instanceof GuiContainerIOPanel) {
+								GuiContainerIOPanel container = (GuiContainerIOPanel) mc.currentScreen;
+								int offsetX = container.width / 2 - 184, offsetY = (container.height - 213) / 2;
+								updateAmountList();
+								container.putScreen(new SubscreenIOPanelRequest(container, x - offsetX, y - offsetY,
+										getStack(), list[slotNumber - 54]));
+							}
+						}
 						return false;
 					}
 				});
@@ -146,14 +159,11 @@ public class ContainerIOPanel extends Container {
 		}
 	}
 
-	@Override
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
-
-		int offset = (page - 1) * 36;
+	public void updateAmountList() {
 		for (int i = 0; i < 36; i++) {
 			list[i] = 0;
 		}
+		int offset = (page - 1) * 36;
 		Set<HugeItemStack> storges = data.storges;
 		if (!search.isEmpty()) {
 			storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);
@@ -183,6 +193,12 @@ public class ContainerIOPanel extends Container {
 			}
 			i++;
 		}
+	}
+
+	@Override
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
+		updateAmountList();
 		for (IContainerListener j : listeners) {
 			j.sendWindowProperty(this, 0, page);
 			j.sendWindowProperty(this, 1, maxPage);

@@ -10,6 +10,7 @@ import com.pinball3d.zone.tileentity.INeedNetwork;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
 public class Subscreen implements IParent {
@@ -35,6 +36,11 @@ public class Subscreen implements IParent {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
+		GlStateManager.pushMatrix();
+		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
+		GlStateManager.disableBlend();
+		GlStateManager.translate(0, 0, 300F);
 		if (renderCover) {
 			Minecraft mc = Minecraft.getMinecraft();
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0x8F000000);
@@ -53,6 +59,10 @@ public class Subscreen implements IParent {
 				screen.doRender(mouseX, mouseY);
 			}
 		}
+		GlStateManager.enableLighting();
+		GlStateManager.enableDepth();
+		GlStateManager.enableBlend();
+		GlStateManager.popMatrix();
 	}
 
 	public void doRenderForeground(int mouseX, int mouseY) {
@@ -95,13 +105,14 @@ public class Subscreen implements IParent {
 				Iterator<Component> it = components.iterator();
 				while (it.hasNext()) {
 					Component c = it.next();
-					if (x >= c.x && x <= c.x + c.width && y >= c.y && y <= c.y + c.height) {
+					if (x >= c.x - this.x && x <= c.x - this.x + c.width && y >= c.y - this.y
+							&& y <= c.y - this.y + c.height) {
 						draggingComponent = c;
 					}
 				}
 			}
 			if (draggingComponent != null) {
-				draggingComponent.onDrag(moveX, moveY);
+				draggingComponent.onDrag(x - this.x, y - this.y, moveX, moveY);
 			}
 		} else {
 			Subscreen screen = subscreens.peek();

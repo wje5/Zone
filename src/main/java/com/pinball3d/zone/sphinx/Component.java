@@ -32,7 +32,7 @@ public class Component {
 
 	}
 
-	public void onDrag(int moveX, int moveY) {
+	public void onDrag(int mouseX, int mouseY, int moveX, int moveY) {
 
 	}
 

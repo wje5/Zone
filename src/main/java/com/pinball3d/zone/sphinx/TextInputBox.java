@@ -10,23 +10,32 @@ public class TextInputBox extends Component {
 	public int maxLength;
 	protected Runnable event;
 	public boolean isFocus;
+	public int flag;
 
 	public TextInputBox(IParent parent, int x, int y, int width, int maxLength, Runnable onClick) {
 		this(parent, x, y, width, 13, maxLength, onClick);
 	}
 
 	public TextInputBox(IParent parent, int x, int y, int width, int height, int maxLength, Runnable onClick) {
+		this(parent, x, y, width, height, maxLength, onClick, 7);
+	}
+
+	public TextInputBox(IParent parent, int x, int y, int width, int height, int maxLength, Runnable onClick,
+			int flag) {
 		super(parent, x, y, width, height);
 		this.x = x;
 		this.y = y;
 		this.maxLength = maxLength;
 		event = onClick;
+		this.flag = flag;
 	}
 
 	@Override
 	public void onLeftClick(int x, int y) {
 		super.onLeftClick(x, y);
-		event.run();
+		if (event != null) {
+			event.run();
+		}
 	}
 
 	@Override
@@ -35,7 +44,7 @@ public class TextInputBox extends Component {
 			if (keyCode == Keyboard.KEY_BACK && text.length() >= 1) {
 				text = text.substring(0, text.length() - 1);
 			}
-			if (Util.isValidChar(typedChar, 7) && text.length() < maxLength) {
+			if (Util.isValidChar(typedChar, flag) && text.length() < maxLength) {
 				text += typedChar;
 			}
 		}

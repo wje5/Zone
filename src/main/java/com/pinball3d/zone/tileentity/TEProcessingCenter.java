@@ -10,6 +10,7 @@ import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.IDevice;
 import com.pinball3d.zone.sphinx.IStorable;
+import com.pinball3d.zone.sphinx.LogisticPack;
 import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
@@ -35,6 +36,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	private Set<WorldPos> nodes = new HashSet<WorldPos>();
 	private Set<WorldPos> storages = new HashSet<WorldPos>();
 	private Set<WorldPos> devices = new HashSet<WorldPos>();
+	private Set<LogisticPack> packs = new HashSet<LogisticPack>();
 	private UUID uuid;
 
 	public TEProcessingCenter() {
@@ -175,6 +177,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 
 	public Set<WorldPos> getDevices() {
 		return devices;
+	}
+
+	public Set<LogisticPack> getPacks() {
+		return packs;
 	}
 
 	public UUID getUUID() {

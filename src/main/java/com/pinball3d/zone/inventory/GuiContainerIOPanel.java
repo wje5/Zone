@@ -25,6 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -86,6 +87,10 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		}));
 	}
 
+	public RenderItem getItemRenderer() {
+		return itemRender;
+	}
+
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
@@ -94,18 +99,6 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		drawTexturedModalRect(offsetX, offsetY, 0, 0, 184, 213);
 		mc.getTextureManager().bindTexture(TEXTURE2);
 		drawTexturedModalRect(offsetX - 92, offsetY, 0, 0, 89, 213);
-		components.forEach(e -> {
-			e.doRender(mouseX, mouseY);
-		});
-		Iterator<Subscreen> it = subscreens.iterator();
-		while (it.hasNext()) {
-			Subscreen screen = it.next();
-			if (screen.dead) {
-				it.remove();
-			} else {
-				screen.doRender(mouseX, mouseY);
-			}
-		}
 		String text = container.page + "/" + container.maxPage;
 		fontRenderer.drawString(text, offsetX - 47 - fontRenderer.getStringWidth(text) / 2, offsetY + 202, 0xFF1ECCDE);
 	}
@@ -130,7 +123,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	}
 
 	@Override
-	protected void renderHoveredToolTip(int p_191948_1_, int p_191948_2_) {
+	protected void renderHoveredToolTip(int mouseX, int mouseY) {
 		int offsetX = (width - 184) / 2 - 46, offsetY = (height - ySize) / 2;
 		GlStateManager.pushMatrix();
 		GlStateManager.disableLighting();
@@ -149,7 +142,19 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
 		GlStateManager.popMatrix();
-		super.renderHoveredToolTip(p_191948_1_, p_191948_2_);
+		components.forEach(e -> {
+			e.doRender(mouseX, mouseY);
+		});
+		Iterator<Subscreen> it = subscreens.iterator();
+		while (it.hasNext()) {
+			Subscreen screen = it.next();
+			if (screen.dead) {
+				it.remove();
+			} else {
+				screen.doRender(mouseX, mouseY);
+			}
+		}
+		super.renderHoveredToolTip(mouseX, mouseY);
 	}
 
 	@Override
@@ -185,7 +190,11 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		clickX = mouseX;
 		clickY = mouseY;
-		super.mouseClicked(mouseX, mouseY, mouseButton);
+		if (subscreens.empty()) {
+			container.x = clickX;
+			container.y = clickY;
+			super.mouseClicked(mouseX, mouseY, mouseButton);
+		}
 	}
 
 	@Override
@@ -206,6 +215,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 						&& mouseY <= screen.y + height) {
 					screen.onClick(mouseX - screen.x, mouseY - screen.y, state != 1);
 				}
+				return;
 			}
 		}
 		lastMouseX = -1;
@@ -220,10 +230,10 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		if (keyCode == Keyboard.KEY_ESCAPE) {
 			if (subscreens.empty()) {
 				mc.displayGuiScreen(new ScreenIOPanel(getNeedNetworkTileEntity()));
-				return;
 			} else if (subscreens.peek().onQuit()) {
 				subscreens.pop();
 			}
+			return;
 		} else {
 			if (subscreens.empty()) {
 				components.forEach(e -> {
@@ -236,6 +246,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 				}
 			} else {
 				subscreens.peek().keyTyped(typedChar, keyCode);
+				return;
 			}
 		}
 		if (!box.isFocus) {
