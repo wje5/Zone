@@ -6,6 +6,7 @@ import net.minecraft.util.ResourceLocation;
 public class Slider extends Component {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	public int scrollingDistance;
+	public Runnable onChange;
 
 	public Slider(IParent parent, int x, int y, int width) {
 		super(parent, x, y + 1, width, 5);
@@ -20,14 +21,18 @@ public class Slider extends Component {
 
 	@Override
 	public void onDrag(int mouseX, int mouseY, int moveX, int moveY) {
-//		scrollingDistance += moveX;
 		scrollingDistance = mouseX - 2;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 		scrollingDistance = scrollingDistance > width - 5 ? width - 5 : scrollingDistance;
+		onChange.run();
 		super.onDrag(mouseX, mouseY, moveX, moveY);
 	}
 
 	public float get() {
 		return 1.0F * scrollingDistance / (width - 5);
+	}
+
+	public void setOnChange(Runnable onChange) {
+		this.onChange = onChange;
 	}
 }

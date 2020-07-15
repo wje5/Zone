@@ -35,6 +35,9 @@ public class ContainerIOPanel extends Container {
 	public int x, y;
 
 	public ContainerIOPanel(EntityPlayer player, TileEntity tileEntity) {
+		for (int i = 0; i < 36; i++) {
+			list[i] = 1;
+		}
 		this.tileEntity = (TEIOPanel) tileEntity;
 		inv = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 		global = new ItemStackHandler(36);
@@ -58,7 +61,6 @@ public class ContainerIOPanel extends Container {
 							if (mc.currentScreen instanceof GuiContainerIOPanel) {
 								GuiContainerIOPanel container = (GuiContainerIOPanel) mc.currentScreen;
 								int offsetX = container.width / 2 - 184, offsetY = (container.height - 213) / 2;
-								updateAmountList();
 								container.putScreen(new SubscreenIOPanelRequest(container, x - offsetX, y - offsetY,
 										getStack(), list[slotNumber - 54]));
 							}
@@ -161,7 +163,7 @@ public class ContainerIOPanel extends Container {
 
 	public void updateAmountList() {
 		for (int i = 0; i < 36; i++) {
-			list[i] = 0;
+			list[i] = 1;
 		}
 		int offset = (page - 1) * 36;
 		Set<HugeItemStack> storges = data.storges;

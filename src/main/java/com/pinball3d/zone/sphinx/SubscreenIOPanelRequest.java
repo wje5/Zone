@@ -13,6 +13,7 @@ import net.minecraft.util.ResourceLocation;
 public class SubscreenIOPanelRequest extends Subscreen {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private TextInputBox box;
+	private Slider slider;
 	public ItemStack stack;
 	public int amount;
 
@@ -29,11 +30,16 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		components.add(box = new TextInputBox(parent, this.x + 70, this.y + 4, 60, 13, 9, null, 4));
 		box.isFocus = true;
 		box.text = "1";
-		components.add(new Slider(this, this.x + 33, this.y + 18, 96));
+		components.add(slider = new Slider(this, this.x + 33, this.y + 18, 96));
+		slider.setOnChange(new Runnable() {
+			@Override
+			public void run() {
+				box.text = String.valueOf((int) ((SubscreenIOPanelRequest.this.amount - 1) * slider.get() + 1));
+			}
+		});
 		components.add(new TextButton(this, this.x + 15, this.y + 41, I18n.format("sphinx.confirm"), new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("Confirm");
 				parent.quitScreen(SubscreenIOPanelRequest.this);
 			}
 		}));
@@ -48,6 +54,18 @@ public class SubscreenIOPanelRequest extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
+		int amount = -1;
+		try {
+			amount = Integer.valueOf(box.text);
+		} catch (NumberFormatException e) {
+
+		}
+		if (amount > this.amount) {
+			amount = this.amount;
+		}
+		if (amount != -1) {
+			box.text = "" + amount;
+		}
 		Gui.drawRect(x, y, x + width, y + height, 0xFF0B5953);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();

@@ -112,7 +112,8 @@ public class Subscreen implements IParent {
 				}
 			}
 			if (draggingComponent != null) {
-				draggingComponent.onDrag(x - this.x, y - this.y, moveX, moveY);
+				draggingComponent.onDrag(x - draggingComponent.x + this.x, y - draggingComponent.y + this.y, moveX,
+						moveY);
 			}
 		} else {
 			Subscreen screen = subscreens.peek();
