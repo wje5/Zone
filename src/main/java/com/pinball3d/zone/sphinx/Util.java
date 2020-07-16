@@ -9,21 +9,27 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Util {
+	@SideOnly(Side.CLIENT)
 	public static void drawTexture(ResourceLocation texture, int x, int y, int width, int height) {
 		drawTexture(texture, x, y, 0, 0, width, height, 1.0F);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void drawTexture(ResourceLocation texture, int x, int y, int uWidth, int vHeight, float scale) {
 		drawTexture(texture, x, y, 0, 0, uWidth, vHeight, scale);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void drawTexture(ResourceLocation texture, int x, int y, int u, int v, int uWidth, int vHeight,
 			float scale) {
 		drawTexture(texture, x, y, (int) (scale * uWidth), (int) (scale * vHeight), u, v, uWidth, vHeight);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void drawTexture(ResourceLocation texture, int x, int y, int width, int height, int u, int v,
 			int uWidth, int vHeight) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
@@ -45,6 +51,7 @@ public class Util {
 		GlStateManager.popMatrix();
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void drawBorder(int x, int y, int width, int height, int lineWidth, int color) {
 		Gui.drawRect(x, y, x + width, y + lineWidth, color);
 		Gui.drawRect(x, y + height - lineWidth, x + width, y + height, color);

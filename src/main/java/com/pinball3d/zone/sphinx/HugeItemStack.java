@@ -21,8 +21,7 @@ public class HugeItemStack {
 	}
 
 	public boolean merge(ItemStack stack) {
-		if (!stack.isEmpty() && stack.getItem() == this.stack.getItem()
-				&& stack.getItemDamage() == this.stack.getItemDamage()) {
+		if (this.stack.isItemEqual(stack)) {
 			count += stack.getCount();
 			return true;
 		}
@@ -30,8 +29,7 @@ public class HugeItemStack {
 	}
 
 	public boolean merge(HugeItemStack hugestack) {
-		if (hugestack.stack.getItem() == this.stack.getItem()
-				&& hugestack.stack.getItemDamage() == this.stack.getItemDamage()) {
+		if (stack.isItemEqual(hugestack.stack)) {
 			count += stack.getCount();
 			return true;
 		}

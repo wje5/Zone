@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageOpenSphinx extends MessageSphinx {
+public class MessageOpenSphinx extends MessageSphinxAdmin {
 	public MessageOpenSphinx() {
 
 	}

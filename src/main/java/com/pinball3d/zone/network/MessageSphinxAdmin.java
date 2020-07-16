@@ -12,16 +12,16 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public abstract class MessageSphinx implements IMessage {
+public abstract class MessageSphinxAdmin implements IMessage {
 	String password;
 	WorldPos pos;
 	NBTTagCompound tag;
 
-	public MessageSphinx() {
+	public MessageSphinxAdmin() {
 
 	}
 
-	public MessageSphinx(String password, WorldPos pos, NBTTagCompound tag) {
+	public MessageSphinxAdmin(String password, WorldPos pos, NBTTagCompound tag) {
 		this.password = password;
 		this.pos = pos;
 		this.tag = tag;
@@ -55,14 +55,14 @@ public abstract class MessageSphinx implements IMessage {
 		FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				if (doCheck(MessageSphinx.this)) {
-					MessageSphinx.this.run(ctx);
+				if (doCheck(MessageSphinxAdmin.this)) {
+					MessageSphinxAdmin.this.run(ctx);
 				}
 			}
 		});
 	}
 
-	public boolean doCheck(MessageSphinx message) {
+	public boolean doCheck(MessageSphinxAdmin message) {
 		World world = message.pos.getWorld();
 		if (!world.isAreaLoaded(message.pos.getPos(), 5)) {
 			return false;

@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageChangeAdminPassword extends MessageSphinx {
+public class MessageChangeAdminPassword extends MessageSphinxAdmin {
 	public MessageChangeAdminPassword() {
 
 	}

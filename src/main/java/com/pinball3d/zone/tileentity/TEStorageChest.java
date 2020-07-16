@@ -9,6 +9,7 @@ import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -174,5 +175,25 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 	@Override
 	public StorageWrapper getStorges() {
 		return new StorageWrapper(inv);
+	}
+
+	@Override
+	public StorageWrapper extract(StorageWrapper request) {
+		StorageWrapper extracted = new StorageWrapper();
+		request.storges.forEach(e -> {
+			int amount = e.count;
+			for (int i = inv.getSlots() - 1; i >= 0; i--) {
+				if (amount <= 0) {
+					break;
+				}
+				ItemStack stack = inv.getStackInSlot(i);
+				if (e.stack.isItemEqual(stack)) {
+					ItemStack newstack = stack.splitStack(amount);
+					amount -= newstack.getCount();
+					extracted.merge(newstack);
+				}
+			}
+		});
+		return extracted;
 	}
 }

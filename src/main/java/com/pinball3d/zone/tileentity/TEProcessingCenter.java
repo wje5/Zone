@@ -1,8 +1,10 @@
 package com.pinball3d.zone.tileentity;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import com.pinball3d.zone.block.BlockLoader;
@@ -244,6 +246,21 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			}
 		});
 		return wrapper;
+	}
+
+	public void requestItems(StorageWrapper wrapper, WorldPos target) {
+		TreeSet<WorldPos> sortset = new TreeSet<WorldPos>(new Comparator<WorldPos>() {
+			@Override
+			public int compare(WorldPos o1, WorldPos o2) {
+				double dist1 = o1.getPos().distanceSq(target.getPos());
+				double dist2 = o2.getPos().distanceSq(target.getPos());
+				return dist1 > dist2 ? 1 : dist1 < dist2 ? -1 : o1.hashCode() > o2.hashCode() ? 1 : -1;
+			}
+		});
+		sortset.addAll(storages);
+		storages.forEach(e -> {
+			System.out.println(e.getPos().distanceSq(target.getPos()));
+		});
 	}
 
 	public void updateNode() {

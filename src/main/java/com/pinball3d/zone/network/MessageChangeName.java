@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageChangeName extends MessageSphinx {
+public class MessageChangeName extends MessageSphinxAdmin {
 	public MessageChangeName() {
 
 	}
