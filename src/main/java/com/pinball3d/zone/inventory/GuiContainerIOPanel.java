@@ -129,7 +129,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
 		GlStateManager.disableBlend();
-		GlStateManager.translate(0, 0, 250);
+		GlStateManager.translate(0, 0, 50);
 		for (int i = 0; i < 36; i++) {
 			if (container.list[i] > 1) {
 				String text = transferString(container.list[i]);
@@ -138,10 +138,6 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 				fontRenderer.drawStringWithShadow(text, x + 17 - fontRenderer.getStringWidth(text), y + 9, 0xFFFFFFFF);
 			}
 		}
-		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
-		GlStateManager.enableBlend();
-		GlStateManager.popMatrix();
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);
 		});
@@ -154,6 +150,11 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 				screen.doRender(mouseX, mouseY);
 			}
 		}
+
+		GlStateManager.enableLighting();
+		GlStateManager.enableDepth();
+		GlStateManager.enableBlend();
+		GlStateManager.popMatrix();
 		super.renderHoveredToolTip(mouseX, mouseY);
 	}
 

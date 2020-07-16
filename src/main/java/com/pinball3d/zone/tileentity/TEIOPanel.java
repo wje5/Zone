@@ -17,13 +17,12 @@ import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, IDevice {
 	private WorldPos worldpos;
 	private UUID network;
-	private IItemHandler inv;
+	private ItemStackHandler inv;
 
 	public TEIOPanel() {
 		super();
@@ -74,6 +73,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		if (compound.hasKey("networkMost")) {
 			network = compound.getUniqueId("network");
 		}
+		inv.deserializeNBT(compound.getCompoundTag("inv"));
 		super.readFromNBT(compound);
 	}
 
@@ -82,6 +82,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 		if (network != null) {
 			compound.setUniqueId("network", network);
 		}
+		compound.setTag("inv", inv.serializeNBT());
 		return super.writeToNBT(compound);
 
 	}

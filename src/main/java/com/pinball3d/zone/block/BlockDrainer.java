@@ -44,16 +44,13 @@ public class BlockDrainer extends BlockContainer {
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		TEDrainer te = (TEDrainer) worldIn.getTileEntity(pos);
-
 		IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-
 		for (int i = handler.getSlots() - 1; i >= 0; --i) {
 			if (handler.getStackInSlot(i) != null) {
 				Block.spawnAsEntity(worldIn, pos, handler.getStackInSlot(i));
 				((IItemHandlerModifiable) handler).setStackInSlot(i, ItemStack.EMPTY);
 			}
 		}
-
 		super.breakBlock(worldIn, pos, state);
 	}
 

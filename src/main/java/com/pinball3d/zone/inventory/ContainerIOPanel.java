@@ -61,8 +61,13 @@ public class ContainerIOPanel extends Container {
 							if (mc.currentScreen instanceof GuiContainerIOPanel) {
 								GuiContainerIOPanel container = (GuiContainerIOPanel) mc.currentScreen;
 								int offsetX = container.width / 2 - 184, offsetY = (container.height - 213) / 2;
-								container.putScreen(new SubscreenIOPanelRequest(container, x - offsetX, y - offsetY,
-										getStack(), list[slotNumber - 54]));
+								int slotX = (slotNumber - 54) % 4 * 19 + 7;
+								int slotY = (slotNumber - 54) / 4 * 19 + 29;
+								if (x - offsetX >= slotX && x - offsetX <= slotX + 16 && y - offsetY >= slotY
+										&& y - offsetY <= slotY + 16) {
+									container.putScreen(new SubscreenIOPanelRequest(container, x - offsetX, y - offsetY,
+											getStack(), list[slotNumber - 54]));
+								}
 							}
 						}
 						return false;
@@ -227,6 +232,7 @@ public class ContainerIOPanel extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+		System.out.println(index);
 		Slot slot = inventorySlots.get(index);
 		if (slot == null || !slot.getHasStack()) {
 			return ItemStack.EMPTY;
@@ -234,14 +240,19 @@ public class ContainerIOPanel extends Container {
 		ItemStack newStack = slot.getStack(), oldStack = newStack.copy();
 		boolean isMerged = false;
 		if (index <= 53) {
-			isMerged = mergeItemStack(newStack, 54, 90, true);
-		} else if (index >= 54 && index < 81) {
+			isMerged = mergeItemStack(newStack, 90, 126, true);
+		} else if (index >= 54 && index < 90) {
+			return ItemStack.EMPTY;
+		} else if (index >= 90 && index < 117) {
 			isMerged = mergeItemStack(newStack, 0, 54, false);
 			if (!isMerged) {
-				isMerged = mergeItemStack(newStack, 81, 90, false);
+				isMerged = mergeItemStack(newStack, 117, 126, true);
 			}
-		} else if (index >= 81) {
-			isMerged = mergeItemStack(newStack, 0, 81, false);
+		} else {
+			isMerged = mergeItemStack(newStack, 0, 54, false);
+			if (!isMerged) {
+				isMerged = mergeItemStack(newStack, 90, 117, true);
+			}
 		}
 		if (!isMerged) {
 			return ItemStack.EMPTY;

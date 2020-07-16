@@ -10,6 +10,7 @@ import java.util.UUID;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.IDevice;
 import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.LogisticPack;
@@ -17,15 +18,19 @@ import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class TEProcessingCenter extends TileEntity implements ITickable {
 	private boolean on;
@@ -334,6 +339,50 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		}
 	}
 
+	public StorageWrapper insertToItemHandler(StorageWrapper wrapper, IItemHandler handler) {
+		int max = handler.getSlots();
+		Iterator<HugeItemStack> it = wrapper.storges.iterator();
+		while (it.hasNext()) {
+			HugeItemStack hugestack = it.next();
+			for (int j = 0; j < max; j++) {
+				ItemStack stack = hugestack.stack.copy();
+				int amount = hugestack.count >= stack.getMaxStackSize() ? stack.getMaxStackSize() : hugestack.count;
+				stack.setCount(amount);
+				stack = handler.insertItem(j, stack, false);
+				hugestack.count = hugestack.count - amount + stack.getCount();
+				if (hugestack.isEmpty()) {
+					it.remove();
+					break;
+				}
+			}
+		}
+		Iterator<ItemStack> it2 = wrapper.other.iterator();
+		while (it2.hasNext()) {
+			ItemStack stack = it2.next();
+			for (int j = 0; j < max; j++) {
+				stack = handler.insertItem(j, stack, false);
+				if (stack.isEmpty()) {
+					it2.remove();
+					break;
+				}
+			}
+		}
+		return wrapper;
+	}
+
+	public void updatePack() {
+		Iterator<LogisticPack> it = packs.iterator();
+		while (it.hasNext()) {
+			LogisticPack i = it.next();
+			TileEntity te = i.target.getTileEntity();
+			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			StorageWrapper wrapper = insertToItemHandler(i.items, handler);
+			handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
+			wrapper = insertToItemHandler(wrapper, handler);
+			it.remove();
+		}
+	}
+
 	@Override
 	public void update() {
 		markDirty();
@@ -380,6 +429,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			}
 		}
 		energyTick--;
+		updatePack();
 	}
 
 	@Override
