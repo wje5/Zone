@@ -35,7 +35,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/io_panel.png");
 	public static final ResourceLocation TEXTURE2 = new ResourceLocation("zone:textures/gui/sphinx/io_panel_2.png");
 	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
-	protected ContainerIOPanel container;
+	public ContainerIOPanel container;
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
 	protected Set<Component> components = new HashSet<Component>();

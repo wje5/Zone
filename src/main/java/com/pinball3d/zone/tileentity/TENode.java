@@ -116,7 +116,7 @@ public class TENode extends TileEntity implements ITickable, INeedNetwork {
 
 	public NBTTagCompound writeNetworkData(NBTTagCompound tag) {
 		if (worldpos != null) {
-			worldpos.save(tag);
+			worldpos.writeToNBT(tag);
 		}
 		return tag;
 	}

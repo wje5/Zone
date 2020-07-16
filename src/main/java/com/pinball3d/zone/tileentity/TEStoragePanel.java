@@ -113,7 +113,7 @@ public class TEStoragePanel extends TileEntity implements ITickable, INeedNetwor
 
 	public NBTTagCompound writeNetworkData(NBTTagCompound tag) {
 		if (worldpos != null) {
-			worldpos.save(tag);
+			worldpos.writeToNBT(tag);
 		}
 		return tag;
 	}

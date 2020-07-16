@@ -32,6 +32,7 @@ public class NetworkHandler {
 		registerMessage(MessageIOPanelPageChange.Handler.class, MessageIOPanelPageChange.class, Side.SERVER);
 		registerMessage(MessageUpdateIOPanelGui.Handler.class, MessageUpdateIOPanelGui.class, Side.SERVER);
 		registerMessage(MessageIOPanelSearchChange.Handler.class, MessageIOPanelSearchChange.class, Side.SERVER);
+		registerMessage(MessageIOPanelRequest.Handler.class, MessageIOPanelRequest.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

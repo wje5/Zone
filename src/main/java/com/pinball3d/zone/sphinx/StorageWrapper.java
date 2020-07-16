@@ -68,9 +68,19 @@ public class StorageWrapper {
 		merge(stack);
 	}
 
+	public StorageWrapper(HugeItemStack stack) {
+		this();
+		merge(stack);
+	}
+
 	public StorageWrapper(IItemHandler stacks) {
 		this();
 		merge(stacks);
+	}
+
+	public StorageWrapper(NBTTagCompound tag) {
+		this();
+		readFromNBT(tag);
 	}
 
 	public void merge(IItemHandler input) {
@@ -117,6 +127,75 @@ public class StorageWrapper {
 			merge(i);
 		}
 		other.addAll(wrapper.other);
+	}
+
+	public void shrink(StorageWrapper wrapper) {
+		Iterator<HugeItemStack> it = wrapper.storges.iterator();
+		while (it.hasNext()) {
+			HugeItemStack i = it.next();
+			shrink(i);
+			if (i.isEmpty()) {
+				it.remove();
+			}
+		}
+		Iterator<ItemStack> it2 = wrapper.other.iterator();
+		while (it2.hasNext()) {
+			ItemStack i = it2.next();
+			shrink(i);
+			if (i.isEmpty()) {
+				it2.remove();
+			}
+		}
+	}
+
+	public HugeItemStack shrink(HugeItemStack hugestack) {
+		Iterator<HugeItemStack> it = storges.iterator();
+		while (it.hasNext()) {
+			HugeItemStack i = it.next();
+			i.shrink(hugestack);
+			if (hugestack.isEmpty()) {
+				break;
+			}
+		}
+		return hugestack;
+	}
+
+	public ItemStack shrink(ItemStack stack) {
+		if (stack.isEmpty()) {
+			return stack;
+		}
+		if (stack.getMaxStackSize() <= 1) {
+			Iterator<ItemStack> it = other.iterator();
+			while (it.hasNext()) {
+				ItemStack i = it.next();
+				if (ItemStack.areItemStacksEqual(i, stack)) {
+					stack.setCount(0);
+					it.remove();
+					break;
+				}
+			}
+		} else {
+			Iterator<HugeItemStack> it = storges.iterator();
+			while (it.hasNext()) {
+				HugeItemStack i = it.next();
+				i.shrink(stack);
+				if (stack.isEmpty()) {
+					break;
+				}
+			}
+		}
+		return stack;
+	}
+
+	public StorageWrapper copy() {
+		StorageWrapper wrapper = new StorageWrapper();
+		storges.forEach(e -> {
+			wrapper.storges.add(e.copy());
+		});
+		other.forEach(e -> {
+			wrapper.other.add(e.copy());
+		});
+		return wrapper;
 	}
 
 	@Override

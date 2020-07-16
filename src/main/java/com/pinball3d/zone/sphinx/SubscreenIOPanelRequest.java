@@ -1,6 +1,9 @@
 package com.pinball3d.zone.sphinx;
 
 import com.pinball3d.zone.inventory.GuiContainerIOPanel;
+import com.pinball3d.zone.network.MessageIOPanelRequest;
+import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.tileentity.TEIOPanel;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -40,6 +43,17 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		components.add(new TextButton(this, this.x + 15, this.y + 41, I18n.format("sphinx.confirm"), new Runnable() {
 			@Override
 			public void run() {
+				if (box.text.isEmpty()) {
+					return;
+				}
+				int amount = Integer.valueOf(box.text);
+				if (amount <= 0) {
+					return;
+				}
+				TEIOPanel te = ((GuiContainerIOPanel) parent).container.tileEntity;
+				NetworkHandler.instance.sendToServer(MessageIOPanelRequest.newMessage("aaaaaaaa", te.getNetworkPos(),
+						new StorageWrapper(new HugeItemStack(stack, amount)),
+						new WorldPos(te.getPos(), te.getWorld())));
 				parent.quitScreen(SubscreenIOPanelRequest.this);
 			}
 		}));
@@ -55,10 +69,8 @@ public class SubscreenIOPanelRequest extends Subscreen {
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
 		int amount = -1;
-		try {
+		if (!box.text.isEmpty()) {
 			amount = Integer.valueOf(box.text);
-		} catch (NumberFormatException e) {
-
 		}
 		if (amount > this.amount) {
 			amount = this.amount;

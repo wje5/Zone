@@ -36,6 +36,40 @@ public class HugeItemStack {
 		return false;
 	}
 
+	public ItemStack shrink(ItemStack stack) {
+		if (this.stack.isItemEqual(stack)) {
+			if (count >= stack.getCount()) {
+				count -= stack.getCount();
+				stack.setCount(0);
+			} else {
+				stack.shrink(count);
+				count = 0;
+			}
+		}
+		return stack;
+	}
+
+	public HugeItemStack shrink(HugeItemStack hugestack) {
+		if (stack.isItemEqual(hugestack.stack)) {
+			if (count >= hugestack.count) {
+				count -= hugestack.count;
+				hugestack.count = 0;
+			} else {
+				hugestack.count -= count;
+				count = 0;
+			}
+		}
+		return hugestack;
+	}
+
+	public boolean isEmpty() {
+		return count <= 0 || stack.isEmpty();
+	}
+
+	public HugeItemStack copy() {
+		return new HugeItemStack(stack.copy(), count);
+	}
+
 	@Override
 	public String toString() {
 		return "H{" + stack + "|" + count + "}";

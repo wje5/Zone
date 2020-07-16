@@ -74,7 +74,7 @@ public class WorldPos {
 		return null;
 	}
 
-	public NBTTagCompound save(NBTTagCompound tag) {
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		NBTTagCompound subtag = new NBTTagCompound();
 		subtag.setInteger("x", pos.getX());
 		subtag.setInteger("y", pos.getY());

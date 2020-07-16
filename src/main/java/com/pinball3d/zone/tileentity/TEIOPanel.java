@@ -88,7 +88,7 @@ public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, ID
 
 	public NBTTagCompound writeNetworkData(NBTTagCompound tag) {
 		if (worldpos != null) {
-			worldpos.save(tag);
+			worldpos.writeToNBT(tag);
 		}
 		return tag;
 	}

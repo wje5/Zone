@@ -258,8 +258,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			}
 		});
 		sortset.addAll(storages);
-		storages.forEach(e -> {
-			System.out.println(e.getPos().distanceSq(target.getPos()));
+		sortset.forEach(e -> {
+			packs.add(new LogisticPack(target, ((IStorable) e.getTileEntity()).extract(wrapper)));
 		});
 	}
 
@@ -423,17 +423,17 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		compound.setBoolean("on", on);
 		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {
-			nodeList.appendTag(e.save(new NBTTagCompound()));
+			nodeList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("nodes", nodeList);
 		NBTTagList storgeList = new NBTTagList();
 		storages.forEach(e -> {
-			storgeList.appendTag(e.save(new NBTTagCompound()));
+			storgeList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("storges", storgeList);
 		NBTTagList deviceList = new NBTTagList();
 		devices.forEach(e -> {
-			deviceList.appendTag(e.save(new NBTTagCompound()));
+			deviceList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("devices", deviceList);
 		if (uuid != null) {

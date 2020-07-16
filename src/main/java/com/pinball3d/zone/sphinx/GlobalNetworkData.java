@@ -90,7 +90,7 @@ public class GlobalNetworkData extends WorldSavedData {
 		map.forEach((k, v) -> {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setUniqueId("uuid", k);
-			v.save(tag);
+			v.writeToNBT(tag);
 			list.appendTag(tag);
 		});
 		nbt.setTag("data", list);

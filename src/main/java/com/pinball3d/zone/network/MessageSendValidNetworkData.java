@@ -44,7 +44,7 @@ public class MessageSendValidNetworkData implements IMessage {
 		NBTTagCompound tag = new NBTTagCompound();
 		NBTTagList taglist = new NBTTagList();
 		list.forEach(e -> {
-			taglist.appendTag(e.save(new NBTTagCompound()));
+			taglist.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		tag.setTag("list", taglist);
 		ByteBufUtils.writeTag(buf, tag);

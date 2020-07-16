@@ -92,7 +92,7 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 
 	public NBTTagCompound writeNetworkData(NBTTagCompound tag) {
 		if (worldpos != null) {
-			worldpos.save(tag);
+			worldpos.writeToNBT(tag);
 		}
 		return tag;
 	}
@@ -194,6 +194,8 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 				}
 			}
 		});
-		return extracted;
+		StorageWrapper r = extracted.copy();
+		request.shrink(extracted);
+		return r;
 	}
 }
