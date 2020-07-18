@@ -96,7 +96,8 @@ public class StorageWrapper {
 			return;
 		}
 		if (stack.getMaxStackSize() <= 1) {
-			other.add(stack);
+			other.add(stack.copy());
+			stack.setCount(0);
 		} else {
 			Iterator<HugeItemStack> it = storges.iterator();
 			while (it.hasNext()) {
@@ -105,7 +106,8 @@ public class StorageWrapper {
 					return;
 				}
 			}
-			storges.add(new HugeItemStack(stack));
+			storges.add(new HugeItemStack(stack.copy()));
+			stack.setCount(0);
 		}
 	}
 
@@ -117,7 +119,8 @@ public class StorageWrapper {
 				return;
 			}
 		}
-		storges.add(hugestack);
+		storges.add(hugestack.copy());
+		hugestack.count = 0;
 	}
 
 	public void merge(StorageWrapper wrapper) {
@@ -127,6 +130,7 @@ public class StorageWrapper {
 			merge(i);
 		}
 		other.addAll(wrapper.other);
+		wrapper.clear();
 	}
 
 	public void shrink(StorageWrapper wrapper) {
@@ -185,6 +189,11 @@ public class StorageWrapper {
 			}
 		}
 		return stack;
+	}
+
+	public void clear() {
+		storges.clear();
+		other.clear();
 	}
 
 	public StorageWrapper copy() {

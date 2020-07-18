@@ -22,7 +22,7 @@ import net.minecraftforge.items.ItemStackHandler;
 public class TEIOPanel extends TileEntity implements INeedNetwork, ITickable, IDevice {
 	private WorldPos worldpos;
 	private UUID network;
-	private ItemStackHandler inv;
+	public ItemStackHandler inv;
 
 	public TEIOPanel() {
 		super();

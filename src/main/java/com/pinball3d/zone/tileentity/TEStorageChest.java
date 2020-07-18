@@ -174,7 +174,9 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 
 	@Override
 	public StorageWrapper getStorges() {
-		return new StorageWrapper(inv);
+		ItemStackHandler handler = new ItemStackHandler();
+		handler.deserializeNBT(inv.serializeNBT());
+		return new StorageWrapper(handler);
 	}
 
 	@Override
@@ -194,8 +196,56 @@ public class TEStorageChest extends TileEntity implements INeedNetwork, ITickabl
 				}
 			}
 		});
+		request.other.forEach(e -> {
+			for (int i = inv.getSlots() - 1; i >= 0; i--) {
+				if (ItemStack.areItemStacksEqual(inv.getStackInSlot(i), e)) {
+					extracted.merge(inv.getStackInSlot(i));
+					break;
+				}
+			}
+		});
 		StorageWrapper r = extracted.copy();
 		request.shrink(extracted);
+		return r;
+	}
+
+	@Override
+	public StorageWrapper insert(StorageWrapper wrapper, boolean simulate) {
+		ItemStackHandler handler;
+		if (simulate) {
+			handler = new ItemStackHandler();
+			handler.deserializeNBT(inv.serializeNBT());
+		} else {
+			handler = inv;
+		}
+		StorageWrapper inserted = new StorageWrapper();
+		wrapper.storges.forEach(e -> {
+			int amount = e.count;
+			int max = handler.getSlots();
+			for (int i = 0; i < max; i++) {
+				if (amount <= 0) {
+					break;
+				}
+				ItemStack stack = e.stack.copy();
+				stack.setCount(amount >= e.stack.getMaxStackSize() ? e.stack.getMaxStackSize() : amount);
+				int count = handler.insertItem(i, stack, false).getCount();
+				stack = e.stack.copy();
+				stack.setCount(amount >= e.stack.getMaxStackSize() ? e.stack.getMaxStackSize() : amount);
+				stack.shrink(count);
+				amount -= stack.getCount();
+				inserted.merge(stack);
+			}
+		});
+		wrapper.other.forEach(e -> {
+			for (int i = inv.getSlots() - 1; i >= 0; i--) {
+				if (handler.insertItem(i, inv.getStackInSlot(i), false).isEmpty()) {
+//					extracted.merge(inv.getStackInSlot(i)); TODO
+					break;
+				}
+			}
+		});
+		StorageWrapper r = inserted.copy();
+		wrapper.shrink(inserted);
 		return r;
 	}
 }

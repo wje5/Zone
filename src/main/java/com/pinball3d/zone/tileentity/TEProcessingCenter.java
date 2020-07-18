@@ -268,6 +268,22 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		});
 	}
 
+	public void dispenceItems(StorageWrapper wrapper, WorldPos pos) {
+		TreeSet<WorldPos> sortset = new TreeSet<WorldPos>(new Comparator<WorldPos>() {
+			@Override
+			public int compare(WorldPos o1, WorldPos o2) {
+				double dist1 = o1.getPos().distanceSq(pos.getPos());
+				double dist2 = o2.getPos().distanceSq(pos.getPos());
+				return dist1 > dist2 ? 1 : dist1 < dist2 ? -1 : o1.hashCode() > o2.hashCode() ? 1 : -1;
+			}
+		});
+		sortset.addAll(storages);
+		sortset.forEach(e -> {
+			packs.add(new LogisticPack(new WorldPos(e.getTileEntity().getPos(), e.getTileEntity().getWorld()),
+					((IStorable) e.getTileEntity()).insert(wrapper, true)));
+		});
+	}
+
 	public void updateNode() {
 		boolean flag = false;
 		Set<WorldPos> temp = new HashSet<WorldPos>();

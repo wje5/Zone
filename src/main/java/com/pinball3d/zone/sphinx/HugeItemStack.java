@@ -23,6 +23,7 @@ public class HugeItemStack {
 	public boolean merge(ItemStack stack) {
 		if (this.stack.isItemEqual(stack)) {
 			count += stack.getCount();
+			stack.setCount(0);
 			return true;
 		}
 		return false;
@@ -30,7 +31,8 @@ public class HugeItemStack {
 
 	public boolean merge(HugeItemStack hugestack) {
 		if (stack.isItemEqual(hugestack.stack)) {
-			count += stack.getCount();
+			count += hugestack.count;
+			hugestack.count = 0;
 			return true;
 		}
 		return false;

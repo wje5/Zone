@@ -31,6 +31,10 @@ public class WorldPos {
 		this.dim = dim;
 	}
 
+	public WorldPos(TileEntity te) {
+		this(te.getPos(), te.getWorld());
+	}
+
 	public World getWorld() {
 		FMLCommonHandler handler = FMLCommonHandler.instance();
 		if (handler.getEffectiveSide() == Side.SERVER) {

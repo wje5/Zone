@@ -41,15 +41,22 @@ public class Subscreen implements IParent {
 		GlStateManager.disableDepth();
 		GlStateManager.disableBlend();
 		GlStateManager.translate(0, 0, 300F);
+
 		if (renderCover) {
 			Minecraft mc = Minecraft.getMinecraft();
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0x8F000000);
 		}
 		doRenderBackground(mouseX, mouseY);
+		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
+		GlStateManager.disableBlend();
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);
 		});
 		doRenderForeground(mouseX, mouseY);
+		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
+		GlStateManager.disableBlend();
 		Iterator<Subscreen> it = subscreens.iterator();
 		while (it.hasNext()) {
 			Subscreen screen = it.next();

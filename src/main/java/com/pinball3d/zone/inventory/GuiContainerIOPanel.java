@@ -10,6 +10,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.network.MessageIOPanelPageChange;
 import com.pinball3d.zone.network.MessageIOPanelSearchChange;
+import com.pinball3d.zone.network.MessageIOPanelSendItemToStorage;
 import com.pinball3d.zone.network.MessageUpdateIOPanelGui;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.Component;
@@ -19,6 +20,7 @@ import com.pinball3d.zone.sphinx.ScreenIOPanel;
 import com.pinball3d.zone.sphinx.Subscreen;
 import com.pinball3d.zone.sphinx.TextInputBox;
 import com.pinball3d.zone.sphinx.TexturedButton;
+import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 
 import net.minecraft.client.Minecraft;
@@ -85,6 +87,21 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 						.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));
 			}
 		}));
+		components
+				.add(new TexturedButton(this, offsetX + 285, offsetY + 5, ICONS, 64, 68, 30, 28, 0.5F, new Runnable() {
+					@Override
+					public void run() {
+						NetworkHandler.instance.sendToServer(MessageIOPanelSendItemToStorage.newMessage("aaaaaaaa",
+								container.tileEntity.getNetworkPos(), new WorldPos(container.tileEntity)));
+					}
+				}));
+		components
+				.add(new TexturedButton(this, offsetX + 285, offsetY + 24, ICONS, 0, 68, 32, 32, 0.5F, new Runnable() {
+					@Override
+					public void run() {
+						System.out.println("config");
+					}
+				}));
 	}
 
 	public RenderItem getItemRenderer() {
@@ -96,7 +113,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(TEXTURE);
 		int offsetX = (width - 184) / 2, offsetY = (height - ySize) / 2;
-		drawTexturedModalRect(offsetX, offsetY, 0, 0, 184, 213);
+		drawTexturedModalRect(offsetX, offsetY, 0, 0, 214, 213);
 		mc.getTextureManager().bindTexture(TEXTURE2);
 		drawTexturedModalRect(offsetX - 92, offsetY, 0, 0, 89, 213);
 		String text = container.page + "/" + container.maxPage;
@@ -129,7 +146,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
 		GlStateManager.disableBlend();
-		GlStateManager.translate(0, 0, 50);
+//		GlStateManager.translate(0, 0, -50);
 		for (int i = 0; i < 36; i++) {
 			if (container.list[i] > 1) {
 				String text = transferString(container.list[i]);

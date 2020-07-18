@@ -51,9 +51,10 @@ public class SubscreenIOPanelRequest extends Subscreen {
 					return;
 				}
 				TEIOPanel te = ((GuiContainerIOPanel) parent).container.tileEntity;
+				StorageWrapper wrapper = stack.getMaxStackSize() <= 1 ? new StorageWrapper(stack)
+						: new StorageWrapper(new HugeItemStack(stack, amount));
 				NetworkHandler.instance.sendToServer(MessageIOPanelRequest.newMessage("aaaaaaaa", te.getNetworkPos(),
-						new StorageWrapper(new HugeItemStack(stack, amount)),
-						new WorldPos(te.getPos(), te.getWorld())));
+						wrapper, new WorldPos(te.getPos(), te.getWorld())));
 				parent.quitScreen(SubscreenIOPanelRequest.this);
 			}
 		}));
@@ -95,12 +96,20 @@ public class SubscreenIOPanelRequest extends Subscreen {
 
 	@Override
 	public void doRenderForeground(int mouseX, int mouseY) {
+		GlStateManager.pushMatrix();
+		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
+		GlStateManager.disableBlend();
 		Util.drawBorder(x, y, 140, 56, 1, 0xFF1ECCDE);
 		Util.drawBorder(x + 8, y + 8, 18, 18, 1, 0xFF1ECCDE);
 		getFontRenderer().drawString(I18n.format("sphinx.output") + ":", x + 30, y + 6, 0xFF1ECCDE);
 		getFontRenderer().drawString(I18n.format("sphinx.time") + ":", x + 30, y + 30, 0xFF1ECCDE);
 		String text = "103s";
 		getFontRenderer().drawString(text, x + 128 - getFontRenderer().getStringWidth(text), y + 30, 0xFF1ECCDE);
+		GlStateManager.enableLighting();
+		GlStateManager.enableDepth();
+		GlStateManager.enableBlend();
+		GlStateManager.popMatrix();
 		super.doRenderForeground(mouseX, mouseY);
 	}
 

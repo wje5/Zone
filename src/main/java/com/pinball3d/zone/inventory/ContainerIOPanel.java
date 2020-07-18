@@ -232,7 +232,6 @@ public class ContainerIOPanel extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-		System.out.println(index);
 		Slot slot = inventorySlots.get(index);
 		if (slot == null || !slot.getHasStack()) {
 			return ItemStack.EMPTY;
