@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#*#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:etherium_plate_riveted"
+    },
+    "*": {
+      "item": "zone:storage_panel"
+    }
+  },
+  "result": {
+    "item": "zone:storage_chest"
+  }
+}

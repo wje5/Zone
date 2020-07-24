@@ -16,7 +16,9 @@ public class TileEntityLoader {
 		registerTileEntity(TEProcessingCenter.class, "ProcessingCenter");
 		registerTileEntity(TETransmissionModule.class, "TransmissionModule");
 		registerTileEntity(TEStorageChest.class, "TEStorageChest");
+		registerTileEntity(TEStoragePanel.class, "TEStoragePanel");
 		registerTileEntity(TEIOPanel.class, "TEIOPanel");
+		registerTileEntity(TEProductionPanel.class, "TEProductionPanel");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

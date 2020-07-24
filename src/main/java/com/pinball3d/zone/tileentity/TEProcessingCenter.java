@@ -12,6 +12,7 @@ import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.IDevice;
+import com.pinball3d.zone.sphinx.IProduction;
 import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.LogisticPack;
 import com.pinball3d.zone.sphinx.StorageWrapper;
@@ -43,6 +44,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	private Set<WorldPos> nodes = new HashSet<WorldPos>();
 	private Set<WorldPos> storages = new HashSet<WorldPos>();
 	private Set<WorldPos> devices = new HashSet<WorldPos>();
+	private Set<WorldPos> productions = new HashSet<WorldPos>();
 	private Set<LogisticPack> packs = new HashSet<LogisticPack>();
 	private UUID uuid;
 
@@ -154,6 +156,11 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				return;
 			}
 		});
+		productions.forEach(e -> {
+			if (e.equals(pos)) {
+				return;
+			}
+		});
 		TileEntity te = pos.getTileEntity();
 		if (te instanceof TENode) {
 			nodes.add(pos);
@@ -161,6 +168,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			storages.add(pos);
 		} else if (te instanceof IDevice) {
 			devices.add(pos);
+		} else if (te instanceof IProduction) {
+			productions.add(pos);
 		}
 		callUpdate();
 		markDirty();
@@ -170,6 +179,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		nodes.remove(pos);
 		storages.remove(pos);
 		devices.remove(pos);
+		productions.remove(pos);
 		callUpdate();
 		markDirty();
 	}
@@ -184,6 +194,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 
 	public Set<WorldPos> getDevices() {
 		return devices;
+	}
+
+	public Set<WorldPos> getProductions() {
+		return productions;
 	}
 
 	public Set<LogisticPack> getPacks() {
@@ -247,7 +261,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		storages.forEach(e -> {
 			TileEntity te = e.getTileEntity();
 			if (te instanceof IStorable) {
-				wrapper.merge(((IStorable) te).getStorges());
+				wrapper.merge(((IStorable) te).getStorages());
 			}
 		});
 		return wrapper;
@@ -264,8 +278,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		});
 		sortset.addAll(storages);
 		sortset.forEach(e -> {
-			packs.add(new LogisticPack(target, ((IStorable) e.getTileEntity()).extract(wrapper)));
+			packs.add(new LogisticPack(target, ((IStorable) e.getTileEntity()).extract(wrapper),
+					new WorldPos(e.getTileEntity())));
 		});
+		callUpdate();
 	}
 
 	public void dispenceItems(StorageWrapper wrapper, WorldPos pos) {
@@ -280,8 +296,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		sortset.addAll(storages);
 		sortset.forEach(e -> {
 			packs.add(new LogisticPack(new WorldPos(e.getTileEntity().getPos(), e.getTileEntity().getWorld()),
-					((IStorable) e.getTileEntity()).insert(wrapper, true)));
+					((IStorable) e.getTileEntity()).insert(wrapper, true), pos));
 		});
+		callUpdate();
 	}
 
 	public void updateNode() {
@@ -323,6 +340,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	}
 
 	public void updateDevice() {
+		System.out.println(productions);
 		boolean flag = false;
 		updateNode();
 		Iterator<WorldPos> it = storages.iterator();
@@ -341,6 +359,18 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		while (it.hasNext()) {
 			WorldPos pos = it.next();
 			if (!(pos.getTileEntity() instanceof IDevice)) {
+				it.remove();
+				flag = true;
+			} else if (!isDeviceInRange(pos.getWorld(), pos.getPos())) {
+				it.remove();
+				((INeedNetwork) pos.getTileEntity()).disconnect();
+				flag = true;
+			}
+		}
+		it = productions.iterator();
+		while (it.hasNext()) {
+			WorldPos pos = it.next();
+			if (!(pos.getTileEntity() instanceof IProduction)) {
 				it.remove();
 				flag = true;
 			} else if (!isDeviceInRange(pos.getWorld(), pos.getPos())) {
@@ -390,12 +420,20 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		Iterator<LogisticPack> it = packs.iterator();
 		while (it.hasNext()) {
 			LogisticPack i = it.next();
-			TileEntity te = i.target.getTileEntity();
-			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-			StorageWrapper wrapper = insertToItemHandler(i.items, handler);
-			handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
-			wrapper = insertToItemHandler(wrapper, handler);
-			it.remove();
+			if (i.forward(1D)) {
+				TileEntity te = i.target.getTileEntity();
+				IItemHandler handler;
+				if (te instanceof IStorable) {
+					StorageWrapper wrapper = insertToItemHandler(i.items, ((IStorable) te).getStorage());
+				} else {
+					StorageWrapper wrapper = insertToItemHandler(i.items,
+							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP));
+					wrapper = insertToItemHandler(wrapper,
+							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH));
+				}
+				it.remove();
+			}
+			callUpdate();
 		}
 	}
 
@@ -427,6 +465,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 					nodes.clear();
 					storages.clear();
 					devices.clear();
+					productions.clear();
 					callUpdate();
 				}
 			} else {
@@ -472,9 +511,19 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		list.forEach(e -> {
 			devices.add(WorldPos.load((NBTTagCompound) e));
 		});
+		productions.clear();
+		list = compound.getTagList("productions", 10);
+		list.forEach(e -> {
+			productions.add(WorldPos.load((NBTTagCompound) e));
+		});
 		if (compound.hasKey("uuidMost")) {
 			uuid = compound.getUniqueId("uuid");
 		}
+		packs.clear();
+		list = compound.getTagList("packs", 10);
+		list.forEach(e -> {
+			packs.add(new LogisticPack((NBTTagCompound) e));
+		});
 		super.readFromNBT(compound);
 	}
 
@@ -502,9 +551,19 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			deviceList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("devices", deviceList);
+		NBTTagList productionList = new NBTTagList();
+		productions.forEach(e -> {
+			productionList.appendTag(e.writeToNBT(new NBTTagCompound()));
+		});
+		compound.setTag("productions", productionList);
 		if (uuid != null) {
 			compound.setUniqueId("uuid", uuid);
 		}
+		NBTTagList packList = new NBTTagList();
+		packs.forEach(e -> {
+			packList.appendTag(e.writeToNBT(new NBTTagCompound()));
+		});
+		compound.setTag("packs", packList);
 		return super.writeToNBT(compound);
 	}
 

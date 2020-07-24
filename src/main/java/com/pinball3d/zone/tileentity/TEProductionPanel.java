@@ -5,7 +5,8 @@ import java.util.UUID;
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.block.BlockStoragePanel;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
-import com.pinball3d.zone.sphinx.IStorable;
+import com.pinball3d.zone.sphinx.IProduction;
+import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
@@ -19,13 +20,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
-public class TEStoragePanel extends TileEntity implements ITickable, INeedNetwork, IStorable {
+public class TEProductionPanel extends TileEntity implements ITickable, IProduction, INeedNetwork {
 	private WorldPos worldpos;
 	private UUID network;
 
-	public TEStoragePanel() {
+	public TEProductionPanel() {
 
 	}
 
@@ -47,6 +47,15 @@ public class TEStoragePanel extends TileEntity implements ITickable, INeedNetwor
 					&& !world.isRemote) {
 				((TEProcessingCenter) worldpos.getTileEntity()).removeNeedNetwork(new WorldPos(pos, world));
 				disconnect();
+				return;
+			}
+			EnumFacing facing = world.getBlockState(pos).getValue(BlockStoragePanel.FACING).getOpposite();
+			BlockPos newpos = pos.add(facing.getFrontOffsetX(), facing.getFrontOffsetY(), facing.getFrontOffsetZ());
+			TileEntity te = world.getTileEntity(newpos);
+			if (te != null) {
+				IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+				((TEProcessingCenter) worldpos.getTileEntity()).dispenceItems(new StorageWrapper(handler, false),
+						new WorldPos(this));
 			}
 		}
 	}
@@ -158,23 +167,5 @@ public class TEStoragePanel extends TileEntity implements ITickable, INeedNetwor
 	public void connect(UUID uuid) {
 		network = uuid;
 		markDirty();
-	}
-
-	@Override
-	public IItemHandler getStorage() {
-		EnumFacing facing = world.getBlockState(pos).getValue(BlockStoragePanel.FACING).getOpposite();
-		BlockPos newpos = pos.add(facing.getFrontOffsetX(), facing.getFrontOffsetY(), facing.getFrontOffsetZ());
-		TileEntity te = world.getTileEntity(newpos);
-		if (te != null) {
-			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-			if (handler != null) {
-				return handler;
-			}
-			handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
-			if (handler != null) {
-				return handler;
-			}
-		}
-		return new ItemStackHandler(0);
 	}
 }

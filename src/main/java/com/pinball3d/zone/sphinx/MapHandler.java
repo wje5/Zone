@@ -34,6 +34,8 @@ public class MapHandler {
 	private Set<PointerNode> nodes;
 	private Set<PointerStorage> storges;
 	private Set<PointerDevice> devices;
+	private Set<PointerProduction> productions;
+	private Set<PointerPack> packs;
 	public WorldPos network;
 	private int dim;
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
@@ -53,6 +55,8 @@ public class MapHandler {
 		nodes = new HashSet<PointerNode>();
 		storges = new HashSet<PointerStorage>();
 		devices = new HashSet<PointerDevice>();
+		productions = new HashSet<PointerProduction>();
+		packs = new HashSet<PointerPack>();
 	}
 
 	private boolean checkNetwork(WorldPos network) {
@@ -135,7 +139,7 @@ public class MapHandler {
 	private void updateNodes() {
 		TEProcessingCenter te = (TEProcessingCenter) network.getTileEntity();
 		Set<WorldPos> set = te.getNodes();
-		nodes = new HashSet<PointerNode>();
+		nodes.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
 				BlockPos pos = e.getPos();
@@ -143,7 +147,7 @@ public class MapHandler {
 			}
 		});
 		set = te.getStorages();
-		storges = new HashSet<PointerStorage>();
+		storges.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
 				BlockPos pos = e.getPos();
@@ -151,11 +155,26 @@ public class MapHandler {
 			}
 		});
 		set = te.getDevices();
-		devices = new HashSet<PointerDevice>();
+		devices.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
 				BlockPos pos = e.getPos();
 				devices.add(new PointerDevice(pos.getX(), pos.getZ()));
+			}
+		});
+		set = te.getProductions();
+		productions.clear();
+		set.forEach(e -> {
+			if (e.getDim() == mc.player.dimension) {
+				BlockPos pos = e.getPos();
+				productions.add(new PointerProduction(pos.getX(), pos.getZ()));
+			}
+		});
+		Set<LogisticPack> packset = te.getPacks();
+		packs.clear();
+		packset.forEach(e -> {
+			if (e.dim == mc.player.dimension) {
+				packs.add(new PointerPack((int) e.x, (int) e.z));
 			}
 		});
 	}
@@ -254,6 +273,12 @@ public class MapHandler {
 			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		});
 		devices.forEach(e -> {
+			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+		});
+		productions.forEach(e -> {
+			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+		});
+		packs.forEach(e -> {
 			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		});
 		GlStateManager.popMatrix();

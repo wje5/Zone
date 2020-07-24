@@ -31,7 +31,7 @@ public class MessageIOPanelSendItemToStorage extends MessageSphinx {
 		TileEntity tileentity = WorldPos.load(tag.getCompoundTag("panelpos")).getTileEntity();
 		if (tileentity instanceof TEIOPanel) {
 			TEIOPanel te = (TEIOPanel) tileentity;
-			((TEProcessingCenter) pos.getTileEntity()).dispenceItems(new StorageWrapper(te.inv),
+			((TEProcessingCenter) pos.getTileEntity()).dispenceItems(new StorageWrapper(te.inv, false),
 					new WorldPos(te.getPos(), te.getWorld()));
 		}
 	}

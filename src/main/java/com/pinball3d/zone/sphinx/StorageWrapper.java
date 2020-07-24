@@ -73,9 +73,9 @@ public class StorageWrapper {
 		merge(stack);
 	}
 
-	public StorageWrapper(IItemHandler stacks) {
+	public StorageWrapper(IItemHandler stacks, boolean isSimulate) {
 		this();
-		merge(stacks);
+		merge(stacks, isSimulate);
 	}
 
 	public StorageWrapper(NBTTagCompound tag) {
@@ -83,11 +83,14 @@ public class StorageWrapper {
 		readFromNBT(tag);
 	}
 
-	public void merge(IItemHandler input) {
+	public void merge(IItemHandler input, boolean isSimulate) {
 		int max = input.getSlots();
 		for (int i = 0; i < max; i++) {
 			ItemStack stack = input.getStackInSlot(i);
-			merge(stack);
+			merge(stack.copy());
+			if (!isSimulate) {
+				input.extractItem(i, Integer.MAX_VALUE, false);
+			}
 		}
 	}
 

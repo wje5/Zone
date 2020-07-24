@@ -2,7 +2,7 @@ package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
-import com.pinball3d.zone.tileentity.TEStoragePanel;
+import com.pinball3d.zone.tileentity.TEProductionPanel;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -29,7 +29,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockStoragePanel extends BlockContainer {
+public class BlockProductionPanel extends BlockContainer {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing");
 
 	protected static final AxisAlignedBB PANEL_U_AABB = new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D,
@@ -45,12 +45,12 @@ public class BlockStoragePanel extends BlockContainer {
 	protected static final AxisAlignedBB PANEL_E_AABB = new AxisAlignedBB(0.0D, 0.1875D, 0.1875D, 0.0625D, 0.8125D,
 			0.8125D);
 
-	public BlockStoragePanel() {
+	public BlockProductionPanel() {
 		super(Material.IRON);
 		setHardness(100.0F);
 		setResistance(2500.0F);
-		setRegistryName("zone:storage_panel");
-		setUnlocalizedName("storage_panel");
+		setRegistryName("zone:production_panel");
+		setUnlocalizedName("production_panel");
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.UP));
 		setCreativeTab(TabZone.tab);
 	}
@@ -66,7 +66,8 @@ public class BlockStoragePanel extends BlockContainer {
 
 	@SideOnly(Side.CLIENT)
 	public void openScreen(World worldIn, BlockPos pos) {
-		Minecraft.getMinecraft().displayGuiScreen(new ScreenNeedNetwork((TEStoragePanel) worldIn.getTileEntity(pos)));
+		Minecraft.getMinecraft()
+				.displayGuiScreen(new ScreenNeedNetwork((TEProductionPanel) worldIn.getTileEntity(pos)));
 	}
 
 	@Override
@@ -162,6 +163,6 @@ public class BlockStoragePanel extends BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TEStoragePanel();
+		return new TEProductionPanel();
 	}
 }
