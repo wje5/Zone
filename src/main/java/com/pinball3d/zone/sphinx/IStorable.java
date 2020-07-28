@@ -1,7 +1,5 @@
 package com.pinball3d.zone.sphinx;
 
-import java.util.Arrays;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
@@ -81,7 +79,6 @@ public interface IStorable {
 				}
 			}
 		}
-		System.out.println(Arrays.toString(history));
 		StorageWrapper r = inserted.copy();
 		wrapper.shrink(inserted);
 		return r;

@@ -99,12 +99,8 @@ public class ContainerIOPanel extends Container {
 		for (int i = 0; i < 36; i++) {
 			global.extractItem(i, 64, false);
 		}
-		if (data == null) {
-			return;
-		}
 		int index = 0;
 		int offset = (page - 1) * 36;
-
 		Set<HugeItemStack> storges = data.storges;
 		if (!search.isEmpty()) {
 			storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);

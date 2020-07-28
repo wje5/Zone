@@ -146,7 +146,6 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
 		GlStateManager.disableBlend();
-//		GlStateManager.translate(0, 0, -50);
 		for (int i = 0; i < 36; i++) {
 			if (container.list[i] > 1) {
 				String text = transferString(container.list[i]);

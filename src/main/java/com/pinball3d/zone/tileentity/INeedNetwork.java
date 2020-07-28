@@ -15,5 +15,7 @@ public interface INeedNetwork {
 
 	public boolean isConnected();
 
-	public void disconnect();
+	public void setConnected(boolean connected);
+
+	public void deleteNetwork();
 }

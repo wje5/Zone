@@ -340,7 +340,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	}
 
 	public void updateDevice() {
-		System.out.println(productions);
 		boolean flag = false;
 		updateNode();
 		Iterator<WorldPos> it = storages.iterator();
@@ -350,9 +349,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				it.remove();
 				flag = true;
 			} else if (!isDeviceInRange(pos.getWorld(), pos.getPos())) {
-				it.remove();
-				((INeedNetwork) pos.getTileEntity()).disconnect();
+				((INeedNetwork) pos.getTileEntity()).setConnected(false);
 				flag = true;
+			} else {
+				((INeedNetwork) pos.getTileEntity()).setConnected(true);
 			}
 		}
 		it = devices.iterator();
@@ -362,9 +362,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				it.remove();
 				flag = true;
 			} else if (!isDeviceInRange(pos.getWorld(), pos.getPos())) {
-				it.remove();
-				((INeedNetwork) pos.getTileEntity()).disconnect();
+				((INeedNetwork) pos.getTileEntity()).setConnected(false);
 				flag = true;
+			} else {
+				((INeedNetwork) pos.getTileEntity()).setConnected(true);
 			}
 		}
 		it = productions.iterator();
@@ -374,9 +375,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				it.remove();
 				flag = true;
 			} else if (!isDeviceInRange(pos.getWorld(), pos.getPos())) {
-				it.remove();
-				((INeedNetwork) pos.getTileEntity()).disconnect();
+				((INeedNetwork) pos.getTileEntity()).setConnected(false);
 				flag = true;
+			} else {
+				((INeedNetwork) pos.getTileEntity()).setConnected(true);
 			}
 		}
 		if (flag) {
@@ -425,7 +427,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				IItemHandler handler;
 				if (te instanceof IStorable) {
 					StorageWrapper wrapper = insertToItemHandler(i.items, ((IStorable) te).getStorage());
-				} else {
+				} else if (te != null) {
 					StorageWrapper wrapper = insertToItemHandler(i.items,
 							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP));
 					wrapper = insertToItemHandler(wrapper,
@@ -462,10 +464,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				loadTick--;
 				if (loadTick == 0) {
 					on = true;
-					nodes.clear();
-					storages.clear();
-					devices.clear();
-					productions.clear();
 					callUpdate();
 				}
 			} else {

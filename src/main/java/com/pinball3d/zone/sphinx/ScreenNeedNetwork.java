@@ -15,6 +15,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class ScreenNeedNetwork extends GuiScreen implements IParent {
@@ -73,7 +74,8 @@ public class ScreenNeedNetwork extends GuiScreen implements IParent {
 		components.add(new ButtonNetworkConfig(this, width - 10, 2, new Runnable() {
 			@Override
 			public void run() {
-				subscreens.push(new SubscreenNetworkConfig((ScreenNeedNetwork) mc.currentScreen));
+				subscreens.push(new SubscreenNetworkConfig((ScreenNeedNetwork) mc.currentScreen,
+						new WorldPos((TileEntity) tileentity)));
 			}
 		}, false));
 	}
@@ -83,7 +85,7 @@ public class ScreenNeedNetwork extends GuiScreen implements IParent {
 		if (!checkTileentity()) {
 			return;
 		}
-		if (tileentity.isConnected()) {
+		if (tileentity.getNetworkPos() != null) {
 			MapHandler.draw(tileentity.getNetworkPos(), width, height);
 		} else {
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);

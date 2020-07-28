@@ -6,6 +6,7 @@ public class TexturedButton extends Component {
 	protected ResourceLocation texture;
 	protected int u, v, uWidth, vHeight;
 	protected Runnable event;
+	protected boolean enabled = true;
 
 	public TexturedButton(IParent parent, int x, int y, ResourceLocation texture, int uWidth, int vHeight, float scale,
 			Runnable onClick) {
@@ -30,15 +31,23 @@ public class TexturedButton extends Component {
 		event = onClick;
 	}
 
+	public void setEnabled(boolean enable) {
+		this.enabled = enable;
+	}
+
 	@Override
 	public void onLeftClick(int x, int y) {
 		super.onLeftClick(x, y);
-		event.run();
+		if (enabled) {
+			event.run();
+		}
 	}
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		Util.drawTexture(texture, x, y, width, height, u, v, uWidth, vHeight);
+		if (enabled) {
+			Util.drawTexture(texture, x, y, width, height, u, v, uWidth, vHeight);
+		}
 	}
 }

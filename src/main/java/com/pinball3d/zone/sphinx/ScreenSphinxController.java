@@ -13,6 +13,7 @@ import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class ScreenSphinxController extends GuiScreen implements IParent {
@@ -36,6 +37,11 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public void renderToolTip(ItemStack stack, int x, int y) {
+		super.renderToolTip(stack, x, y);
 	}
 
 	@Override

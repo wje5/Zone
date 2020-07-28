@@ -159,3 +159,4 @@ sphinx.sphinx_config=史芬斯系统配置
 sphinx.change_admin_password=修改您的管理员密码
 sphinx.change_login_password=修改系统登录密码
 sphinx.change_sphinx_name=修改系统名称
+sphinx.view_storages=查看存储信息

@@ -159,3 +159,4 @@ sphinx.sphinx_config=Sphinx Config
 sphinx.change_admin_password=Change your administrator password
 sphinx.change_login_password=Change sphinx login password
 sphinx.change_sphinx_name=Change sphinx name
+sphinx.view_storages=View Storages

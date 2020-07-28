@@ -17,27 +17,27 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageRequestValidNetworks implements IMessage {
 	String name;
-	int dim;
+	WorldPos pos;
 
 	public MessageRequestValidNetworks() {
 
 	}
 
-	public MessageRequestValidNetworks(EntityPlayer player) {
+	public MessageRequestValidNetworks(EntityPlayer player, WorldPos pos) {
 		name = player.getName();
-		dim = player.dimension;
+		this.pos = pos;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		name = ByteBufUtils.readUTF8String(buf);
-		dim = buf.readInt();
+		pos = WorldPos.readFromByte(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		ByteBufUtils.writeUTF8String(buf, name);
-		buf.writeInt(dim);
+		pos.writeToByte(buf);
 	}
 
 	public static class Handler implements IMessageHandler<MessageRequestValidNetworks, IMessage> {
@@ -46,10 +46,10 @@ public class MessageRequestValidNetworks implements IMessage {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
-					World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
+					World world = message.pos.getWorld();
 					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					List<WorldPos> list = SphinxUtil.getValidNetworks(player.dimension, player.posX, player.posY,
-							player.posZ);
+					List<WorldPos> list = SphinxUtil.getValidNetworks(player.dimension, message.pos.getPos().getX(),
+							message.pos.getPos().getY(), message.pos.getPos().getZ());
 					NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(list), player);
 				}
 			});

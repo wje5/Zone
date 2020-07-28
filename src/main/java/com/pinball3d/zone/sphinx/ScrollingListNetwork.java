@@ -18,10 +18,18 @@ public class ScrollingListNetwork extends Component {
 	protected List<WorldPos> data = new ArrayList<WorldPos>();
 
 	public ScrollingListNetwork(IParent parent, int x, int y, int width, int height) {
+		this(parent, x, y, width, height, null);
+	}
+
+	public ScrollingListNetwork(IParent parent, int x, int y, int width, int height, WorldPos pos) {
 		super(parent, x, y, width, height);
 		this.parent = parent;
 		this.lineHeight = 25;
-		NetworkHandler.instance.sendToServer(new MessageRequestValidNetworks(mc.player));
+		NetworkHandler.instance.sendToServer(new MessageRequestValidNetworks(mc.player,
+				pos == null
+						? new WorldPos((int) mc.player.posX, (int) mc.player.posY, (int) mc.player.posZ,
+								mc.player.world)
+						: pos));
 	}
 
 	public void setData(List<WorldPos> data) {

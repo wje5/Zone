@@ -36,6 +36,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	private static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");
 	private Set<Component> components = new HashSet<Component>();
+	private TexturedButton button;
 	public WorldPos worldpos;
 	private boolean flag;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
@@ -73,6 +74,11 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 		}
 	}
 
+	@Override
+	public void renderToolTip(ItemStack stack, int x, int y) {
+		super.renderToolTip(stack, x, y);
+	}
+
 	private void applyComponents() {
 		components = new HashSet<Component>();
 		components.add(new ButtonNetworkConfig(this, width - 10, 2, new Runnable() {
@@ -81,6 +87,12 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 				subscreens.push(new SubscreenNetworkConfig((ScreenTerminal) mc.currentScreen));
 			}
 		}, true));
+		components.add(button = new TexturedButton(this, width - 20, 2, TEXTURE, 94, 68, 22, 30, 0.25F, new Runnable() {
+			@Override
+			public void run() {
+				subscreens.push(new SubscreenViewStorage((ScreenTerminal) mc.currentScreen));
+			}
+		}));
 	}
 
 	@Override
@@ -89,8 +101,10 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			return;
 		}
 		if (isConnected()) {
+			button.setEnabled(true);
 			MapHandler.draw(getNetwork(), width, height);
 		} else {
+			button.setEnabled(false);
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
 			Util.drawTexture(TEXTURE_NO_NETWORK, width / 2 - 32, height / 2 - 32, 256, 256, 0.25F);
 			String text = I18n.format("sphinx.no_network");

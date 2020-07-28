@@ -12,9 +12,17 @@ public class SubscreenNetworkConfig extends Subscreen {
 		this(parent, parent.getWidth() / 2 - 150, parent.getHeight() / 2 - 100);
 	}
 
+	public SubscreenNetworkConfig(IParent parent, WorldPos pos) {
+		this(parent, parent.getWidth() / 2 - 150, parent.getHeight() / 2 - 100, pos);
+	}
+
 	public SubscreenNetworkConfig(IParent parent, int x, int y) {
+		this(parent, x, y, null);
+	}
+
+	public SubscreenNetworkConfig(IParent parent, int x, int y, WorldPos pos) {
 		super(parent, x, y, 300, 200, true);
-		components.add(list = new ScrollingListNetwork(this, this.x + 16, this.y + 24, 268, 170));
+		components.add(list = new ScrollingListNetwork(this, this.x + 16, this.y + 24, 268, 170, pos));
 	}
 
 	public void refresh() {

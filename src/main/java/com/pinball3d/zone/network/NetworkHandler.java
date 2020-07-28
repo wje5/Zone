@@ -35,6 +35,8 @@ public class NetworkHandler {
 		registerMessage(MessageIOPanelRequest.Handler.class, MessageIOPanelRequest.class, Side.SERVER);
 		registerMessage(MessageIOPanelSendItemToStorage.Handler.class, MessageIOPanelSendItemToStorage.class,
 				Side.SERVER);
+		registerMessage(MessageRequestStorage.Handler.class, MessageRequestStorage.class, Side.SERVER);
+		registerMessage(MessageSendStorageToClient.Handler.class, MessageSendStorageToClient.class, Side.CLIENT);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(
