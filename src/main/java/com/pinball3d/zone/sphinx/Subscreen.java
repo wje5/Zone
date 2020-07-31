@@ -89,6 +89,7 @@ public class Subscreen implements IParent {
 
 	public void onClick(int x, int y, boolean isLeft) {
 		if (subscreens.empty()) {
+			onClickScreen(x, y, isLeft);
 			components.forEach(e -> {
 				int cX = x + this.x - e.x;
 				int cY = y + this.y - e.y;

@@ -20,6 +20,7 @@ import com.pinball3d.zone.sphinx.ScreenIOPanel;
 import com.pinball3d.zone.sphinx.Subscreen;
 import com.pinball3d.zone.sphinx.TextInputBox;
 import com.pinball3d.zone.sphinx.TexturedButton;
+import com.pinball3d.zone.sphinx.Util;
 import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 
@@ -120,25 +121,6 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		fontRenderer.drawString(text, offsetX - 47 - fontRenderer.getStringWidth(text) / 2, offsetY + 202, 0xFF1ECCDE);
 	}
 
-	public static String transferString(int count) {
-		if (count < 1000) {
-			return String.valueOf(count);
-		}
-		if (count < 100000) {
-			return (count / 1000) + "K";
-		}
-		if (count < 1000000) {
-			return "<1M";
-		}
-		if (count < 100000000) {
-			return (count / 1000000) + "M";
-		}
-		if (count < 1000000000) {
-			return "<1G";
-		}
-		return (count / 1000000000) + "G";
-	}
-
 	@Override
 	protected void renderHoveredToolTip(int mouseX, int mouseY) {
 		int offsetX = (width - 184) / 2 - 46, offsetY = (height - ySize) / 2;
@@ -148,7 +130,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		GlStateManager.disableBlend();
 		for (int i = 0; i < 36; i++) {
 			if (container.list[i] > 1) {
-				String text = transferString(container.list[i]);
+				String text = Util.transferString(container.list[i]);
 				int x = (i % 4) * 19 - 38 + offsetX;
 				int y = (i / 4) * 19 + 29 + offsetY;
 				fontRenderer.drawStringWithShadow(text, x + 17 - fontRenderer.getStringWidth(text), y + 9, 0xFFFFFFFF);

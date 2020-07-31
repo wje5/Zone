@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -77,5 +78,46 @@ public class Util {
 			return flag >= 4;
 		}
 		return false;
+	}
+
+	public static String transferString(int count) {
+		if (count < 1000) {
+			return String.valueOf(count);
+		}
+		if (count < 100000) {
+			return (count / 1000) + "K";
+		}
+		if (count < 1000000) {
+			return "<1M";
+		}
+		if (count < 100000000) {
+			return (count / 1000000) + "M";
+		}
+		if (count < 1000000000) {
+			return "<1G";
+		}
+		return (count / 1000000000) + "G";
+	}
+
+	public static boolean isItemStackEqualEgnoreCount(ItemStack stackA, ItemStack stackB) {
+		if (stackA.isEmpty() && stackB.isEmpty()) {
+			return true;
+		} else {
+			if (!stackA.isEmpty() && !stackB.isEmpty()) {
+				if (stackA.getItem() != stackB.getItem()) {
+					return false;
+				} else if (stackA.getItemDamage() != stackB.getItemDamage()) {
+					return false;
+				} else if (stackA.getTagCompound() == null && stackB.getTagCompound() != null) {
+					return false;
+				} else if (stackB.getTagCompound() == null && stackA.getTagCompound() != null) {
+					return false;
+				} else {
+					return (stackA.getTagCompound() == null || stackA.getTagCompound().equals(stackB.getTagCompound()))
+							&& stackA.areCapsCompatible(stackB);
+				}
+			}
+			return false;
+		}
 	}
 }

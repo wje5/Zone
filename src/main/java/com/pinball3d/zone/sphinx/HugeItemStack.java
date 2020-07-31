@@ -21,7 +21,7 @@ public class HugeItemStack {
 	}
 
 	public boolean merge(ItemStack stack) {
-		if (this.stack.isItemEqual(stack)) {
+		if (Util.isItemStackEqualEgnoreCount(this.stack, stack)) {
 			count += stack.getCount();
 			stack.setCount(0);
 			return true;
@@ -30,7 +30,7 @@ public class HugeItemStack {
 	}
 
 	public boolean merge(HugeItemStack hugestack) {
-		if (stack.isItemEqual(hugestack.stack)) {
+		if (Util.isItemStackEqualEgnoreCount(stack, hugestack.stack)) {
 			count += hugestack.count;
 			hugestack.count = 0;
 			return true;
@@ -39,7 +39,7 @@ public class HugeItemStack {
 	}
 
 	public ItemStack shrink(ItemStack stack) {
-		if (this.stack.isItemEqual(stack)) {
+		if (Util.isItemStackEqualEgnoreCount(this.stack, stack)) {
 			if (count >= stack.getCount()) {
 				count -= stack.getCount();
 				stack.setCount(0);
@@ -52,7 +52,7 @@ public class HugeItemStack {
 	}
 
 	public HugeItemStack shrink(HugeItemStack hugestack) {
-		if (stack.isItemEqual(hugestack.stack)) {
+		if (Util.isItemStackEqualEgnoreCount(stack, hugestack.stack)) {
 			if (count >= hugestack.count) {
 				count -= hugestack.count;
 				hugestack.count = 0;

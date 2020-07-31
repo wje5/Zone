@@ -129,17 +129,30 @@ public class SubscreenViewStorage extends Subscreen {
 		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
 		RenderHelper.enableGUIStandardItemLighting();
 		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
+		GlStateManager.disableBlend();
 		ItemStack temp = ItemStack.EMPTY;
 		int slot = -1;
 		for (int j = 0; j < 7; j++) {
 			for (int i = 0; i < 13; i++) {
 				ItemStack stack = ItemStack.EMPTY;
+				int amount = 0;
 				if (it.hasNext()) {
-					stack = it.next().stack;
+					HugeItemStack hugestack = it.next();
+					stack = hugestack.stack;
+					amount = hugestack.count;
 				} else if (it2.hasNext()) {
 					stack = it2.next();
+					amount = stack.getCount();
 				}
+				stack = stack.copy();
+				stack.setCount(1);
 				ir.renderItemAndEffectIntoGUI(stack, x + 28 + i * 19, y + 46 + j * 19);
+				if (amount > 1) {
+					String text = Util.transferString(amount);
+					getFontRenderer().drawStringWithShadow(text,
+							x + 45 + i * 19 - getFontRenderer().getStringWidth(text), y + 55 + j * 19, 0xFFFFFFFF);
+				}
 				ir.renderItemOverlays(getFontRenderer(), stack, x + 28 + i * 19, y + 46 + j * 19);
 				if (getHoveredSlot(mouseX, mouseY) == j * 13 + i) {
 					temp = stack;
@@ -147,10 +160,12 @@ public class SubscreenViewStorage extends Subscreen {
 				}
 			}
 		}
-		if (slot != -1) {
+		if (!temp.isEmpty()) {
 			renderCoverAndToolTip(temp, slot, mouseX, mouseY);
 		}
 		RenderHelper.disableStandardItemLighting();
 		GlStateManager.enableLighting();
+		GlStateManager.enableDepth();
+		GlStateManager.enableBlend();
 	}
 }

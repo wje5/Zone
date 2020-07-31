@@ -397,7 +397,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				int amount = hugestack.count >= stack.getMaxStackSize() ? stack.getMaxStackSize() : hugestack.count;
 				stack.setCount(amount);
 				stack = handler.insertItem(j, stack, false);
-				hugestack.count = hugestack.count - amount + stack.getCount();
+				hugestack.count = hugestack.count - amount + (stack.isEmpty() ? 0 : stack.getCount());
 				if (hugestack.isEmpty()) {
 					it.remove();
 					break;

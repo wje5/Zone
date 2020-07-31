@@ -59,7 +59,7 @@ public interface IStorable {
 				stack.setCount(amount >= e.stack.getMaxStackSize() ? e.stack.getMaxStackSize() : amount);
 				stack.shrink(count);
 				amount -= stack.getCount();
-				history[i] = stack.getCount();
+				history[i] += stack.getCount();
 				inserted.merge(stack);
 			}
 		});
