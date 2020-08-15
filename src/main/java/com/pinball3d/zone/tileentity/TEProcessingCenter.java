@@ -268,6 +268,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	}
 
 	public void requestItems(StorageWrapper wrapper, WorldPos target) {
+		System.out.println(wrapper.storges.iterator().next().writeToNBT(new NBTTagCompound()));
 		TreeSet<WorldPos> sortset = new TreeSet<WorldPos>(new Comparator<WorldPos>() {
 			@Override
 			public int compare(WorldPos o1, WorldPos o2) {

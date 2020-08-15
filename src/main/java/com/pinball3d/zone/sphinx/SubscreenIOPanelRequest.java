@@ -38,7 +38,6 @@ public class SubscreenIOPanelRequest extends Subscreen {
 			@Override
 			public void run() {
 				box.text = String.valueOf((int) ((SubscreenIOPanelRequest.this.amount - 1) * slider.get() + 1));
-				System.out.println(box.text);
 			}
 		});
 		components.add(new TextButton(this, this.x + 15, this.y + 41, I18n.format("sphinx.confirm"), new Runnable() {
@@ -51,7 +50,6 @@ public class SubscreenIOPanelRequest extends Subscreen {
 				if (amount <= 0) {
 					return;
 				}
-				System.out.println(amount);
 				TEIOPanel te = ((GuiContainerIOPanel) parent).container.tileEntity;
 				StorageWrapper wrapper = stack.getMaxStackSize() <= 1 ? new StorageWrapper(stack)
 						: new StorageWrapper(new HugeItemStack(stack, amount));

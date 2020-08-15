@@ -183,15 +183,14 @@ public class RecipeHandler {
 	}
 
 	public static boolean match(Recipe recipe, List<ItemStack> inputs) {
-		for (int i = 0; i < inputs.size(); i++) {
-			if (!recipe.apply(i, inputs.get(i))) {
-				return false;
+		if (inputs.size() == recipe.getInputs().size()) {
+			for (int i = 0; i < inputs.size(); i++) {
+				if (!recipe.apply(i, inputs.get(i))) {
+					return false;
+				}
 			}
 		}
-		if (recipe.getInput(inputs.size()).isEmpty()) {
-			return true;
-		}
-		return false;
+		return true;
 	}
 
 	public static enum Type {

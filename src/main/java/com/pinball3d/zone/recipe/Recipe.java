@@ -1,6 +1,9 @@
 package com.pinball3d.zone.recipe;
 
+import java.util.List;
+
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
+import com.pinball3d.zone.sphinx.Util;
 
 import net.minecraft.item.ItemStack;
 
@@ -11,6 +14,8 @@ public abstract class Recipe {
 
 	public abstract ItemStack getInput(int index);
 
+	public abstract List<ItemStack> getInputs();
+
 	public abstract ItemStack getOutput(int index);
 
 	public int getTime() {
@@ -19,24 +24,11 @@ public abstract class Recipe {
 
 	public boolean apply(int index, ItemStack stack2) {
 		ItemStack stack = getInput(index);
-		if (stack.getItem() == stack2.getItem()) {
-			int meta = stack.getMetadata();
-			if (meta == 32767 || meta == stack2.getMetadata()) {
+		if (Util.isItemStackEqualEgnoreCount(stack, stack2)) {
+			if (stack2.getCount() >= stack.getCount()) {
 				return true;
 			}
 		}
 		return false;
-	}
-
-	public boolean inputsEqual(Recipe recipe) {
-		for (int i = 0;; i++) {
-			ItemStack stack = recipe.getInput(i);
-			if (getInput(i) == ItemStack.EMPTY || stack == ItemStack.EMPTY) {
-				return true;
-			}
-			if (!apply(i, stack)) {
-				return false;
-			}
-		}
 	}
 }

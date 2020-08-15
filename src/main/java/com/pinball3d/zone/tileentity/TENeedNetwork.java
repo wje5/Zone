@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.Constants;
 public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable {
 	protected WorldPos worldpos;
 	protected UUID network;
+	protected String password;
 	protected boolean connected = true;
 
 	public void callUpdate() {

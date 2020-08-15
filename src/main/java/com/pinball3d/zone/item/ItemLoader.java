@@ -1,7 +1,6 @@
 package com.pinball3d.zone.item;
 
 import com.pinball3d.zone.psp.ItemFC;
-import com.pinball3d.zone.render.TEISRMachineGun;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -85,7 +84,7 @@ public class ItemLoader {
 		register(registry, energy = new ZoneItem("energy"));
 		register(registry, terminal = new ItemTerminal());
 		register(registry, fc = new ItemFC());
-		register(registry, machine_gun = new ItemMachineGun());
+//		register(registry, machine_gun = new ItemMachineGun());
 		register(registry, crushed_iron_ore = new ZoneItem("crushed_iron_ore"));
 		register(registry, crushed_gold_ore = new ZoneItem("crushed_gold_ore"));
 		register(registry, crushed_diamond_ore = new ZoneItem("crushed_diamond_ore"));
@@ -168,6 +167,6 @@ public class ItemLoader {
 
 	@SideOnly(Side.CLIENT)
 	private static void registerTEISR() {
-		ItemLoader.machine_gun.setTileEntityItemStackRenderer(new TEISRMachineGun());
+//		ItemLoader.machine_gun.setTileEntityItemStackRenderer(new TEISRMachineGun());
 	}
 }

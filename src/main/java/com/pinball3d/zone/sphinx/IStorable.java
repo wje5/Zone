@@ -20,7 +20,7 @@ public interface IStorable {
 					break;
 				}
 				ItemStack stack = inv.getStackInSlot(i);
-				if (e.stack.isItemEqual(stack)) {
+				if (Util.isItemStackEqualEgnoreCount(e.stack, stack)) {
 					stack = inv.extractItem(i, amount, false);
 					amount -= stack.getCount();
 					extracted.merge(stack);

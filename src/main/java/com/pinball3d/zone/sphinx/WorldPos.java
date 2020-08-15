@@ -9,6 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class WorldPos {
 	private BlockPos pos;
@@ -38,14 +39,19 @@ public class WorldPos {
 	public World getWorld() {
 		FMLCommonHandler handler = FMLCommonHandler.instance();
 		if (handler.getEffectiveSide() == Side.SERVER) {
-			return handler.getMinecraftServerInstance().getWorld(dim);
+			return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim);
 		} else {
-			World world = Minecraft.getMinecraft().world;
-			if (world.provider.getDimension() == dim) {
-				return Minecraft.getMinecraft().world;
-			} else {
-				throw new RuntimeException("DRRRRRRRRR!");
-			}
+			return getClientWorld();
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	private World getClientWorld() {
+		World world = Minecraft.getMinecraft().world;
+		if (world.provider.getDimension() == dim) {
+			return Minecraft.getMinecraft().world;
+		} else {
+			throw new RuntimeException("DRRRRRRRRR!");
 		}
 	}
 
