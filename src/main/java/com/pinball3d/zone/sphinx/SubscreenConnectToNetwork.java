@@ -84,8 +84,18 @@ public class SubscreenConnectToNetwork extends Subscreen {
 							INeedNetwork te = parent.getNeedNetworkTileEntity();
 							WorldPos pos1 = new WorldPos(tileentity.getPos(), tileentity.getWorld());
 							WorldPos pos2 = new WorldPos(((TileEntity) te).getPos(), ((TileEntity) te).getWorld());
-							NetworkHandler.instance.sendToServer(new MessageConnectToNetwork(pos1, pos2));
-							te.connect(tileentity.getUUID());
+							WorldPos pos3 = te.getNetworkPos();
+							if (pos3 != null) {
+								TEProcessingCenter pc = (TEProcessingCenter) pos3.getTileEntity();
+								pc.removeNeedNetwork(pos1);
+							} else if (te.getNetwork() != null) {
+								pos3 = GlobalNetworkData.getData(((TileEntity) te).getWorld())
+										.getNetwork(te.getNetwork());
+								TEProcessingCenter pc = (TEProcessingCenter) pos3.getTileEntity();
+								pc.removeNeedNetwork(pos1);
+							}
+							NetworkHandler.instance.sendToServer(new MessageConnectToNetwork(pos1, pos2, input));
+							te.connect(tileentity.getUUID(), input);
 							tileentity.addNeedNetwork(pos2);
 						}
 						if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {

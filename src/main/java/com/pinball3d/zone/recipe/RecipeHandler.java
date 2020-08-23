@@ -113,7 +113,7 @@ public class RecipeHandler {
 		register(new RecipeGrinder(new ItemStack(Items.BUCKET), new ItemStack(ItemLoader.iron_dust, 2), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.NETHERRACK),
 				new ItemStack(ItemLoader.small_pile_netherrack_dust, 8), 200));
-		register(new RecipeGrinder(new ItemStack(Blocks.HARDENED_CLAY),
+		register(new RecipeGrinder(new ItemStack(Blocks.HARDENED_CLAY, 1, 32767),
 				new ItemStack(ItemLoader.small_pile_clay_dust, 14), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, 32767),
 				new ItemStack(ItemLoader.small_pile_clay_dust, 14), 200));
@@ -156,6 +156,8 @@ public class RecipeHandler {
 				400));
 		register(new RecipeCrystallizer(new ItemStack(Items.BLAZE_POWDER, 16), new ItemStack(ItemLoader.blaze_crystal),
 				400));
+		register(new RecipeCrystallizer(new ItemStack(Items.GLOWSTONE_DUST, 16),
+				new ItemStack(ItemLoader.interference_crystal), 400));
 		register(new RecipeCrystallizer(new ItemStack(ItemLoader.diamond_dust, 1), new ItemStack(Items.DIAMOND), 400));
 		register(new RecipeCrystallizer(new ItemStack(ItemLoader.emerald_dust, 1), new ItemStack(Items.EMERALD), 400));
 		register(new RecipeCrystallizer(new ItemStack(ItemLoader.lapis_dust, 1), new ItemStack(Items.DYE, 1, 4), 400));

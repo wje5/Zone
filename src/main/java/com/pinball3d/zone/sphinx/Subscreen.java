@@ -32,6 +32,8 @@ public class Subscreen implements IParent {
 		this.y = y + parent.getYOffset();
 		this.width = width;
 		this.height = height;
+		this.x = this.x + width > displayWidth / 2 ? displayWidth / 2 - width : this.x;
+		this.y = this.y + height > displayHeight / 2 ? displayHeight / 2 - height : this.y;
 		renderCover = rendercover;
 	}
 
@@ -89,7 +91,6 @@ public class Subscreen implements IParent {
 
 	public void onClick(int x, int y, boolean isLeft) {
 		if (subscreens.empty()) {
-			onClickScreen(x, y, isLeft);
 			components.forEach(e -> {
 				int cX = x + this.x - e.x;
 				int cY = y + this.y - e.y;

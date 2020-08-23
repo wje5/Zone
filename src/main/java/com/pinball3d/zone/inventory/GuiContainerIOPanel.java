@@ -92,8 +92,9 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 				.add(new TexturedButton(this, offsetX + 285, offsetY + 5, ICONS, 64, 68, 30, 28, 0.5F, new Runnable() {
 					@Override
 					public void run() {
-						NetworkHandler.instance.sendToServer(MessageIOPanelSendItemToStorage.newMessage("aaaaaaaa",
-								container.tileEntity.getNetworkPos(), new WorldPos(container.tileEntity)));
+						NetworkHandler.instance.sendToServer(
+								MessageIOPanelSendItemToStorage.newMessage(container.tileEntity.getPassword(),
+										container.tileEntity.getNetworkPos(), new WorldPos(container.tileEntity)));
 					}
 				}));
 		components

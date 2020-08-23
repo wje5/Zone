@@ -16,7 +16,7 @@
       "item": "zone:processing_unit"
     },
     "-": {
-      "item": "zone:quartz_circuit_board"
+      "item": "zone:chip"
     }
   },
   "result": {

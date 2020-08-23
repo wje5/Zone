@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.Constants;
 public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable {
 	protected WorldPos worldpos;
 	protected UUID network;
-	protected String password;
+	protected String password = "";
 	protected boolean connected = true;
 
 	public void callUpdate() {
@@ -54,8 +54,10 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	}
 
 	@Override
-	public void connect(UUID uuid) {
+	public void connect(UUID uuid, String password) {
 		network = uuid;
+		worldpos = null;
+		this.password = password;
 		markDirty();
 	}
 
@@ -94,8 +96,19 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	public void deleteNetwork() {
 		network = null;
 		worldpos = null;
+		password = "";
 		markDirty();
 		callUpdate();
+	}
+
+	@Override
+	public String getPassword() {
+		return password;
+	}
+
+	@Override
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	@Override
@@ -103,6 +116,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 		if (compound.hasKey("networkMost")) {
 			network = compound.getUniqueId("network");
 		}
+		password = compound.getString("password");
 		super.readFromNBT(compound);
 	}
 
@@ -111,6 +125,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 		if (network != null) {
 			compound.setUniqueId("network", network);
 		}
+		compound.setString("password", password);
 		return super.writeToNBT(compound);
 
 	}

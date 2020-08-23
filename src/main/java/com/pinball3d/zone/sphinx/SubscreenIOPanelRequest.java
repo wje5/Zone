@@ -53,8 +53,8 @@ public class SubscreenIOPanelRequest extends Subscreen {
 				TEIOPanel te = ((GuiContainerIOPanel) parent).container.tileEntity;
 				StorageWrapper wrapper = stack.getMaxStackSize() <= 1 ? new StorageWrapper(stack)
 						: new StorageWrapper(new HugeItemStack(stack, amount));
-				NetworkHandler.instance.sendToServer(MessageIOPanelRequest.newMessage("aaaaaaaa", te.getNetworkPos(),
-						wrapper, new WorldPos(te.getPos(), te.getWorld())));
+				NetworkHandler.instance.sendToServer(MessageIOPanelRequest.newMessage(te.getPassword(),
+						te.getNetworkPos(), wrapper, new WorldPos(te.getPos(), te.getWorld())));
 				parent.quitScreen(SubscreenIOPanelRequest.this);
 			}
 		}));

@@ -7,22 +7,22 @@
   ],
   "key": {
     "#": {
-      "item": "zone:etherium_plate_riveted"
+      "item": "zone:reinforced_glass_pane"
     },
     "*": {
-      "item": "zone:advenced_circuit_board"
+      "item": "zone:display_screen"
     },
     "+": {
-      "item": "zone:charged_glass_pane"
+      "item": "zone:etherium_plate_riveted"
     },
     "-": {
-      "item": "zone:etherium_hull"
+      "item": "zone:advenced_circuit_board"
     },
     "=": {
       "item": "zone:half_interference_unit"
     }
   },
   "result": {
-    "item": "zone:io_panel"
+    "item": "zone:production_panel"
   }
 }

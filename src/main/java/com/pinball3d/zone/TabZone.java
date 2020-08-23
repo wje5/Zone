@@ -1,7 +1,8 @@
 package com.pinball3d.zone;
 
+import com.pinball3d.zone.block.BlockLoader;
+
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 public class TabZone extends CreativeTabs {
@@ -17,6 +18,6 @@ public class TabZone extends CreativeTabs {
 
 	@Override
 	public ItemStack getTabIconItem() {
-		return new ItemStack(Blocks.COBBLESTONE);
+		return new ItemStack(BlockLoader.controller_mainframe);
 	}
 }

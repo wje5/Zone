@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:etherium_block"
+    }
+  },
+  "result": {
+    "item": "zone:etherium",
+    "count": 9
+  }
+}

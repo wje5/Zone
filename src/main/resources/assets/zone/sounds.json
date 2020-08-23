@@ -3,5 +3,15 @@
         "sounds": [
             "zone:machine_gun"
         ]
+    },
+    "grinder": {
+        "sounds": [
+            "zone:grinder"
+        ]
+    },
+    "drainer": {
+        "sounds": [
+            "zone:drainer"
+        ]
     }
 }

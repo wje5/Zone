@@ -19,6 +19,7 @@ import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -41,6 +42,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	private String loginPassword = "";
 	private int loadTick;
 	private int energyTick;
+	private int energy;
 	private Set<WorldPos> nodes = new HashSet<WorldPos>();
 	private Set<WorldPos> storages = new HashSet<WorldPos>();
 	private Set<WorldPos> devices = new HashSet<WorldPos>();
@@ -127,6 +129,30 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void setPassword(String password) {
 		if (password.length() == 8) {
 			loginPassword = password;
+			nodes.forEach(e -> {
+				TileEntity te = e.getTileEntity();
+				if (te instanceof INeedNetwork) {
+					((INeedNetwork) te).setPassword(password);
+				}
+			});
+			storages.forEach(e -> {
+				TileEntity te = e.getTileEntity();
+				if (te instanceof INeedNetwork) {
+					((INeedNetwork) te).setPassword(password);
+				}
+			});
+			devices.forEach(e -> {
+				TileEntity te = e.getTileEntity();
+				if (te instanceof INeedNetwork) {
+					((INeedNetwork) te).setPassword(password);
+				}
+			});
+			productions.forEach(e -> {
+				TileEntity te = e.getTileEntity();
+				if (te instanceof INeedNetwork) {
+					((INeedNetwork) te).setPassword(password);
+				}
+			});
 			callUpdate();
 			markDirty();
 		}
@@ -251,9 +277,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public boolean consumeEnergy(int amount) {
 		BlockPos p = pos.add(0, -3, 0);
 		if (world.getBlockState(p).getBlock() == BlockLoader.transmission_module) {
-			return ((TETransmissionModule) world.getTileEntity(p)).tryUseEnergy(amount, false);
+			TETransmissionModule te = (TETransmissionModule) world.getTileEntity(p);
+			boolean flag = te.tryUseEnergy(amount, false);
+			energy = te.getEnergy();
+			callUpdate();
+			return flag;
+		} else {
+			energy = 0;
+			callUpdate();
+			return false;
 		}
-		return false;
 	}
 
 	public StorageWrapper getNetworkUseableItems() {
@@ -268,7 +301,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	}
 
 	public void requestItems(StorageWrapper wrapper, WorldPos target) {
-		System.out.println(wrapper.storges.iterator().next().writeToNBT(new NBTTagCompound()));
 		TreeSet<WorldPos> sortset = new TreeSet<WorldPos>(new Comparator<WorldPos>() {
 			@Override
 			public int compare(WorldPos o1, WorldPos o2) {
@@ -417,6 +449,23 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			}
 		}
 		return wrapper;
+	}
+
+	public WorkingState getWorkingState() {
+		if (loadTick > 0) {
+			return WorkingState.STARTING;
+		}
+		if (!on) {
+			return WorkingState.OFF;
+		}
+		if (needInit()) {
+			return WorkingState.UNINIT;
+		}
+		return WorkingState.WORKING;
+	}
+
+	public int getEnergy() {
+		return energy;
 	}
 
 	public void updatePack() {
@@ -577,11 +626,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	}
 
 	public NBTTagCompound writeNetworkData(NBTTagCompound tag) {
+		tag.setInteger("energy", energy);
 		return tag;
 	}
 
 	public void readNetworkData(NBTTagCompound tag) {
-
+		energy = tag.getInteger("energy");
 	}
 
 	@Override
@@ -593,5 +643,20 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void handleUpdateTag(NBTTagCompound tag) {
 		readFromNBT(tag);
 		readNetworkData(tag);
+	}
+
+	public static enum WorkingState {
+		WORKING("sphinx.working"), OFF("sphinx.off"), STARTING("sphinx.starting"), UNINIT("sphinx.uninit");
+
+		String key;
+
+		private WorkingState(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {
+			return I18n.format(key);
+		}
 	}
 }

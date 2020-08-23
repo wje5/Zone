@@ -112,11 +112,10 @@ public class WorldPos {
 
 	@Override
 	public int hashCode() {
-		int result = super.hashCode();
+		int result = dim;
 		result = result * 31 + pos.getX();
 		result = result * 31 + pos.getY();
 		result = result * 31 + pos.getZ();
-		result = result * 31 + dim;
 		return result;
 	}
 

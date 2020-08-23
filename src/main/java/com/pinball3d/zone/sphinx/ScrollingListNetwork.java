@@ -117,8 +117,14 @@ public class ScrollingListNetwork extends Component {
 			ListBar bar = it.next();
 			yOffset += bar.height;
 			if (yOffset >= y + scrollingDistance && yOffset < y + scrollingDistance + bar.height) {
-				parent.putScreen(new SubscreenConnectToNetwork(parent, bar.tileentity, x + this.x - parent.getXOffset(),
-						y + this.y - parent.getYOffset()));
+				if (bar.selected) {
+					parent.putScreen(new SubscreenCheckConnectedNetwork(parent, bar.tileentity,
+							x + this.x - parent.getXOffset(), y + this.y - parent.getYOffset()));
+				} else {
+					parent.putScreen(new SubscreenConnectToNetwork(parent, bar.tileentity,
+							x + this.x - parent.getXOffset(), y + this.y - parent.getYOffset()));
+				}
+
 				return;
 			}
 		}

@@ -2,10 +2,14 @@ package com.pinball3d.zone.tileentity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 public class TEDrainer extends ZoneMachine {
+	public static final SoundEvent SOUND = new SoundEvent(new ResourceLocation("zone:drainer"));
 	protected int tick;
 
 	public TEDrainer() {
@@ -19,6 +23,9 @@ public class TEDrainer extends ZoneMachine {
 			return;
 		}
 		tick++;
+		if (tick % 200 == 0) {
+			world.playSound(null, pos, SOUND, SoundCategory.BLOCKS, 1.0F, 1.0F);
+		}
 		if (tick >= 1200) {
 			tick -= 1200;
 			addEnergy(1);

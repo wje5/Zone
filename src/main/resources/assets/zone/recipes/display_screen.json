@@ -3,7 +3,7 @@
   "pattern": [
     "###",
     "***",
-    "#+#"
+    "###"
   ],
   "key": {
     "#": {
@@ -11,9 +11,6 @@
     },
     "*": {
       "item": "zone:dioptric_crystal"
-    },
-    "+": {
-      "item": "zone:advenced_circuit_board"
     }
   },
   "result": {

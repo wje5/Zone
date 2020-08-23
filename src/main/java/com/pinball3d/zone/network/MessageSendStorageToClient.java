@@ -48,14 +48,14 @@ public class MessageSendStorageToClient implements IMessage {
 						if (!((ScreenTerminal) screen).subscreens.empty()) {
 							Subscreen subscreen = ((ScreenTerminal) screen).subscreens.get(0);
 							if (subscreen instanceof SubscreenViewStorage) {
-								((SubscreenViewStorage) subscreen).data = message.data;
+								((SubscreenViewStorage) subscreen).setData(message.data);
 							}
 						}
 					} else if (screen instanceof ScreenSphinxController) {
 						if (!((ScreenSphinxController) screen).subscreens.empty()) {
 							Subscreen subscreen = ((ScreenSphinxController) screen).subscreens.get(0);
 							if (subscreen instanceof SubscreenViewStorage) {
-								((SubscreenViewStorage) subscreen).data = message.data;
+								((SubscreenViewStorage) subscreen).setData(message.data);
 							}
 						}
 					}

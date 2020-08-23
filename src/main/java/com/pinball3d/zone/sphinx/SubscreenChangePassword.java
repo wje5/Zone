@@ -46,12 +46,14 @@ public class SubscreenChangePassword extends Subscreen {
 										new WorldPos(te.getPos(), te.getWorld()), box1.text));
 						te.setAdminPassword(box1.text);
 						parent.quitScreen(SubscreenChangePassword.this);
+						parent.putScreen(new SubscreenSphinxConfig(parent));
 					} else {
 						NetworkHandler.instance.sendToServer(
 								MessageChangePassword.newMessage(((ScreenSphinxController) parent).password,
 										new WorldPos(te.getPos(), te.getWorld()), box1.text));
 						te.setPassword(box1.text);
 						parent.quitScreen(SubscreenChangePassword.this);
+						parent.putScreen(new SubscreenSphinxConfig(parent));
 					}
 				}
 			}
@@ -60,6 +62,7 @@ public class SubscreenChangePassword extends Subscreen {
 			@Override
 			public void run() {
 				parent.quitScreen(SubscreenChangePassword.this);
+				parent.putScreen(new SubscreenSphinxConfig(parent));
 			}
 		}));
 	}
@@ -67,7 +70,8 @@ public class SubscreenChangePassword extends Subscreen {
 	@Override
 	public boolean onQuit() {
 		if (subscreens.empty()) {
-			subscreens.push(new SubscreenQuitWizard(this));
+			parent.quitScreen(this);
+			parent.putScreen(new SubscreenSphinxConfig(parent));
 			return false;
 		}
 		if (subscreens.peek().onQuit()) {

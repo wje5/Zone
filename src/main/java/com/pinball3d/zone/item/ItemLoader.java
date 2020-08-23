@@ -22,7 +22,7 @@ public class ItemLoader {
 			etherium_plate_riveted, kinetic_amplifier, etherium_rod, advenced_circuit_board, processing_unit,
 			transistor, energy_group, restrain_circle, theile_tube, laser_generater, crystallization_accelerator,
 			redstone_crystal, dioptric_crystal, induction_tube, smoothing_unit, blaze_crystal, display_screen,
-			amplify_unit, network_adapter;
+			amplify_unit, network_adapter, interference_crystal, half_interference_unit;
 
 	public static Item energy, construct_block, terminal, fc, machine_gun;
 
@@ -81,6 +81,8 @@ public class ItemLoader {
 		register(registry, display_screen = new ZoneItem("display_screen"));
 		register(registry, amplify_unit = new ZoneItem("amplify_unit"));
 		register(registry, network_adapter = new ZoneItem("network_adapter"));
+		register(registry, interference_crystal = new ZoneItem("interference_crystal"));
+		register(registry, half_interference_unit = new ZoneItem("half_interference_unit"));
 		register(registry, energy = new ZoneItem("energy"));
 		register(registry, terminal = new ItemTerminal());
 		register(registry, fc = new ItemFC());

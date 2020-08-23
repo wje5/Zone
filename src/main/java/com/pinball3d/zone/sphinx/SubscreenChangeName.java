@@ -36,6 +36,7 @@ public class SubscreenChangeName extends Subscreen {
 									new WorldPos(te.getPos(), te.getWorld()), box.text));
 					te.setName(box.text);
 					parent.quitScreen(SubscreenChangeName.this);
+					parent.putScreen(new SubscreenSphinxConfig(parent));
 				}
 			}
 		}));
@@ -43,6 +44,7 @@ public class SubscreenChangeName extends Subscreen {
 			@Override
 			public void run() {
 				parent.quitScreen(SubscreenChangeName.this);
+				parent.putScreen(new SubscreenSphinxConfig(parent));
 			}
 		}));
 	}
@@ -50,7 +52,8 @@ public class SubscreenChangeName extends Subscreen {
 	@Override
 	public boolean onQuit() {
 		if (subscreens.empty()) {
-			subscreens.push(new SubscreenQuitWizard(this));
+			parent.quitScreen(this);
+			parent.putScreen(new SubscreenSphinxConfig(parent));
 			return false;
 		}
 		if (subscreens.peek().onQuit()) {

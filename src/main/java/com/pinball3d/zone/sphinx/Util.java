@@ -106,7 +106,7 @@ public class Util {
 			if (!stackA.isEmpty() && !stackB.isEmpty()) {
 				if (stackA.getItem() != stackB.getItem()) {
 					return false;
-				} else if (stackA.getItemDamage() != stackB.getItemDamage()) {
+				} else if (stackA.getItemDamage() != 32767 && stackA.getItemDamage() != stackB.getItemDamage()) {
 					return false;
 				} else if (stackA.getTagCompound() == null && stackB.getTagCompound() != null) {
 					return false;

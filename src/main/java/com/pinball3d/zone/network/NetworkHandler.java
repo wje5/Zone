@@ -37,6 +37,8 @@ public class NetworkHandler {
 				Side.SERVER);
 		registerMessage(MessageRequestStorage.Handler.class, MessageRequestStorage.class, Side.SERVER);
 		registerMessage(MessageSendStorageToClient.Handler.class, MessageSendStorageToClient.class, Side.CLIENT);
+		registerMessage(MessageDisconnect.Handler.class, MessageDisconnect.class, Side.SERVER);
+		registerMessage(MessageTerminalDisconnect.Handler.class, MessageTerminalDisconnect.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

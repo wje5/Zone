@@ -19,7 +19,7 @@
       "item": "zone:advenced_circuit_board"
     },
     "=": {
-      "item": "zone:network_adapter"
+      "item": "zone:half_interference_unit"
     }
   },
   "result": {

@@ -51,7 +51,7 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 			return;
 		}
 		applyComponents();
-		if (tileentity.needInit()) {
+		if (tileentity.needInit() && subscreens.empty()) {
 			subscreens.add(new SubscreenSphinxInitWizard(this));
 		}
 		super.initGui();

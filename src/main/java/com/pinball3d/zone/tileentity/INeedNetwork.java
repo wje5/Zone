@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.pinball3d.zone.sphinx.WorldPos;
 
 public interface INeedNetwork {
-	public void connect(UUID uuid);
+	public void connect(UUID uuid, String password);
 
 	public UUID getNetwork();
 
@@ -18,4 +18,8 @@ public interface INeedNetwork {
 	public void setConnected(boolean connected);
 
 	public void deleteNetwork();
+
+	public String getPassword();
+
+	public void setPassword(String password);
 }

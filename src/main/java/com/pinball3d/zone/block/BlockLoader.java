@@ -18,9 +18,9 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber
 public class BlockLoader {
-	public static Block iron_hull, clarity_glass, reinforced_glass, etherium_hull, etherium_bars, clarity_glass_pane,
-			etherium_frame, reinforced_glass_pane, charged_glass, charged_glass_pane, firm_glass, firm_glass_pane,
-			reinforced_stone;
+	public static Block iron_hull, clarity_glass, reinforced_glass, etherium_hull, etherium_block, etherium_bars,
+			clarity_glass_pane, etherium_frame, reinforced_glass_pane, charged_glass, charged_glass_pane, firm_glass,
+			firm_glass_pane, reinforced_stone;
 
 	public static Block drainer, grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter,
 			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light;
@@ -36,6 +36,7 @@ public class BlockLoader {
 		register(registry, clarity_glass = new BlockClarityGlass());
 		register(registry, reinforced_glass = new BlockReinforcedGlass());
 		register(registry, etherium_hull = new BlockEtheriumHull());
+		register(registry, etherium_block = new BlockEtheriumBlock());
 		register(registry, etherium_bars = new BlockEtheriumBars());
 		register(registry, clarity_glass_pane = new BlockClarityGlassPane());
 		register(registry, etherium_frame = new BlockEtheriumFrame());
@@ -83,6 +84,7 @@ public class BlockLoader {
 		registerItem(registry, clarity_glass);
 		registerItem(registry, reinforced_glass);
 		registerItem(registry, etherium_hull);
+		registerItem(registry, etherium_block);
 		registerItem(registry, etherium_bars);
 		registerItem(registry, clarity_glass_pane);
 		registerItem(registry, etherium_frame);

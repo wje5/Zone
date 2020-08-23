@@ -9,6 +9,7 @@ import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -18,10 +19,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class SubscreenViewStorage extends Subscreen {
+	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	public StorageWrapper data = new StorageWrapper();
 	public String search = "";
-	public int page = 1;
+	public int page = 1, maxPage = 1;
 
 	public SubscreenViewStorage(IParent parent) {
 		this(parent, parent.getWidth() / 2 - 150, parent.getHeight() / 2 - 100);
@@ -34,6 +36,18 @@ public class SubscreenViewStorage extends Subscreen {
 		} else {
 			TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
 		}
+		components.add(new TexturedButton(this, this.x + 120, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, new Runnable() {
+			@Override
+			public void run() {
+				page = page - 1 < 1 ? 1 : page - 1;
+			}
+		}));
+		components.add(new TexturedButton(this, this.x + 175, this.y + 180, ICONS, 97, 32, 5, 9, 1.0F, new Runnable() {
+			@Override
+			public void run() {
+				page = page + 1 > maxPage ? maxPage : page + 1;
+			}
+		}));
 	}
 
 	public void renderCoverAndToolTip(ItemStack stack, int slot, int mouseX, int mouseY) {
@@ -64,6 +78,21 @@ public class SubscreenViewStorage extends Subscreen {
 			return slotY * 13 + slotX;
 		}
 		return -1;
+	}
+
+	public void setData(StorageWrapper data) {
+		this.data = data;
+		updateGlobalStorges();
+	}
+
+	public void updateGlobalStorges() {
+		maxPage = (data.storges.size() + data.other.size() - 1) / 91 + 1;
+		if (page > maxPage) {
+			page = maxPage;
+		}
+		if (page < 1) {
+			page = 1;
+		}
 	}
 
 	@Override
@@ -113,7 +142,7 @@ public class SubscreenViewStorage extends Subscreen {
 		Iterator<HugeItemStack> it = storges.iterator();
 		Iterator<ItemStack> it2 = other.iterator();
 		int index = 0;
-		for (int offset = (page - 1) * 36; offset > 0; offset--) {
+		for (int offset = (page - 1) * 91; offset > 0; offset--) {
 			if (it.hasNext()) {
 				it.next();
 			} else if (it2.hasNext()) {
@@ -127,10 +156,17 @@ public class SubscreenViewStorage extends Subscreen {
 		}
 		parent.getFontRenderer().drawString(I18n.format("sphinx.view_storages"), x + 15, y + 8, 0xFF1ECCDE);
 		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
+		String text = page + "/" + maxPage;
+		FontRenderer fr = getFontRenderer();
+		fr.drawString(text, x + 150 - fr.getStringWidth(text) / 2, y + 181, 0xFF1ECCDE);
+		GlStateManager.enableLighting();
+		GlStateManager.enableDepth();
+		GlStateManager.enableBlend();
 		RenderHelper.enableGUIStandardItemLighting();
 		GlStateManager.disableLighting();
-		GlStateManager.disableDepth();
-		GlStateManager.disableBlend();
+		GlStateManager.enableRescaleNormal();
+		GlStateManager.enableColorMaterial();
+		GlStateManager.enableLighting();
 		ItemStack temp = ItemStack.EMPTY;
 		int slot = -1;
 		for (int j = 0; j < 7; j++) {
@@ -148,11 +184,14 @@ public class SubscreenViewStorage extends Subscreen {
 				stack = stack.copy();
 				stack.setCount(1);
 				ir.renderItemAndEffectIntoGUI(stack, x + 28 + i * 19, y + 46 + j * 19);
+				GlStateManager.pushMatrix();
+				GlStateManager.translate(0, 0, 300F);
 				if (amount > 1) {
-					String text = Util.transferString(amount);
+					text = Util.transferString(amount);
 					getFontRenderer().drawStringWithShadow(text,
 							x + 45 + i * 19 - getFontRenderer().getStringWidth(text), y + 55 + j * 19, 0xFFFFFFFF);
 				}
+				GlStateManager.popMatrix();
 				ir.renderItemOverlays(getFontRenderer(), stack, x + 28 + i * 19, y + 46 + j * 19);
 				if (getHoveredSlot(mouseX, mouseY) == j * 13 + i) {
 					temp = stack;
