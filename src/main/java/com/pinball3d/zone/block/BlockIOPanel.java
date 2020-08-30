@@ -32,8 +32,8 @@ public class BlockIOPanel extends BlockContainer {
 
 	public BlockIOPanel() {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(300.0F);
+		setResistance(7500.0F);
 		setRegistryName("zone:io_panel");
 		setUnlocalizedName("io_panel");
 		setCreativeTab(TabZone.tab);

@@ -11,8 +11,8 @@ import net.minecraft.world.World;
 public class BlockDynavoltRestrainer extends Block {
 	public BlockDynavoltRestrainer() {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(300.0F);
+		setResistance(7500.0F);
 		setRegistryName("zone:dynavolt_restrainer");
 		setUnlocalizedName("dynavolt_restrainer");
 		setCreativeTab(TabZone.tab);

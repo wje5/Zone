@@ -10,8 +10,8 @@ import net.minecraft.util.BlockRenderLayer;
 public class BlockFirmGlass extends BlockGlass {
 	public BlockFirmGlass() {
 		super(Material.GLASS, false);
-		setHardness(50.0F);
-		setResistance(1000.0F);
+		setHardness(20.0F);
+		setResistance(500.0F);
 		setSoundType(SoundType.GLASS);
 		setRegistryName("zone:firm_glass");
 		setUnlocalizedName("firm_glass");

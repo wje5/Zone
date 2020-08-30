@@ -35,8 +35,8 @@ public class BlockCrystallizer extends BlockContainer {
 
 	public BlockCrystallizer(boolean burning) {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(200.0F);
+		setResistance(5000.0F);
 		setLightLevel(burning ? 1F : 0F);
 		setRegistryName("zone:crystallizer" + (burning ? "_light" : ""));
 		setUnlocalizedName("crystallizer");

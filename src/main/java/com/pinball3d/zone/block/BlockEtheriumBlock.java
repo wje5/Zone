@@ -8,8 +8,8 @@ import net.minecraft.block.material.Material;
 public class BlockEtheriumBlock extends Block {
 	public BlockEtheriumBlock() {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(200.0F);
+		setResistance(5000.0F);
 		setRegistryName("zone:etherium_block");
 		setUnlocalizedName("etherium_block");
 		setCreativeTab(TabZone.tab);

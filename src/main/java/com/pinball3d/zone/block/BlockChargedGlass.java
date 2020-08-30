@@ -10,8 +10,8 @@ import net.minecraft.util.BlockRenderLayer;
 public class BlockChargedGlass extends BlockGlass {
 	public BlockChargedGlass() {
 		super(Material.GLASS, false);
-		setHardness(10F);
-		setResistance(200.0F);
+		setHardness(35F);
+		setResistance(750.0F);
 		setSoundType(SoundType.GLASS);
 		setRegistryName("zone:charged_glass");
 		setUnlocalizedName("charged_glass");

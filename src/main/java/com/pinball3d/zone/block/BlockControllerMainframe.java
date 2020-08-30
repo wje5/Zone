@@ -26,8 +26,8 @@ public class BlockControllerMainframe extends Block {
 
 	public BlockControllerMainframe() {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(300.0F);
+		setResistance(7500.0F);
 		setRegistryName("zone:controller_mainframe");
 		setUnlocalizedName("controller_mainframe");
 		setCreativeTab(TabZone.tab);

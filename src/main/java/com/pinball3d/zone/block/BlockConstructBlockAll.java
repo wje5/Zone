@@ -8,8 +8,8 @@ import net.minecraft.block.material.Material;
 public class BlockConstructBlockAll extends Block {
 	public BlockConstructBlockAll() {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(300.0F);
+		setResistance(7500.0F);
 		setRegistryName("zone:construct_block_all");
 		setUnlocalizedName("construct_block");
 		setCreativeTab(TabZone.tab);

@@ -31,8 +31,8 @@ public class BlockNode extends BlockContainer {
 
 	public BlockNode() {
 		super(Material.IRON);
-		setHardness(5.0F);
-		setResistance(10.0F);
+		setHardness(300.0F);
+		setResistance(7500.0F);
 		setRegistryName("zone:node");
 		setUnlocalizedName("node");
 		setCreativeTab(TabZone.tab);

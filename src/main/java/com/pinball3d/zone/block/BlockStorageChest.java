@@ -32,8 +32,8 @@ public class BlockStorageChest extends BlockContainer {
 
 	public BlockStorageChest() {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(300.0F);
+		setResistance(7500.0F);
 		setRegistryName("zone:storage_chest");
 		setUnlocalizedName("storage_chest");
 		setCreativeTab(TabZone.tab);

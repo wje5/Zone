@@ -13,5 +13,25 @@
         "sounds": [
             "zone:drainer"
         ]
+    },
+    "alloy_smelter": {
+        "sounds": [
+            "zone:alloy_smelter"
+        ]
+    },
+    "elec_furnace": {
+        "sounds": [
+            "zone:elec_furnace"
+        ]
+    },
+    "centrifuge": {
+        "sounds": [
+            "zone:centrifuge"
+        ]
+    },
+    "crystallizer": {
+        "sounds": [
+            "zone:crystallizer"
+        ]
     }
 }

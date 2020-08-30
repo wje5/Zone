@@ -144,7 +144,7 @@ public class RecipeHandler {
 				new ItemStack(ItemLoader.small_pile_redstone_dust), new ItemStack(ItemLoader.small_pile_redstone_dust),
 				new ItemStack(ItemLoader.small_pile_stone_dust), 100));
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_coal_ore),
-				new ItemStack(ItemLoader.small_pile_coal_dust), new ItemStack(ItemLoader.small_pile_coal_dust),
+				new ItemStack(ItemLoader.tiny_pile_coal_dust), new ItemStack(ItemLoader.tiny_pile_coal_dust),
 				new ItemStack(ItemLoader.small_pile_stone_dust), 100));
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_lapis_ore),
 				new ItemStack(ItemLoader.small_pile_lapis_dust), new ItemStack(ItemLoader.small_pile_lapis_dust),

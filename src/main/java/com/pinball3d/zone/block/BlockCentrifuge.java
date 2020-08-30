@@ -35,8 +35,8 @@ public class BlockCentrifuge extends BlockContainer {
 
 	public BlockCentrifuge(boolean burning) {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(200.0F);
+		setResistance(5000.0F);
 		setLightLevel(burning ? 1F : 0F);
 		setRegistryName("zone:centrifuge" + (burning ? "_light" : ""));
 		setUnlocalizedName("centrifuge");

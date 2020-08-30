@@ -10,8 +10,8 @@ import net.minecraft.util.BlockRenderLayer;
 public class BlockEtheriumFrame extends Block {
 	public BlockEtheriumFrame() {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(300.0F);
+		setResistance(7500.0F);
 		setRegistryName("zone:etherium_frame");
 		setUnlocalizedName("etherium_frame");
 		setCreativeTab(TabZone.tab);

@@ -10,8 +10,8 @@ import net.minecraft.util.BlockRenderLayer;
 public class BlockFirmGlassPane extends BlockPane {
 	public BlockFirmGlassPane() {
 		super(Material.GLASS, false);
-		setHardness(50.0F);
-		setResistance(1000.0F);
+		setHardness(20.0F);
+		setResistance(500.0F);
 		setSoundType(SoundType.GLASS);
 		setRegistryName("zone:firm_glass_pane");
 		setUnlocalizedName("firm_glass_pane");

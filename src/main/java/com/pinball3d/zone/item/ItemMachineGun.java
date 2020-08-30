@@ -35,8 +35,6 @@ public class ItemMachineGun extends ZoneItem {
 	public ItemMachineGun() {
 		super("machine_gun");
 		setMaxStackSize(1);
-		setMaxDamage(60);
-		setContainerItem(this);
 	}
 
 	@Override

@@ -47,8 +47,8 @@ public class BlockProductionPanel extends BlockContainer {
 
 	public BlockProductionPanel() {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(300.0F);
+		setResistance(7500.0F);
 		setRegistryName("zone:production_panel");
 		setUnlocalizedName("production_panel");
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.UP));

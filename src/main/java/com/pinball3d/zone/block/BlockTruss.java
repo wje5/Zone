@@ -22,8 +22,8 @@ public class BlockTruss extends BlockRotatedPillar {
 
 	public BlockTruss() {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(300.0F);
+		setResistance(7500.0F);
 		setRegistryName("zone:truss");
 		setUnlocalizedName("truss");
 		setCreativeTab(TabZone.tab);

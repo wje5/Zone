@@ -43,7 +43,6 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 					setConnected(false);
 				}
 			} else {
-				((TEProcessingCenter) worldpos.getTileEntity()).removeNeedNetwork(new WorldPos(pos, world));
 				deleteNetwork();
 			}
 		}

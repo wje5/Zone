@@ -10,11 +10,15 @@ import com.pinball3d.zone.recipe.RecipeHandler.Type;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class TECentrifuge extends ZoneMachine {
+	public static final SoundEvent SOUND = new SoundEvent(new ResourceLocation("zone:centrifuge"));
 	protected int tick, totalTick, energyTick;
 	protected ItemStackHandler input, output, expectOutput;
 
@@ -53,6 +57,7 @@ public class TECentrifuge extends ZoneMachine {
 						expectOutput.setStackInSlot(2, recipe.getOutput(2));
 						tick = recipe.getTime();
 						totalTick = recipe.getTime();
+						world.playSound(null, pos, SOUND, SoundCategory.BLOCKS, 1.0F, 1.0F);
 					}
 				}
 			}

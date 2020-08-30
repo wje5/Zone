@@ -25,8 +25,8 @@ public class BlockProcessingCenter extends BlockContainer {
 
 	public BlockProcessingCenter(boolean on) {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(10000.0F);
+		setResistance(250000.0F);
 		setLightLevel(on ? 1F : 0F);
 		setRegistryName("zone:processing_center" + (on ? "_light" : ""));
 		setUnlocalizedName("processing_center");

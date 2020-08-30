@@ -1,0 +1,22 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "zone:drill.obj",
+    "custom": {
+      "flip-v": true
+    },
+    "transform": {
+      "rotation": [
+        0,
+        180,
+        0
+      ]
+    }
+  },
+  "variants": {
+    "inventory": [
+      {
+      }
+    ]
+  }
+}

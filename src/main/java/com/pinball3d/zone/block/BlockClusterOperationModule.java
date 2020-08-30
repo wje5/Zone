@@ -11,8 +11,8 @@ import net.minecraft.world.World;
 public class BlockClusterOperationModule extends Block {
 	public BlockClusterOperationModule() {
 		super(Material.IRON);
-		setHardness(100.0F);
-		setResistance(2500.0F);
+		setHardness(300.0F);
+		setResistance(7500.0F);
 		setRegistryName("zone:cluster_operation_module");
 		setUnlocalizedName("cluster_operation_module");
 		setCreativeTab(TabZone.tab);

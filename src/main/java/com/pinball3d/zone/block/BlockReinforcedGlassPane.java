@@ -10,8 +10,8 @@ import net.minecraft.util.BlockRenderLayer;
 public class BlockReinforcedGlassPane extends BlockPane {
 	public BlockReinforcedGlassPane() {
 		super(Material.GLASS, false);
-		setHardness(20.0F);
-		setResistance(500.0F);
+		setHardness(50.0F);
+		setResistance(1000.0F);
 		setSoundType(SoundType.GLASS);
 		setRegistryName("zone:reinforced_glass_pane");
 		setUnlocalizedName("reinforced_glass_pane");
