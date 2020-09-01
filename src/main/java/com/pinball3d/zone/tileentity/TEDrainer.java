@@ -6,10 +6,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 public class TEDrainer extends ZoneMachine {
-	public static final SoundEvent SOUND = new SoundEvent(new ResourceLocation("zone:drainer"));
+	public static final ResourceLocation SOUND = new ResourceLocation("zone:drainer");
 	protected int tick;
 
 	public TEDrainer() {
@@ -24,7 +26,7 @@ public class TEDrainer extends ZoneMachine {
 		}
 		tick++;
 		if (tick % 200 == 0) {
-			world.playSound(null, pos, SOUND, SoundCategory.BLOCKS, 1.0F, 1.0F);
+			world.playSound(null, pos, SoundEvent.REGISTRY.getObject(SOUND), SoundCategory.BLOCKS, 1.0F, 1.0F);
 		}
 		if (tick >= 1200) {
 			tick -= 1200;
@@ -59,5 +61,10 @@ public class TEDrainer extends ZoneMachine {
 		super.writeToNBT(compound);
 		compound.setInteger("tick", tick);
 		return compound;
+	}
+
+	@SubscribeEvent
+	public static void onSoundEvenrRegistration(RegistryEvent.Register<SoundEvent> event) {
+		event.getRegistry().register(new SoundEvent(SOUND).setRegistryName(SOUND));
 	}
 }

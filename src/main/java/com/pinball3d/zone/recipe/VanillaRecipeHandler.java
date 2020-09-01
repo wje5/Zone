@@ -13,12 +13,13 @@ public class VanillaRecipeHandler {
 		GameRegistry.addSmelting(new ItemStack(ItemLoader.crushed_iron_ore), new ItemStack(Items.IRON_NUGGET), 0.1F);
 		GameRegistry.addSmelting(new ItemStack(ItemLoader.crushed_gold_ore), new ItemStack(Items.GOLD_NUGGET), 0.15F);
 		GameRegistry.addSmelting(new ItemStack(Blocks.SOUL_SAND), new ItemStack(BlockLoader.clarity_glass), 0.2F);
-		GameRegistry.addSmelting(new ItemStack(ItemLoader.iron_dust), new ItemStack(Items.IRON_INGOT), 0F);
-		GameRegistry.addSmelting(new ItemStack(ItemLoader.gold_dust), new ItemStack(Items.GOLD_INGOT), 0F);
-		GameRegistry.addSmelting(new ItemStack(ItemLoader.tiny_pile_iron_dust), new ItemStack(Items.IRON_NUGGET), 0F);
-		GameRegistry.addSmelting(new ItemStack(ItemLoader.tiny_pile_gold_dust), new ItemStack(Items.GOLD_NUGGET), 0F);
-		GameRegistry.addSmelting(new ItemStack(ItemLoader.etherium_dust), new ItemStack(ItemLoader.etherium), 0F);
+		GameRegistry.addSmelting(new ItemStack(ItemLoader.iron_dust), new ItemStack(Items.IRON_INGOT), 0.5F);
+		GameRegistry.addSmelting(new ItemStack(ItemLoader.gold_dust), new ItemStack(Items.GOLD_INGOT), 0.7F);
+		GameRegistry.addSmelting(new ItemStack(ItemLoader.tiny_pile_iron_dust), new ItemStack(Items.IRON_NUGGET),
+				0.05F);
+		GameRegistry.addSmelting(new ItemStack(ItemLoader.tiny_pile_gold_dust), new ItemStack(Items.GOLD_NUGGET), 0.1F);
+		GameRegistry.addSmelting(new ItemStack(ItemLoader.etherium_dust), new ItemStack(ItemLoader.etherium), 0.5F);
 		GameRegistry.addSmelting(new ItemStack(ItemLoader.clarity_glass_dust), new ItemStack(BlockLoader.clarity_glass),
-				0F);
+				0.1F);
 	}
 }

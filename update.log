@@ -99,3 +99,7 @@ Fix Sphinx Wizard UI
 Fix Sphinx change login password
 Add sounds
 Update blocks hardness
+
+#1.3.5
+Add Drill
+Update vanilla furnace smelt getted exp
