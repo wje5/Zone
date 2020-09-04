@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "# *",
+    " * ",
+    "*  "
+  ],
+  "key": {
+    "#": {
+      "item": "zone:file",
+      "data":32767
+    },
+    "*": {
+      "item": "zone:etherium_rod"
+    }
+  },
+  "result": {
+    "item": "zone:drill_head"
+  }
+}
