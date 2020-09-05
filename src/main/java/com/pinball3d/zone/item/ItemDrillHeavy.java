@@ -13,8 +13,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -26,8 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod.EventBusSubscriber
 public class ItemDrillHeavy extends ItemPickaxe {
-	public static final SoundEvent SOUND = new SoundEvent(new ResourceLocation("zone:drill_heavy"));
-
 	public ItemDrillHeavy() {
 		super(ZoneToolMaterial.ETHERIUM);
 		setRegistryName("zone:drill_heavy");
@@ -54,33 +51,63 @@ public class ItemDrillHeavy extends ItemPickaxe {
 		tag.setBoolean("charged", charged);
 	}
 
+	public static boolean checkDamage(ItemStack stack) {
+		if (stack.getItemDamage() >= 4096) {
+			return true;
+		}
+		return false;
+	}
+
+	public static ItemStack genNewStack(ItemStack stack) {
+		ItemStack r = new ItemStack(ItemLoader.drill_empty);
+		NBTTagCompound tag = r.getTagCompound();
+		if (tag == null) {
+			tag = new NBTTagCompound();
+			r.setTagCompound(tag);
+		}
+		tag.setTag("ench", stack.getEnchantmentTagList());
+		return r;
+	}
+
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
-		if (!isCharged(stack) && entityIn instanceof EntityPlayer) {
-			InventoryPlayer inv = ((EntityPlayer) entityIn).inventory;
-			int count = 0;
-			for (int i = 0; i < inv.getSizeInventory(); i++) {
-				ItemStack s = inv.getStackInSlot(i);
-				if (!s.isEmpty() && s.getItem() == ItemLoader.energy) {
-					count += s.getCount();
-				}
+		if (entityIn instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) entityIn;
+			if (checkDamage(stack)) {
+				player.setHeldItem(EnumHand.MAIN_HAND, genNewStack(stack));
+				return;
 			}
-			if (count >= 5) {
-				count = 0;
+			if (!isCharged(stack)) {
+				InventoryPlayer inv = player.inventory;
+				int count = 0;
 				for (int i = 0; i < inv.getSizeInventory(); i++) {
 					ItemStack s = inv.getStackInSlot(i);
 					if (!s.isEmpty() && s.getItem() == ItemLoader.energy) {
-						int amount = s.getCount() >= 5 - count ? 5 - count : s.getCount();
-						count += amount;
-						if (s.getCount() <= amount) {
-							inv.setInventorySlotContents(i, ItemStack.EMPTY);
-						} else {
-							inv.setInventorySlotContents(i, new ItemStack(ItemLoader.energy, s.getCount() - amount));
-						}
-						if (count >= 5) {
-							setCharged(stack, true);
-							return;
+						count += s.getCount();
+					}
+				}
+				if (count >= 5) {
+					count = 0;
+					for (int i = 0; i < inv.getSizeInventory(); i++) {
+						ItemStack s = inv.getStackInSlot(i);
+						if (!s.isEmpty() && s.getItem() == ItemLoader.energy) {
+							if (checkDamage(stack)) {
+								player.setHeldItem(EnumHand.MAIN_HAND, genNewStack(stack));
+								return;
+							}
+							int amount = s.getCount() >= 5 - count ? 5 - count : s.getCount();
+							count += amount;
+							if (s.getCount() <= amount) {
+								inv.setInventorySlotContents(i, ItemStack.EMPTY);
+							} else {
+								inv.setInventorySlotContents(i,
+										new ItemStack(ItemLoader.energy, s.getCount() - amount));
+							}
+							if (count >= 5) {
+								setCharged(stack, true);
+								return;
+							}
 						}
 					}
 				}
@@ -129,12 +156,20 @@ public class ItemDrillHeavy extends ItemPickaxe {
 			for (int i = -1; i <= 1; i++) {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
-						BlockPos p = pos.add(i, j, k);
-						IBlockState b = player.world.getBlockState(p);
-						float hard = b.getBlockHardness(player.world, p);
-						if (canHarvestBlock(b) && hard <= block.getBlockHardness(player.world, pos) && hard > 0) {
-							player.world.destroyBlock(p, true);
-							onBlockDestroyed(itemstack, player.world, b, p, player);
+						if (i != 0 || j != 0 || k != 0) {
+							BlockPos p = pos.add(i, j, k);
+							IBlockState b = player.world.getBlockState(p);
+							float hard = b.getBlockHardness(player.world, p);
+							if (checkDamage(itemstack)) {
+								player.setHeldItem(EnumHand.MAIN_HAND, genNewStack(itemstack));
+								return super.onBlockStartBreak(itemstack, pos, player);
+							}
+							if (canHarvestBlock(b) && hard <= block.getBlockHardness(player.world, pos) && hard > 0) {
+								player.world.setBlockToAir(p);
+								b.getBlock().harvestBlock(player.world, player, p, b, player.world.getTileEntity(p),
+										itemstack);
+								onBlockDestroyed(itemstack, player.world, b, p, player);
+							}
 						}
 					}
 				}

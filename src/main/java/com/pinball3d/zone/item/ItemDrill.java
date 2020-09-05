@@ -13,8 +13,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -26,14 +25,30 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod.EventBusSubscriber
 public class ItemDrill extends ItemPickaxe {
-	public static final SoundEvent SOUND = new SoundEvent(new ResourceLocation("zone:drill"));
-
 	public ItemDrill() {
 		super(ZoneToolMaterial.ETHERIUM);
 		setRegistryName("zone:drill");
 		setUnlocalizedName("drill");
 		setCreativeTab(TabZone.tab);
 		setMaxStackSize(1);
+	}
+
+	public static boolean checkDamage(ItemStack stack) {
+		if (stack.getItemDamage() >= 4096) {
+			return true;
+		}
+		return false;
+	}
+
+	public static ItemStack genNewStack(ItemStack stack) {
+		ItemStack r = new ItemStack(ItemLoader.drill_empty);
+		NBTTagCompound tag = r.getTagCompound();
+		if (tag == null) {
+			tag = new NBTTagCompound();
+			r.setTagCompound(tag);
+		}
+		tag.setTag("ench", stack.getEnchantmentTagList());
+		return r;
 	}
 
 	public static boolean isCharged(ItemStack stack) {
@@ -67,18 +82,25 @@ public class ItemDrill extends ItemPickaxe {
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
-		if (!isCharged(stack) && entityIn instanceof EntityPlayer) {
-			InventoryPlayer inv = ((EntityPlayer) entityIn).inventory;
-			for (int i = 0; i < inv.getSizeInventory(); i++) {
-				ItemStack s = inv.getStackInSlot(i);
-				if (!s.isEmpty() && s.getItem() == ItemLoader.energy) {
-					if (s.getCount() <= 1) {
-						inv.setInventorySlotContents(i, ItemStack.EMPTY);
-					} else {
-						inv.setInventorySlotContents(i, new ItemStack(ItemLoader.energy, s.getCount() - 1));
+		if (entityIn instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) entityIn;
+			if (checkDamage(stack)) {
+				player.setHeldItem(EnumHand.MAIN_HAND, genNewStack(stack));
+				return;
+			}
+			if (!isCharged(stack)) {
+				InventoryPlayer inv = player.inventory;
+				for (int i = 0; i < inv.getSizeInventory(); i++) {
+					ItemStack s = inv.getStackInSlot(i);
+					if (!s.isEmpty() && s.getItem() == ItemLoader.energy) {
+						if (s.getCount() <= 1) {
+							inv.setInventorySlotContents(i, ItemStack.EMPTY);
+						} else {
+							inv.setInventorySlotContents(i, new ItemStack(ItemLoader.energy, s.getCount() - 1));
+						}
+						charge(stack);
+						return;
 					}
-					charge(stack);
-					return;
 				}
 			}
 		}
