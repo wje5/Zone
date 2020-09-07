@@ -1,17 +1,14 @@
 package com.pinball3d.zone.tileentity;
 
+import com.pinball3d.zone.SoundUtil;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 public class TEDrainer extends ZoneMachine {
-	public static final ResourceLocation SOUND = new ResourceLocation("zone:drainer");
 	protected int tick;
 
 	public TEDrainer() {
@@ -21,12 +18,13 @@ public class TEDrainer extends ZoneMachine {
 	@Override
 	public void update() {
 		super.update();
-		if (world.isRemote) {
-			return;
-		}
 		tick++;
-		if (tick % 200 == 0) {
-			world.playSound(null, pos, SoundEvent.REGISTRY.getObject(SOUND), SoundCategory.BLOCKS, 1.0F, 1.0F);
+		if (world.isRemote) {
+			if (tick % 200 == 0) {
+				world.playSound(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
+						SoundUtil.getSoundEventFromId(1), SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+			}
+			return;
 		}
 		if (tick >= 1200) {
 			tick -= 1200;
@@ -63,8 +61,8 @@ public class TEDrainer extends ZoneMachine {
 		return compound;
 	}
 
-	@SubscribeEvent
-	public static void onSoundEvenrRegistration(RegistryEvent.Register<SoundEvent> event) {
-		event.getRegistry().register(new SoundEvent(SOUND).setRegistryName(SOUND));
-	}
+//	@SubscribeEvent
+//	public static void onSoundEvenrRegistration(RegistryEvent.Register<SoundEvent> event) {
+//		event.getRegistry().register(new SoundEvent(SOUND).setRegistryName(SOUND));
+//	}
 }

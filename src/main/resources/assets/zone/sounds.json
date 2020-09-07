@@ -5,33 +5,43 @@
         ]
     },
     "grinder": {
+    	"category": "block",
+    	"subtitle": "sound.grinder",
         "sounds": [
             "zone:grinder"
         ]
     },
     "drainer": {
+    	"category": "block",
+    	"subtitle": "sound.drainer",
         "sounds": [
             "zone:drainer"
         ]
     },
     "alloy_smelter": {
     	"category": "block",
-    	"subtitle": "zone.sound.alloy_smelter",
+    	"subtitle": "sound.alloy_smelter",
         "sounds": [
             "zone:alloy_smelter"
         ]
     },
     "elec_furnace": {
+        "category": "block",
+    	"subtitle": "sound.elec_furnace",
         "sounds": [
             "zone:elec_furnace"
         ]
     },
     "centrifuge": {
+        "category": "block",
+    	"subtitle": "sound.centrifuge",
         "sounds": [
             "zone:centrifuge"
         ]
     },
     "crystallizer": {
+        "category": "block",
+    	"subtitle": "sound.crystallizer",
         "sounds": [
             "zone:crystallizer"
         ]

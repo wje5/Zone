@@ -117,6 +117,7 @@ public class RecipeHandler {
 				new ItemStack(ItemLoader.small_pile_clay_dust, 14), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, 32767),
 				new ItemStack(ItemLoader.small_pile_clay_dust, 14), 200));
+		register(new RecipeGrinder(new ItemStack(Items.FLINT), new ItemStack(ItemLoader.tiny_pile_flint_dust, 8), 200));
 
 		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.iron_dust), new ItemStack(ItemLoader.gold_dust),
 				new ItemStack(ItemLoader.quartz_dust), new ItemStack(ItemLoader.etherium), 200));

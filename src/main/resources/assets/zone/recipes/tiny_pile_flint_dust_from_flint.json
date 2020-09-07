@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#",
+    "*"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:hammer",
+      "data":32767
+    },
+    "*": {
+      "item": "minecraft:flint"
+    }
+  },
+  "result": {
+    "item": "zone:tiny_pile_flint_dust",
+    "count": 8
+  }
+}

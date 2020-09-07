@@ -3,6 +3,8 @@ package com.pinball3d.zone.tileentity;
 import java.util.Arrays;
 
 import com.pinball3d.zone.block.BlockCrystallizer;
+import com.pinball3d.zone.network.MessagePlaySoundAtPos;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.recipe.Recipe;
 import com.pinball3d.zone.recipe.RecipeHandler;
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
@@ -10,15 +12,12 @@ import com.pinball3d.zone.recipe.RecipeHandler.Type;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class TECrystallizer extends ZoneMachine {
-	public static final SoundEvent SOUND = new SoundEvent(new ResourceLocation("zone:crystallizer"));
 	protected int tick, totalTick, energyTick;
 	protected ItemStackHandler input, output, expectOutput;
 
@@ -49,7 +48,9 @@ public class TECrystallizer extends ZoneMachine {
 						expectOutput.setStackInSlot(0, recipe.getOutput(0));
 						tick = recipe.getTime();
 						totalTick = recipe.getTime();
-						world.playSound(null, pos, SOUND, SoundCategory.BLOCKS, 1.0F, 1.0F);
+						NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 5),
+								new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
+										pos.getZ() + 0.5F, 16));
 					}
 				}
 			}

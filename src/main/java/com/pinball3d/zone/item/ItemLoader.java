@@ -22,7 +22,8 @@ public class ItemLoader {
 			etherium_plate_riveted, kinetic_amplifier, etherium_rod, advenced_circuit_board, processing_unit,
 			transistor, energy_group, restrain_circle, theile_tube, laser_generater, crystallization_accelerator,
 			redstone_crystal, dioptric_crystal, induction_tube, smoothing_unit, blaze_crystal, display_screen,
-			amplify_unit, network_adapter, interference_crystal, half_interference_unit;
+			amplify_unit, network_adapter, interference_crystal, half_interference_unit, sagger, fire_brick, clay_mold,
+			ceramic_mold;
 
 	public static Item energy, construct_block, terminal, fc, machine_gun, drill, drill_heavy, drill_head,
 			drill_heavy_head, drill_empty;
@@ -31,17 +32,17 @@ public class ItemLoader {
 			crushed_redstone_ore, crushed_coal_ore, crushed_lapis_ore, crushed_quartz_ore;
 
 	public static Item iron_dust, gold_dust, diamond_dust, emerald_dust, coal_dust, lapis_dust, quartz_dust, stone_dust,
-			netherrack_dust, etherium_dust, clarity_glass_dust, clay_dust;
+			netherrack_dust, etherium_dust, clarity_glass_dust, clay_dust, flint_dust;
 
 	public static Item small_pile_iron_dust, small_pile_gold_dust, small_pile_diamond_dust, small_pile_emerald_dust,
 			small_pile_redstone_dust, small_pile_coal_dust, small_pile_lapis_dust, small_pile_quartz_dust,
 			small_pile_stone_dust, small_pile_netherrack_dust, small_pile_etherium_dust, small_pile_clarity_glass_dust,
-			small_pile_clay_dust;
+			small_pile_clay_dust, small_pile_flint_dust;
 
 	public static Item tiny_pile_iron_dust, tiny_pile_gold_dust, tiny_pile_diamond_dust, tiny_pile_emerald_dust,
 			tiny_pile_redstone_dust, tiny_pile_coal_dust, tiny_pile_lapis_dust, tiny_pile_quartz_dust,
 			tiny_pile_stone_dust, tiny_pile_netherrack_dust, tiny_pile_etherium_dust, tiny_pile_clarity_glass_dust,
-			tiny_pile_clay_dust;
+			tiny_pile_clay_dust, tiny_pile_flint_dust;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -84,6 +85,10 @@ public class ItemLoader {
 		register(registry, network_adapter = new ZoneItem("network_adapter"));
 		register(registry, interference_crystal = new ZoneItem("interference_crystal"));
 		register(registry, half_interference_unit = new ZoneItem("half_interference_unit"));
+		register(registry, sagger = new ZoneItem("sagger"));
+		register(registry, fire_brick = new ZoneItem("fire_brick"));
+		register(registry, clay_mold = new ZoneItem("clay_mold"));
+		register(registry, ceramic_mold = new ZoneItem("ceramic_mold"));
 		register(registry, energy = new ZoneItem("energy"));
 		register(registry, terminal = new ItemTerminal());
 		register(registry, fc = new ItemFC());
@@ -113,6 +118,7 @@ public class ItemLoader {
 		register(registry, etherium_dust = new ZoneItem("etherium_dust"));
 		register(registry, clarity_glass_dust = new ZoneItem("clarity_glass_dust"));
 		register(registry, clay_dust = new ZoneItem("clay_dust"));
+		register(registry, flint_dust = new ZoneItem("flint_dust"));
 		register(registry, small_pile_iron_dust = new ZoneItem("small_pile_iron_dust"));
 		register(registry, small_pile_gold_dust = new ZoneItem("small_pile_gold_dust"));
 		register(registry, small_pile_diamond_dust = new ZoneItem("small_pile_diamond_dust"));
@@ -126,6 +132,7 @@ public class ItemLoader {
 		register(registry, small_pile_etherium_dust = new ZoneItem("small_pile_etherium_dust"));
 		register(registry, small_pile_clarity_glass_dust = new ZoneItem("small_pile_clarity_glass_dust"));
 		register(registry, small_pile_clay_dust = new ZoneItem("small_pile_clay_dust"));
+		register(registry, small_pile_flint_dust = new ZoneItem("small_pile_flint_dust"));
 		register(registry, tiny_pile_iron_dust = new ZoneItem("tiny_pile_iron_dust"));
 		register(registry, tiny_pile_gold_dust = new ZoneItem("tiny_pile_gold_dust"));
 		register(registry, tiny_pile_diamond_dust = new ZoneItem("tiny_pile_diamond_dust"));
@@ -139,6 +146,7 @@ public class ItemLoader {
 		register(registry, tiny_pile_etherium_dust = new ZoneItem("tiny_pile_etherium_dust"));
 		register(registry, tiny_pile_clarity_glass_dust = new ZoneItem("tiny_pile_clarity_glass_dust"));
 		register(registry, tiny_pile_clay_dust = new ZoneItem("tiny_pile_clay_dust"));
+		register(registry, tiny_pile_flint_dust = new ZoneItem("tiny_pile_flint_dust"));
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {

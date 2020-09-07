@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "*#*",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:clay_ball"
+    },
+    "*": {
+      "item": "zone:flint_dust"
+    }
+  },
+  "result": {
+    "item": "zone:sagger"
+  }
+}

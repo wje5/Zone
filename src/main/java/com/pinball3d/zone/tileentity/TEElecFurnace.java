@@ -1,20 +1,19 @@
 package com.pinball3d.zone.tileentity;
 
 import com.pinball3d.zone.block.BlockElecFurnace;
+import com.pinball3d.zone.network.MessagePlaySoundAtPos;
+import com.pinball3d.zone.network.NetworkHandler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class TEElecFurnace extends ZoneMachine {
-	public static final SoundEvent SOUND = new SoundEvent(new ResourceLocation("zone:elec_furnace"));
 	protected int tick, energyTick;
 	protected ItemStackHandler input, output, expectOutput;
 
@@ -43,7 +42,9 @@ public class TEElecFurnace extends ZoneMachine {
 						input.extractItem(0, 1, false);
 						expectOutput.setStackInSlot(0, stack);
 						tick = 100;
-						world.playSound(null, pos, SOUND, SoundCategory.BLOCKS, 1.0F, 1.0F);
+						NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 3),
+								new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
+										pos.getZ() + 0.5F, 16));
 					}
 				}
 			}
