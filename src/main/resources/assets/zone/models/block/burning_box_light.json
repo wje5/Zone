@@ -1,0 +1,9 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "top": "zone:blocks/burning_box_top_light",
+        "front": "zone:blocks/burning_box_light",
+        "side": "zone:blocks/fire_brick_block",
+        "down": "zone:blocks/fire_brick_block"
+    }
+}

@@ -26,7 +26,7 @@ public class ItemLoader {
 			ceramic_mold;
 
 	public static Item energy, construct_block, terminal, fc, machine_gun, drill, drill_heavy, drill_head,
-			drill_heavy_head, drill_empty;
+			drill_heavy_head, drill_empty, crucible_spoon, crucible_spoon_filled;
 
 	public static Item crushed_iron_ore, crushed_gold_ore, crushed_diamond_ore, crushed_emerald_ore,
 			crushed_redstone_ore, crushed_coal_ore, crushed_lapis_ore, crushed_quartz_ore;
@@ -98,6 +98,8 @@ public class ItemLoader {
 		register(registry, drill_head = new ItemDrillHead());
 		register(registry, drill_heavy_head = new ItemDrillHeavyHead());
 		register(registry, drill_empty = new ItemDrillEmpty());
+		register(registry, crucible_spoon = new ItemCrucibleSpoon(false));
+		register(registry, crucible_spoon_filled = new ItemCrucibleSpoon(true));
 		register(registry, crushed_iron_ore = new ZoneItem("crushed_iron_ore"));
 		register(registry, crushed_gold_ore = new ZoneItem("crushed_gold_ore"));
 		register(registry, crushed_diamond_ore = new ZoneItem("crushed_diamond_ore"));

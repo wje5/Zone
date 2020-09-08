@@ -65,7 +65,7 @@ public class TECrystallizer extends ZoneMachine {
 			}
 		}
 		if (energyTick > 0 != flag) {
-			((BlockCrystallizer) blockType).setState(energyTick > 0, world, pos);
+			BlockCrystallizer.setState(energyTick > 0, world, pos);
 		}
 	}
 

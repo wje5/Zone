@@ -19,6 +19,9 @@ public class TileEntityLoader {
 		registerTileEntity(TEStoragePanel.class, "TEStoragePanel");
 		registerTileEntity(TEIOPanel.class, "TEIOPanel");
 		registerTileEntity(TEProductionPanel.class, "TEProductionPanel");
+		registerTileEntity(TECrucible.class, "TECrucible");
+		registerTileEntity(TEBurningBox.class, "TEBurningBox");
+		registerTileEntity(TECastingTable.class, "TECastingTable");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

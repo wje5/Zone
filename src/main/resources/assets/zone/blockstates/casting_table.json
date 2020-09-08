@@ -1,0 +1,16 @@
+{
+    "variants": {
+        "facing=north,state=empty": { "model": "zone:casting_table" },
+        "facing=south,state=empty": { "model": "zone:casting_table", "y": 180 },
+        "facing=west,state=empty":  { "model": "zone:casting_table", "y": 270 },
+        "facing=east,state=empty":  { "model": "zone:casting_table", "y": 90 },
+        "facing=north,state=fluid": { "model": "zone:casting_table" },
+        "facing=south,state=fluid": { "model": "zone:casting_table", "y": 180 },
+        "facing=west,state=fluid":  { "model": "zone:casting_table", "y": 270 },
+        "facing=east,state=fluid":  { "model": "zone:casting_table", "y": 90 },
+        "facing=north,state=ingot": { "model": "zone:casting_table" },
+        "facing=south,state=ingot": { "model": "zone:casting_table", "y": 180 },
+        "facing=west,state=ingot":  { "model": "zone:casting_table", "y": 270 },
+        "facing=east,state=ingot":  { "model": "zone:casting_table", "y": 90 }
+    }
+}

@@ -21,8 +21,6 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 public class BlockProcessingCenter extends BlockContainer {
-	private static boolean keepInventory;
-
 	public BlockProcessingCenter(boolean on) {
 		super(Material.IRON);
 		setHardness(10000.0F);
@@ -35,7 +33,7 @@ public class BlockProcessingCenter extends BlockContainer {
 
 	@Override
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		Explosion explosion = world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
+		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 
@@ -210,10 +208,7 @@ public class BlockProcessingCenter extends BlockContainer {
 	}
 
 	public static void setState(boolean active, World worldIn, BlockPos pos) {
-		IBlockState iblockstate = worldIn.getBlockState(pos);
 		TileEntity tileentity = worldIn.getTileEntity(pos);
-		keepInventory = true;
-
 		if (active) {
 			worldIn.setBlockState(pos, BlockLoader.processing_center_light.getDefaultState(), 3);
 			worldIn.setBlockState(pos, BlockLoader.processing_center_light.getDefaultState(), 3);
@@ -221,9 +216,6 @@ public class BlockProcessingCenter extends BlockContainer {
 			worldIn.setBlockState(pos, BlockLoader.processing_center.getDefaultState(), 3);
 			worldIn.setBlockState(pos, BlockLoader.processing_center.getDefaultState(), 3);
 		}
-
-		keepInventory = false;
-
 		if (tileentity != null) {
 			tileentity.validate();
 			worldIn.setTileEntity(pos, tileentity);

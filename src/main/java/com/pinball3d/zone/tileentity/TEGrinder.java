@@ -65,7 +65,7 @@ public class TEGrinder extends ZoneMachine {
 			}
 		}
 		if (energyTick > 0 != flag) {
-			((BlockGrinder) blockType).setState(energyTick > 0, world, pos);
+			BlockGrinder.setState(energyTick > 0, world, pos);
 		}
 	}
 

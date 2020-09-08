@@ -30,7 +30,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class BlockAlloySmelter extends BlockContainer {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-	private final boolean isBurning;
 	private static boolean keepInventory;
 
 	public BlockAlloySmelter(boolean burning) {
@@ -42,7 +41,6 @@ public class BlockAlloySmelter extends BlockContainer {
 		setUnlocalizedName("alloy_smelter");
 		setCreativeTab(TabZone.tab);
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-		isBurning = burning;
 	}
 
 	@Override
@@ -161,7 +159,7 @@ public class BlockAlloySmelter extends BlockContainer {
 
 	@Override
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		Explosion explosion = world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
+		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 

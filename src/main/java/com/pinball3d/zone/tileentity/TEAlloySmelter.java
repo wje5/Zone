@@ -67,7 +67,7 @@ public class TEAlloySmelter extends ZoneMachine {
 			}
 		}
 		if (energyTick > 0 != flag) {
-			((BlockAlloySmelter) blockType).setState(energyTick > 0, world, pos);
+			BlockAlloySmelter.setState(energyTick > 0, world, pos);
 		}
 	}
 

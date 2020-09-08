@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "zone:burning_box" },
+        "facing=south": { "model": "zone:burning_box", "y": 180 },
+        "facing=west":  { "model": "zone:burning_box", "y": 270 },
+        "facing=east":  { "model": "zone:burning_box", "y": 90 }
+    }
+}

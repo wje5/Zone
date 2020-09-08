@@ -1,0 +1,20 @@
+{
+    "variants": {
+        "facing=north,fluid=false,ore=false": { "model": "zone:crucible" },
+        "facing=south,fluid=false,ore=false": { "model": "zone:crucible", "y": 180 },
+        "facing=west,fluid=false,ore=false":  { "model": "zone:crucible", "y": 270 },
+        "facing=east,fluid=false,ore=false":  { "model": "zone:crucible", "y": 90 },
+        "facing=north,fluid=true,ore=false": { "model": "zone:crucible" },
+        "facing=south,fluid=true,ore=false": { "model": "zone:crucible", "y": 180 },
+        "facing=west,fluid=true,ore=false":  { "model": "zone:crucible", "y": 270 },
+        "facing=east,fluid=true,ore=false":  { "model": "zone:crucible", "y": 90 },
+        "facing=north,fluid=false,ore=true": { "model": "zone:crucible" },
+        "facing=south,fluid=false,ore=true": { "model": "zone:crucible", "y": 180 },
+        "facing=west,fluid=false,ore=true":  { "model": "zone:crucible", "y": 270 },
+        "facing=east,fluid=false,ore=true":  { "model": "zone:crucible", "y": 90 },
+        "facing=north,fluid=true,ore=true": { "model": "zone:crucible" },
+        "facing=south,fluid=true,ore=true": { "model": "zone:crucible", "y": 180 },
+        "facing=west,fluid=true,ore=true":  { "model": "zone:crucible", "y": 270 },
+        "facing=east,fluid=true,ore=true":  { "model": "zone:crucible", "y": 90 }
+    }
+}

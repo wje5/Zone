@@ -165,7 +165,7 @@ public class ItemDrillHeavy extends ItemPickaxe {
 								return super.onBlockStartBreak(itemstack, pos, player);
 							}
 							if (canHarvestBlock(b) && hard <= block.getBlockHardness(player.world, pos) && hard > 0) {
-								player.world.setBlockToAir(p);
+								player.world.destroyBlock(p, false);
 								b.getBlock().harvestBlock(player.world, player, p, b, player.world.getTileEntity(p),
 										itemstack);
 								onBlockDestroyed(itemstack, player.world, b, p, player);

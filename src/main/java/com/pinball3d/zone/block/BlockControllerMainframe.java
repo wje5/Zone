@@ -107,7 +107,6 @@ public class BlockControllerMainframe extends Block {
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing facing = EnumFacing.getHorizontal(meta % 4);
-		Boolean burning = meta > 4;
 		return this.getDefaultState().withProperty(FACING, facing);
 	}
 
@@ -124,7 +123,7 @@ public class BlockControllerMainframe extends Block {
 
 	@Override
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		Explosion explosion = world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
+		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 }

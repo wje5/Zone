@@ -73,7 +73,7 @@ public class TECentrifuge extends ZoneMachine {
 			}
 		}
 		if (energyTick > 0 != flag) {
-			((BlockCentrifuge) blockType).setState(energyTick > 0, world, pos);
+			BlockCentrifuge.setState(energyTick > 0, world, pos);
 		}
 	}
 

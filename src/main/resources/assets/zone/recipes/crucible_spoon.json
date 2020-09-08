@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  #",
+    " * ",
+    "*  "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:bowl"
+    },
+    "*": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "zone:crucible_spoon"
+  }
+}

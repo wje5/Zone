@@ -69,6 +69,12 @@ public class BlockStorageChest extends BlockContainer {
 		super.breakBlock(worldIn, pos, state);
 	}
 
+	@Override
+	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+		super.onBlockAdded(worldIn, pos, state);
+		this.setDefaultFacing(worldIn, pos, state);
+	}
+
 	private void setDefaultFacing(World worldIn, BlockPos pos, IBlockState state) {
 		if (!worldIn.isRemote) {
 			IBlockState iblockstate = worldIn.getBlockState(pos.north());
@@ -99,7 +105,6 @@ public class BlockStorageChest extends BlockContainer {
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing facing = EnumFacing.getHorizontal(meta % 4);
-		Boolean burning = meta > 4;
 		return this.getDefaultState().withProperty(FACING, facing);
 	}
 
@@ -116,7 +121,7 @@ public class BlockStorageChest extends BlockContainer {
 
 	@Override
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		Explosion explosion = world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
+		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 

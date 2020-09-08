@@ -30,7 +30,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class BlockGrinder extends BlockContainer {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-	private final boolean isBurning;
 	private static boolean keepInventory;
 
 	public BlockGrinder(boolean burning) {
@@ -42,7 +41,6 @@ public class BlockGrinder extends BlockContainer {
 		setUnlocalizedName("grinder");
 		setCreativeTab(TabZone.tab);
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-		isBurning = burning;
 	}
 
 	@Override
@@ -144,7 +142,6 @@ public class BlockGrinder extends BlockContainer {
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing facing = EnumFacing.getHorizontal(meta % 4);
-		Boolean burning = meta > 4;
 		return this.getDefaultState().withProperty(FACING, facing);
 	}
 
@@ -161,7 +158,7 @@ public class BlockGrinder extends BlockContainer {
 
 	@Override
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		Explosion explosion = world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
+		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 

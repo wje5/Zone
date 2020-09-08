@@ -23,7 +23,8 @@ public class BlockLoader {
 			firm_glass_pane, reinforced_stone;
 
 	public static Block drainer, grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter,
-			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light;
+			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light, crucible,
+			burning_box, burning_box_light, casting_table;
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module, storage_panel,
@@ -58,6 +59,10 @@ public class BlockLoader {
 		register(registry, node = new BlockNode());
 		register(registry, crystallizer = new BlockCrystallizer(false));
 		register(registry, crystallizer_light = new BlockCrystallizer(true));
+		register(registry, crucible = new BlockCrucible());
+		register(registry, burning_box = new BlockBurningBox(false));
+		register(registry, burning_box_light = new BlockBurningBox(true));
+		register(registry, casting_table = new BlockCastingTable());
 		register(registry, construct_block = new BlockConstructBlock());
 		register(registry, construct_block_all = new BlockConstructBlockAll());
 		register(registry, cluster_operation_module = new BlockClusterOperationModule());
@@ -101,6 +106,9 @@ public class BlockLoader {
 		registerItem(registry, centrifuge);
 		registerItem(registry, node);
 		registerItem(registry, crystallizer);
+		registerItem(registry, crucible);
+		registerItem(registry, burning_box);
+		registerItem(registry, casting_table);
 		registerItem(registry, ItemLoader.construct_block = new ItemConstructBlock());
 		registerItem(registry, cluster_operation_module);
 		registerItem(registry, controller_mainframe);

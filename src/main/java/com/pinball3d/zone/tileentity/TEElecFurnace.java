@@ -59,7 +59,7 @@ public class TEElecFurnace extends ZoneMachine {
 			}
 		}
 		if (energyTick > 0 != flag) {
-			((BlockElecFurnace) blockType).setState(energyTick > 0, world, pos);
+			BlockElecFurnace.setState(energyTick > 0, world, pos);
 		}
 	}
 
