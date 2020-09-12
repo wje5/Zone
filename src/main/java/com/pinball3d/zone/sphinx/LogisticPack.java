@@ -5,6 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 
 public class LogisticPack {
 	public WorldPos target;
+	public WorldPos next;
 	public StorageWrapper items;
 	public double x, y, z;
 	public int dim;
@@ -27,6 +28,13 @@ public class LogisticPack {
 	}
 
 	public boolean forward(double distance) {
+		if (tryForward(distance) > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public double tryForward(double distance) {
 		double xDistance = target.getPos().getX() - x;
 		double yDistance = target.getPos().getY() - y;
 		double zDistance = target.getPos().getZ() - z;
@@ -35,13 +43,13 @@ public class LogisticPack {
 			x = target.getPos().getX();
 			y = target.getPos().getY();
 			z = target.getPos().getZ();
-			return true;
+			return distance - total;
 		}
 		double scale = distance / total;
 		x += xDistance * scale;
 		y += yDistance * scale;
 		z += zDistance * scale;
-		return false;
+		return 0;
 	}
 
 	public boolean check() {

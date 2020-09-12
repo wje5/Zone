@@ -3,23 +3,19 @@ package com.pinball3d.zone.sphinx;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
 
-public class PointerPlayer extends Gui {
-	public int x, z;
+public class PointerPlayer extends Pointer {
 	public float angle;
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 
 	public PointerPlayer(int x, int z) {
-		this.x = x;
-		this.z = z;
+		super(x, z);
 	}
 
+	@Override
 	public void doRender(int offsetX, int offsetZ) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
 		GlStateManager.pushMatrix();

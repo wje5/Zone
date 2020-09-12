@@ -92,6 +92,10 @@ public class StorageWrapper {
 		readFromNBT(tag);
 	}
 
+	public boolean isEmpty() {
+		return storges.isEmpty() && other.isEmpty();
+	}
+
 	public void merge(IItemHandler input, boolean isSimulate) {
 		int max = input.getSlots();
 		for (int i = 0; i < max; i++) {

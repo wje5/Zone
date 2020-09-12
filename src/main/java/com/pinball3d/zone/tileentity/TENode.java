@@ -6,10 +6,7 @@ public class TENode extends TENeedNetwork {
 	}
 
 	public boolean isPointInRange(int dim, double x, double y, double z) {
-		if (world.provider.getDimension() != dim) {
-			return false;
-		}
-		if (Math.sqrt(pos.distanceSq(x, y, z)) < 25) {
+		if (world.provider.getDimension() == dim && Math.sqrt(pos.distanceSq(x, y, z)) < 25) {
 			return true;
 		}
 		return false;

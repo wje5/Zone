@@ -52,7 +52,7 @@ public class MessageUpdateIOPanelGui implements IMessage {
 					if (player != null && player.openContainer instanceof ContainerIOPanel) {
 						ContainerIOPanel container = (ContainerIOPanel) player.openContainer;
 						WorldPos pos = container.tileEntity.getNetworkPos();
-						if (pos != null) {
+						if (container.tileEntity.isConnected() && pos != null) {
 							TileEntity tileEntity = pos.getTileEntity();
 							if (pos.getTileEntity() instanceof TEProcessingCenter) {
 								container.setData(((TEProcessingCenter) tileEntity).getNetworkUseableItems());

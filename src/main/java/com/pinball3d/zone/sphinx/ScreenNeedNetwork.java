@@ -85,7 +85,7 @@ public class ScreenNeedNetwork extends GuiScreen implements IParent {
 		if (!checkTileentity()) {
 			return;
 		}
-		if (tileentity.getNetworkPos() != null) {
+		if (tileentity.getNetworkPos() != null && tileentity.isConnected()) {
 			MapHandler.draw(tileentity.getNetworkPos(), width, height);
 		} else {
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);

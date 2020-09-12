@@ -29,7 +29,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -249,25 +248,26 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		}
 		Iterator<WorldPos> it = nodes.iterator();
 		while (it.hasNext()) {
-			if (((TENode) it.next().getTileEntity()).isPointInRange(dim, x, y, z)) {
+			TENode i = (TENode) it.next().getTileEntity();
+			if (i.isConnected() && i.isPointInRange(dim, x, y, z)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean isDeviceInRange(World world, BlockPos pos) {
-		if (this.world.provider.getDimension() != world.provider.getDimension()) {
+	public boolean isDeviceInRange(WorldPos pos) {
+		if (world.provider.getDimension() != pos.getDim()) {
 			return false;
 		}
-		if (Math.sqrt(this.pos.distanceSq(pos.getX(), pos.getY(), pos.getZ())) < 25) {
+		if (Math.sqrt(this.pos.distanceSq(pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ())) < 25) {
 			return true;
 		}
 		Iterator<WorldPos> it = nodes.iterator();
 		while (it.hasNext()) {
 			TENode te = (TENode) it.next().getTileEntity();
-			if (!te.getPos().equals(pos)
-					&& te.isPointInRange(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ())) {
+			if (!te.getPos().equals(pos) && te.isConnected()
+					&& te.isPointInRange(pos.getDim(), pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ())) {
 				return true;
 			}
 		}
@@ -293,7 +293,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		StorageWrapper wrapper = new StorageWrapper();
 		storages.forEach(e -> {
 			TileEntity te = e.getTileEntity();
-			if (te instanceof IStorable) {
+			if (te instanceof INeedNetwork && ((INeedNetwork) te).isConnected() && te instanceof IStorable) {
 				wrapper.merge(((IStorable) te).getStorages());
 			}
 		});
@@ -311,8 +311,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		});
 		sortset.addAll(storages);
 		sortset.forEach(e -> {
-			packs.add(new LogisticPack(target, ((IStorable) e.getTileEntity()).extract(wrapper),
-					new WorldPos(e.getTileEntity())));
+			TileEntity te = e.getTileEntity();
+			if (te instanceof INeedNetwork && ((INeedNetwork) te).isConnected() && te instanceof IStorable) {
+				StorageWrapper w = ((IStorable) te).extract(wrapper);
+				if (!w.isEmpty()) {
+					packs.add(new LogisticPack(target, w, new WorldPos(te)));
+				}
+			}
 		});
 		callUpdate();
 	}
@@ -328,8 +333,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		});
 		sortset.addAll(storages);
 		sortset.forEach(e -> {
-			packs.add(new LogisticPack(new WorldPos(e.getTileEntity().getPos(), e.getTileEntity().getWorld()),
-					((IStorable) e.getTileEntity()).insert(wrapper, true), pos));
+			TileEntity te = e.getTileEntity();
+			if (te instanceof INeedNetwork && ((INeedNetwork) te).isConnected() && te instanceof IStorable) {
+				StorageWrapper w = ((IStorable) te).insert(wrapper, true);
+				if (!w.isEmpty()) {
+					packs.add(new LogisticPack(new WorldPos(te), w, pos));
+				}
+			}
 		});
 		callUpdate();
 	}
@@ -338,9 +348,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		boolean flag = false;
 		Set<WorldPos> temp = new HashSet<WorldPos>();
 		do {
+			flag = false;
 			Iterator<WorldPos> it = nodes.iterator();
 			while (it.hasNext()) {
-				flag = false;
 				WorldPos i = it.next();
 				if (i == null || i.getBlockState().getBlock() != BlockLoader.node) {
 					continue;
@@ -349,15 +359,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 					if (Math.sqrt(pos.distanceSq(i.getPos().getX(), i.getPos().getY(), i.getPos().getZ())) < 25) {
 						flag = true;
 						temp.add(i);
+						((TENode) i.getTileEntity()).setConnected(true);
 					} else {
 						Iterator<WorldPos> it2 = temp.iterator();
 						while (it2.hasNext()) {
 							WorldPos nodepos = it2.next();
-							if (nodepos.getBlockState().getBlock() == BlockLoader.node
-									&& ((TENode) nodepos.getTileEntity()).isPointInRange(i.getDim(), i.getPos().getX(),
-											i.getPos().getY(), i.getPos().getZ())) {
+							if (((TENode) nodepos.getTileEntity()).isPointInRange(i.getDim(), i.getPos().getX(),
+									i.getPos().getY(), i.getPos().getZ())) {
 								flag = true;
 								temp.add(i);
+								((TENode) i.getTileEntity()).setConnected(true);
 								break;
 							}
 						}
@@ -366,7 +377,17 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			}
 		} while (flag);
 		if (!temp.equals(nodes)) {
-			nodes = temp;
+			Iterator<WorldPos> it = nodes.iterator();
+			while (it.hasNext()) {
+				WorldPos e = it.next();
+				if (!temp.contains(e)) {
+					if (e != null && e.getBlockState().getBlock() == BlockLoader.node) {
+						((INeedNetwork) e.getTileEntity()).setConnected(false);
+					} else {
+						it.remove();
+					}
+				}
+			}
 			markDirty();
 			callUpdate();
 		}
@@ -381,7 +402,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			if (!(pos.getTileEntity() instanceof IStorable)) {
 				it.remove();
 				flag = true;
-			} else if (!isDeviceInRange(pos.getWorld(), pos.getPos())) {
+			} else if (!isDeviceInRange(pos)) {
 				((INeedNetwork) pos.getTileEntity()).setConnected(false);
 				flag = true;
 			} else {
@@ -394,7 +415,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			if (!(pos.getTileEntity() instanceof IDevice)) {
 				it.remove();
 				flag = true;
-			} else if (!isDeviceInRange(pos.getWorld(), pos.getPos())) {
+			} else if (!isDeviceInRange(pos)) {
 				((INeedNetwork) pos.getTileEntity()).setConnected(false);
 				flag = true;
 			} else {
@@ -407,7 +428,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			if (!(pos.getTileEntity() instanceof IProduction)) {
 				it.remove();
 				flag = true;
-			} else if (!isDeviceInRange(pos.getWorld(), pos.getPos())) {
+			} else if (!isDeviceInRange(pos)) {
 				((INeedNetwork) pos.getTileEntity()).setConnected(false);
 				flag = true;
 			} else {

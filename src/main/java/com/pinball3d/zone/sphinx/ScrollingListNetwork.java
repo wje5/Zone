@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.pinball3d.zone.network.MessageRequestValidNetworks;
 import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.Gui;
@@ -42,7 +43,8 @@ public class ScrollingListNetwork extends Component {
 		if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
 			worldpos = ((ScreenTerminal) ((SubscreenNetworkConfig) parent).parent).worldpos;
 		} else {
-			worldpos = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity.getNetworkPos();
+			INeedNetwork te = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity;
+			worldpos = te.isConnected() ? te.getNetworkPos() : null;
 		}
 		List<WorldPos> temp = new ArrayList<WorldPos>();
 		data.forEach(e -> {
@@ -70,7 +72,8 @@ public class ScrollingListNetwork extends Component {
 		if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
 			worldpos = ((ScreenTerminal) ((SubscreenNetworkConfig) parent).parent).worldpos;
 		} else {
-			worldpos = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity.getNetworkPos();
+			INeedNetwork te = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity;
+			worldpos = te.isConnected() ? te.getNetworkPos() : null;
 		}
 		data.forEach(e -> {
 			list.add(new ListBar((TEProcessingCenter) e.getTileEntity(),

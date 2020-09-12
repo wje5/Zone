@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.lwjgl.input.Keyboard;
+
 import com.pinball3d.zone.network.MessageRequestStorage;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
@@ -24,6 +26,7 @@ public class SubscreenViewStorage extends Subscreen {
 	public StorageWrapper data = new StorageWrapper();
 	public String search = "";
 	public int page = 1, maxPage = 1;
+	private TextInputBox box;
 
 	public SubscreenViewStorage(IParent parent) {
 		this(parent, parent.getWidth() / 2 - 150, parent.getHeight() / 2 - 100);
@@ -36,6 +39,19 @@ public class SubscreenViewStorage extends Subscreen {
 		} else {
 			TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
 		}
+		components.add(box = new TextInputBox(this, getXOffset() + 27, getYOffset() + 27, 61, 15, 8, new Runnable() {
+			@Override
+			public void run() {
+				box.isFocus = true;
+			}
+		}));
+		components.add(new TexturedButton(this, getXOffset() + 87, getYOffset() + 27, ICONS, 92, 41, 15, 15, 1.0F,
+				new Runnable() {
+					@Override
+					public void run() {
+						search = box.text;
+					}
+				}));
 		components.add(new TexturedButton(this, this.x + 120, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, new Runnable() {
 			@Override
 			public void run() {
@@ -86,7 +102,24 @@ public class SubscreenViewStorage extends Subscreen {
 	}
 
 	public void updateGlobalStorges() {
-		maxPage = (data.storges.size() + data.other.size() - 1) / 91 + 1;
+		int size = 0;
+		Iterator<HugeItemStack> it = data.storges.iterator();
+		while (it.hasNext()) {
+			HugeItemStack hugestack = it.next();
+			if (hugestack.stack.getItem().getRegistryName().getResourcePath().contains(search)
+					|| hugestack.stack.getDisplayName().contains(search)) {
+				size++;
+			}
+		}
+		Iterator<ItemStack> it2 = data.other.iterator();
+		while (it2.hasNext()) {
+			ItemStack stack = it2.next();
+			if (stack.getItem().getRegistryName().getResourcePath().contains(search)
+					|| stack.getDisplayName().contains(search)) {
+				size++;
+			}
+		}
+		maxPage = (size - 1) / 91 + 1;
 		if (page > maxPage) {
 			page = maxPage;
 		}
@@ -206,5 +239,20 @@ public class SubscreenViewStorage extends Subscreen {
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
+	}
+
+	@Override
+	public void keyTyped(char typedChar, int keyCode) {
+		if (subscreens.empty()) {
+			components.forEach(e -> {
+				e.onKeyTyped(typedChar, keyCode);
+			});
+			if (keyCode == Keyboard.KEY_RETURN && box.isFocus) {
+				search = box.text;
+				box.isFocus = false;
+			}
+		} else {
+			subscreens.peek().keyTyped(typedChar, keyCode);
+		}
 	}
 }

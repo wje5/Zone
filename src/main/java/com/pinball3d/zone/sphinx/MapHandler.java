@@ -1,15 +1,19 @@
 package com.pinball3d.zone.sphinx;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
+import com.pinball3d.zone.tileentity.INeedNetwork;
+import com.pinball3d.zone.tileentity.TENode;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.Minecraft;
@@ -22,7 +26,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 public class MapHandler {
@@ -38,7 +41,6 @@ public class MapHandler {
 	private Set<PointerPack> packs;
 	public WorldPos network;
 	private int dim;
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	public static Minecraft mc = Minecraft.getMinecraft();
 	private static MapHandler instance;
 
@@ -51,12 +53,49 @@ public class MapHandler {
 		yOffset = pos.getZ();
 		pointerPlayer = new PointerPlayer(xOffset, yOffset);
 		dim = mc.player.world.provider.getDimension();
-		processingCenter = new PointerProcessingCenter(network.getPos().getX(), network.getPos().getZ());
-		nodes = new HashSet<PointerNode>();
-		storges = new HashSet<PointerStorage>();
-		devices = new HashSet<PointerDevice>();
-		productions = new HashSet<PointerProduction>();
-		packs = new HashSet<PointerPack>();
+		processingCenter = new PointerProcessingCenter(network);
+		nodes = new TreeSet<PointerNode>(new Comparator<PointerNode>() {
+			@Override
+			public int compare(PointerNode o1, PointerNode o2) {
+				return o1.pos.getPos().getX() < o2.pos.getPos().getX() ? -1
+						: o1.pos.getPos().getX() > o2.pos.getPos().getX() ? 1
+								: o1.pos.getPos().getX() < o2.pos.getPos().getZ() ? -1
+										: o1.pos.getPos().getZ() > o2.pos.getPos().getZ() ? 1 : 0;
+			};
+		});
+		storges = new TreeSet<PointerStorage>(new Comparator<PointerStorage>() {
+			@Override
+			public int compare(PointerStorage o1, PointerStorage o2) {
+				return o1.pos.getPos().getX() < o2.pos.getPos().getX() ? -1
+						: o1.pos.getPos().getX() > o2.pos.getPos().getX() ? 1
+								: o1.pos.getPos().getZ() < o2.pos.getPos().getZ() ? -1
+										: o1.pos.getPos().getZ() > o2.pos.getPos().getZ() ? 1 : 0;
+			};
+		});
+		devices = new TreeSet<PointerDevice>(new Comparator<PointerDevice>() {
+			@Override
+			public int compare(PointerDevice o1, PointerDevice o2) {
+				return o1.pos.getPos().getX() < o2.pos.getPos().getX() ? -1
+						: o1.pos.getPos().getX() > o2.pos.getPos().getX() ? 1
+								: o1.pos.getPos().getZ() < o2.pos.getPos().getZ() ? -1
+										: o1.pos.getPos().getZ() > o2.pos.getPos().getZ() ? 1 : 0;
+			};
+		});
+		productions = new TreeSet<PointerProduction>(new Comparator<PointerProduction>() {
+			@Override
+			public int compare(PointerProduction o1, PointerProduction o2) {
+				return o1.pos.getPos().getX() < o2.pos.getPos().getX() ? -1
+						: o1.pos.getPos().getX() > o2.pos.getPos().getX() ? 1
+								: o1.pos.getPos().getZ() < o2.pos.getPos().getZ() ? -1
+										: o1.pos.getPos().getZ() > o2.pos.getPos().getZ() ? 1 : 0;
+			};
+		});
+		packs = new TreeSet<PointerPack>(new Comparator<PointerPack>() {
+			@Override
+			public int compare(PointerPack o1, PointerPack o2) {
+				return o1.x < o2.x ? -1 : o1.x > o2.x ? 1 : o1.z < o2.z ? -1 : o1.z > o2.z ? 1 : 0;
+			};
+		});
 	}
 
 	private boolean checkNetwork(WorldPos network) {
@@ -74,9 +113,10 @@ public class MapHandler {
 		instance.updatePlayer();
 		instance.updateLiving();
 		instance.updateProcessingCenter();
-		instance.updateNodes();
+		instance.updateDevices();
 		instance.drawMap(width, height);
 		instance.drawPointer(width, height);
+		instance.drawLines(width, height);
 	}
 
 	public static void dragMap(int dragX, int dragY) {
@@ -101,7 +141,7 @@ public class MapHandler {
 	}
 
 	private void updateLiving() {
-		Predicate selector = new Predicate<Entity>() {
+		Predicate<Entity> selector = new Predicate<Entity>() {
 			@Override
 			public boolean apply(Entity input) {
 				return input instanceof EntityLiving;
@@ -128,46 +168,40 @@ public class MapHandler {
 
 	private void updateProcessingCenter() {
 		if (network.getDim() == mc.player.dimension) {
-			BlockPos pos = network.getPos();
-			processingCenter.x = pos.getX();
-			processingCenter.z = pos.getZ();
+			processingCenter.pos = network;
 		} else {
 			processingCenter = null;
 		}
 	}
 
-	private void updateNodes() {
+	private void updateDevices() {
 		TEProcessingCenter te = (TEProcessingCenter) network.getTileEntity();
 		Set<WorldPos> set = te.getNodes();
 		nodes.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
-				BlockPos pos = e.getPos();
-				nodes.add(new PointerNode(pos.getX(), pos.getZ()));
+				nodes.add(new PointerNode(e, ((INeedNetwork) e.getTileEntity()).isConnected()));
 			}
 		});
 		set = te.getStorages();
 		storges.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
-				BlockPos pos = e.getPos();
-				storges.add(new PointerStorage(pos.getX(), pos.getZ()));
+				storges.add(new PointerStorage(e, ((INeedNetwork) e.getTileEntity()).isConnected()));
 			}
 		});
 		set = te.getDevices();
 		devices.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
-				BlockPos pos = e.getPos();
-				devices.add(new PointerDevice(pos.getX(), pos.getZ()));
+				devices.add(new PointerDevice(e, ((INeedNetwork) e.getTileEntity()).isConnected()));
 			}
 		});
 		set = te.getProductions();
 		productions.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
-				BlockPos pos = e.getPos();
-				productions.add(new PointerProduction(pos.getX(), pos.getZ()));
+				productions.add(new PointerProduction(e, ((INeedNetwork) e.getTileEntity()).isConnected()));
 			}
 		});
 		Set<LogisticPack> packset = te.getPacks();
@@ -186,7 +220,6 @@ public class MapHandler {
 				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
 				GlStateManager.DestFactor.ZERO);
 		EntityPlayer player = mc.player;
-		BlockPos pos = player.getPosition();
 		int xChunk = getRenderOffsetX(width) < 0 ? getRenderOffsetX(width) / 16 - 1 : getRenderOffsetX(width) / 16;
 		int yChunk = getRenderOffsetY(height) < 0 ? getRenderOffsetY(height) / 16 - 1 : getRenderOffsetY(height) / 16;
 		int xEnd = getRenderOffsetX(width) + width - 1 < 0 ? (getRenderOffsetX(width) + width - 1) / 16 - 1
@@ -282,5 +315,42 @@ public class MapHandler {
 			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		});
 		GlStateManager.popMatrix();
+	}
+
+	private void drawLines(int width, int height) {
+		List<PointerNeedNetwork> list = new ArrayList<PointerNeedNetwork>();
+		list.add(processingCenter);
+		list.addAll(nodes);
+		list.addAll(storges);
+		list.addAll(devices);
+		list.addAll(productions);
+		for (int i = 0; i < list.size(); i++) {
+			PointerNeedNetwork e = list.get(i);
+			for (int j = i + 1; j < list.size(); j++) {
+				PointerNeedNetwork e2 = list.get(j);
+				if (e instanceof PointerProcessingCenter && Math.sqrt(e.pos.getPos().distanceSq(e.pos.getPos().getX(),
+						e.pos.getPos().getY(), e.pos.getPos().getZ())) < 25) {
+					Util.drawLine(e.pos.getPos().getX() - getRenderOffsetX(width),
+							e.pos.getPos().getZ() - getRenderOffsetY(height),
+							e2.pos.getPos().getX() - getRenderOffsetX(width),
+							e2.pos.getPos().getZ() - getRenderOffsetY(height), 0xFFFF0000);
+				} else if (e instanceof PointerNode && ((TENode) e.pos.getTileEntity()).isPointInRange(e2.pos.getDim(),
+						e2.pos.getPos().getX(), e2.pos.getPos().getY(), e2.pos.getPos().getZ())) {
+					Util.drawLine(e2.pos.getPos().getX() - getRenderOffsetX(width),
+							e2.pos.getPos().getZ() - getRenderOffsetY(height),
+							e.pos.getPos().getX() - getRenderOffsetX(width),
+							e.pos.getPos().getZ() - getRenderOffsetY(height), 0xFFFF0000);
+//					if (e2.pos.getPos().equals(new BlockPos(-349, 64, 370))) {
+//						System.out.println(e.pos);
+//					}
+				} else if (e2 instanceof PointerNode && ((TENode) e2.pos.getTileEntity()).isPointInRange(e.pos.getDim(),
+						e.pos.getPos().getX(), e.pos.getPos().getY(), e.pos.getPos().getZ())) {
+					Util.drawLine(e2.pos.getPos().getX() - getRenderOffsetX(width),
+							e2.pos.getPos().getZ() - getRenderOffsetY(height),
+							e.pos.getPos().getX() - getRenderOffsetX(width),
+							e.pos.getPos().getZ() - getRenderOffsetY(height), 0xFFFF0000);
+				}
+			}
+		}
 	}
 }

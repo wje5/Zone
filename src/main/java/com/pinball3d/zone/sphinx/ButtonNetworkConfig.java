@@ -1,5 +1,7 @@
 package com.pinball3d.zone.sphinx;
 
+import com.pinball3d.zone.tileentity.INeedNetwork;
+
 import net.minecraft.util.ResourceLocation;
 
 public class ButtonNetworkConfig extends TexturedButton {
@@ -19,7 +21,8 @@ public class ButtonNetworkConfig extends TexturedButton {
 		if (flag) {
 			connected = ((ScreenTerminal) parent).getNetwork() != null;
 		} else {
-			connected = ((ScreenNeedNetwork) parent).getNeedNetworkTileEntity().getNetwork() != null;
+			INeedNetwork te = ((ScreenNeedNetwork) parent).getNeedNetworkTileEntity();
+			connected = te.getNetwork() != null && te.isConnected();
 		}
 		Util.drawTexture(texture, x, y, width, connected ? 6 : 8, connected ? 0 : 84, connected ? 16 : 0, uWidth,
 				connected ? 26 : 32);

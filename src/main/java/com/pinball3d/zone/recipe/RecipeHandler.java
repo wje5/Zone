@@ -112,7 +112,7 @@ public class RecipeHandler {
 				new ItemStack(ItemLoader.small_pile_iron_dust, 5), 200));
 		register(new RecipeGrinder(new ItemStack(Items.BUCKET), new ItemStack(ItemLoader.iron_dust, 2), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.NETHERRACK),
-				new ItemStack(ItemLoader.small_pile_netherrack_dust, 8), 200));
+				new ItemStack(ItemLoader.tiny_pile_netherrack_dust, 8), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.HARDENED_CLAY, 1, 32767),
 				new ItemStack(ItemLoader.small_pile_clay_dust, 14), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, 32767),

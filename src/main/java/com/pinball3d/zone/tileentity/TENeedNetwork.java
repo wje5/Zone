@@ -17,7 +17,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	protected WorldPos worldpos;
 	protected UUID network;
 	protected String password = "";
-	protected boolean connected = true;
+	protected boolean connected = false;
 
 	public void callUpdate() {
 		markDirty();
@@ -38,7 +38,9 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 		if (worldpos != null) {
 			if (worldpos.getTileEntity() instanceof TEProcessingCenter) {
 				if (((TEProcessingCenter) worldpos.getTileEntity()).isOn()) {
-					work();
+					if (connected) {
+						work();
+					}
 				} else {
 					setConnected(false);
 				}
@@ -57,6 +59,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 		network = uuid;
 		worldpos = null;
 		this.password = password;
+		connected = true;
 		markDirty();
 	}
 
@@ -72,7 +75,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 			if (worldpos == null) {
 				deleteNetwork();
 			}
-			markDirty();
+			callUpdate();
 		}
 	}
 
@@ -89,6 +92,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	@Override
 	public void setConnected(boolean connected) {
 		this.connected = connected;
+		callUpdate();
 	}
 
 	@Override
@@ -96,7 +100,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 		network = null;
 		worldpos = null;
 		password = "";
-		markDirty();
+		connected = false;
 		callUpdate();
 	}
 
@@ -108,6 +112,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	@Override
 	public void setPassword(String password) {
 		this.password = password;
+		callUpdate();
 	}
 
 	@Override
@@ -116,6 +121,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 			network = compound.getUniqueId("network");
 		}
 		password = compound.getString("password");
+		connected = compound.getBoolean("connected");
 		super.readFromNBT(compound);
 	}
 
@@ -125,6 +131,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 			compound.setUniqueId("network", network);
 		}
 		compound.setString("password", password);
+		compound.setBoolean("connected", connected);
 		return super.writeToNBT(compound);
 
 	}
