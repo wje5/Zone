@@ -6,6 +6,7 @@ import com.pinball3d.zone.sphinx.ScreenSphinxOpenPassword;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
@@ -125,5 +126,10 @@ public class BlockControllerMainframe extends Block {
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
 		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
+	}
+
+	@Override
+	public EnumPushReaction getMobilityFlag(IBlockState state) {
+		return EnumPushReaction.BLOCK;
 	}
 }

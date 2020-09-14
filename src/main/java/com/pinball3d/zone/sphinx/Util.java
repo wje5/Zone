@@ -74,12 +74,18 @@ public class Util {
 				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
 				GlStateManager.DestFactor.ZERO);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-//		GlStateManager.color(f, f1, f2, f3);
 		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
-		double width = 0.5D;
+		double width = 0.25D;
 		double s = (y2 - y1) / (x2 - x1);
 		double xoffset = Math.sqrt(width * width * s * s / (s * s + 1));
-		double yoffset = xoffset / s;
+		double yoffset = Math.abs(xoffset / s);
+		if (x2 - x1 == 0) {
+			yoffset = 0;
+			xoffset = width;
+		} else if (y2 - y1 == 0) {
+			xoffset = 0;
+			yoffset = width;
+		}
 		if (y1 > y2) {
 			if (x1 > x2) {
 				bufferbuilder.pos(x1 - xoffset, y1 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
@@ -87,23 +93,36 @@ public class Util {
 				bufferbuilder.pos(x2 + xoffset, y2 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
 				bufferbuilder.pos(x2 - xoffset, y2 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
 			} else {
-				bufferbuilder.pos(x1 + xoffset, y1 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
-				bufferbuilder.pos(x1 - xoffset, y1 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
-				bufferbuilder.pos(x2 - xoffset, y2 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
-				bufferbuilder.pos(x2 + xoffset, y2 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+				if (xoffset > yoffset) {
+					bufferbuilder.pos(x1 - xoffset, y1 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+					bufferbuilder.pos(x1 + xoffset, y1 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+					bufferbuilder.pos(x2 + xoffset, y2 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+					bufferbuilder.pos(x2 - xoffset, y2 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+				} else {
+					bufferbuilder.pos(x2 - xoffset, y2 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+					bufferbuilder.pos(x1 - xoffset, y1 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+					bufferbuilder.pos(x1 + xoffset, y1 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+					bufferbuilder.pos(x2 + xoffset, y2 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+				}
 			}
 		} else if (x1 > x2) {
-			bufferbuilder.pos(x2 + xoffset, y2 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
-			bufferbuilder.pos(x2 - xoffset, y2 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
-			bufferbuilder.pos(x1 - xoffset, y1 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
-			bufferbuilder.pos(x1 + xoffset, y1 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+			if (xoffset > yoffset) {
+				bufferbuilder.pos(x2 - xoffset, y2 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+				bufferbuilder.pos(x2 + xoffset, y2 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+				bufferbuilder.pos(x1 + xoffset, y1 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+				bufferbuilder.pos(x1 - xoffset, y1 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+			} else {
+				bufferbuilder.pos(x2 + xoffset, y2 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+				bufferbuilder.pos(x1 + xoffset, y1 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+				bufferbuilder.pos(x1 - xoffset, y1 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+				bufferbuilder.pos(x2 - xoffset, y2 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
+			}
 		} else {
 			bufferbuilder.pos(x2 - xoffset, y2 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
 			bufferbuilder.pos(x2 + xoffset, y2 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
 			bufferbuilder.pos(x1 + xoffset, y1 - yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
 			bufferbuilder.pos(x1 - xoffset, y1 + yoffset, 0.0D).color(f, f1, f2, f3).endVertex();
 		}
-
 		tessellator.draw();
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableBlend();

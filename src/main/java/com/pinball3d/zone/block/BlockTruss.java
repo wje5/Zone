@@ -4,6 +4,7 @@ import com.pinball3d.zone.TabZone;
 
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockRotatedPillar;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -81,5 +82,10 @@ public class BlockTruss extends BlockRotatedPillar {
 	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos,
 			EnumFacing side) {
 		return true;
+	}
+
+	@Override
+	public EnumPushReaction getMobilityFlag(IBlockState state) {
+		return EnumPushReaction.BLOCK;
 	}
 }

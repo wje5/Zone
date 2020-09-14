@@ -1,11 +1,11 @@
 package com.pinball3d.zone.sphinx;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.client.gui.FontRenderer;
-import scala.actors.threadpool.Arrays;
 
 public class MultilineText extends Component {
 	protected List<String> texts;

@@ -7,6 +7,6 @@ public class PointerPack extends Pointer {
 
 	@Override
 	public void doRender(int offsetX, int offsetZ) {
-		Util.drawTexture(TEXTURE, x - offsetX - 3, z - offsetZ - 3, 136, 0, 13, 13, 0.5F);
+		Util.drawTexture(TEXTURE, x - offsetX - 2, z - offsetZ - 2, 107, 32, 5, 5, 0.5F);
 	}
 }

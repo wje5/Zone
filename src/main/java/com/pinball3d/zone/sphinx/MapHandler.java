@@ -324,31 +324,29 @@ public class MapHandler {
 		list.addAll(storges);
 		list.addAll(devices);
 		list.addAll(productions);
+		int color = 0x48C0C0C0;
 		for (int i = 0; i < list.size(); i++) {
 			PointerNeedNetwork e = list.get(i);
 			for (int j = i + 1; j < list.size(); j++) {
 				PointerNeedNetwork e2 = list.get(j);
-				if (e instanceof PointerProcessingCenter && Math.sqrt(e.pos.getPos().distanceSq(e.pos.getPos().getX(),
-						e.pos.getPos().getY(), e.pos.getPos().getZ())) < 25) {
+				if (e instanceof PointerProcessingCenter && Math.sqrt(e.pos.getPos().distanceSq(e2.pos.getPos().getX(),
+						e2.pos.getPos().getY(), e2.pos.getPos().getZ())) < 25) {
 					Util.drawLine(e.pos.getPos().getX() - getRenderOffsetX(width),
 							e.pos.getPos().getZ() - getRenderOffsetY(height),
 							e2.pos.getPos().getX() - getRenderOffsetX(width),
-							e2.pos.getPos().getZ() - getRenderOffsetY(height), 0xFFFF0000);
+							e2.pos.getPos().getZ() - getRenderOffsetY(height), color);
 				} else if (e instanceof PointerNode && ((TENode) e.pos.getTileEntity()).isPointInRange(e2.pos.getDim(),
 						e2.pos.getPos().getX(), e2.pos.getPos().getY(), e2.pos.getPos().getZ())) {
-					Util.drawLine(e2.pos.getPos().getX() - getRenderOffsetX(width),
-							e2.pos.getPos().getZ() - getRenderOffsetY(height),
-							e.pos.getPos().getX() - getRenderOffsetX(width),
-							e.pos.getPos().getZ() - getRenderOffsetY(height), 0xFFFF0000);
-//					if (e2.pos.getPos().equals(new BlockPos(-349, 64, 370))) {
-//						System.out.println(e.pos);
-//					}
+					Util.drawLine(e.pos.getPos().getX() - getRenderOffsetX(width),
+							e.pos.getPos().getZ() - getRenderOffsetY(height),
+							e2.pos.getPos().getX() - getRenderOffsetX(width),
+							e2.pos.getPos().getZ() - getRenderOffsetY(height), color);
 				} else if (e2 instanceof PointerNode && ((TENode) e2.pos.getTileEntity()).isPointInRange(e.pos.getDim(),
 						e.pos.getPos().getX(), e.pos.getPos().getY(), e.pos.getPos().getZ())) {
 					Util.drawLine(e2.pos.getPos().getX() - getRenderOffsetX(width),
 							e2.pos.getPos().getZ() - getRenderOffsetY(height),
 							e.pos.getPos().getX() - getRenderOffsetX(width),
-							e.pos.getPos().getZ() - getRenderOffsetY(height), 0xFFFF0000);
+							e.pos.getPos().getZ() - getRenderOffsetY(height), color);
 				}
 			}
 		}

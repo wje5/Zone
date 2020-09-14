@@ -4,6 +4,7 @@ import java.util.Random;
 
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.BlockRotatedPillar;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -56,5 +57,10 @@ public class BlockConstructBlock extends BlockRotatedPillar {
 	@Override
 	protected ItemStack getSilkTouchDrop(IBlockState state) {
 		return new ItemStack(Item.getItemFromBlock(BlockLoader.construct_block_all));
+	}
+
+	@Override
+	public EnumPushReaction getMobilityFlag(IBlockState state) {
+		return EnumPushReaction.BLOCK;
 	}
 }
