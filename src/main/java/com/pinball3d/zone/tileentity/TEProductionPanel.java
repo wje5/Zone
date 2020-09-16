@@ -18,11 +18,12 @@ public class TEProductionPanel extends TENeedNetwork implements IProduction {
 
 	@Override
 	public void work() {
-		EnumFacing facing = world.getBlockState(pos).getValue(BlockStoragePanel.FACING).getOpposite();
-		BlockPos newpos = pos.add(facing.getFrontOffsetX(), facing.getFrontOffsetY(), facing.getFrontOffsetZ());
+		EnumFacing facing = world.getBlockState(pos).getValue(BlockStoragePanel.FACING);
+		BlockPos newpos = pos.add(facing.getOpposite().getFrontOffsetX(), facing.getOpposite().getFrontOffsetY(),
+				facing.getOpposite().getFrontOffsetZ());
 		TileEntity te = world.getTileEntity(newpos);
 		if (te != null) {
-			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
 			((TEProcessingCenter) worldpos.getTileEntity()).dispenceItems(new StorageWrapper(handler, false),
 					new WorldPos(this));
 			markDirty();

@@ -124,3 +124,11 @@ Fix some recipe
 Add connect line display
 Fix sphinx in client crash
 Now some block can't pushed by piston
+
+#1.4.1
+Update some recipe
+Fix multiline text
+
+#1.4.2
+Change Storage Panel&Production Panel working facing to it's attached face
+Now excess logistic pack can return to network

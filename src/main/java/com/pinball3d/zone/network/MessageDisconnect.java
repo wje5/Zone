@@ -48,9 +48,9 @@ public class MessageDisconnect implements IMessage {
 					}
 					TileEntity te = message.needNetwork.getTileEntity();
 					if (te instanceof INeedNetwork) {
-						((INeedNetwork) te).deleteNetwork();
 						WorldPos pos = GlobalNetworkData.getData(te.getWorld())
 								.getNetwork(((INeedNetwork) te).getNetwork());
+						((INeedNetwork) te).deleteNetwork();
 						if (pos != null) {
 							TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
 							pc.removeNeedNetwork(message.needNetwork);

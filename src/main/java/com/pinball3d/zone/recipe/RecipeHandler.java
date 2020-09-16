@@ -118,6 +118,14 @@ public class RecipeHandler {
 		register(new RecipeGrinder(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, 32767),
 				new ItemStack(ItemLoader.small_pile_clay_dust, 14), 200));
 		register(new RecipeGrinder(new ItemStack(Items.FLINT), new ItemStack(ItemLoader.tiny_pile_flint_dust, 8), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.PRISMARINE),
+				new ItemStack(ItemLoader.small_pile_prismarine_dust, 14), 200));
+		register(new RecipeGrinder(new ItemStack(Blocks.PRISMARINE, 1, 1), new ItemStack(ItemLoader.prismarine_dust, 8),
+				200));
+		register(new RecipeGrinder(new ItemStack(Blocks.PRISMARINE, 1, 2), new ItemStack(ItemLoader.prismarine_dust, 8),
+				200));
+		register(new RecipeGrinder(new ItemStack(Blocks.SEA_LANTERN), new ItemStack(ItemLoader.prismarine_dust, 32),
+				200));
 
 		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.iron_dust), new ItemStack(ItemLoader.gold_dust),
 				new ItemStack(ItemLoader.quartz_dust), new ItemStack(ItemLoader.etherium), 200));
@@ -128,6 +136,9 @@ public class RecipeHandler {
 				new ItemStack(BlockLoader.charged_glass), 200));
 		register(new RecipeAlloySmelter(new ItemStack(ItemLoader.stone_dust), new ItemStack(ItemLoader.netherrack_dust),
 				new ItemStack(ItemLoader.clay_dust), new ItemStack(BlockLoader.reinforced_stone), 200));
+		register(
+				new RecipeAlloySmelter(new ItemStack(ItemLoader.prismarine_dust), new ItemStack(ItemLoader.quartz_dust),
+						new ItemStack(ItemLoader.lapis_dust), new ItemStack(Items.PRISMARINE_SHARD), 200));
 
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_iron_ore),
 				new ItemStack(ItemLoader.tiny_pile_iron_dust), new ItemStack(ItemLoader.tiny_pile_iron_dust),
@@ -163,6 +174,8 @@ public class RecipeHandler {
 		register(new RecipeCrystallizer(new ItemStack(ItemLoader.emerald_dust, 1), new ItemStack(Items.EMERALD), 400));
 		register(new RecipeCrystallizer(new ItemStack(ItemLoader.lapis_dust, 1), new ItemStack(Items.DYE, 1, 4), 400));
 		register(new RecipeCrystallizer(new ItemStack(ItemLoader.quartz_dust, 1), new ItemStack(Items.QUARTZ), 400));
+		register(new RecipeCrystallizer(new ItemStack(ItemLoader.prismarine_dust, 8),
+				new ItemStack(Items.PRISMARINE_CRYSTALS), 400));
 	}
 
 	public static void register(Recipe recipe) {

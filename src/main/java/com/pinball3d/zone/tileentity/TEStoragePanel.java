@@ -17,15 +17,12 @@ public class TEStoragePanel extends TENeedNetwork implements IStorable {
 
 	@Override
 	public IItemHandler getStorage() {
-		EnumFacing facing = world.getBlockState(pos).getValue(BlockStoragePanel.FACING).getOpposite();
-		BlockPos newpos = pos.add(facing.getFrontOffsetX(), facing.getFrontOffsetY(), facing.getFrontOffsetZ());
+		EnumFacing facing = world.getBlockState(pos).getValue(BlockStoragePanel.FACING);
+		BlockPos newpos = pos.add(facing.getOpposite().getFrontOffsetX(), facing.getOpposite().getFrontOffsetY(),
+				facing.getOpposite().getFrontOffsetZ());
 		TileEntity te = world.getTileEntity(newpos);
 		if (te != null) {
-			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-			if (handler != null) {
-				return handler;
-			}
-			handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH);
+			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
 			if (handler != null) {
 				return handler;
 			}

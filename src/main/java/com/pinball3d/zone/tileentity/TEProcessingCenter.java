@@ -1,8 +1,10 @@
 package com.pinball3d.zone.tileentity;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -42,12 +44,26 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	private int loadTick;
 	private int energyTick;
 	private int energy;
-	private Set<WorldPos> nodes = new HashSet<WorldPos>();
-	private Set<WorldPos> storages = new HashSet<WorldPos>();
-	private Set<WorldPos> devices = new HashSet<WorldPos>();
-	private Set<WorldPos> productions = new HashSet<WorldPos>();
+	public static Comparator<WorldPos> worldPosComparator = new Comparator<WorldPos>() {
+		@Override
+		public int compare(WorldPos o1, WorldPos o2) {
+			return o1.getDim() < o2.getDim() ? -1
+					: o1.getDim() > o2.getDim() ? 1
+							: o1.getPos().getX() < o2.getPos().getX() ? -1
+									: o1.getPos().getX() > o2.getPos().getX() ? 1
+											: o1.getPos().getY() < o2.getPos().getY() ? -1
+													: o1.getPos().getY() > o2.getPos().getY() ? 1
+															: o1.getPos().getZ() < o2.getPos().getZ() ? -1
+																	: o1.getPos().getZ() > o2.getPos().getZ() ? 1 : 0;
+		}
+	};
+	private Set<WorldPos> nodes = new TreeSet<WorldPos>(worldPosComparator);
+	private Set<WorldPos> storages = new TreeSet<WorldPos>(worldPosComparator);
+	private Set<WorldPos> devices = new TreeSet<WorldPos>(worldPosComparator);
+	private Set<WorldPos> productions = new TreeSet<WorldPos>(worldPosComparator);
 	private Set<LogisticPack> packs = new HashSet<LogisticPack>();
 	private UUID uuid;
+	private double[][] map;
 
 	public TEProcessingCenter() {
 
@@ -266,7 +282,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		Iterator<WorldPos> it = nodes.iterator();
 		while (it.hasNext()) {
 			TENode te = (TENode) it.next().getTileEntity();
-			if (!te.getPos().equals(pos) && te.isConnected()
+			if (!te.getPos().equals(pos.getPos()) && te.isConnected()
 					&& te.isPointInRange(pos.getDim(), pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ())) {
 				return true;
 			}
@@ -489,29 +505,108 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		return energy;
 	}
 
+	public void refreshMap() {
+		List<WorldPos> list = new ArrayList<WorldPos>();
+		list.addAll(nodes);
+		list.addAll(storages);
+		list.addAll(devices);
+		list.addAll(productions);
+		map = new double[list.size() + 1][list.size() + 1];
+		for (int i = 0; i < list.size() + 1; i++) {
+			for (int j = 0; j < list.size() + 1; j++) {
+				map[i][j] = Double.MAX_VALUE;
+			}
+		}
+		for (int i = 0; i < list.size(); i++) {
+			WorldPos pos = list.get(i);
+			double dist = Math.sqrt(this.pos.distanceSq(pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ()));
+			if (dist < 25) {
+				map[0][i + 1] = dist;
+				map[i + 1][0] = dist;
+			}
+		}
+		for (int i = 0; i < list.size(); i++) {
+			WorldPos pos = list.get(i);
+			TileEntity tileentity = pos.getTileEntity();
+			if (tileentity instanceof TENode) {
+				for (int j = 0; j < list.size(); j++) {
+					WorldPos pos2 = list.get(j);
+					if (tileentity.getWorld().provider.getDimension() == pos.getDim()) {
+						double dist = Math.sqrt(pos.getPos().distanceSq(pos2.getPos().getX(), pos2.getPos().getY(),
+								pos2.getPos().getZ()));
+						if (dist < 25) {
+							map[i + 1][j + 1] = dist;
+							map[j + 1][i + 1] = dist;
+						}
+					}
+				}
+			}
+
+		}
+		for (int i = 0; i < list.size() + 1; i++) {
+			for (int j = 0; j < list.size() + 1; j++) {
+				System.out.print("\t" + (map[i][j] == Double.MAX_VALUE ? 0 : (int) map[i][j]));
+			}
+			System.out.println();
+		}
+	}
+
+	public void dijkstra(WorldPos pos) {
+		List<WorldPos> list = new ArrayList<WorldPos>();
+		list.addAll(nodes);
+		list.addAll(storages);
+		list.addAll(devices);
+		list.addAll(productions);
+
+	}
+
 	public void updatePack() {
 		Iterator<LogisticPack> it = packs.iterator();
+		Set<LogisticPack> deads = new HashSet<LogisticPack>();
 		while (it.hasNext()) {
 			LogisticPack i = it.next();
+			if (!isPointInRange(i.dim, i.x, i.y, i.z)) {
+				deads.add(i);
+				it.remove();
+			}
 			if (i.forward(1D)) {
 				TileEntity te = i.target.getTileEntity();
-				IItemHandler handler;
 				if (te instanceof IStorable) {
 					StorageWrapper wrapper = insertToItemHandler(i.items, ((IStorable) te).getStorage());
+					if (!wrapper.isEmpty()) {
+						dispenceItems(wrapper, new WorldPos(te));
+					}
 				} else if (te != null) {
 					StorageWrapper wrapper = insertToItemHandler(i.items,
 							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP));
 					wrapper = insertToItemHandler(wrapper,
 							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH));
+					wrapper = insertToItemHandler(wrapper,
+							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.SOUTH));
+					wrapper = insertToItemHandler(wrapper,
+							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST));
+					wrapper = insertToItemHandler(wrapper,
+							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.EAST));
+					wrapper = insertToItemHandler(wrapper,
+							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN));
+					if (!wrapper.isEmpty()) {
+						dispenceItems(wrapper, new WorldPos(te));
+					}
 				}
 				it.remove();
 			}
 			callUpdate();
 		}
+		deads.forEach(e -> {
+			dispenceItems(e.items, new WorldPos((int) e.x, (int) e.y, (int) e.z, e.dim));
+		});
 	}
 
 	@Override
 	public void update() {
+		if (map == null) {
+			refreshMap();
+		}
 		markDirty();
 		if (world.isRemote) {
 			if (loadTick > 0) {

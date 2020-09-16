@@ -32,17 +32,17 @@ public class ItemLoader {
 			crushed_redstone_ore, crushed_coal_ore, crushed_lapis_ore, crushed_quartz_ore;
 
 	public static Item iron_dust, gold_dust, diamond_dust, emerald_dust, coal_dust, lapis_dust, quartz_dust, stone_dust,
-			netherrack_dust, etherium_dust, clarity_glass_dust, clay_dust, flint_dust;
+			netherrack_dust, etherium_dust, clarity_glass_dust, clay_dust, flint_dust, prismarine_dust;
 
 	public static Item small_pile_iron_dust, small_pile_gold_dust, small_pile_diamond_dust, small_pile_emerald_dust,
 			small_pile_redstone_dust, small_pile_coal_dust, small_pile_lapis_dust, small_pile_quartz_dust,
 			small_pile_stone_dust, small_pile_netherrack_dust, small_pile_etherium_dust, small_pile_clarity_glass_dust,
-			small_pile_clay_dust, small_pile_flint_dust;
+			small_pile_clay_dust, small_pile_flint_dust, small_pile_prismarine_dust;
 
 	public static Item tiny_pile_iron_dust, tiny_pile_gold_dust, tiny_pile_diamond_dust, tiny_pile_emerald_dust,
 			tiny_pile_redstone_dust, tiny_pile_coal_dust, tiny_pile_lapis_dust, tiny_pile_quartz_dust,
 			tiny_pile_stone_dust, tiny_pile_netherrack_dust, tiny_pile_etherium_dust, tiny_pile_clarity_glass_dust,
-			tiny_pile_clay_dust, tiny_pile_flint_dust;
+			tiny_pile_clay_dust, tiny_pile_flint_dust, tiny_pile_prismarine_dust;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -121,6 +121,7 @@ public class ItemLoader {
 		register(registry, clarity_glass_dust = new ZoneItem("clarity_glass_dust"));
 		register(registry, clay_dust = new ZoneItem("clay_dust"));
 		register(registry, flint_dust = new ZoneItem("flint_dust"));
+		register(registry, prismarine_dust = new ZoneItem("prismarine_dust"));
 		register(registry, small_pile_iron_dust = new ZoneItem("small_pile_iron_dust"));
 		register(registry, small_pile_gold_dust = new ZoneItem("small_pile_gold_dust"));
 		register(registry, small_pile_diamond_dust = new ZoneItem("small_pile_diamond_dust"));
@@ -135,6 +136,7 @@ public class ItemLoader {
 		register(registry, small_pile_clarity_glass_dust = new ZoneItem("small_pile_clarity_glass_dust"));
 		register(registry, small_pile_clay_dust = new ZoneItem("small_pile_clay_dust"));
 		register(registry, small_pile_flint_dust = new ZoneItem("small_pile_flint_dust"));
+		register(registry, small_pile_prismarine_dust = new ZoneItem("small_pile_prismarine_dust"));
 		register(registry, tiny_pile_iron_dust = new ZoneItem("tiny_pile_iron_dust"));
 		register(registry, tiny_pile_gold_dust = new ZoneItem("tiny_pile_gold_dust"));
 		register(registry, tiny_pile_diamond_dust = new ZoneItem("tiny_pile_diamond_dust"));
@@ -149,6 +151,7 @@ public class ItemLoader {
 		register(registry, tiny_pile_clarity_glass_dust = new ZoneItem("tiny_pile_clarity_glass_dust"));
 		register(registry, tiny_pile_clay_dust = new ZoneItem("tiny_pile_clay_dust"));
 		register(registry, tiny_pile_flint_dust = new ZoneItem("tiny_pile_flint_dust"));
+		register(registry, tiny_pile_prismarine_dust = new ZoneItem("tiny_pile_prismarine_dust"));
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {

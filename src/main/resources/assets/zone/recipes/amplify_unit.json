@@ -1,22 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "#*+",
-    "*-*",
-    "+*#"
+    "#*#",
+    "+++",
+    "-*-"
   ],
   "key": {
     "#": {
-      "item": "zone:theile_tube"
+      "item": "zone:half_interference_unit"
     },
     "*": {
-      "item": "minecraft:experience_bottle"
+      "item": "zone:advenced_circuit_board"
     },
     "+": {
       "item": "zone:smoothing_unit"
     },
     "-": {
-      "item": "minecraft:end_crystal"
+      "item": "zone:theile_tube"
     }
   },
   "result": {

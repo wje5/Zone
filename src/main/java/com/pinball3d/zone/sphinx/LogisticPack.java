@@ -1,11 +1,14 @@
 package com.pinball3d.zone.sphinx;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 public class LogisticPack {
 	public WorldPos target;
-	public WorldPos next;
+	public List<WorldPos> routes = new ArrayList<WorldPos>();
 	public StorageWrapper items;
 	public double x, y, z;
 	public int dim;
@@ -28,28 +31,30 @@ public class LogisticPack {
 	}
 
 	public boolean forward(double distance) {
-		if (tryForward(distance) > 0) {
-			return true;
-		}
+		do {
+			boolean flag = routes.isEmpty();
+			WorldPos next = flag ? target : routes.get(0);
+			double xDistance = next.getPos().getX() - x;
+			double yDistance = next.getPos().getY() - y;
+			double zDistance = next.getPos().getZ() - z;
+			double total = Math.sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
+			if (total < distance) {
+				x = next.getPos().getX();
+				y = next.getPos().getY();
+				z = next.getPos().getZ();
+				distance -= total;
+				if (flag) {
+					return true;
+				}
+			} else {
+				double scale = distance / total;
+				x += xDistance * scale;
+				y += yDistance * scale;
+				z += zDistance * scale;
+				return false;
+			}
+		} while (distance > 0);
 		return false;
-	}
-
-	public double tryForward(double distance) {
-		double xDistance = target.getPos().getX() - x;
-		double yDistance = target.getPos().getY() - y;
-		double zDistance = target.getPos().getZ() - z;
-		double total = Math.sqrt(xDistance * xDistance + yDistance * yDistance + zDistance * zDistance);
-		if (total < distance) {
-			x = target.getPos().getX();
-			y = target.getPos().getY();
-			z = target.getPos().getZ();
-			return distance - total;
-		}
-		double scale = distance / total;
-		x += xDistance * scale;
-		y += yDistance * scale;
-		z += zDistance * scale;
-		return 0;
 	}
 
 	public boolean check() {
@@ -77,5 +82,10 @@ public class LogisticPack {
 		tag.setDouble("z", z);
 		tag.setInteger("dim", dim);
 		return tag;
+	}
+
+	@Override
+	public String toString() {
+		return writeToNBT(new NBTTagCompound()).toString();
 	}
 }
