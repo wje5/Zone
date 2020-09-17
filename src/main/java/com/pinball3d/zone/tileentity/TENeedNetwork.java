@@ -60,7 +60,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 		worldpos = null;
 		this.password = password;
 		connected = true;
-		markDirty();
+		callUpdate();
 	}
 
 	@Override

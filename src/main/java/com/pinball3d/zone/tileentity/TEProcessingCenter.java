@@ -17,6 +17,7 @@ import com.pinball3d.zone.sphinx.IDevice;
 import com.pinball3d.zone.sphinx.IProduction;
 import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.LogisticPack;
+import com.pinball3d.zone.sphinx.LogisticPack.Path;
 import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
@@ -89,7 +90,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		BlockProcessingCenter.setState(false, world, pos);
 		loadTick = 0;
 		energyTick = 0;
-		markDirty();
 		callUpdate();
 	}
 
@@ -212,6 +212,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		} else if (te instanceof IProduction) {
 			productions.add(pos);
 		}
+		if (!world.isRemote) {
+			refreshMap();
+		}
 		callUpdate();
 		markDirty();
 	}
@@ -221,6 +224,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		storages.remove(pos);
 		devices.remove(pos);
 		productions.remove(pos);
+		if (!world.isRemote) {
+			refreshMap();
+		}
 		callUpdate();
 		markDirty();
 	}
@@ -331,7 +337,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			if (te instanceof INeedNetwork && ((INeedNetwork) te).isConnected() && te instanceof IStorable) {
 				StorageWrapper w = ((IStorable) te).extract(wrapper);
 				if (!w.isEmpty()) {
-					packs.add(new LogisticPack(target, w, new WorldPos(te)));
+					List<Path> l = dijkstra(target);
+					for (Path i : l) {
+						if (i.getTarget().equals(e)) {
+							LogisticPack pack = new LogisticPack(i.routes, w, new WorldPos(te));
+							packs.add(pack);
+						}
+					}
 				}
 			}
 		});
@@ -353,14 +365,21 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			if (te instanceof INeedNetwork && ((INeedNetwork) te).isConnected() && te instanceof IStorable) {
 				StorageWrapper w = ((IStorable) te).insert(wrapper, true);
 				if (!w.isEmpty()) {
-					packs.add(new LogisticPack(new WorldPos(te), w, pos));
+//					packs.add(new LogisticPack(new WorldPos(te), w, pos));
+					List<Path> l = dijkstra(pos);
+					for (Path i : l) {
+						if (i.getTarget().equals(e)) {
+							LogisticPack pack = new LogisticPack(i.flip().routes, w, new WorldPos(te));
+							packs.add(pack);
+						}
+					}
 				}
 			}
 		});
 		callUpdate();
 	}
 
-	public void updateNode() {
+	public boolean updateNode() {
 		boolean flag = false;
 		Set<WorldPos> temp = new HashSet<WorldPos>();
 		do {
@@ -392,7 +411,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				}
 			}
 		} while (flag);
-		if (!temp.equals(nodes)) {
+		Set<WorldPos> l = new HashSet<WorldPos>();
+		nodes.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (te instanceof TENode && ((TENode) te).isConnected()) {
+				l.add(e);
+			}
+		});
+		if (!temp.equals(l)) {
 			Iterator<WorldPos> it = nodes.iterator();
 			while (it.hasNext()) {
 				WorldPos e = it.next();
@@ -406,12 +432,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 			}
 			markDirty();
 			callUpdate();
+			return true;
 		}
+		return false;
 	}
 
-	public void updateDevice() {
-		boolean flag = false;
-		updateNode();
+	public boolean updateDevice() {
+		boolean flag = updateNode();
 		Iterator<WorldPos> it = storages.iterator();
 		while (it.hasNext()) {
 			WorldPos pos = it.next();
@@ -419,10 +446,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				it.remove();
 				flag = true;
 			} else if (!isDeviceInRange(pos)) {
-				((INeedNetwork) pos.getTileEntity()).setConnected(false);
-				flag = true;
+				INeedNetwork te = (INeedNetwork) pos.getTileEntity();
+				flag |= te.isConnected();
+				te.setConnected(false);
 			} else {
-				((INeedNetwork) pos.getTileEntity()).setConnected(true);
+				INeedNetwork te = (INeedNetwork) pos.getTileEntity();
+				flag |= !te.isConnected();
+				te.setConnected(true);
 			}
 		}
 		it = devices.iterator();
@@ -432,10 +462,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				it.remove();
 				flag = true;
 			} else if (!isDeviceInRange(pos)) {
-				((INeedNetwork) pos.getTileEntity()).setConnected(false);
-				flag = true;
+				INeedNetwork te = (INeedNetwork) pos.getTileEntity();
+				flag |= te.isConnected();
+				te.setConnected(false);
 			} else {
-				((INeedNetwork) pos.getTileEntity()).setConnected(true);
+				INeedNetwork te = (INeedNetwork) pos.getTileEntity();
+				flag |= !te.isConnected();
+				te.setConnected(true);
 			}
 		}
 		it = productions.iterator();
@@ -445,16 +478,21 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				it.remove();
 				flag = true;
 			} else if (!isDeviceInRange(pos)) {
-				((INeedNetwork) pos.getTileEntity()).setConnected(false);
-				flag = true;
+				INeedNetwork te = (INeedNetwork) pos.getTileEntity();
+				flag |= te.isConnected();
+				te.setConnected(false);
 			} else {
-				((INeedNetwork) pos.getTileEntity()).setConnected(true);
+				INeedNetwork te = (INeedNetwork) pos.getTileEntity();
+				flag |= !te.isConnected();
+				te.setConnected(true);
 			}
 		}
 		if (flag) {
 			markDirty();
 			callUpdate();
+			return true;
 		}
+		return false;
 	}
 
 	public StorageWrapper insertToItemHandler(StorageWrapper wrapper, IItemHandler handler) {
@@ -507,16 +545,37 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 
 	public void refreshMap() {
 		List<WorldPos> list = new ArrayList<WorldPos>();
-		list.addAll(nodes);
-		list.addAll(storages);
-		list.addAll(devices);
-		list.addAll(productions);
+		nodes.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (te instanceof TENode && ((TENode) te).isConnected()) {
+				list.add(e);
+			}
+		});
+		storages.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (te instanceof IStorable && ((INeedNetwork) te).isConnected()) {
+				list.add(e);
+			}
+		});
+		devices.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (te instanceof IDevice && ((INeedNetwork) te).isConnected()) {
+				list.add(e);
+			}
+		});
+		productions.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (te instanceof IProduction && ((INeedNetwork) te).isConnected()) {
+				list.add(e);
+			}
+		});
 		map = new double[list.size() + 1][list.size() + 1];
 		for (int i = 0; i < list.size() + 1; i++) {
 			for (int j = 0; j < list.size() + 1; j++) {
 				map[i][j] = Double.MAX_VALUE;
 			}
 		}
+		map[0][0] = 0;
 		for (int i = 0; i < list.size(); i++) {
 			WorldPos pos = list.get(i);
 			double dist = Math.sqrt(this.pos.distanceSq(pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ()));
@@ -545,19 +604,89 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		}
 		for (int i = 0; i < list.size() + 1; i++) {
 			for (int j = 0; j < list.size() + 1; j++) {
-				System.out.print("\t" + (map[i][j] == Double.MAX_VALUE ? 0 : (int) map[i][j]));
+				System.out.print("\t" + (map[i][j] == Double.MAX_VALUE ? "M" : (int) map[i][j]));
 			}
 			System.out.println();
 		}
+		if (!nodes.isEmpty()) {
+			System.out.println(dijkstra(list.get(0)));
+		}
 	}
 
-	public void dijkstra(WorldPos pos) {
+	public List<Path> dijkstra(WorldPos pos) {
+		if (map == null) {
+			refreshMap();
+		}
 		List<WorldPos> list = new ArrayList<WorldPos>();
-		list.addAll(nodes);
-		list.addAll(storages);
-		list.addAll(devices);
-		list.addAll(productions);
-
+		nodes.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (te instanceof TENode && ((TENode) te).isConnected()) {
+				list.add(e);
+			}
+		});
+		storages.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (te instanceof IStorable && ((INeedNetwork) te).isConnected()) {
+				list.add(e);
+			}
+		});
+		devices.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (te instanceof IDevice && ((INeedNetwork) te).isConnected()) {
+				list.add(e);
+			}
+		});
+		productions.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (te instanceof IProduction && ((INeedNetwork) te).isConnected()) {
+				list.add(e);
+			}
+		});
+		int index = pos.getPos().equals(this.pos) ? 0 : list.indexOf(pos) + 1;
+		if (index == -1) {
+			throw new RuntimeException("wrong pos:" + pos);
+		}
+		double[] dist = map[index];
+		int[][] path = new int[map.length][0];
+		boolean[] t = new boolean[dist.length];
+		t[index] = true;
+		do {
+			double min = Double.MAX_VALUE;
+			int minIndex = -1;
+			for (int i = 0; i < dist.length; i++) {
+				if (!t[i] && dist[i] < min) {
+					min = dist[i];
+					minIndex = i;
+				}
+			}
+			if (minIndex == -1) {
+				System.out.println(dist);
+				System.out.println(t);
+				System.out.println(path);
+				List<Path> r = new ArrayList<Path>();
+				for (int j = 0; j < path.length; j++) {
+					List<WorldPos> l = new ArrayList<WorldPos>();
+					for (int k = 0; k < path[j].length; k++) {
+						l.add(path[j][k] > 0 ? list.get(path[j][k] - 1) : new WorldPos(this));
+					}
+					l.add(j > 0 ? list.get(j - 1) : new WorldPos(this));
+					r.add(new Path(l, dist[j]));
+				}
+				return r;
+			}
+			t[minIndex] = true;
+			for (int i = 0; i < map.length; i++) {
+				double d = map[minIndex][i] + dist[minIndex];
+				if (d < dist[i]) {
+					dist[i] = d;
+					path[i] = new int[path[minIndex].length + 1];
+					for (int j = 0; j < path[minIndex].length; j++) {
+						path[i][j] = path[minIndex][j];
+					}
+					path[i][path[i].length - 1] = minIndex;
+				}
+			}
+		} while (true);
 	}
 
 	public void updatePack() {
@@ -566,15 +695,15 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		while (it.hasNext()) {
 			LogisticPack i = it.next();
 			if (!isPointInRange(i.dim, i.x, i.y, i.z)) {
-				deads.add(i);
 				it.remove();
+				callUpdate();
 			}
 			if (i.forward(1D)) {
-				TileEntity te = i.target.getTileEntity();
+				TileEntity te = i.getTarget().getTileEntity();
 				if (te instanceof IStorable) {
 					StorageWrapper wrapper = insertToItemHandler(i.items, ((IStorable) te).getStorage());
 					if (!wrapper.isEmpty()) {
-						dispenceItems(wrapper, new WorldPos(te));
+						deads.add(new LogisticPack(i.routes, wrapper, i.x, i.y, i.z, i.dim));
 					}
 				} else if (te != null) {
 					StorageWrapper wrapper = insertToItemHandler(i.items,
@@ -590,7 +719,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 					wrapper = insertToItemHandler(wrapper,
 							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN));
 					if (!wrapper.isEmpty()) {
-						dispenceItems(wrapper, new WorldPos(te));
+						deads.add(new LogisticPack(i.routes, wrapper, i.x, i.y, i.z, i.dim));
 					}
 				}
 				it.remove();
@@ -604,9 +733,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 
 	@Override
 	public void update() {
-		if (map == null) {
-			refreshMap();
-		}
 		markDirty();
 		if (world.isRemote) {
 			if (loadTick > 0) {
@@ -624,7 +750,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				callUpdate();
 			}
 		}
-		updateDevice();
 		if (loadTick > 0) {
 			if (consumeEnergy(1)) {
 				loadTick--;
@@ -644,10 +769,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 				energyTick += 10;
 			} else {
 				shutdown();
-				break;
+				return;
 			}
 		}
 		energyTick--;
+		if (updateDevice() || map == null) {
+			refreshMap();
+		}
 		updatePack();
 	}
 

@@ -1,24 +1,24 @@
 package com.pinball3d.zone.sphinx;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.NBTTagList;
 
 public class LogisticPack {
-	public WorldPos target;
-	public List<WorldPos> routes = new ArrayList<WorldPos>();
+	public List<WorldPos> routes;
 	public StorageWrapper items;
 	public double x, y, z;
 	public int dim;
 
-	public LogisticPack(WorldPos target, StorageWrapper wrapper, WorldPos pos) {
-		this(target, wrapper, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDim());
+	public LogisticPack(List<WorldPos> path, StorageWrapper wrapper, WorldPos pos) {
+		this(path, wrapper, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDim());
 	}
 
-	public LogisticPack(WorldPos target, StorageWrapper wrapper, double x, double y, double z, int dim) {
-		this.target = target;
+	public LogisticPack(List<WorldPos> path, StorageWrapper wrapper, double x, double y, double z, int dim) {
+		this.routes = path;
 		items = wrapper;
 		this.x = x;
 		this.y = y;
@@ -31,9 +31,8 @@ public class LogisticPack {
 	}
 
 	public boolean forward(double distance) {
-		do {
-			boolean flag = routes.isEmpty();
-			WorldPos next = flag ? target : routes.get(0);
+		while (distance > 0 && !routes.isEmpty()) {
+			WorldPos next = routes.get(0);
 			double xDistance = next.getPos().getX() - x;
 			double yDistance = next.getPos().getY() - y;
 			double zDistance = next.getPos().getZ() - z;
@@ -43,8 +42,10 @@ public class LogisticPack {
 				y = next.getPos().getY();
 				z = next.getPos().getZ();
 				distance -= total;
-				if (flag) {
+				if (routes.isEmpty()) {
 					return true;
+				} else {
+					routes.remove(0);
 				}
 			} else {
 				double scale = distance / total;
@@ -53,20 +54,20 @@ public class LogisticPack {
 				z += zDistance * scale;
 				return false;
 			}
-		} while (distance > 0);
-		return false;
-	}
-
-	public boolean check() {
-		TileEntity te = target.getTileEntity();
-		if (!(te instanceof IStorable) && !(te instanceof IDevice)) {
-			return false;
 		}
 		return true;
 	}
 
+	public WorldPos getTarget() {
+		return routes.get(routes.size() - 1);
+	}
+
 	public void readFromNBT(NBTTagCompound tag) {
-		target = WorldPos.load(tag.getCompoundTag("target"));
+		routes = new ArrayList<WorldPos>();
+		NBTTagList list = tag.getTagList("routes", 10);
+		list.forEach(e -> {
+			routes.add(WorldPos.load((NBTTagCompound) e));
+		});
 		items = new StorageWrapper(tag.getCompoundTag("items"));
 		x = tag.getDouble("x");
 		y = tag.getDouble("y");
@@ -75,7 +76,10 @@ public class LogisticPack {
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-		tag.setTag("target", target.writeToNBT(new NBTTagCompound()));
+		NBTTagList list = new NBTTagList();
+		routes.forEach(e -> {
+			list.appendTag(e.writeToNBT(new NBTTagCompound()));
+		});
 		tag.setTag("items", items.writeToNBT(new NBTTagCompound()));
 		tag.setDouble("x", x);
 		tag.setDouble("y", y);
@@ -87,5 +91,24 @@ public class LogisticPack {
 	@Override
 	public String toString() {
 		return writeToNBT(new NBTTagCompound()).toString();
+	}
+
+	public static class Path {
+		public List<WorldPos> routes = new ArrayList<WorldPos>();
+		public double distance;
+
+		public Path(List<WorldPos> path, double dist) {
+			routes = path;
+			distance = dist;
+		}
+
+		public WorldPos getTarget() {
+			return routes.get(routes.size() - 1);
+		}
+
+		public Path flip() {
+			Collections.reverse(routes);
+			return this;
+		}
 	}
 }

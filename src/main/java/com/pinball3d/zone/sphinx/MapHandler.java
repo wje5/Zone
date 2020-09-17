@@ -26,6 +26,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 public class MapHandler {
@@ -180,28 +181,40 @@ public class MapHandler {
 		nodes.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
-				nodes.add(new PointerNode(e, ((INeedNetwork) e.getTileEntity()).isConnected()));
+				TileEntity t = e.getTileEntity();
+				if (t != null) {
+					nodes.add(new PointerNode(e, ((INeedNetwork) t).isConnected()));
+				}
 			}
 		});
 		set = te.getStorages();
 		storges.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
-				storges.add(new PointerStorage(e, ((INeedNetwork) e.getTileEntity()).isConnected()));
+				TileEntity t = e.getTileEntity();
+				if (t != null) {
+					storges.add(new PointerStorage(e, ((INeedNetwork) t).isConnected()));
+				}
 			}
 		});
 		set = te.getDevices();
 		devices.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
-				devices.add(new PointerDevice(e, ((INeedNetwork) e.getTileEntity()).isConnected()));
+				TileEntity t = e.getTileEntity();
+				if (t != null) {
+					devices.add(new PointerDevice(e, ((INeedNetwork) t).isConnected()));
+				}
 			}
 		});
 		set = te.getProductions();
 		productions.clear();
 		set.forEach(e -> {
 			if (e.getDim() == mc.player.dimension) {
-				productions.add(new PointerProduction(e, ((INeedNetwork) e.getTileEntity()).isConnected()));
+				TileEntity t = e.getTileEntity();
+				if (t != null) {
+					productions.add(new PointerProduction(e, ((INeedNetwork) t).isConnected()));
+				}
 			}
 		});
 		Set<LogisticPack> packset = te.getPacks();

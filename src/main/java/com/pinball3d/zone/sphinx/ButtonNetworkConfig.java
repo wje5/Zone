@@ -19,7 +19,7 @@ public class ButtonNetworkConfig extends TexturedButton {
 	public void doRender(int mouseX, int mouseY) {
 		boolean connected;
 		if (flag) {
-			connected = ((ScreenTerminal) parent).getNetwork() != null;
+			connected = ((ScreenTerminal) parent).isConnected();
 		} else {
 			INeedNetwork te = ((ScreenNeedNetwork) parent).getNeedNetworkTileEntity();
 			connected = te.getNetwork() != null && te.isConnected();
