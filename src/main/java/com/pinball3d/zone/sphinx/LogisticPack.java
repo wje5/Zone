@@ -59,7 +59,7 @@ public class LogisticPack {
 	}
 
 	public WorldPos getTarget() {
-		return routes.get(routes.size() - 1);
+		return routes.isEmpty() ? new WorldPos((int) x, (int) y, (int) z, dim) : routes.get(routes.size() - 1);
 	}
 
 	public void readFromNBT(NBTTagCompound tag) {

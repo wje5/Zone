@@ -91,6 +91,8 @@ public class SubscreenConnectToNetwork extends Subscreen {
 							} else if (te.getNetwork() != null) {
 								pos3 = GlobalNetworkData.getData(((TileEntity) te).getWorld())
 										.getNetwork(te.getNetwork());
+								System.out.println(GlobalNetworkData.getData(((TileEntity) te).getWorld())
+										.writeToNBT(new NBTTagCompound()));
 								TEProcessingCenter pc = (TEProcessingCenter) pos3.getTileEntity();
 								pc.removeNeedNetwork(pos1);
 							}
