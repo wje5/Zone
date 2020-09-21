@@ -46,11 +46,11 @@ item.energy.name=能量
 item.construct_block.name=结构方块
 item.terminal.name=终端
 item.fc.name=FC
-item.machine_gun.name=MK1 布朗式轻机枪
 item.drill.name=冲击钻
 item.drill_head.name=钻头
 item.drill_heavy_head.name=重型钻头
 item.crucible_spoon.name=坩埚勺
+item.menual.name=整备师手册
 item.crushed_iron_ore.name=粉碎的铁矿石
 item.crushed_gold_ore.name=粉碎的金矿石
 item.crushed_diamond_ore.name=粉碎的钻石矿石
@@ -192,6 +192,11 @@ sphinx.working=运行
 sphinx.off=关闭
 sphinx.starting=开机
 sphinx.uninit=未初始化
+
+menual.preface=   欢迎使用Zone!\n\n目前这个Mod带来了：\n*一个能增产矿石的坩埚\n*一个能更换头部的钻头\n*将矿石粉碎成32份的打粉机\n*更多的增产（7倍！）\n*能在各种意义上把人打成筛子\n的射钉枪\n*一艘可爱的潜水艇\n*伟大的史芬斯©系统\n*还有更多...
+menual.menu=            目录\n          -Tier 1-\n-工具与材料-\n-坩埚和燃烧室-\n-收集器-\n-研磨机-\n-电炉-\n-合金炉-\n          -Tier 2-\n-离心机-\n-结晶器-\n-冲击钻-\n-史芬斯©系统
+menual.tool=
+menual.material=
 
 sound.grinder=磨粉机：工作
 sound.drainer=收集器：工作

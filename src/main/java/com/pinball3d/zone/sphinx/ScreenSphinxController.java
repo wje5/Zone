@@ -12,12 +12,10 @@ import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class ScreenSphinxController extends GuiScreen implements IParent {
-	private static BufferBuilder bufferbuilder;
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
 	public String password;
@@ -77,7 +75,7 @@ public class ScreenSphinxController extends GuiScreen implements IParent {
 	}
 
 	private void applyComponents() {
-		components = new HashSet<Component>();
+		components.clear();
 		components.add(new TexturedButton(this, width - 20, 2, TEXTURE, 0, 68, 32, 32, 0.25F, new Runnable() {
 			@Override
 			public void run() {

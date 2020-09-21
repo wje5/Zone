@@ -129,7 +129,13 @@ Now some block can't pushed by piston
 Update some recipe
 Fix multiline text
 
-#1.4.2
+#1.5.0
 Change Storage Panel&Production Panel working facing to it's attached face
 Now excess logistic pack can return to network
 Update some about sphinx
+Add Sphinx pathfinding ALG
+
+#1.5.1
+Delete Machine Gun's model&texture
+
+#1.6.0
