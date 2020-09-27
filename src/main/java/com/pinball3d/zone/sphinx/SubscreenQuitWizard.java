@@ -2,12 +2,8 @@ package com.pinball3d.zone.sphinx;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
 
 public class SubscreenQuitWizard extends Subscreen {
-	private static final ResourceLocation TEXTURE = new ResourceLocation(
-			"zone:textures/gui/sphinx/connect_to_network.png");
-
 	public SubscreenQuitWizard(IParent parent) {
 		this(parent, parent.getWidth() / 2 - 80, parent.getHeight() / 2 - 45);
 	}

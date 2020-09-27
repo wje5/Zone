@@ -8,7 +8,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
@@ -52,7 +51,6 @@ public class MessageTerminalConnectToNetwork implements IMessage {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 					World world = message.network.getWorld();
 					if (!world.isAreaLoaded(message.network.getPos(), 5)) {
 						return;

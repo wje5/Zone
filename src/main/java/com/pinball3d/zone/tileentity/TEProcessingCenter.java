@@ -78,6 +78,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		return on;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void callUpdate() {
 		markDirty();
 		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());

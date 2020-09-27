@@ -1,6 +1,8 @@
 package com.pinball3d.zone.block;
 
+import com.pinball3d.zone.item.ItemCastingTable;
 import com.pinball3d.zone.item.ItemConstructBlock;
+import com.pinball3d.zone.item.ItemCrucible;
 import com.pinball3d.zone.item.ItemLoader;
 
 import net.minecraft.block.Block;
@@ -24,7 +26,7 @@ public class BlockLoader {
 
 	public static Block drainer, grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter,
 			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light, crucible,
-			burning_box, burning_box_light, casting_table;
+			burning_box, burning_box_light, casting_table, boiler, boiler_light;
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module, storage_panel,
@@ -63,6 +65,8 @@ public class BlockLoader {
 		register(registry, burning_box = new BlockBurningBox(false));
 		register(registry, burning_box_light = new BlockBurningBox(true));
 		register(registry, casting_table = new BlockCastingTable());
+		register(registry, boiler = new BlockBoiler(false));
+		register(registry, boiler_light = new BlockBoiler(true));
 		register(registry, construct_block = new BlockConstructBlock());
 		register(registry, construct_block_all = new BlockConstructBlockAll());
 		register(registry, cluster_operation_module = new BlockClusterOperationModule());
@@ -106,9 +110,10 @@ public class BlockLoader {
 		registerItem(registry, centrifuge);
 		registerItem(registry, node);
 		registerItem(registry, crystallizer);
-		registerItem(registry, crucible);
+		registerItem(registry, ItemLoader.crucible = new ItemCrucible());
 		registerItem(registry, burning_box);
-		registerItem(registry, casting_table);
+		registerItem(registry, ItemLoader.casting_table = new ItemCastingTable());
+		registerItem(registry, boiler);
 		registerItem(registry, ItemLoader.construct_block = new ItemConstructBlock());
 		registerItem(registry, cluster_operation_module);
 		registerItem(registry, controller_mainframe);

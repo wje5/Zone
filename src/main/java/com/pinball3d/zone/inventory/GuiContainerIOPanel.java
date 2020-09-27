@@ -154,7 +154,9 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
 		GlStateManager.popMatrix();
-		super.renderHoveredToolTip(mouseX, mouseY);
+		if (subscreens.empty()) {
+			super.renderHoveredToolTip(mouseX, mouseY);
+		}
 	}
 
 	@Override

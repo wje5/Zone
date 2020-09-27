@@ -19,6 +19,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	protected String password = "";
 	protected boolean connected = false;
 
+	@SuppressWarnings("deprecation")
 	public void callUpdate() {
 		markDirty();
 		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());

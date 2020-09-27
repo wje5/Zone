@@ -31,7 +31,7 @@ public class RecipeDrillHeavyTear extends ShapelessRecipes {
 
 	@Override
 	public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-		NonNullList list = super.getRemainingItems(inv);
+		NonNullList<ItemStack> list = super.getRemainingItems(inv);
 		for (int i = 0; i < 9; i++) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (!stack.isEmpty()) {

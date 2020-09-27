@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "zone:coal_dust"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:stick"
+    }
+    
+  ],
+  "result": {
+    "item": "minecraft:torch",
+    "count": 6
+  }
+}

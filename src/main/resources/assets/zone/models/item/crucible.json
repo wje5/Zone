@@ -1,6 +1,3 @@
 {
-    "parent": "builtin/generated",
-    "textures": {
-        "layer0": "zone:items/crucible"
-    }
+    "parent": "builtin/entity"
 }

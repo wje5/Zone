@@ -22,11 +22,14 @@ public class TEBurningBox extends TileEntity implements ITickable {
 					BlockBurningBox.setState(true, world, pos);
 					smeltTime += 200;
 					fuel.getStackInSlot(0).shrink(1);
+					markDirty();
 				} else {
 					BlockBurningBox.setState(false, world, pos);
+					markDirty();
 				}
 			} else {
 				smeltTime--;
+				markDirty();
 			}
 		}
 	}
@@ -39,6 +42,7 @@ public class TEBurningBox extends TileEntity implements ITickable {
 		return super.hasCapability(capability, facing);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {

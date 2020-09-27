@@ -22,6 +22,7 @@ public class TileEntityLoader {
 		registerTileEntity(TECrucible.class, "TECrucible");
 		registerTileEntity(TEBurningBox.class, "TEBurningBox");
 		registerTileEntity(TECastingTable.class, "TECastingTable");
+		registerTileEntity(TEBoiler.class, "TEBoiler");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

@@ -18,6 +18,7 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int TRANSMISSION_MODULE = 7;
 	public static final int IO_PANEL = 8;
 	public static final int BURNING_BOX = 9;
+	public static final int BOILER = 10;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -44,6 +45,8 @@ public class GuiElementLoader implements IGuiHandler {
 			return new ContainerIOPanel(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case BURNING_BOX:
 			return new ContainerBurningBox(player, world.getTileEntity(new BlockPos(x, y, z)));
+		case BOILER:
+			return new ContainerBoiler(player, world.getTileEntity(new BlockPos(x, y, z)));
 		}
 		return null;
 	}
@@ -75,6 +78,8 @@ public class GuiElementLoader implements IGuiHandler {
 		case BURNING_BOX:
 			return new GuiContainerBurningBox(
 					new ContainerBurningBox(player, world.getTileEntity(new BlockPos(x, y, z))));
+		case BOILER:
+			return new GuiContainerBoiler(new ContainerBoiler(player, world.getTileEntity(new BlockPos(x, y, z))));
 		}
 		return null;
 	}

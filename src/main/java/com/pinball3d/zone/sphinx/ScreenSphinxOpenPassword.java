@@ -29,7 +29,7 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
 	private int xOffset, yOffset;
-	private boolean flag, flag2;
+	private boolean flag;
 	public TEProcessingCenter tileentity;
 
 	public ScreenSphinxOpenPassword(TEProcessingCenter te, boolean flag) {

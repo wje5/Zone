@@ -8,12 +8,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class ZoneMachine extends TileEntity implements ITickable {
 	protected ItemStackHandler energy;
+	protected float explosionStrength = 4.0F;
 
 	public ZoneMachine(int energySlot) {
 		super();
@@ -56,8 +56,9 @@ public class ZoneMachine extends TileEntity implements ITickable {
 		}
 		if (amount > 0) {
 			world.setBlockToAir(pos);
-			Explosion explosion = world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
+			world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), explosionStrength, true, true);
 		}
+		markDirty();
 	}
 
 	public boolean tryUseEnergy(boolean simulate) {
@@ -67,6 +68,7 @@ public class ZoneMachine extends TileEntity implements ITickable {
 				return true;
 			}
 		}
+		markDirty();
 		return false;
 	}
 
@@ -78,6 +80,7 @@ public class ZoneMachine extends TileEntity implements ITickable {
 			if (energy.getStackInSlot(i).getItem() == ItemLoader.energy) {
 				ItemStack stack = energy.extractItem(i, amount, simulate);
 				amount -= stack.getCount();
+				markDirty();
 				if (amount <= 0) {
 					return true;
 				}

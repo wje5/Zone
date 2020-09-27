@@ -11,10 +11,8 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 public class SubscreenIOPanelRequest extends Subscreen {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private TextInputBox box;
 	private Slider slider;
 	public ItemStack stack;
@@ -103,9 +101,9 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		Util.drawBorder(x, y, 140, 56, 1, 0xFF1ECCDE);
 		Util.drawBorder(x + 8, y + 8, 18, 18, 1, 0xFF1ECCDE);
 		getFontRenderer().drawString(I18n.format("sphinx.output") + ":", x + 30, y + 6, 0xFF1ECCDE);
-		getFontRenderer().drawString(I18n.format("sphinx.time") + ":", x + 30, y + 30, 0xFF1ECCDE);
-		String text = "103s";
-		getFontRenderer().drawString(text, x + 128 - getFontRenderer().getStringWidth(text), y + 30, 0xFF1ECCDE);
+//		getFontRenderer().drawString(I18n.format("sphinx.time") + ":", x + 30, y + 30, 0xFF1ECCDE);
+//		String text = "103s";
+//		getFontRenderer().drawString(text, x + 128 - getFontRenderer().getStringWidth(text), y + 30, 0xFF1ECCDE);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();

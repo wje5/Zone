@@ -20,7 +20,6 @@ import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +28,6 @@ import net.minecraft.util.ResourceLocation;
 
 public class ScreenTerminal extends GuiScreen implements IParent {
 	protected Map<Long, ChunkRenderCache> mapCache = new HashMap<Long, ChunkRenderCache>();
-	private static BufferBuilder bufferbuilder;
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");

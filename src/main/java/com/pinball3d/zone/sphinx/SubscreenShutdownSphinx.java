@@ -7,12 +7,8 @@ import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 
 public class SubscreenShutdownSphinx extends Subscreen {
-	private static final ResourceLocation TEXTURE = new ResourceLocation(
-			"zone:textures/gui/sphinx/connect_to_network.png");
-
 	public SubscreenShutdownSphinx(IParent parent) {
 		this(parent, parent.getWidth() / 2 - 80, parent.getHeight() / 2 - 45);
 	}

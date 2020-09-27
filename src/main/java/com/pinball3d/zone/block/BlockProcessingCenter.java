@@ -19,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 public class BlockProcessingCenter extends BlockContainer {
 	public BlockProcessingCenter(boolean on) {
@@ -33,7 +34,7 @@ public class BlockProcessingCenter extends BlockContainer {
 
 	@Override
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
+		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 20.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 
@@ -210,11 +211,15 @@ public class BlockProcessingCenter extends BlockContainer {
 	public static void setState(boolean active, World worldIn, BlockPos pos) {
 		TileEntity tileentity = worldIn.getTileEntity(pos);
 		if (active) {
-			worldIn.setBlockState(pos, BlockLoader.processing_center_light.getDefaultState(), 3);
-			worldIn.setBlockState(pos, BlockLoader.processing_center_light.getDefaultState(), 3);
+			worldIn.setBlockState(pos, BlockLoader.processing_center_light.getDefaultState(),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
+			worldIn.setBlockState(pos, BlockLoader.processing_center_light.getDefaultState(),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 		} else {
-			worldIn.setBlockState(pos, BlockLoader.processing_center.getDefaultState(), 3);
-			worldIn.setBlockState(pos, BlockLoader.processing_center.getDefaultState(), 3);
+			worldIn.setBlockState(pos, BlockLoader.processing_center.getDefaultState(),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
+			worldIn.setBlockState(pos, BlockLoader.processing_center.getDefaultState(),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 		}
 		if (tileentity != null) {
 			tileentity.validate();

@@ -6,8 +6,12 @@ import com.pinball3d.zone.tileentity.TECrucible;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class RenderLoader {
+	public static RenderCrucible renderCrucible;
+	public static RenderCastingTable renderCastingTable;
+
 	public RenderLoader() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TECrucible.class, new RenderCrucible());
-		ClientRegistry.bindTileEntitySpecialRenderer(TECastingTable.class, new RenderCastingTable());
+		ClientRegistry.bindTileEntitySpecialRenderer(TECrucible.class, renderCrucible = new RenderCrucible());
+		ClientRegistry.bindTileEntitySpecialRenderer(TECastingTable.class,
+				renderCastingTable = new RenderCastingTable());
 	}
 }

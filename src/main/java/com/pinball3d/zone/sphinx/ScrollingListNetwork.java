@@ -10,7 +10,6 @@ import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.Gui;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class ScrollingListNetwork extends Component {
@@ -67,7 +66,6 @@ public class ScrollingListNetwork extends Component {
 		list = new ArrayList<ListBar>();
 		length = 0;
 		scrollingDistance = 0;
-		ItemStack stack = parent.getTerminal();
 		WorldPos worldpos;
 		if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
 			worldpos = ((ScreenTerminal) ((SubscreenNetworkConfig) parent).parent).worldpos;

@@ -121,7 +121,7 @@ public class BlockStorageChest extends BlockContainer {
 
 	@Override
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
+		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 8.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 

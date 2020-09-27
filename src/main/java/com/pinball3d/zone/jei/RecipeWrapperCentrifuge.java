@@ -4,17 +4,14 @@ import java.util.Arrays;
 
 import com.pinball3d.zone.recipe.RecipeCentrifuge;
 
-import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 
 public class RecipeWrapperCentrifuge implements IRecipeWrapper {
-	private final IJeiHelpers jeiHelpers;
 	protected final RecipeCentrifuge recipe;
 
-	public RecipeWrapperCentrifuge(IJeiHelpers jeiHelpers, RecipeCentrifuge recipe) {
-		this.jeiHelpers = jeiHelpers;
+	public RecipeWrapperCentrifuge(RecipeCentrifuge recipe) {
 		this.recipe = recipe;
 	}
 

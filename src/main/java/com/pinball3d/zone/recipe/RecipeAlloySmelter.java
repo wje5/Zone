@@ -1,11 +1,11 @@
 package com.pinball3d.zone.recipe;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
 
 import net.minecraft.item.ItemStack;
-import scala.actors.threadpool.Arrays;
 
 public class RecipeAlloySmelter extends Recipe {
 	private ItemStack[] inputs;

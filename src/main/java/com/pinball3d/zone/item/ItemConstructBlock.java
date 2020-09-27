@@ -21,7 +21,7 @@ public class ItemConstructBlock extends ItemBlock {
 	public ItemConstructBlock() {
 		super(BlockLoader.construct_block_all);
 		setRegistryName("zone:construct_block");
-		setUnlocalizedName("zone:construct_block");
+		setUnlocalizedName("construct_block");
 		setCreativeTab(TabZone.tab);
 	}
 

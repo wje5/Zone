@@ -1,17 +1,18 @@
-package com.pinball3d.zone.menual;
+package com.pinball3d.zone.manual;
 
+import com.pinball3d.zone.sphinx.IParent;
 import com.pinball3d.zone.sphinx.TexturedButton;
 import com.pinball3d.zone.sphinx.Util;
 
 import net.minecraft.util.ResourceLocation;
 
 public class ButtonPage extends TexturedButton {
-	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/menual.png");
-	public static final ResourceLocation TEXTURE2 = new ResourceLocation("zone:textures/gui/menual_2.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/manual.png");
+	public static final ResourceLocation TEXTURE2 = new ResourceLocation("zone:textures/gui/manual_2.png");
 	private final boolean flag;
 
-	public ButtonPage(int x, int y, boolean flag, Runnable onClick) {
-		super(null, x, y, TEXTURE, 146, 0, 10, 13, 1.0F, onClick);
+	public ButtonPage(IParent parent, int x, int y, boolean flag, Runnable onClick) {
+		super(parent, x, y, TEXTURE, 146, 0, 10, 13, 1.0F, onClick);
 		this.flag = flag;
 	}
 

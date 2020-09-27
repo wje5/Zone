@@ -1,9 +1,8 @@
 package com.pinball3d.zone.render;
 
-import org.lwjgl.opengl.GL11;
-
 import com.pinball3d.zone.tileentity.TECastingTable;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
 
@@ -14,9 +13,9 @@ public class RenderCastingTable extends TileEntitySpecialRenderer<TECastingTable
 	@Override
 	public void render(TECastingTable tileentity, double x, double y, double z, float tick, int destroyStage,
 			float alpha) {
-		GL11.glPushMatrix();
-		GL11.glTranslated(x + 0.5D, y, z + 0.5D);
-		GL11.glRotatef(180.0F, 1.0F, 0.0F, 0.0F);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x + 0.5F, y, z + 0.5F);
+		GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
 		int meta = tileentity.getBlockMetadata();
 		double rot = 0;
 		switch (meta % 4) {
@@ -44,6 +43,6 @@ public class RenderCastingTable extends TileEntitySpecialRenderer<TECastingTable
 			modelCastingTableFilled.setRotationAngle(0, (float) rot, 0);
 			modelCastingTableFilled.render(null, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
 		}
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 	}
 }

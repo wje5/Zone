@@ -65,10 +65,9 @@ public class BlockCrucible extends BlockContainer {
 	}
 
 	public static void setState(IBlockState state, World worldIn, BlockPos pos) {
-		IBlockState iblockstate = worldIn.getBlockState(pos);
 		TileEntity tileentity = worldIn.getTileEntity(pos);
 		keepInventory = true;
-		worldIn.setBlockState(pos, state, Constants.BlockFlags.DEFAULT);
+		worldIn.setBlockState(pos, state, Constants.BlockFlags.DEFAULT_AND_RERENDER);
 		keepInventory = false;
 		if (tileentity != null) {
 			tileentity.validate();

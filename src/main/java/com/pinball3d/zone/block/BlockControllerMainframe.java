@@ -60,11 +60,7 @@ public class BlockControllerMainframe extends Block {
 		} else {
 			if (te.isLoading()) {
 				mc.displayGuiScreen(new ScreenLoadSphinx((TEProcessingCenter) worldIn.getTileEntity(pos)));
-			}
-//			else if (te.needInit()) {
-//				mc.displayGuiScreen(new ScreenSphinxController((TEProcessingCenter) worldIn.getTileEntity(pos), ""));
-//			}
-			else {
+			} else {
 				mc.displayGuiScreen(
 						new ScreenSphinxOpenPassword((TEProcessingCenter) worldIn.getTileEntity(pos), false));
 			}
@@ -124,7 +120,7 @@ public class BlockControllerMainframe extends Block {
 
 	@Override
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
+		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 8.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 

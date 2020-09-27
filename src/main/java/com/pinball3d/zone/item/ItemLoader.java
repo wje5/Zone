@@ -26,7 +26,7 @@ public class ItemLoader {
 			ceramic_mold;
 
 	public static Item energy, construct_block, terminal, fc, drill, drill_heavy, drill_head, drill_heavy_head,
-			drill_empty, crucible_spoon, crucible_spoon_filled, menual;
+			drill_empty, crucible_spoon, crucible_spoon_filled, menual, crucible, casting_table, hybrid_fuel;
 
 	public static Item crushed_iron_ore, crushed_gold_ore, crushed_diamond_ore, crushed_emerald_ore,
 			crushed_redstone_ore, crushed_coal_ore, crushed_lapis_ore, crushed_quartz_ore;
@@ -43,6 +43,8 @@ public class ItemLoader {
 			tiny_pile_redstone_dust, tiny_pile_coal_dust, tiny_pile_lapis_dust, tiny_pile_quartz_dust,
 			tiny_pile_stone_dust, tiny_pile_netherrack_dust, tiny_pile_etherium_dust, tiny_pile_clarity_glass_dust,
 			tiny_pile_clay_dust, tiny_pile_flint_dust, tiny_pile_prismarine_dust;
+
+	public static Item construct_block_axis, construct_block_axis_rot, truss_x, truss_z;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -99,7 +101,8 @@ public class ItemLoader {
 		register(registry, drill_empty = new ItemDrillEmpty());
 		register(registry, crucible_spoon = new ItemCrucibleSpoon(false));
 		register(registry, crucible_spoon_filled = new ItemCrucibleSpoon(true));
-		register(registry, menual = new ItemMenual());
+		register(registry, menual = new ItemManual());
+		register(registry, hybrid_fuel = new ZoneItem("hybrid_fuel"));
 		register(registry, crushed_iron_ore = new ZoneItem("crushed_iron_ore"));
 		register(registry, crushed_gold_ore = new ZoneItem("crushed_gold_ore"));
 		register(registry, crushed_diamond_ore = new ZoneItem("crushed_diamond_ore"));
@@ -152,6 +155,10 @@ public class ItemLoader {
 		register(registry, tiny_pile_clay_dust = new ZoneItem("tiny_pile_clay_dust"));
 		register(registry, tiny_pile_flint_dust = new ZoneItem("tiny_pile_flint_dust"));
 		register(registry, tiny_pile_prismarine_dust = new ZoneItem("tiny_pile_prismarine_dust"));
+		register(registry, construct_block_axis = new ZoneItem("construct_block_axis").setCreativeTab(null));
+		register(registry, construct_block_axis_rot = new ZoneItem("construct_block_axis_rot").setCreativeTab(null));
+		register(registry, truss_x = new ZoneItem("truss_x").setCreativeTab(null));
+		register(registry, truss_z = new ZoneItem("truss_z").setCreativeTab(null));
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {

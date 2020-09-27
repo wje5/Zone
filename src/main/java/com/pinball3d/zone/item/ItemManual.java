@@ -1,6 +1,6 @@
 package com.pinball3d.zone.item;
 
-import com.pinball3d.zone.menual.ScreenMenualPrefaceAndMenu;
+import com.pinball3d.zone.manual.ScreenManualPrefaceAndMenu;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,9 +12,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemMenual extends ZoneItem {
-	public ItemMenual() {
-		super("menual");
+public class ItemManual extends ZoneItem {
+	public ItemManual() {
+		super("manual");
 		setMaxStackSize(1);
 	}
 
@@ -28,6 +28,6 @@ public class ItemMenual extends ZoneItem {
 
 	@SideOnly(Side.CLIENT)
 	public void openScreen() {
-		Minecraft.getMinecraft().displayGuiScreen(new ScreenMenualPrefaceAndMenu());
+		Minecraft.getMinecraft().displayGuiScreen(new ScreenManualPrefaceAndMenu());
 	}
 }

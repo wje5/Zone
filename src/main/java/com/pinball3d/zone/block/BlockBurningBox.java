@@ -23,6 +23,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -120,15 +121,17 @@ public class BlockBurningBox extends BlockContainer {
 		if (active) {
 			worldIn.setBlockState(pos,
 					BlockLoader.burning_box_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
-					3);
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 			worldIn.setBlockState(pos,
 					BlockLoader.burning_box_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
-					3);
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 		} else {
 			worldIn.setBlockState(pos,
-					BlockLoader.burning_box.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+					BlockLoader.burning_box.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 			worldIn.setBlockState(pos,
-					BlockLoader.burning_box.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+					BlockLoader.burning_box.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 		}
 
 		keepInventory = false;

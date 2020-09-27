@@ -13,7 +13,6 @@ import com.pinball3d.zone.recipe.RecipeHandler;
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
 
 import mezz.jei.api.IGuiHelper;
-import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
@@ -33,24 +32,22 @@ public class JEIHandler implements IModPlugin {
 
 	@Override
 	public void register(IModRegistry registry) {
-		IJeiHelpers helpers = registry.getJeiHelpers();
 		registry.addRecipes(RecipeHandler.getRecipes(Type.GRINDER), "zone:grinder");
-		registry.handleRecipes(RecipeGrinder.class, recipe -> new RecipeWrapperGrinder(helpers, recipe),
-				"zone:grinder");
+		registry.handleRecipes(RecipeGrinder.class, recipe -> new RecipeWrapperGrinder(recipe), "zone:grinder");
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.grinder), "zone:grinder");
 		registry.addRecipeClickArea(GuiContainerGrinder.class, 80, 35, 22, 15, "zone:grinder");
 		registry.addRecipes(RecipeHandler.getRecipes(Type.ALLOY_SMELTER), "zone:alloy_smelter");
-		registry.handleRecipes(RecipeAlloySmelter.class, recipe -> new RecipeWrapperAlloySmelter(helpers, recipe),
+		registry.handleRecipes(RecipeAlloySmelter.class, recipe -> new RecipeWrapperAlloySmelter(recipe),
 				"zone:alloy_smelter");
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.alloy_smelter), "zone:alloy_smelter");
 		registry.addRecipeClickArea(GuiContainerAlloySmelter.class, 80, 35, 22, 15, "zone:alloy_smelter");
 		registry.addRecipes(RecipeHandler.getRecipes(Type.CENTRIFUGE), "zone:centrifuge");
-		registry.handleRecipes(RecipeCentrifuge.class, recipe -> new RecipeWrapperCentrifuge(helpers, recipe),
+		registry.handleRecipes(RecipeCentrifuge.class, recipe -> new RecipeWrapperCentrifuge(recipe),
 				"zone:centrifuge");
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.centrifuge), "zone:centrifuge");
 		registry.addRecipeClickArea(GuiContainerCentrifuge.class, 63, 35, 22, 15, "zone:centrifuge");
 		registry.addRecipes(RecipeHandler.getRecipes(Type.CRYSTALLIZER), "zone:crystallizer");
-		registry.handleRecipes(RecipeCrystallizer.class, recipe -> new RecipeWrapperCrystallizer(helpers, recipe),
+		registry.handleRecipes(RecipeCrystallizer.class, recipe -> new RecipeWrapperCrystallizer(recipe),
 				"zone:crystallizer");
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.crystallizer), "zone:crystallizer");
 		registry.addRecipeClickArea(GuiContainerCrystallizer.class, 80, 35, 22, 15, "zone:crystallizer");

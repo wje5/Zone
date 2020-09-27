@@ -4,7 +4,6 @@ import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -50,7 +49,6 @@ public class MessageWizardData implements IMessage {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 					World world = message.pos.getWorld();
 					if (!world.isAreaLoaded(message.pos.getPos(), 5)) {
 						return;

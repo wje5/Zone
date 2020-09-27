@@ -13,13 +13,11 @@ import com.pinball3d.zone.tileentity.INeedNetwork;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class ScreenNeedNetwork extends GuiScreen implements IParent {
-	private static BufferBuilder bufferbuilder;
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");

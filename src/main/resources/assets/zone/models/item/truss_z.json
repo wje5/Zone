@@ -1,0 +1,25 @@
+{
+    "parent": "block/block",
+    "elements": [
+        {   "from": [ 5, 5, 0 ],
+            "to": [ 11, 11, 16 ],
+            "faces": {
+                "down":  { "texture": "#down", "cullface": "down" },
+                "up":    { "texture": "#up", "cullface": "up" },
+                "north": { "texture": "#north", "cullface": "north" },
+                "south": { "texture": "#south", "cullface": "south" },
+                "west":  { "texture": "#west", "cullface": "west" },
+                "east":  { "texture": "#east", "cullface": "east" }
+            }
+        }
+    ],
+    "textures": {
+        "down": "zone:blocks/truss",
+        "up": "zone:blocks/truss",
+        "north": "zone:blocks/truss_up",
+        "south": "zone:blocks/truss_up",
+        "west": "zone:blocks/truss_rot",
+        "east": "zone:blocks/truss_rot",
+        "particle": "zone:blocks/truss"
+    }
+}

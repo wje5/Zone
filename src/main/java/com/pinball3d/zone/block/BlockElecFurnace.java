@@ -24,6 +24,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -122,15 +123,17 @@ public class BlockElecFurnace extends BlockContainer {
 		if (active) {
 			worldIn.setBlockState(pos,
 					BlockLoader.elec_furnace_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
-					3);
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 			worldIn.setBlockState(pos,
 					BlockLoader.elec_furnace_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
-					3);
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 		} else {
 			worldIn.setBlockState(pos,
-					BlockLoader.elec_furnace.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+					BlockLoader.elec_furnace.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 			worldIn.setBlockState(pos,
-					BlockLoader.elec_furnace.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+					BlockLoader.elec_furnace.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 		}
 
 		keepInventory = false;

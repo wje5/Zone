@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+-=",
+    "#@#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:rivet"
+    },
+    "*": {
+      "item": "zone:hammer",
+      "data":32767
+    },
+    "+": {
+      "item": "zone:spanner",
+      "data":32767
+    },
+    "-": {
+      "item": "minecraft:book"
+    },
+    "=": {
+      "item": "zone:file",
+      "data":32767
+    },
+    "@": {
+      "item": "zone:saw",
+      "data":32767
+    }
+  },
+  "result": {
+    "item": "zone:manual"
+  }
+}

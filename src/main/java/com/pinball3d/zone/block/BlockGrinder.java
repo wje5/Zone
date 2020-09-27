@@ -24,6 +24,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -121,14 +122,18 @@ public class BlockGrinder extends BlockContainer {
 
 		if (active) {
 			worldIn.setBlockState(pos,
-					BlockLoader.grinder_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+					BlockLoader.grinder_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 			worldIn.setBlockState(pos,
-					BlockLoader.grinder_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+					BlockLoader.grinder_light.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 		} else {
 			worldIn.setBlockState(pos,
-					BlockLoader.grinder.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+					BlockLoader.grinder.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 			worldIn.setBlockState(pos,
-					BlockLoader.grinder.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)), 3);
+					BlockLoader.grinder.getDefaultState().withProperty(FACING, iblockstate.getValue(FACING)),
+					Constants.BlockFlags.DEFAULT_AND_RERENDER);
 		}
 
 		keepInventory = false;

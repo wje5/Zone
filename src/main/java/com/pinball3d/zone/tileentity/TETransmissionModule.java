@@ -12,29 +12,16 @@ public class TETransmissionModule extends ZoneMachine {
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
-			switch (facing) {
-			case UP:
-			case NORTH:
-			case SOUTH:
-			case WEST:
-			case EAST:
-				return true;
-			}
+			return true;
 		}
 		return super.hasCapability(capability, facing);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
-			switch (facing) {
-			case UP:
-			case NORTH:
-			case SOUTH:
-			case WEST:
-			case EAST:
-				return (T) energy;
-			}
+			return (T) energy;
 		}
 		return super.getCapability(capability, facing);
 	}

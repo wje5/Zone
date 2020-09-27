@@ -8,7 +8,6 @@ import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.network.MessageRequestStorage;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -34,11 +33,6 @@ public class SubscreenViewStorage extends Subscreen {
 
 	public SubscreenViewStorage(IParent parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		if (parent instanceof ScreenTerminal) {
-			TEProcessingCenter te = (TEProcessingCenter) ((ScreenTerminal) parent).getNetwork().getTileEntity();
-		} else {
-			TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
-		}
 		components.add(box = new TextInputBox(this, getXOffset() + 27, getYOffset() + 27, 61, 15, 8, new Runnable() {
 			@Override
 			public void run() {
@@ -174,7 +168,6 @@ public class SubscreenViewStorage extends Subscreen {
 		}
 		Iterator<HugeItemStack> it = storges.iterator();
 		Iterator<ItemStack> it2 = other.iterator();
-		int index = 0;
 		for (int offset = (page - 1) * 91; offset > 0; offset--) {
 			if (it.hasNext()) {
 				it.next();
@@ -219,13 +212,9 @@ public class SubscreenViewStorage extends Subscreen {
 				ir.renderItemAndEffectIntoGUI(stack, x + 28 + i * 19, y + 46 + j * 19);
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(0, 0, 300F);
-				if (amount > 1) {
-					text = Util.transferString(amount);
-					getFontRenderer().drawStringWithShadow(text,
-							x + 45 + i * 19 - getFontRenderer().getStringWidth(text), y + 55 + j * 19, 0xFFFFFFFF);
-				}
+				text = amount <= 1 ? null : Util.transferString(amount);
 				GlStateManager.popMatrix();
-				ir.renderItemOverlays(getFontRenderer(), stack, x + 28 + i * 19, y + 46 + j * 19);
+				ir.renderItemOverlayIntoGUI(getFontRenderer(), stack, x + 28 + i * 19, y + 46 + j * 19, text);
 				if (getHoveredSlot(mouseX, mouseY) == j * 13 + i) {
 					temp = stack;
 					slot = j * 13 + i;
@@ -235,10 +224,10 @@ public class SubscreenViewStorage extends Subscreen {
 		if (!temp.isEmpty()) {
 			renderCoverAndToolTip(temp, slot, mouseX, mouseY);
 		}
-		RenderHelper.disableStandardItemLighting();
-		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
-		GlStateManager.enableBlend();
+//		RenderHelper.disableStandardItemLighting();
+//		GlStateManager.enableLighting();
+//		GlStateManager.enableDepth();
+//		GlStateManager.enableBlend();
 	}
 
 	@Override

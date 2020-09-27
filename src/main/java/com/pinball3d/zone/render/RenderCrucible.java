@@ -1,28 +1,25 @@
 package com.pinball3d.zone.render;
 
-import org.lwjgl.opengl.GL11;
-
 import com.pinball3d.zone.tileentity.TECrucible;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 public class RenderCrucible extends TileEntitySpecialRenderer<TECrucible> {
+	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/blocks/crucible.png");
+	private static final ResourceLocation TEXTURE2 = new ResourceLocation("zone:textures/blocks/crucible_filled.png");
 	private ModelCrucible model = new ModelCrucible();
 	private ModelCrucibleFilled model2 = new ModelCrucibleFilled();
 
-	@Override
-	public void render(TECrucible tileentity, double x, double y, double z, float tick, int destroyStage, float alpha) {
-		GL11.glPushMatrix();
-		GL11.glTranslated(x + 0.5D, y, z + 0.5D);
-		GL11.glRotatef(180.0F, 1.0F, 0.0F, 0.0F);
-		TECrucible te = tileentity;
-		int meta = te.getBlockMetadata();
+	public void render(int meta, double x, double y, double z, float tick, int destroyStage, float alpha) {
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x + 0.5F, y, z + 0.5F);
+		GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
 		double rot = 0;
 		switch (meta % 4) {
 		case 0:
@@ -37,23 +34,24 @@ public class RenderCrucible extends TileEntitySpecialRenderer<TECrucible> {
 			rot = -Math.PI / 2;
 		}
 		if (meta < 8) {
-			bindTexture(new ResourceLocation("zone:textures/blocks/crucible.png"));
+			bindTexture(TEXTURE);
 			model.setRotationAngle(0, (float) rot, 0);
-			model.render((Entity) null, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+			model.render(null, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
 		} else {
-			bindTexture(new ResourceLocation("zone:textures/blocks/crucible_filled.png"));
+			bindTexture(TEXTURE2);
 			model2.setRotationAngle(0, (float) rot, 0);
-			model2.render((Entity) null, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+			model2.render(null, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
 		}
 		if (meta % 8 > 3) {
-//			RenderItem.renderInFrame = true;
-			GL11.glPushMatrix();
-			GL11.glTranslatef(0.0F, -0.5F, 0.0F);
-			GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
+			GlStateManager.translate(0.0F, -0.5F, 0.0F);
+			GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
 			Minecraft.getMinecraft().getRenderItem().renderItem(new ItemStack(Blocks.IRON_ORE), TransformType.FIXED);
-			GL11.glPopMatrix();
-//			RenderItem.renderInFrame = false;
 		}
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
+	}
+
+	@Override
+	public void render(TECrucible te, double x, double y, double z, float tick, int destroyStage, float alpha) {
+		render(te.getBlockMetadata(), x, y, z, tick, destroyStage, alpha);
 	}
 }

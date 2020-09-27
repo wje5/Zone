@@ -1,4 +1,4 @@
-package com.pinball3d.zone.menual;
+package com.pinball3d.zone.manual;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -17,14 +17,15 @@ import com.pinball3d.zone.sphinx.Util;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public abstract class ScreenMenualBase extends GuiScreen implements IParent {
-	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/menual.png");
-	public static final ResourceLocation TEXTURE2 = new ResourceLocation("zone:textures/gui/menual_2.png");
+public abstract class ScreenManualBase extends GuiScreen implements IParent {
+	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/manual.png");
+	public static final ResourceLocation TEXTURE2 = new ResourceLocation("zone:textures/gui/manual_2.png");
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
-	private Set<Component> components = new HashSet<Component>();
+	protected Set<Component> components = new HashSet<Component>();
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 
 	@Override
@@ -33,15 +34,15 @@ public abstract class ScreenMenualBase extends GuiScreen implements IParent {
 		super.initGui();
 	}
 
-	private void applyComponents() {
+	protected void applyComponents() {
 		components.clear();
-		components.add(new ButtonPage(getXOffset() + 12, getYOffset() + 158, true, new Runnable() {
+		components.add(new ButtonPage(this, getXOffset() + 12, getYOffset() + 158, true, new Runnable() {
 			@Override
 			public void run() {
 				onFlip(true);
 			}
 		}));
-		components.add(new ButtonPage(getXOffset() + 270, getYOffset() + 158, false, new Runnable() {
+		components.add(new ButtonPage(this, getXOffset() + 270, getYOffset() + 158, false, new Runnable() {
 			@Override
 			public void run() {
 				onFlip(false);
@@ -73,6 +74,11 @@ public abstract class ScreenMenualBase extends GuiScreen implements IParent {
 	public abstract void drawContents(int mouseX, int mouseY);
 
 	@Override
+	public void renderToolTip(ItemStack stack, int x, int y) {
+		super.renderToolTip(stack, x, y);
+	}
+
+	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		int x = width / 2 - 146;
 		int x2 = width / 2;
@@ -82,6 +88,13 @@ public abstract class ScreenMenualBase extends GuiScreen implements IParent {
 		drawContents(mouseX, mouseY);
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);
+		});
+		components.forEach(e -> {
+			if (e instanceof ItemFrame) {
+				((ItemFrame) e).renderToolTip(mouseX, mouseY);
+			} else if (e instanceof BlockShowWithTip) {
+				((BlockShowWithTip) e).renderToolTip(mouseX, mouseY);
+			}
 		});
 		Iterator<Subscreen> it = subscreens.iterator();
 		while (it.hasNext()) {

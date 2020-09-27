@@ -100,7 +100,7 @@ public class BlockNode extends BlockContainer {
 
 	@Override
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
+		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 8.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 
@@ -119,6 +119,7 @@ public class BlockNode extends BlockContainer {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(this, new IProperty<?>[] { FACING },

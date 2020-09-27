@@ -40,6 +40,7 @@ public class TEDrainer extends ZoneMachine {
 		return super.hasCapability(capability, facing);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability) && facing == EnumFacing.DOWN) {
@@ -60,9 +61,4 @@ public class TEDrainer extends ZoneMachine {
 		compound.setInteger("tick", tick);
 		return compound;
 	}
-
-//	@SubscribeEvent
-//	public static void onSoundEvenrRegistration(RegistryEvent.Register<SoundEvent> event) {
-//		event.getRegistry().register(new SoundEvent(SOUND).setRegistryName(SOUND));
-//	}
 }

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "*+*",
+    "#-#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:etherium_plate_riveted"
+    },
+    "*": {
+      "item": "zone:etherium_bars"
+    },
+    "+": {
+      "item": "zone:etherium_hull"
+    },
+    "-": {
+      "item": "zone:advenced_circuit_board"
+    }
+  },
+  "result": {
+    "item": "zone:boiler"
+  }
+}

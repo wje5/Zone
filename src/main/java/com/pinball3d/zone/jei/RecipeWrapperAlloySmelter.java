@@ -4,17 +4,14 @@ import java.util.Arrays;
 
 import com.pinball3d.zone.recipe.RecipeAlloySmelter;
 
-import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 
 public class RecipeWrapperAlloySmelter implements IRecipeWrapper {
-	private final IJeiHelpers jeiHelpers;
 	protected final RecipeAlloySmelter recipe;
 
-	public RecipeWrapperAlloySmelter(IJeiHelpers jeiHelpers, RecipeAlloySmelter recipe) {
-		this.jeiHelpers = jeiHelpers;
+	public RecipeWrapperAlloySmelter(RecipeAlloySmelter recipe) {
 		this.recipe = recipe;
 	}
 
