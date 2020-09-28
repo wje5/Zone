@@ -7,8 +7,8 @@
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["3DPinball"],
-  "credits": "",
+  "authorList": ["3DPinball","Sliver"],
+  "credits": "Special thanks to §¬§â§Þ§± for his translation",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

@@ -105,6 +105,7 @@ item.tiny_pile_clay_dust.name=小撮粘土粉
 item.tiny_pile_flint_dust.name=小撮燧石粉
 item.tiny_pile_prismarine_dust.name=小撮海晶粉
 item.construct_block_axis.name=结构方块
+item.construct_block_axis_rot.name=结构方块
 item.truss_x.name=桁架
 item.truss_z.name=桁架
 
@@ -223,6 +224,7 @@ manual.sphinx_system_5=-第三层-\n\n\n\n\n\n\n\n\n\n纵向放置桁架以支�
 manual.sphinx_system_6=-第四层-\n\n\n\n\n\n\n\n\n\n横向放置桁架以连接各模块。
 manual.sphinx_system_7=-第五层-\n\n\n\n\n\n\n\n\n\n结构方块或桁架错误连接，\n将导致结构无法正确识别。
 manual.sphinx_system_8=\n在束能器下方放置输导模块，\n以为系统提供足够的能量。\n\n然后在第一层的任一侧面中心\n放置控制器主机，完成搭建。\n\n右击控制器主机以开机，\n初始密码为空。\n\n开机时将在约13秒内，\n消耗约4组能量。\n当主机保持开启时，\n每10tick将消耗一个能量。\n\n§o玩得愉快！§r
+manual.sphinx_system_9=null
 
 sound.grinder=磨粉机：工作
 sound.drainer=收集器：工作
