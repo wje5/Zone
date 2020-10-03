@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) {
+		new CapabilityLoader(event);
 		TabZone.init();
 		TileEntityLoader.init();
 		new NetworkHandler();

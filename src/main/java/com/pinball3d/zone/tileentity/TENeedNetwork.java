@@ -117,6 +117,16 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	}
 
 	@Override
+	public WorkingState getWorkingState() {
+		return isConnected() ? WorkingState.WORKING : WorkingState.DISCONNECTED;
+	}
+
+	@Override
+	public String getName() {
+		return getBlockType().getLocalizedName();
+	}
+
+	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		if (compound.hasKey("networkMost")) {
 			network = compound.getUniqueId("network");

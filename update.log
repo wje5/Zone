@@ -144,3 +144,10 @@ Update IO Panel UI
 Fix Crucible render in multiplayer
 Add recipe that can use coal dust make torch
 Add Boiler and Hybrid Fuel
+
+#1.6.1
+Now you can choose units in Terminal or Controller Mainframe
+Try fix Crucible render
+Update network info screen
+Update IO Panel texture
+Add Manual to player inventory on first join world

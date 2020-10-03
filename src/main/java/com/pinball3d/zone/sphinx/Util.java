@@ -6,6 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
@@ -126,6 +128,24 @@ public class Util {
 		tessellator.draw();
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableBlend();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void renderItem(ItemStack stack, int x, int y, float scale) {
+		GlStateManager.pushMatrix();
+		RenderItem ir = Minecraft.getMinecraft().getRenderItem();
+		GlStateManager.enableLighting();
+		GlStateManager.enableDepth();
+		GlStateManager.enableBlend();
+		RenderHelper.enableGUIStandardItemLighting();
+		GlStateManager.disableLighting();
+		GlStateManager.enableRescaleNormal();
+		GlStateManager.enableColorMaterial();
+		GlStateManager.enableLighting();
+		GlStateManager.translate(x, y, 0);
+		GlStateManager.scale(scale, scale, scale);
+		ir.renderItemAndEffectIntoGUI(stack, 0, 0);
+		GlStateManager.popMatrix();
 	}
 
 	/**

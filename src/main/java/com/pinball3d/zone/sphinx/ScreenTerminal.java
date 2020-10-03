@@ -1,9 +1,11 @@
 package com.pinball3d.zone.sphinx;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -30,7 +32,8 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	protected Map<Long, ChunkRenderCache> mapCache = new HashMap<Long, ChunkRenderCache>();
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons .png");
+	private static final ResourceLocation TEXTURE_3 = new ResourceLocation("zone:textures/gui/sphinx/icons_3.png");
 	private static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");
 	private Set<Component> components = new HashSet<Component>();
@@ -39,6 +42,8 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	private boolean flag;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	public ItemStack stack;
+	private List<Pointer> chosen = new ArrayList<Pointer>();
+	private int chosenIndex = 0;
 
 	public ScreenTerminal(ItemStack stack) {
 		this.stack = stack;
@@ -63,9 +68,15 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			}
 		} else {
 			if (subscreens.empty()) {
-				components.forEach(e -> {
-					e.onKeyTyped(typedChar, keyCode);
-				});
+				Iterator<Component> it = components.iterator();
+				boolean flag = false;
+				while (flag && it.hasNext()) {
+					Component c = it.next();
+					flag = c.onKeyTyped(typedChar, keyCode);
+				}
+				if (keyCode == Keyboard.KEY_TAB) {
+					setChosenIndex(chosenIndex + 1);
+				}
 			} else {
 				subscreens.peek().keyTyped(typedChar, keyCode);
 			}
@@ -101,6 +112,18 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 		if (isConnected()) {
 			button.setEnabled(true);
 			MapHandler.draw(getNetwork(), width, height);
+			if (!chosen.isEmpty()) {
+				Util.drawTexture(TEXTURE_3, width - 128, height - 58, 256, 115, 0.5F);
+				Util.drawBorder(width - 106, height - 47, 28, 28, 1, 0xFF20E6E6);
+				chosen.get(0).renderThumbHuge(width - 105, height - 46);
+				if (chosen.size() > 1) {
+					for (int i = 0; i < chosen.size(); i++) {
+						Util.drawBorder(width - 74 + (i % 5) * 15, height - (i < 5 ? 47 : 32), 13, 13, 1,
+								i == chosenIndex ? 0xFFE0E0E0 : 0xFF20E6E6);
+						chosen.get(i).renderThumb(width - 73 + (i % 5) * 15, height - (i < 5 ? 46 : 31));
+					}
+				}
+			}
 		} else {
 			button.setEnabled(false);
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
@@ -121,13 +144,55 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 				screen.doRender(mouseX, mouseY);
 			}
 		}
-
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;
+	}
+
+	public void setChosen(List<Pointer> l) {
+		chosen = l.size() > 10 ? l.subList(0, 10) : l;
+		updateChosenUnitButton();
+	}
+
+	public List<Pointer> getChosen() {
+		return chosen;
+	}
+
+	public void setChosenIndex(int index) {
+		if (index < chosen.size()) {
+			chosenIndex = index;
+		} else {
+			chosenIndex = 0;
+		}
+	}
+
+	public int getChosenIndex() {
+		return chosenIndex;
+	}
+
+	public void updateChosenUnitButton() {
+		Iterator<Component> it = components.iterator();
+		while (it.hasNext()) {
+			Component c = it.next();
+			if (c instanceof IUnitButton) {
+				it.remove();
+			}
+		}
+		if (!chosen.isEmpty()) {
+			List<Component> l = chosen.get(0).getUnitButtons(this);
+			it = l.iterator();
+			int index = 0;
+			while (it.hasNext()) {
+				Component c = it.next();
+				c.x = width - 100 + index * 13;
+				c.y = height - 12;
+				index++;
+			}
+			components.addAll(l);
+		}
 	}
 
 	private boolean checkItem() {
@@ -236,13 +301,22 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
 		if ((clickX == -1 || Math.abs(mouseX - clickX) < 5) && (clickY == -1 || Math.abs(mouseY - clickY) < 5)) {
 			if (subscreens.empty()) {
-				components.forEach(e -> {
-					int x = mouseX - e.x;
-					int y = mouseY - e.y;
-					if (x >= 0 && x <= e.width && y >= 0 && y <= e.height) {
-						e.onClickScreen(x, y, state != 1);
+				Iterator<Component> it = components.iterator();
+				boolean flag = false;
+				while (it.hasNext()) {
+					Component c = it.next();
+					int x = mouseX - c.x;
+					int y = mouseY - c.y;
+					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
+						if (c.onClickScreen(x, y, state != 1)) {
+							flag = true;
+							break;
+						}
 					}
-				});
+				}
+				if (!flag) {
+					MapHandler.onClick(width, height, mouseX, mouseY);
+				}
 			} else {
 				Subscreen screen = subscreens.peek();
 				if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y

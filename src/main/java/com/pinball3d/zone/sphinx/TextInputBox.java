@@ -31,15 +31,18 @@ public class TextInputBox extends Component {
 	}
 
 	@Override
-	public void onLeftClick(int x, int y) {
-		super.onLeftClick(x, y);
+	public boolean onLeftClick(int x, int y) {
+		if (super.onLeftClick(x, y)) {
+			return true;
+		}
 		if (event != null) {
 			event.run();
 		}
+		return true;
 	}
 
 	@Override
-	public void onKeyTyped(char typedChar, int keyCode) {
+	public boolean onKeyTyped(char typedChar, int keyCode) {
 		if (isFocus) {
 			if (keyCode == Keyboard.KEY_BACK && text.length() >= 1) {
 				text = text.substring(0, text.length() - 1);
@@ -47,7 +50,9 @@ public class TextInputBox extends Component {
 			if (Util.isValidChar(typedChar, flag) && text.length() < maxLength) {
 				text += typedChar;
 			}
+			return true;
 		}
+		return false;
 	}
 
 	@Override

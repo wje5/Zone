@@ -16,20 +16,20 @@ public class Component {
 		this.height = height;
 	}
 
-	public void onClickScreen(int x, int y, boolean isLeft) {
+	public boolean onClickScreen(int x, int y, boolean isLeft) {
 		if (isLeft) {
-			onLeftClick(x, y);
+			return onLeftClick(x, y);
 		} else {
-			onRightClick(x, y);
+			return onRightClick(x, y);
 		}
 	}
 
-	public void onLeftClick(int x, int y) {
-
+	public boolean onLeftClick(int x, int y) {
+		return false;
 	}
 
-	public void onRightClick(int x, int y) {
-
+	public boolean onRightClick(int x, int y) {
+		return false;
 	}
 
 	public void onDrag(int mouseX, int mouseY, int moveX, int moveY) {
@@ -40,7 +40,7 @@ public class Component {
 
 	}
 
-	public void onKeyTyped(char typedChar, int keyCode) {
-
+	public boolean onKeyTyped(char typedChar, int keyCode) {
+		return false;
 	}
 }

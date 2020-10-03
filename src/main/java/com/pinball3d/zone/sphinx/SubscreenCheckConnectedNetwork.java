@@ -24,7 +24,7 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 				y + 35 + parent.getYOffset() > displayHeight ? displayHeight - 35 - parent.getYOffset() : y, 165, 35,
 				false);
 		this.tileentity = tileentity;
-		components.add(new HyperTextHutton(this, this.x + 35, this.y + 24, I18n.format("sphinx.info"), new Runnable() {
+		components.add(new HyperTextButton(this, this.x + 35, this.y + 24, I18n.format("sphinx.info"), new Runnable() {
 			@Override
 			public void run() {
 				SubscreenNetworkConfig screen = (SubscreenNetworkConfig) parent;
@@ -35,7 +35,7 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 			}
 		}));
 		components.add(
-				new HyperTextHutton(this, this.x + 70, this.y + 24, I18n.format("sphinx.disconnect"), new Runnable() {
+				new HyperTextButton(this, this.x + 70, this.y + 24, I18n.format("sphinx.disconnect"), new Runnable() {
 					@Override
 					public void run() {
 						if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {

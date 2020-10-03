@@ -60,9 +60,12 @@ public abstract class ScreenManualBase extends GuiScreen implements IParent {
 			}
 		} else {
 			if (subscreens.empty()) {
-				components.forEach(e -> {
-					e.onKeyTyped(typedChar, keyCode);
-				});
+				Iterator<Component> it = components.iterator();
+				boolean flag = false;
+				while (flag && it.hasNext()) {
+					Component c = it.next();
+					flag = c.onKeyTyped(typedChar, keyCode);
+				}
 			} else {
 				subscreens.peek().keyTyped(typedChar, keyCode);
 			}
@@ -152,13 +155,17 @@ public abstract class ScreenManualBase extends GuiScreen implements IParent {
 	protected void mouseReleased(int mouseX, int mouseY, int state) {
 		if ((clickX == -1 || Math.abs(mouseX - clickX) < 5) && (clickY == -1 || Math.abs(mouseY - clickY) < 5)) {
 			if (subscreens.empty()) {
-				components.forEach(e -> {
-					int x = mouseX - e.x;
-					int y = mouseY - e.y;
-					if (x >= 0 && x <= e.width && y >= 0 && y <= e.height) {
-						e.onClickScreen(x, y, state != 1);
+				Iterator<Component> it = components.iterator();
+				while (it.hasNext()) {
+					Component c = it.next();
+					int x = mouseX - c.x;
+					int y = mouseY - c.y;
+					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
+						if (c.onClickScreen(x, y, state != 1)) {
+							break;
+						}
 					}
-				});
+				}
 			} else {
 				Subscreen screen = subscreens.peek();
 				if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y

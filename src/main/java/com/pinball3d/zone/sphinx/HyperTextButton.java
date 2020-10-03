@@ -1,10 +1,10 @@
 package com.pinball3d.zone.sphinx;
 
-public class HyperTextHutton extends Component {
+public class HyperTextButton extends Component {
 	protected String text;
 	protected Runnable event;
 
-	public HyperTextHutton(IParent parent, int x, int y, String text, Runnable onClick) {
+	public HyperTextButton(IParent parent, int x, int y, String text, Runnable onClick) {
 		super(parent, x, y, parent.getFontRenderer().getStringWidth(text), parent.getFontRenderer().FONT_HEIGHT);
 		this.x = x;
 		this.y = y;
@@ -13,9 +13,12 @@ public class HyperTextHutton extends Component {
 	}
 
 	@Override
-	public void onLeftClick(int x, int y) {
-		super.onLeftClick(x, y);
+	public boolean onLeftClick(int x, int y) {
+		if (super.onLeftClick(x, y)) {
+			return true;
+		}
 		event.run();
+		return true;
 	}
 
 	@Override

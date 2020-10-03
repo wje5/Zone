@@ -125,7 +125,28 @@ public class MapHandler {
 			instance.xOffset += dragX;
 			instance.yOffset += dragY;
 		}
+	}
 
+	public static void onClick(int width, int height, int x, int y) {
+		if (instance == null) {
+			return;
+		}
+		List<PointerNeedNetwork> list = new ArrayList<PointerNeedNetwork>();
+		list.add(instance.processingCenter);
+		list.addAll(instance.nodes);
+		list.addAll(instance.storges);
+		list.addAll(instance.devices);
+		list.addAll(instance.productions);
+		List<Pointer> l = new ArrayList<Pointer>();
+		list.forEach(e -> {
+			if (e.pos.getDim() == mc.player.dimension
+					&& e.isClick(x + instance.getRenderOffsetX(width), y + instance.getRenderOffsetY(height))) {
+				l.add(e);
+			}
+		});
+		if (mc.currentScreen instanceof ScreenTerminal) {
+			((ScreenTerminal) mc.currentScreen).setChosen(l);
+		}
 	}
 
 	private void updatePlayer() {

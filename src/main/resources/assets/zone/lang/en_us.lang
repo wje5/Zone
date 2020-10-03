@@ -104,8 +104,8 @@ item.tiny_pile_clarity_glass_dust.name=Tiny Pile Clarity Glass Dust
 item.tiny_pile_clay_dust.name=Tiny Pile Clay Dust
 item.tiny_pile_flint_dust.name=Tiny Pile Flint Dust
 item.tiny_pile_prismarine_dust.name=Tiny Pile Prismarine Dust
-item.construct_block_axis.name=Construct Block Axis
-item.construct_block_axis_rot.name=Construct Block Axis
+item.construct_block_axis.name=Construct Block
+item.construct_block_axis_rot.name=Construct Block
 item.truss_x.name=Truss
 item.truss_z.name=Truss
 
@@ -199,6 +199,9 @@ sphinx.working=Working
 sphinx.off=Off
 sphinx.starting=Starting
 sphinx.uninit=Uninitialized
+sphinx.disconnected=Disconnected
+sphinx.unit_info=Unit Infomation
+sphinx.unit_name=Unit name
 
 manual.preface=   Welcome to Zone!!\n\nCurrently it introduced\n*An ore multiplying Cricible\n*A kind of Drill with replaceable\nhead\n*The Grinder crushing ores to\n32 pieces\n*Even more ore-multiplying ways\n(up to 7x!)\n*The Nail Gun making holes all\nover your enemies\n*An adorable submarine\n*All-Mighty Sphinx© System\n*and more...
 manual.menu=            Menu\n          -Tier 1-\n-Tools and Materials-\n-Crucible and Miscellaneous-\n-Drainer-\n-Grinder-\n-Electric Furnace-\n-Alloy Smelter-\n          -Tier 2-\n-Boiler-\n-Drill-\n-Centrifuge-\n-Crystallizer-\n-Sphinx© System-
@@ -225,6 +228,7 @@ manual.sphinx_system_6=-Layer 4-\n\n\n\n\n\n\n\n\n\nPlace the Trusses horizontal
 manual.sphinx_system_7=-Layer 5-\n\n\n\n\n\n\n\n\n\nIf any of the structure parts\nare not connected correctly,\nthe whole structure will not be\nactive.
 manual.sphinx_system_8=\nPlace the Transmission Module\nright below the\nDynavolt Restrainer.\nThe whole system depends on\nthe energy provided by them.\n\nThen, at the center of any of\nthe four edges in Layer 1,\nyou should place the\nController Mainframe, that\nshould form the structure.\n\nRight-click on it to boot\nthe system.\nThe system doesn't require a\npassword by default.
 manual.sphinx_system_9=Booting procedure takes about\n13 seconds,and costs roughly\n4 stacks of Energy.\nIt uses one Energy per 10 ticks.\nIt's necessary to maintain the\nsystem.\n\n§oHave fun!§r
+
 sound.grinder=Grinder:Work
 sound.drainer=Drainer:Work
 sound.alloy_smelter=Alloy Smelter:Work

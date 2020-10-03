@@ -233,9 +233,12 @@ public class SubscreenViewStorage extends Subscreen {
 	@Override
 	public void keyTyped(char typedChar, int keyCode) {
 		if (subscreens.empty()) {
-			components.forEach(e -> {
-				e.onKeyTyped(typedChar, keyCode);
-			});
+			Iterator<Component> it = components.iterator();
+			boolean flag = false;
+			while (flag && it.hasNext()) {
+				Component c = it.next();
+				flag = c.onKeyTyped(typedChar, keyCode);
+			}
 			if (keyCode == Keyboard.KEY_RETURN && box.isFocus) {
 				search = box.text;
 				box.isFocus = false;

@@ -1,5 +1,7 @@
 package com.pinball3d.zone.sphinx;
 
+import java.util.Iterator;
+
 import com.pinball3d.zone.inventory.GuiContainerIOPanel;
 import com.pinball3d.zone.network.MessageIOPanelRequest;
 import com.pinball3d.zone.network.NetworkHandler;
@@ -114,9 +116,12 @@ public class SubscreenIOPanelRequest extends Subscreen {
 	@Override
 	public void keyTyped(char typedChar, int keyCode) {
 		if (subscreens.empty()) {
-			components.forEach(e -> {
-				e.onKeyTyped(typedChar, keyCode);
-			});
+			Iterator<Component> it = components.iterator();
+			boolean flag = false;
+			while (flag && it.hasNext()) {
+				Component c = it.next();
+				flag = c.onKeyTyped(typedChar, keyCode);
+			}
 		} else {
 			subscreens.peek().keyTyped(typedChar, keyCode);
 		}

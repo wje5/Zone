@@ -49,18 +49,21 @@ public class ScrollingList extends Component {
 	}
 
 	@Override
-	public void onLeftClick(int x, int y) {
-		super.onLeftClick(x, y);
+	public boolean onLeftClick(int x, int y) {
+		if (super.onLeftClick(x, y)) {
+			return true;
+		}
 		Iterator<ListBar> it = list.iterator();
 		int yOffset = 0;
 		while (it.hasNext()) {
 			ListBar bar = it.next();
-			yOffset += bar.height;
-			if (yOffset >= y + scrollingDistance && yOffset < y + scrollingDistance + bar.height) {
+			if (y + scrollingDistance >= yOffset && y + scrollingDistance < yOffset + bar.height) {
 				bar.event.run();
-				return;
+				return true;
 			}
+			yOffset += bar.height;
 		}
+		return false;
 	}
 
 	public class ListBar {

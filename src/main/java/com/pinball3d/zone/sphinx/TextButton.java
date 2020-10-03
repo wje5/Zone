@@ -13,9 +13,12 @@ public class TextButton extends Component {
 	}
 
 	@Override
-	public void onLeftClick(int x, int y) {
-		super.onLeftClick(x, y);
+	public boolean onLeftClick(int x, int y) {
+		if (super.onLeftClick(x, y)) {
+			return true;
+		}
 		event.run();
+		return true;
 	}
 
 	@Override

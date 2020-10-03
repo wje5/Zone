@@ -2,10 +2,8 @@ package com.pinball3d.zone.manual;
 
 import com.pinball3d.zone.sphinx.Component;
 import com.pinball3d.zone.sphinx.IParent;
+import com.pinball3d.zone.sphinx.Util;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 
 public class BlockShow extends Component {
@@ -20,19 +18,6 @@ public class BlockShow extends Component {
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
-		GlStateManager.pushMatrix();
-		RenderItem ir = mc.getRenderItem();
-		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
-		GlStateManager.enableBlend();
-		RenderHelper.enableGUIStandardItemLighting();
-		GlStateManager.disableLighting();
-		GlStateManager.enableRescaleNormal();
-		GlStateManager.enableColorMaterial();
-		GlStateManager.enableLighting();
-		GlStateManager.translate(x, y, 0);
-		GlStateManager.scale(scale, scale, scale);
-		ir.renderItemAndEffectIntoGUI(stack, 0, 0);
-		GlStateManager.popMatrix();
+		Util.renderItem(stack, x, y, scale);
 	}
 }

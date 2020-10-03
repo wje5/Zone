@@ -91,13 +91,17 @@ public class Subscreen implements IParent {
 
 	public void onClick(int x, int y, boolean isLeft) {
 		if (subscreens.empty()) {
-			components.forEach(e -> {
-				int cX = x + this.x - e.x;
-				int cY = y + this.y - e.y;
-				if (cX >= 0 && cX <= e.width && cY >= 0 && cY <= e.height) {
-					e.onClickScreen(cX, cY, isLeft);
+			Iterator<Component> it = components.iterator();
+			while (it.hasNext()) {
+				Component c = it.next();
+				int cX = x + this.x - c.x;
+				int cY = y + this.y - c.y;
+				if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
+					if (c.onClickScreen(cX, cY, isLeft)) {
+						break;
+					}
 				}
-			});
+			}
 		} else {
 			Subscreen screen = subscreens.peek();
 			int x1 = x + this.x;
@@ -146,9 +150,12 @@ public class Subscreen implements IParent {
 
 	public void keyTyped(char typedChar, int keyCode) {
 		if (subscreens.empty()) {
-			components.forEach(e -> {
-				e.onKeyTyped(typedChar, keyCode);
-			});
+			Iterator<Component> it = components.iterator();
+			boolean flag = false;
+			while (flag && it.hasNext()) {
+				Component c = it.next();
+				flag = c.onKeyTyped(typedChar, keyCode);
+			}
 		} else {
 			subscreens.peek().keyTyped(typedChar, keyCode);
 		}

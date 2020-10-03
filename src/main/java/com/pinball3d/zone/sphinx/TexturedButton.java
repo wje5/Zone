@@ -36,11 +36,15 @@ public class TexturedButton extends Component {
 	}
 
 	@Override
-	public void onLeftClick(int x, int y) {
-		super.onLeftClick(x, y);
+	public boolean onLeftClick(int x, int y) {
+		if (super.onLeftClick(x, y)) {
+			return true;
+		}
 		if (enabled) {
 			event.run();
+			return true;
 		}
+		return false;
 	}
 
 	@Override

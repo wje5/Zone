@@ -30,6 +30,7 @@ public class TECrucible extends TileEntity implements ITickable {
 		if (world.isRemote) {
 			return;
 		}
+		boolean flag = false;
 		if (world.getBlockState(pos.add(0, -1, 0)).getBlock() == BlockLoader.burning_box_light) {
 			temp = Math.min(temp + 1.2F, 1220.0F);
 		} else {
@@ -49,6 +50,7 @@ public class TECrucible extends TileEntity implements ITickable {
 					if (ore.getStackInSlot(0).isEmpty()) {
 						ore.setStackInSlot(0, new ItemStack(Blocks.IRON_ORE, stack.getCount()));
 						stack.setCount(0);
+						flag = true;
 					} else {
 						int a = Math.min(64 - ore.getStackInSlot(0).getCount(), stack.getCount());
 						ore.setStackInSlot(0, new ItemStack(Blocks.IRON_ORE, ore.getStackInSlot(0).getCount() + a));
@@ -59,14 +61,19 @@ public class TECrucible extends TileEntity implements ITickable {
 		}
 		if (temp >= 935 && !ore.getStackInSlot(0).isEmpty()) {
 			if (amount < 10) {
+				if (amount <= 0) {
+					flag = true;
+				}
 				amount += 2;
 				ore.setStackInSlot(0, new ItemStack(Blocks.IRON_ORE, ore.getStackInSlot(0).getCount() - 1));
 				temp -= 120;
 			}
 		}
-		IBlockState state = world.getBlockState(pos);
-		BlockCrucible.setState(state.withProperty(BlockCrucible.ORE, !ore.getStackInSlot(0).isEmpty())
-				.withProperty(BlockCrucible.FLUID, amount > 0), world, pos);
+		if (flag) {
+			IBlockState state = world.getBlockState(pos);
+			BlockCrucible.setState(state.withProperty(BlockCrucible.ORE, !ore.getStackInSlot(0).isEmpty())
+					.withProperty(BlockCrucible.FLUID, amount > 0), world, pos);
+		}
 	}
 
 	@Override

@@ -4,7 +4,7 @@ public class PointerProduction extends PointerNeedNetwork {
 	private boolean valid;
 
 	public PointerProduction(WorldPos pos, boolean valid) {
-		super(pos);
+		super(pos, 7, 4);
 		this.valid = valid;
 	}
 
@@ -16,5 +16,11 @@ public class PointerProduction extends PointerNeedNetwork {
 			Util.drawTexture(TEXTURE, pos.getPos().getX() - offsetX, pos.getPos().getZ() - offsetZ + 1, 116, 21, 9, 9,
 					0.5F);
 		}
+	}
+
+	@Override
+	public boolean isClick(int x, int z) {
+		return pos.getPos().getX() - 3 <= x && pos.getPos().getX() - 3 + width >= x && pos.getPos().getZ() - 2 <= z
+				&& pos.getPos().getZ() - 2 + width >= z;
 	}
 }

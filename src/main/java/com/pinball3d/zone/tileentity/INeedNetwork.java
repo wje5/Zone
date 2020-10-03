@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import com.pinball3d.zone.sphinx.WorldPos;
 
+import net.minecraft.client.resources.I18n;
+
 public interface INeedNetwork {
 	public void connect(UUID uuid, String password);
 
@@ -22,4 +24,23 @@ public interface INeedNetwork {
 	public String getPassword();
 
 	public void setPassword(String password);
+
+	public WorkingState getWorkingState();
+
+	public String getName();
+
+	public static enum WorkingState {
+		WORKING("sphinx.working"), DISCONNECTED("sphinx.disconnected");
+
+		String key;
+
+		private WorkingState(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {
+			return I18n.format(key);
+		}
+	}
 }

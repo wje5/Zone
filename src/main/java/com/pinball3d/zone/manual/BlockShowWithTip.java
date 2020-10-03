@@ -2,11 +2,10 @@ package com.pinball3d.zone.manual;
 
 import com.pinball3d.zone.sphinx.Component;
 import com.pinball3d.zone.sphinx.IParent;
+import com.pinball3d.zone.sphinx.Util;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.ItemStack;
 
 public class BlockShowWithTip extends Component {
@@ -21,19 +20,7 @@ public class BlockShowWithTip extends Component {
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
-		GlStateManager.pushMatrix();
-		RenderItem ir = mc.getRenderItem();
-		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
-		GlStateManager.enableBlend();
-		RenderHelper.enableGUIStandardItemLighting();
-		GlStateManager.disableLighting();
-		GlStateManager.enableRescaleNormal();
-		GlStateManager.enableColorMaterial();
-		GlStateManager.enableLighting();
-		GlStateManager.scale(scale, scale, scale);
-		ir.renderItemAndEffectIntoGUI(stack, x, y);
-		GlStateManager.popMatrix();
+		Util.renderItem(stack, x, y, scale);
 	}
 
 	public void renderToolTip(int mouseX, int mouseY) {
