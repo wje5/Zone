@@ -32,7 +32,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	protected Map<Long, ChunkRenderCache> mapCache = new HashMap<Long, ChunkRenderCache>();
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons .png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE_3 = new ResourceLocation("zone:textures/gui/sphinx/icons_3.png");
 	private static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");

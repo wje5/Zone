@@ -18,7 +18,6 @@ public class SubscreenNetworkInfo extends Subscreen {
 
 	public SubscreenNetworkInfo(IParent parent, WorldPos pos) {
 		this(parent, parent.getWidth() / 2 - 150, parent.getHeight() / 2 - 100, pos);
-
 	}
 
 	public SubscreenNetworkInfo(IParent parent, int x, int y, WorldPos pos) {

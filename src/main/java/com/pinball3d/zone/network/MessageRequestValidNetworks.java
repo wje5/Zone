@@ -1,19 +1,12 @@
 package com.pinball3d.zone.network;
 
-import java.util.List;
-
 import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.WorldPos;
-import com.pinball3d.zone.tileentity.INeedNetwork;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -55,30 +48,9 @@ public class MessageRequestValidNetworks implements IMessage {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
-					World world = message.pos.getWorld();
-					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					List<WorldPos> list = SphinxUtil.getValidNetworks(player.dimension, message.pos.getPos().getX(),
-							message.pos.getPos().getY(), message.pos.getPos().getZ());
-					NBTTagCompound tag = new NBTTagCompound();
-					if (!message.isPlayer) {
-						TileEntity tileentity = message.pos.getTileEntity();
-						if (tileentity instanceof INeedNetwork) {
-							WorldPos network = ((INeedNetwork) tileentity).getNetworkPos();
-							if (network != null) {
-								tag.setTag("connected", network.writeToNBT(new NBTTagCompound()));
-							}
-						}
-					}
-					NBTTagList taglist = new NBTTagList();
-					list.forEach(e -> {
-						TEProcessingCenter te = (TEProcessingCenter) e.getTileEntity();
-						NBTTagCompound t = new NBTTagCompound();
-						t.setString("name", te.getName());
-						e.writeToNBT(t);
-						taglist.appendTag(t);
-					});
-					tag.setTag("list", taglist);
-					NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), player);
+					EntityPlayer player = message.pos.getWorld().getPlayerEntityByName(message.name);
+					NBTTagCompound tag = SphinxUtil.getValidNetworkData(message.pos, player, message.isPlayer);
+					NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), (EntityPlayerMP) player);
 				}
 			});
 			return null;

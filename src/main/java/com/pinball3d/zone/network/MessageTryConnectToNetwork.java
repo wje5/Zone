@@ -1,6 +1,7 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.item.ItemLoader;
+import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
@@ -88,6 +89,8 @@ public class MessageTryConnectToNetwork implements IMessage {
 								tag.setUniqueId("network", te.getUUID());
 								tag.setString("password", message.password);
 								stack.setTagCompound(tag);
+								NBTTagCompound data = SphinxUtil.getValidNetworkData(message.pos, player, true);
+								NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(data), player);
 							} else {
 								TileEntity t = message.pos.getTileEntity();
 								if (t instanceof INeedNetwork) {
@@ -95,6 +98,8 @@ public class MessageTryConnectToNetwork implements IMessage {
 									((INeedNetwork) t).setWorldPos(message.network, te.getUUID());
 									te.addNeedNetwork(message.pos);
 								}
+								NBTTagCompound tag = SphinxUtil.getValidNetworkData(message.pos, player, false);
+								NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), player);
 							}
 						} else {
 							NetworkHandler.instance.sendTo(new MessageConnectNetworkCallbackWrong(), player);

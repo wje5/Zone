@@ -1,36 +1,45 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageDisconnect implements IMessage {
+	String name;
 	WorldPos needNetwork;
 
 	public MessageDisconnect() {
 
 	}
 
-	public MessageDisconnect(WorldPos needNetwork) {
+	public MessageDisconnect(EntityPlayer player, WorldPos needNetwork) {
+		name = player.getName();
 		this.needNetwork = needNetwork;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
+		name = ByteBufUtils.readUTF8String(buf);
 		needNetwork = WorldPos.readFromByte(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
+		ByteBufUtils.writeUTF8String(buf, name);
 		needNetwork.writeToByte(buf);
 	}
 
@@ -41,6 +50,7 @@ public class MessageDisconnect implements IMessage {
 				@Override
 				public void run() {
 					World world = message.needNetwork.getWorld();
+					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
 					if (!world.isAreaLoaded(message.needNetwork.getPos(), 5)) {
 						return;
 					}
@@ -53,6 +63,8 @@ public class MessageDisconnect implements IMessage {
 							TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
 							pc.removeNeedNetwork(message.needNetwork);
 						}
+						NBTTagCompound tag = SphinxUtil.getValidNetworkData(message.needNetwork, player, false);
+						NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), player);
 					}
 				}
 			});

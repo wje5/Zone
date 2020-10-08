@@ -7,8 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.pinball3d.zone.item.ItemLoader;
+import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
@@ -31,5 +38,50 @@ public class SphinxUtil {
 			}
 		});
 		return list;
+	}
+
+	public static NBTTagCompound getValidNetworkData(WorldPos pos, EntityPlayer player, boolean isPlayer) {
+		List<WorldPos> list = SphinxUtil.getValidNetworks(player.dimension, pos.getPos().getX(), pos.getPos().getY(),
+				pos.getPos().getZ());
+		NBTTagCompound tag = new NBTTagCompound();
+		if (!isPlayer) {
+			TileEntity tileentity = pos.getTileEntity();
+			if (tileentity instanceof INeedNetwork) {
+				WorldPos network = ((INeedNetwork) tileentity).getNetworkPos();
+				if (network != null) {
+					tag.setTag("connected", network.writeToNBT(new NBTTagCompound()));
+				}
+			}
+		} else {
+			ItemStack stack = player.getHeldItemMainhand();
+			if (stack.getItem() != ItemLoader.terminal) {
+				stack = player.getHeldItemOffhand();
+			}
+			if (stack.getItem() == ItemLoader.terminal) {
+				NBTTagCompound t = stack.getTagCompound();
+				if (t == null) {
+					t = new NBTTagCompound();
+					stack.setTagCompound(t);
+				}
+				if (t.hasUniqueId("network")) {
+					UUID uuid = t.getUniqueId("network");
+					GlobalNetworkData data = GlobalNetworkData.getData(pos.getWorld());
+					WorldPos network = data.getNetwork(uuid);
+					if (network != null) {
+						tag.setTag("connected", network.writeToNBT(new NBTTagCompound()));
+					}
+				}
+			}
+		}
+		NBTTagList taglist = new NBTTagList();
+		list.forEach(e -> {
+			TEProcessingCenter te = (TEProcessingCenter) e.getTileEntity();
+			NBTTagCompound t = new NBTTagCompound();
+			t.setString("name", te.getName());
+			e.writeToNBT(t);
+			taglist.appendTag(t);
+		});
+		tag.setTag("list", taglist);
+		return tag;
 	}
 }

@@ -46,26 +46,24 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 							screen.worldpos = null;
 							parent.quitScreen(SubscreenCheckConnectedNetwork.this);
 							NetworkHandler.instance.sendToServer(new MessageTerminalDisconnect(mc.player));
-							((SubscreenNetworkConfig) parent).refresh();
 						} else {
 							INeedNetwork te = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity;
 							WorldPos pos = te.getNetworkPos();
 							if (pos != null) {
 								TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
 								WorldPos pos2 = new WorldPos((TileEntity) te);
-								NetworkHandler.instance.sendToServer(new MessageDisconnect(pos2));
+								NetworkHandler.instance.sendToServer(new MessageDisconnect(mc.player, pos2));
 								pc.removeNeedNetwork(pos2);
 							} else if (te.getNetwork() != null) {
 								pos = GlobalNetworkData.getData(((TileEntity) te).getWorld())
 										.getNetwork(te.getNetwork());
 								WorldPos pos2 = new WorldPos((TileEntity) te);
-								NetworkHandler.instance.sendToServer(new MessageDisconnect(pos2));
+								NetworkHandler.instance.sendToServer(new MessageDisconnect(mc.player, pos2));
 								TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
 								pc.removeNeedNetwork(pos2);
 							}
 							te.deleteNetwork();
 							parent.quitScreen(SubscreenCheckConnectedNetwork.this);
-							((SubscreenNetworkConfig) parent).refresh();
 						}
 					}
 				}));

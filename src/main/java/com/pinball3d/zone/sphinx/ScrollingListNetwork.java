@@ -35,6 +35,7 @@ public class ScrollingListNetwork extends Component {
 	}
 
 	public void setData(NBTTagCompound tag) {
+		data.clear();
 		connected = WorldPos.load(tag.getCompoundTag("connected"));
 		NBTTagList list = tag.getTagList("list", 10);
 		list.forEach(e -> {

@@ -3,6 +3,7 @@ package com.pinball3d.zone.sphinx;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -34,6 +35,10 @@ public class WorldPos {
 
 	public WorldPos(TileEntity te) {
 		this(te.getPos(), te.getWorld());
+	}
+
+	public WorldPos(Entity entity) {
+		this(entity.getPosition(), entity.getEntityWorld());
 	}
 
 	public World getWorld() {
