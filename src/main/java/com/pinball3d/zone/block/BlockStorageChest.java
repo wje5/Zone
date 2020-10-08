@@ -56,7 +56,7 @@ public class BlockStorageChest extends BlockContainer {
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		TEStorageChest te = (TEStorageChest) worldIn.getTileEntity(pos);
-
+		te.unload();
 		IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 
 		for (int i = handler.getSlots() - 1; i >= 0; --i) {

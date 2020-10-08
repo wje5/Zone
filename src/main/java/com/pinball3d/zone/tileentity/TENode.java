@@ -1,6 +1,8 @@
 package com.pinball3d.zone.tileentity;
 
-public class TENode extends TENeedNetwork {
+import com.pinball3d.zone.ChunkHandler.IChunkLoader;
+
+public class TENode extends TENeedNetwork implements IChunkLoader {
 	public TENode() {
 
 	}

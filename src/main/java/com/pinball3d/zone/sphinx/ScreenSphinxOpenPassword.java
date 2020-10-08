@@ -60,22 +60,25 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 				new Runnable() {
 					@Override
 					public void run() {
-						if ((input.length() == 8 || input.length() == 0) && tileentity.isCorrectAdminPassword(input)) {
-							if (flag) {
-								NetworkHandler.instance.sendToServer(new MessageOpenSphinx(input,
-										new WorldPos(tileentity.getPos(), tileentity.getWorld()),
-										new NBTTagCompound()));
-								tileentity.open();
-								mc.displayGuiScreen(new ScreenLoadSphinx(tileentity));
-							} else {
-								mc.displayGuiScreen(new ScreenSphinxController(tileentity, input));
-							}
-						} else {
-							input = "";
-							incorrect = true;
-						}
+						onConfirm();
 					}
 				}));
+	}
+
+	private void onConfirm() {
+		if ((input.length() == 8 || input.length() == 0) && tileentity.isCorrectAdminPassword(input)) {
+			if (flag) {
+				NetworkHandler.instance.sendToServer(new MessageOpenSphinx(input,
+						new WorldPos(tileentity.getPos(), tileentity.getWorld()), new NBTTagCompound()));
+				tileentity.open();
+				mc.displayGuiScreen(new ScreenLoadSphinx(tileentity));
+			} else {
+				mc.displayGuiScreen(new ScreenSphinxController(tileentity, input));
+			}
+		} else {
+			input = "";
+			incorrect = true;
+		}
 	}
 
 	@Override
@@ -90,24 +93,12 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 			if (subscreens.empty()) {
 				Iterator<Component> it = components.iterator();
 				boolean flag = false;
-				while (flag && it.hasNext()) {
+				while (!flag && it.hasNext()) {
 					Component c = it.next();
 					flag = c.onKeyTyped(typedChar, keyCode);
 				}
 				if (keyCode == Keyboard.KEY_RETURN) {
-					if ((input.length() == 8 || input.length() == 0) && tileentity.isCorrectAdminPassword(input)) {
-						if (flag) {
-							NetworkHandler.instance.sendToServer(new MessageOpenSphinx(input,
-									new WorldPos(tileentity.getPos(), tileentity.getWorld()), new NBTTagCompound()));
-							tileentity.open();
-							mc.displayGuiScreen(new ScreenLoadSphinx(tileentity));
-						} else {
-							mc.displayGuiScreen(new ScreenSphinxController(tileentity, input));
-						}
-					} else {
-						input = "";
-						incorrect = true;
-					}
+					onConfirm();
 				} else {
 					if (keyCode == Keyboard.KEY_BACK) {
 						if (input.length() >= 1) {

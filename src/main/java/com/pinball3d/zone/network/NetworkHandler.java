@@ -15,9 +15,6 @@ public class NetworkHandler {
 		registerMessage(MessageWizardData.Handler.class, MessageWizardData.class, Side.SERVER);
 		registerMessage(MessageOpenSphinx.Handler.class, MessageOpenSphinx.class, Side.SERVER);
 		registerMessage(MessageShutdownSphinx.Handler.class, MessageShutdownSphinx.class, Side.SERVER);
-		registerMessage(MessageConnectToNetwork.Handler.class, MessageConnectToNetwork.class, Side.SERVER);
-		registerMessage(MessageTerminalConnectToNetwork.Handler.class, MessageTerminalConnectToNetwork.class,
-				Side.SERVER);
 		registerMessage(MessageTerminalRequestNetworkData.Handler.class, MessageTerminalRequestNetworkData.class,
 				Side.SERVER);
 		registerMessage(MessageSendNetworkDataToTerminal.Handler.class, MessageSendNetworkDataToTerminal.class,
@@ -39,6 +36,15 @@ public class NetworkHandler {
 		registerMessage(MessageDisconnect.Handler.class, MessageDisconnect.class, Side.SERVER);
 		registerMessage(MessageTerminalDisconnect.Handler.class, MessageTerminalDisconnect.class, Side.SERVER);
 		registerMessage(MessagePlaySoundAtPos.Handler.class, MessagePlaySoundAtPos.class, Side.CLIENT);
+		registerMessage(MessageTryConnectToNetwork.Handler.class, MessageTryConnectToNetwork.class, Side.SERVER);
+		registerMessage(MessageConnectNetworkCallback.Handler.class, MessageConnectNetworkCallback.class, Side.CLIENT);
+		registerMessage(MessageConnectNetworkCallbackWrong.Handler.class, MessageConnectNetworkCallbackWrong.class,
+				Side.CLIENT);
+		registerMessage(MessageRequestMapData.Handler.class, MessageRequestMapData.class, Side.SERVER);
+		registerMessage(MessageSendMapDataToClient.Handler.class, MessageSendMapDataToClient.class, Side.CLIENT);
+		registerMessage(MessageRequestNetworkInfo.Handler.class, MessageRequestNetworkInfo.class, Side.SERVER);
+		registerMessage(MessageSendNetworkInfoToClient.Handler.class, MessageSendNetworkInfoToClient.class,
+				Side.CLIENT);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

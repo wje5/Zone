@@ -233,6 +233,12 @@ public class BlockProcessingCenter extends BlockContainer {
 	}
 
 	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		((TEProcessingCenter) worldIn.getTileEntity(pos)).unload();
+		super.breakBlock(worldIn, pos, state);
+	}
+
+	@Override
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
 		return new ItemStack(BlockLoader.processing_center);
 	}

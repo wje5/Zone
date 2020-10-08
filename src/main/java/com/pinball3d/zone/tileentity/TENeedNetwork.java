@@ -1,7 +1,11 @@
 package com.pinball3d.zone.tileentity;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+import com.pinball3d.zone.ChunkHandler;
+import com.pinball3d.zone.ChunkHandler.IChunkLoader;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.WorldPos;
 
@@ -11,13 +15,15 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.common.util.Constants;
 
-public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable {
+public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable, IChunkLoader {
 	protected WorldPos worldpos;
 	protected UUID network;
 	protected String password = "";
 	protected boolean connected = false;
+	private boolean loaded;
 
 	@SuppressWarnings("deprecation")
 	public void callUpdate() {
@@ -27,8 +33,23 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 				Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
 	}
 
+	public void load() {
+		if (!loaded) {
+			ChunkHandler.instance.loadChunks(new WorldPos(this));
+			loaded = true;
+		}
+	}
+
+	public void unload() {
+		if (loaded) {
+			ChunkHandler.instance.unloadChunks(new WorldPos(this));
+			loaded = false;
+		}
+	}
+
 	@Override
 	public void update() {
+		load();
 		if (world.isRemote) {
 			return;
 		}
@@ -181,5 +202,12 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	public void handleUpdateTag(NBTTagCompound tag) {
 		readFromNBT(tag);
 		readNetworkData(tag);
+	}
+
+	@Override
+	public Set<ChunkPos> getLoadChunks() {
+		Set<ChunkPos> s = new HashSet<ChunkPos>();
+		s.add(new ChunkPos(pos));
+		return s;
 	}
 }

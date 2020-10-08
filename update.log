@@ -151,3 +151,9 @@ Try fix Crucible render
 Update network info screen
 Update IO Panel texture
 Add Manual to player inventory on first join world
+
+#1.7.0
+Refact Sphinx client
+Update Construct Block
+Fix Manual
+Now some devices can load chunk

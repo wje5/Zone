@@ -9,8 +9,12 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import com.pinball3d.zone.ChunkHandler;
+import com.pinball3d.zone.ChunkHandler.IChunkLoader;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
+import com.pinball3d.zone.network.MessageSendMapDataToClient;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.IDevice;
@@ -23,6 +27,7 @@ import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -32,11 +37,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class TEProcessingCenter extends TileEntity implements ITickable {
+public class TEProcessingCenter extends TileEntity implements ITickable, IChunkLoader {
 	private boolean on;
 	private boolean init;
 	private String name = "";
@@ -45,6 +51,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	private int loadTick;
 	private int energyTick;
 	private int energy;
+	private boolean loaded;
 	public static Comparator<WorldPos> worldPosComparator = new Comparator<WorldPos>() {
 		@Override
 		public int compare(WorldPos o1, WorldPos o2) {
@@ -696,6 +703,80 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		} while (true);
 	}
 
+	public void sendMapDataToClient(EntityPlayerMP player) {
+		NBTTagCompound tag = new NBTTagCompound();
+		NBTTagList list = new NBTTagList();
+		getNodes().forEach(e -> {
+			NBTTagCompound n = new NBTTagCompound();
+			list.appendTag(e.writeToNBT(n));
+			TileEntity t = e.getTileEntity();
+			if (t instanceof INeedNetwork) {
+				n.setBoolean("connected", ((INeedNetwork) t).isConnected());
+			}
+		});
+		tag.setTag("nodes", list);
+		NBTTagList list2 = new NBTTagList();
+		getStorages().forEach(e -> {
+			NBTTagCompound n = new NBTTagCompound();
+			list2.appendTag(e.writeToNBT(n));
+			TileEntity t = e.getTileEntity();
+			if (t instanceof INeedNetwork) {
+				n.setBoolean("connected", ((INeedNetwork) t).isConnected());
+			}
+		});
+		tag.setTag("storages", list2);
+		NBTTagList list3 = new NBTTagList();
+		getDevices().forEach(e -> {
+			NBTTagCompound n = new NBTTagCompound();
+			list3.appendTag(e.writeToNBT(n));
+			TileEntity t = e.getTileEntity();
+			if (t instanceof INeedNetwork) {
+				n.setBoolean("connected", ((INeedNetwork) t).isConnected());
+			}
+		});
+		tag.setTag("devices", list3);
+		NBTTagList list4 = new NBTTagList();
+		getProductions().forEach(e -> {
+			NBTTagCompound n = new NBTTagCompound();
+			list4.appendTag(e.writeToNBT(n));
+			TileEntity t = e.getTileEntity();
+			if (t instanceof INeedNetwork) {
+				n.setBoolean("connected", ((INeedNetwork) t).isConnected());
+			}
+		});
+		tag.setTag("productions", list4);
+		List<Integer> lines = new ArrayList<Integer>();
+		List<WorldPos> l = new ArrayList<WorldPos>();
+		l.add(new WorldPos(this));
+		l.addAll(getNodes());
+		l.addAll(getStorages());
+		l.addAll(getDevices());
+		l.addAll(getProductions());
+		for (int i = 0; i < l.size(); i++) {
+			WorldPos e = l.get(i);
+			for (int j = i + 1; j < l.size(); j++) {
+				WorldPos e2 = l.get(j);
+				TileEntity te1 = e.getTileEntity();
+				TileEntity te2 = e2.getTileEntity();
+				if (te1 instanceof TEProcessingCenter && Math
+						.sqrt(e.getPos().distanceSq(e2.getPos().getX(), e2.getPos().getY(), e2.getPos().getZ())) < 25) {
+					lines.add(i);
+					lines.add(j);
+				} else if (te1 instanceof TENode && ((TENode) te1).isPointInRange(e2.getDim(), e2.getPos().getX(),
+						e2.getPos().getY(), e2.getPos().getZ())) {
+					lines.add(i);
+					lines.add(j);
+				} else if (te2 instanceof TENode && ((TENode) te2).isPointInRange(e.getDim(), e.getPos().getX(),
+						e.getPos().getY(), e.getPos().getZ())) {
+					lines.add(i);
+					lines.add(j);
+				}
+			}
+		}
+		NetworkHandler.instance.sendTo(new MessageSendMapDataToClient(new WorldPos(this), tag,
+				lines.stream().mapToInt(Integer::valueOf).toArray()), player);
+	}
+
 	public void updatePack() {
 		Iterator<LogisticPack> it = packs.iterator();
 		Set<LogisticPack> deads = new HashSet<LogisticPack>();
@@ -738,8 +819,23 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 		callUpdate();
 	}
 
+	public void load() {
+		if (!loaded) {
+			ChunkHandler.instance.loadChunks(new WorldPos(this));
+			loaded = true;
+		}
+	}
+
+	public void unload() {
+		if (loaded) {
+			ChunkHandler.instance.unloadChunks(new WorldPos(this));
+			loaded = false;
+		}
+	}
+
 	@Override
 	public void update() {
+		load();
 		markDirty();
 		if (world.isRemote) {
 			if (loadTick > 0) {
@@ -894,6 +990,21 @@ public class TEProcessingCenter extends TileEntity implements ITickable {
 	public void handleUpdateTag(NBTTagCompound tag) {
 		readFromNBT(tag);
 		readNetworkData(tag);
+	}
+
+	@Override
+	public Set<ChunkPos> getLoadChunks() {
+		Set<ChunkPos> s = new HashSet<ChunkPos>();
+		s.add(new ChunkPos(pos.getX() >> 4 - 1, pos.getZ() >> 4 - 1));
+		s.add(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4 - 1));
+		s.add(new ChunkPos(pos.getX() >> 4 + 1, pos.getZ() >> 4 - 1));
+		s.add(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4 - 1));
+		s.add(new ChunkPos(pos));
+		s.add(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4 + 1));
+		s.add(new ChunkPos(pos.getX() >> 4 - 1, pos.getZ() >> 4 + 1));
+		s.add(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4 + 1));
+		s.add(new ChunkPos(pos.getX() >> 4 + 1, pos.getZ() >> 4 + 1));
+		return s;
 	}
 
 	public static enum WorkingState {

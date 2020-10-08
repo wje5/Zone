@@ -12,9 +12,8 @@ import java.util.TreeSet;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
-import com.pinball3d.zone.tileentity.INeedNetwork;
-import com.pinball3d.zone.tileentity.TENode;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.network.MessageRequestMapData;
+import com.pinball3d.zone.network.NetworkHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -26,7 +25,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 
 public class MapHandler {
@@ -36,18 +36,22 @@ public class MapHandler {
 	private Map<Integer, PointerLiving> livings;
 	private PointerProcessingCenter processingCenter;
 	private Set<PointerNode> nodes;
-	private Set<PointerStorage> storges;
+	private Set<PointerStorage> storages;
 	private Set<PointerDevice> devices;
 	private Set<PointerProduction> productions;
 	private Set<PointerPack> packs;
 	public WorldPos network;
 	private int dim;
+	private NBTTagCompound data;
+	private int[] lines;
+	private long updateTick;
 	public static Minecraft mc = Minecraft.getMinecraft();
 	private static MapHandler instance;
 
 	private MapHandler(WorldPos netWork) {
 		ChunkRenderCache.init();
 		this.network = netWork;
+		NetworkHandler.instance.sendToServer(new MessageRequestMapData(mc.player, network));
 		livings = new HashMap<Integer, PointerLiving>();
 		BlockPos pos = mc.player.getPosition();
 		xOffset = pos.getX();
@@ -64,7 +68,7 @@ public class MapHandler {
 										: o1.pos.getPos().getZ() > o2.pos.getPos().getZ() ? 1 : 0;
 			};
 		});
-		storges = new TreeSet<PointerStorage>(new Comparator<PointerStorage>() {
+		storages = new TreeSet<PointerStorage>(new Comparator<PointerStorage>() {
 			@Override
 			public int compare(PointerStorage o1, PointerStorage o2) {
 				return o1.pos.getPos().getX() < o2.pos.getPos().getX() ? -1
@@ -114,10 +118,21 @@ public class MapHandler {
 		instance.updatePlayer();
 		instance.updateLiving();
 		instance.updateProcessingCenter();
-		instance.updateDevices();
 		instance.drawMap(width, height);
 		instance.drawPointer(width, height);
 		instance.drawLines(width, height);
+		if (instance.updateTick < mc.world.getTotalWorldTime()) {
+			NetworkHandler.instance.sendToServer(new MessageRequestMapData(mc.player, network));
+			instance.updateTick = mc.world.getTotalWorldTime() + 20;
+		}
+	}
+
+	public static void setData(WorldPos network, NBTTagCompound data, int[] lines) {
+		if (instance != null && instance.network.equals(network)) {
+			instance.data = data;
+			instance.updateDevices();
+			instance.lines = lines;
+		}
 	}
 
 	public static void dragMap(int dragX, int dragY) {
@@ -134,7 +149,7 @@ public class MapHandler {
 		List<PointerNeedNetwork> list = new ArrayList<PointerNeedNetwork>();
 		list.add(instance.processingCenter);
 		list.addAll(instance.nodes);
-		list.addAll(instance.storges);
+		list.addAll(instance.storages);
 		list.addAll(instance.devices);
 		list.addAll(instance.productions);
 		List<Pointer> l = new ArrayList<Pointer>();
@@ -197,54 +212,52 @@ public class MapHandler {
 	}
 
 	private void updateDevices() {
-		TEProcessingCenter te = (TEProcessingCenter) network.getTileEntity();
-		Set<WorldPos> set = te.getNodes();
+		if (data == null) {
+			return;
+		}
+		NBTTagList list = data.getTagList("nodes", 10);
 		nodes.clear();
-		set.forEach(e -> {
-			if (e.getDim() == mc.player.dimension) {
-				TileEntity t = e.getTileEntity();
-				if (t != null) {
-					nodes.add(new PointerNode(e, ((INeedNetwork) t).isConnected()));
-				}
+		list.forEach(e -> {
+			NBTTagCompound tag = (NBTTagCompound) e;
+			WorldPos pos = WorldPos.load(tag);
+			if (pos.getDim() == mc.player.dimension) {
+				nodes.add(new PointerNode(pos, tag.getBoolean("connected")));
 			}
 		});
-		set = te.getStorages();
-		storges.clear();
-		set.forEach(e -> {
-			if (e.getDim() == mc.player.dimension) {
-				TileEntity t = e.getTileEntity();
-				if (t != null) {
-					storges.add(new PointerStorage(e, ((INeedNetwork) t).isConnected()));
-				}
+		list = data.getTagList("storages", 10);
+		storages.clear();
+		list.forEach(e -> {
+			NBTTagCompound tag = (NBTTagCompound) e;
+			WorldPos pos = WorldPos.load(tag);
+			if (pos.getDim() == mc.player.dimension) {
+				storages.add(new PointerStorage(pos, tag.getBoolean("connected")));
 			}
 		});
-		set = te.getDevices();
+		list = data.getTagList("devices", 10);
 		devices.clear();
-		set.forEach(e -> {
-			if (e.getDim() == mc.player.dimension) {
-				TileEntity t = e.getTileEntity();
-				if (t != null) {
-					devices.add(new PointerDevice(e, ((INeedNetwork) t).isConnected()));
-				}
+		list.forEach(e -> {
+			NBTTagCompound tag = (NBTTagCompound) e;
+			WorldPos pos = WorldPos.load(tag);
+			if (pos.getDim() == mc.player.dimension) {
+				devices.add(new PointerDevice(pos, tag.getBoolean("connected")));
 			}
 		});
-		set = te.getProductions();
+		list = data.getTagList("productions", 10);
 		productions.clear();
-		set.forEach(e -> {
-			if (e.getDim() == mc.player.dimension) {
-				TileEntity t = e.getTileEntity();
-				if (t != null) {
-					productions.add(new PointerProduction(e, ((INeedNetwork) t).isConnected()));
-				}
+		list.forEach(e -> {
+			NBTTagCompound tag = (NBTTagCompound) e;
+			WorldPos pos = WorldPos.load(tag);
+			if (pos.getDim() == mc.player.dimension) {
+				productions.add(new PointerProduction(pos, tag.getBoolean("connected")));
 			}
 		});
-		Set<LogisticPack> packset = te.getPacks();
-		packs.clear();
-		packset.forEach(e -> {
-			if (e.dim == mc.player.dimension) {
-				packs.add(new PointerPack((int) e.x, (int) e.z));
-			}
-		});
+//		Set<LogisticPack> packset = te.getPacks();
+//		packs.clear();
+//		packset.forEach(e -> {
+//			if (e.dim == mc.player.dimension) {
+//				packs.add(new PointerPack((int) e.x, (int) e.z));
+//			}
+//		});
 	}
 
 	private void drawMap(int width, int height) {
@@ -336,7 +349,7 @@ public class MapHandler {
 		nodes.forEach(e -> {
 			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		});
-		storges.forEach(e -> {
+		storages.forEach(e -> {
 			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		});
 		devices.forEach(e -> {
@@ -352,37 +365,22 @@ public class MapHandler {
 	}
 
 	private void drawLines(int width, int height) {
+		if (lines == null) {
+			return;
+		}
 		List<PointerNeedNetwork> list = new ArrayList<PointerNeedNetwork>();
 		list.add(processingCenter);
 		list.addAll(nodes);
-		list.addAll(storges);
+		list.addAll(storages);
 		list.addAll(devices);
 		list.addAll(productions);
 		int color = 0x48C0C0C0;
-		for (int i = 0; i < list.size(); i++) {
-			PointerNeedNetwork e = list.get(i);
-			for (int j = i + 1; j < list.size(); j++) {
-				PointerNeedNetwork e2 = list.get(j);
-				if (e instanceof PointerProcessingCenter && Math.sqrt(e.pos.getPos().distanceSq(e2.pos.getPos().getX(),
-						e2.pos.getPos().getY(), e2.pos.getPos().getZ())) < 25) {
-					Util.drawLine(e.pos.getPos().getX() - getRenderOffsetX(width),
-							e.pos.getPos().getZ() - getRenderOffsetY(height),
-							e2.pos.getPos().getX() - getRenderOffsetX(width),
-							e2.pos.getPos().getZ() - getRenderOffsetY(height), color);
-				} else if (e instanceof PointerNode && ((TENode) e.pos.getTileEntity()).isPointInRange(e2.pos.getDim(),
-						e2.pos.getPos().getX(), e2.pos.getPos().getY(), e2.pos.getPos().getZ())) {
-					Util.drawLine(e.pos.getPos().getX() - getRenderOffsetX(width),
-							e.pos.getPos().getZ() - getRenderOffsetY(height),
-							e2.pos.getPos().getX() - getRenderOffsetX(width),
-							e2.pos.getPos().getZ() - getRenderOffsetY(height), color);
-				} else if (e2 instanceof PointerNode && ((TENode) e2.pos.getTileEntity()).isPointInRange(e.pos.getDim(),
-						e.pos.getPos().getX(), e.pos.getPos().getY(), e.pos.getPos().getZ())) {
-					Util.drawLine(e2.pos.getPos().getX() - getRenderOffsetX(width),
-							e2.pos.getPos().getZ() - getRenderOffsetY(height),
-							e.pos.getPos().getX() - getRenderOffsetX(width),
-							e.pos.getPos().getZ() - getRenderOffsetY(height), color);
-				}
-			}
+		for (int i = 0; i < lines.length; i += 2) {
+			PointerNeedNetwork e = list.get(lines[i]);
+			PointerNeedNetwork e2 = list.get(lines[i + 1]);
+			Util.drawLine(e.pos.getPos().getX() - getRenderOffsetX(width),
+					e.pos.getPos().getZ() - getRenderOffsetY(height), e2.pos.getPos().getX() - getRenderOffsetX(width),
+					e2.pos.getPos().getZ() - getRenderOffsetY(height), color);
 		}
 	}
 }

@@ -6,16 +6,17 @@ import java.util.List;
 
 import com.pinball3d.zone.network.MessageRequestValidNetworks;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.tileentity.INeedNetwork;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.Gui;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 
 public class ScrollingListNetwork extends Component {
 	protected int length, lineHeight, scrollingDistance;
 	protected List<ListBar> list = new ArrayList<ListBar>();
-	protected List<WorldPos> data = new ArrayList<WorldPos>();
+	protected List<NBTTagCompound> data = new ArrayList<NBTTagCompound>();
+	protected WorldPos pos, connected;
 
 	public ScrollingListNetwork(IParent parent, int x, int y, int width, int height) {
 		this(parent, x, y, width, height, null);
@@ -25,36 +26,34 @@ public class ScrollingListNetwork extends Component {
 		super(parent, x, y, width, height);
 		this.parent = parent;
 		this.lineHeight = 25;
+		this.pos = pos;
+		boolean flag = pos == null;
 		NetworkHandler.instance.sendToServer(new MessageRequestValidNetworks(mc.player,
-				pos == null
-						? new WorldPos((int) mc.player.posX, (int) mc.player.posY, (int) mc.player.posZ,
-								mc.player.world)
-						: pos));
+				flag ? new WorldPos((int) mc.player.posX, (int) mc.player.posY, (int) mc.player.posZ, mc.player.world)
+						: pos,
+				flag));
 	}
 
-	public void setData(List<WorldPos> data) {
-		this.data = data;
+	public void setData(NBTTagCompound tag) {
+		connected = WorldPos.load(tag.getCompoundTag("connected"));
+		NBTTagList list = tag.getTagList("list", 10);
+		list.forEach(e -> {
+			data.add((NBTTagCompound) e);
+		});
 		refresh();
 	}
 
 	public void sort() {
-		WorldPos worldpos;
-		if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
-			worldpos = ((ScreenTerminal) ((SubscreenNetworkConfig) parent).parent).worldpos;
-		} else {
-			INeedNetwork te = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity;
-			worldpos = te.isConnected() ? te.getNetworkPos() : null;
-		}
-		List<WorldPos> temp = new ArrayList<WorldPos>();
+		List<NBTTagCompound> temp = new ArrayList<NBTTagCompound>();
 		data.forEach(e -> {
-			if (worldpos != null && e.getWorld().provider.getDimension() == worldpos.getDim()
-					&& e.getPos().equals(worldpos.getPos())) {
+			WorldPos p = WorldPos.load(e);
+			if (p != null && p.equals(connected)) {
 				temp.add(e);
 			}
 		});
 		data.forEach(e -> {
-			if (!(worldpos != null && e.getWorld().provider.getDimension() == worldpos.getDim()
-					&& e.getPos().equals(worldpos.getPos()))) {
+			WorldPos p = WorldPos.load(e);
+			if (!(p != null && p.equals(connected))) {
 				temp.add(e);
 			}
 		});
@@ -66,18 +65,10 @@ public class ScrollingListNetwork extends Component {
 		list = new ArrayList<ListBar>();
 		length = 0;
 		scrollingDistance = 0;
-		WorldPos worldpos;
-		if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
-			worldpos = ((ScreenTerminal) ((SubscreenNetworkConfig) parent).parent).worldpos;
-		} else {
-			INeedNetwork te = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity;
-			worldpos = te.isConnected() ? te.getNetworkPos() : null;
-		}
 		data.forEach(e -> {
-			list.add(new ListBar((TEProcessingCenter) e.getTileEntity(),
-					worldpos != null && e.getWorld().provider.getDimension() == worldpos.getDim()
-							&& e.getPos().equals(worldpos.getPos()),
-					width, lineHeight));
+			WorldPos pos = WorldPos.load(e);
+			String name = e.getString("name");
+			list.add(new ListBar(pos, name, pos.equals(connected), width, lineHeight));
 			length += lineHeight;
 		});
 
@@ -120,10 +111,10 @@ public class ScrollingListNetwork extends Component {
 			ListBar bar = it.next();
 			if (y + scrollingDistance >= yOffset && y + scrollingDistance < yOffset + bar.height) {
 				if (bar.selected) {
-					parent.putScreen(new SubscreenCheckConnectedNetwork(parent, bar.tileentity,
+					parent.putScreen(new SubscreenCheckConnectedNetwork(parent, bar.pos, bar.name,
 							x + this.x - parent.getXOffset(), y + this.y - parent.getYOffset()));
 				} else {
-					parent.putScreen(new SubscreenConnectToNetwork(parent, bar.tileentity,
+					parent.putScreen(new SubscreenConnectToNetwork(parent, pos, bar.pos, bar.name,
 							x + this.x - parent.getXOffset(), y + this.y - parent.getYOffset()));
 				}
 				return true;
@@ -134,13 +125,15 @@ public class ScrollingListNetwork extends Component {
 	}
 
 	public class ListBar {
-		protected TEProcessingCenter tileentity;
+		protected WorldPos pos;
+		protected String name;
 		protected boolean selected;
 		protected int width;
 		protected int height;
 
-		public ListBar(TEProcessingCenter tileentity, boolean selected, int width, int height) {
-			this.tileentity = tileentity;
+		public ListBar(WorldPos pos, String name, boolean selected, int width, int height) {
+			this.pos = pos;
+			this.name = name;
 			this.selected = selected;
 			this.width = width;
 			this.height = height;
@@ -160,7 +153,7 @@ public class ScrollingListNetwork extends Component {
 			Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/icons.png"), x + 7, y + upCut, 0,
 					16 + upCut * 2, 32, 26 - (upCut + downCut) * 2, 0.5F);
 			if (upCut < 4 && downCut < 4) {
-				parent.getFontRenderer().drawString(tileentity.getName(), x + 30, y + 3, 0xFF1ECCDE);
+				parent.getFontRenderer().drawString(name, x + 30, y + 3, 0xFF1ECCDE);
 			}
 			if (selected) {
 				y += 2;

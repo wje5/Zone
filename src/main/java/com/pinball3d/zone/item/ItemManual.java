@@ -45,7 +45,7 @@ public class ItemManual extends ZoneItem {
 				IZonePlayerCapability cap = event.player.getCapability(CapabilityLoader.PLAYER_CAPABILITY, null);
 				if (!cap.isInited()) {
 					event.player.inventory.addItemStackToInventory(new ItemStack(ItemLoader.manual));
-					cap.setInited();
+					cap.setInited(true);
 				}
 			}
 		}

@@ -6,8 +6,22 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+@Mod.EventBusSubscriber
 public class CapabilityZonePlayerInfo {
+	@SubscribeEvent
+	public static void reSyncDataOnPlayerDeath(PlayerEvent.Clone event) {
+		IZonePlayerCapability cap = event.getEntityPlayer().getCapability(CapabilityLoader.PLAYER_CAPABILITY, null);
+		if (cap != null) {
+			IZonePlayerCapability original = event.getOriginal().getCapability(CapabilityLoader.PLAYER_CAPABILITY,
+					null);
+			cap.setInited(original.isInited());
+		}
+	}
+
 	public static class Implementation implements IZonePlayerCapability {
 		private boolean inited;
 
@@ -17,8 +31,8 @@ public class CapabilityZonePlayerInfo {
 		}
 
 		@Override
-		public void setInited() {
-			inited = true;
+		public void setInited(boolean flag) {
+			inited = flag;
 		}
 
 	}
@@ -37,9 +51,7 @@ public class CapabilityZonePlayerInfo {
 				EnumFacing side, NBTBase nbt) {
 			if (nbt instanceof NBTTagCompound) {
 				NBTTagCompound tag = (NBTTagCompound) nbt;
-				if (tag.getBoolean("inited")) {
-					instance.setInited();
-				}
+				instance.setInited(tag.getBoolean("inited"));
 			}
 		}
 	}

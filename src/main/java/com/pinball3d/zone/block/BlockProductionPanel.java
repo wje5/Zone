@@ -151,6 +151,12 @@ public class BlockProductionPanel extends BlockContainer {
 	}
 
 	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		((TEProductionPanel) worldIn.getTileEntity(pos)).unload();
+		super.breakBlock(worldIn, pos, state);
+	}
+
+	@Override
 	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
 		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 8.0F, true, true);
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);

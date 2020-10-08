@@ -3,5 +3,5 @@ package com.pinball3d.zone;
 public interface IZonePlayerCapability {
 	public boolean isInited();
 
-	public void setInited();
+	public void setInited(boolean flag);
 }

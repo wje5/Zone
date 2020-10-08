@@ -119,6 +119,12 @@ public class BlockNode extends BlockContainer {
 		return false;
 	}
 
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		((TENode) worldIn.getTileEntity(pos)).unload();
+		super.breakBlock(worldIn, pos, state);
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected BlockStateContainer createBlockState() {

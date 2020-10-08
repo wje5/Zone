@@ -60,7 +60,7 @@ public class ScreenNeedNetwork extends GuiScreen implements IParent {
 			if (subscreens.empty()) {
 				Iterator<Component> it = components.iterator();
 				boolean flag = false;
-				while (flag && it.hasNext()) {
+				while (!flag && it.hasNext()) {
 					Component c = it.next();
 					flag = c.onKeyTyped(typedChar, keyCode);
 				}

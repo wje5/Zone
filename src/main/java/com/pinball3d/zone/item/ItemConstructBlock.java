@@ -31,9 +31,7 @@ public class ItemConstructBlock extends ItemBlock {
 
 		IBlockState iblockstate = worldIn.getBlockState(pos);
 		Block block = iblockstate.getBlock();
-		Block placeblock = block == BlockLoader.construct_block || block == BlockLoader.construct_block_all
-				? BlockLoader.construct_block
-				: BlockLoader.construct_block_all;
+		Block placeblock = player.isSneaking() ? BlockLoader.construct_block : BlockLoader.construct_block_all;
 		if (!block.isReplaceable(worldIn, pos)) {
 			pos = pos.offset(facing);
 		}

@@ -247,9 +247,12 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 			return;
 		} else {
 			if (subscreens.empty()) {
-				components.forEach(e -> {
-					e.onKeyTyped(typedChar, keyCode);
-				});
+				Iterator<Component> it = components.iterator();
+				boolean flag = false;
+				while (!flag && it.hasNext()) {
+					Component c = it.next();
+					flag = c.onKeyTyped(typedChar, keyCode);
+				}
 				if (keyCode == Keyboard.KEY_RETURN && box.isFocus) {
 					NetworkHandler.instance
 							.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));

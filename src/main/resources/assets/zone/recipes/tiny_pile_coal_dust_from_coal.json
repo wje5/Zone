@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#",
+    "*"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:hammer",
+      "data":32767
+    },
+    "*": {
+      "item": "minecraft:coal",
+      "data":0
+    }
+  },
+  "result": {
+    "item": "zone:tiny_pile_coal_dust",
+    "count": 8
+  }
+}
