@@ -1,9 +1,13 @@
 package com.pinball3d.zone.sphinx;
 
+import com.pinball3d.zone.item.ItemLoader;
+
+import net.minecraft.item.Item;
+
 public class PointerProcessingCenter extends PointerNeedNetwork {
 
 	public PointerProcessingCenter(WorldPos pos) {
-		super(pos, 10, 12);
+		super(pos, Item.getIdFromItem(ItemLoader.processing_center_light), true, 10, 12);
 	}
 
 	@Override

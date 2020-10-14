@@ -1,16 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "#*#",
+    "###",
     "+-+",
     "#=#"
   ],
   "key": {
     "#": {
       "item": "zone:etherium_plate_riveted"
-    },
-    "*": {
-      "item": "zone:display_screen"
     },
     "+": {
       "item": "zone:reinforced_glass_pane"

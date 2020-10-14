@@ -9,7 +9,10 @@ public class SoundUtil {
 			new SoundEvent(new ResourceLocation("zone:alloy_smelter")),
 			new SoundEvent(new ResourceLocation("zone:elec_furnace")),
 			new SoundEvent(new ResourceLocation("zone:centrifuge")),
-			new SoundEvent(new ResourceLocation("zone:crystallizer")) };
+			new SoundEvent(new ResourceLocation("zone:crystallizer")),
+			new SoundEvent(new ResourceLocation("zone:boiler")), new SoundEvent(new ResourceLocation("zone:lathe")),
+			new SoundEvent(new ResourceLocation("zone:forming_press")),
+			new SoundEvent(new ResourceLocation("zone:pump")) };
 
 	public static SoundEvent getSoundEventFromId(int id) {
 		return sounds[id];

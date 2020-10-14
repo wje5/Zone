@@ -45,6 +45,11 @@ public class NetworkHandler {
 		registerMessage(MessageRequestNetworkInfo.Handler.class, MessageRequestNetworkInfo.class, Side.SERVER);
 		registerMessage(MessageSendNetworkInfoToClient.Handler.class, MessageSendNetworkInfoToClient.class,
 				Side.CLIENT);
+		registerMessage(MessageRequestNeedNetworkInfo.Handler.class, MessageRequestNeedNetworkInfo.class, Side.SERVER);
+		registerMessage(MessageSendNeedNetworkInfoToClient.Handler.class, MessageSendNeedNetworkInfoToClient.class,
+				Side.CLIENT);
+		registerMessage(MessageRequestPackData.Handler.class, MessageRequestPackData.class, Side.SERVER);
+		registerMessage(MessageSendPackDataToClient.Handler.class, MessageSendPackDataToClient.class, Side.CLIENT);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

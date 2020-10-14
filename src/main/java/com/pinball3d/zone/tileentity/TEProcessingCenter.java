@@ -14,6 +14,7 @@ import com.pinball3d.zone.ChunkHandler.IChunkLoader;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.network.MessageSendMapDataToClient;
+import com.pinball3d.zone.network.MessageSendPackDataToClient;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.HugeItemStack;
@@ -28,6 +29,7 @@ import com.pinball3d.zone.sphinx.WorldPos;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -300,10 +302,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		Iterator<WorldPos> it = nodes.iterator();
 		while (it.hasNext()) {
-			TENode te = (TENode) it.next().getTileEntity();
-			if (!te.getPos().equals(pos.getPos()) && te.isConnected()
-					&& te.isPointInRange(pos.getDim(), pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ())) {
-				return true;
+			TileEntity tileentity = it.next().getTileEntity();
+			if (tileentity instanceof TENode) {
+				TENode te = (TENode) tileentity;
+				if (!te.getPos().equals(pos.getPos()) && te.isConnected() && te.isPointInRange(pos.getDim(),
+						pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ())) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -399,14 +404,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			Iterator<WorldPos> it = nodes.iterator();
 			while (it.hasNext()) {
 				WorldPos i = it.next();
-				if (i == null || i.getBlockState().getBlock() != BlockLoader.node) {
+				TileEntity tileentity = i.getTileEntity();
+				if (i == null || i.getBlockState().getBlock() != BlockLoader.node || !(tileentity instanceof TENode)) {
 					continue;
 				}
+				TENode te = (TENode) tileentity;
 				if (!temp.contains(i) && i.getDim() == world.provider.getDimension()) {
 					if (Math.sqrt(pos.distanceSq(i.getPos().getX(), i.getPos().getY(), i.getPos().getZ())) < 25) {
 						flag = true;
 						temp.add(i);
-						((TENode) i.getTileEntity()).setConnected(true);
+						te.setConnected(true);
 					} else {
 						Iterator<WorldPos> it2 = temp.iterator();
 						while (it2.hasNext()) {
@@ -415,7 +422,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 									i.getPos().getY(), i.getPos().getZ())) {
 								flag = true;
 								temp.add(i);
-								((TENode) i.getTileEntity()).setConnected(true);
+								te.setConnected(true);
 								break;
 							}
 						}
@@ -425,28 +432,26 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		} while (flag);
 		Set<WorldPos> l = new HashSet<WorldPos>();
 		nodes.forEach(e -> {
-			TileEntity te = e.getTileEntity();
-			if (te instanceof TENode && ((TENode) te).isConnected()) {
-				l.add(e);
-			}
+			l.add(e);
 		});
-		if (!temp.equals(l)) {
-			Iterator<WorldPos> it = nodes.iterator();
-			while (it.hasNext()) {
-				WorldPos e = it.next();
-				if (!temp.contains(e)) {
-					if (e != null && e.getBlockState().getBlock() == BlockLoader.node) {
-						((INeedNetwork) e.getTileEntity()).setConnected(false);
-					} else {
-						it.remove();
-					}
+		Set<WorldPos> s = new HashSet<WorldPos>();
+		l.forEach(e -> {
+			if (e.getBlockState().getBlock() == BlockLoader.node) {
+				TileEntity tileentity = e.getTileEntity();
+				if (tileentity instanceof TENode && getUUID().equals(((TENode) tileentity).getNetwork())) {
+					s.add(e);
+					((TENode) tileentity).setConnected(temp.contains(e));
 				}
 			}
+		});
+		if (nodes.equals(s)) {
+			return false;
+		} else {
+			nodes = s;
 			markDirty();
 			callUpdate();
 			return true;
 		}
-		return false;
 	}
 
 	public boolean updateDevice() {
@@ -704,54 +709,50 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public void sendMapDataToClient(EntityPlayerMP player) {
+		updateDevice();
 		NBTTagCompound tag = new NBTTagCompound();
 		NBTTagList list = new NBTTagList();
-		getNodes().forEach(e -> {
+		nodes.forEach(e -> {
+			TENode te = (TENode) e.getTileEntity();
 			NBTTagCompound n = new NBTTagCompound();
 			list.appendTag(e.writeToNBT(n));
-			TileEntity t = e.getTileEntity();
-			if (t instanceof INeedNetwork) {
-				n.setBoolean("connected", ((INeedNetwork) t).isConnected());
-			}
+			n.setBoolean("connected", te.isConnected());
 		});
 		tag.setTag("nodes", list);
 		NBTTagList list2 = new NBTTagList();
-		getStorages().forEach(e -> {
+		storages.forEach(e -> {
+			INeedNetwork te = (INeedNetwork) e.getTileEntity();
 			NBTTagCompound n = new NBTTagCompound();
 			list2.appendTag(e.writeToNBT(n));
-			TileEntity t = e.getTileEntity();
-			if (t instanceof INeedNetwork) {
-				n.setBoolean("connected", ((INeedNetwork) t).isConnected());
-			}
+			n.setBoolean("connected", te.isConnected());
+			n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
 		});
 		tag.setTag("storages", list2);
 		NBTTagList list3 = new NBTTagList();
-		getDevices().forEach(e -> {
+		devices.forEach(e -> {
+			INeedNetwork te = (INeedNetwork) e.getTileEntity();
 			NBTTagCompound n = new NBTTagCompound();
 			list3.appendTag(e.writeToNBT(n));
-			TileEntity t = e.getTileEntity();
-			if (t instanceof INeedNetwork) {
-				n.setBoolean("connected", ((INeedNetwork) t).isConnected());
-			}
+			n.setBoolean("connected", te.isConnected());
+			n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
 		});
 		tag.setTag("devices", list3);
 		NBTTagList list4 = new NBTTagList();
-		getProductions().forEach(e -> {
+		productions.forEach(e -> {
+			INeedNetwork te = (INeedNetwork) e.getTileEntity();
 			NBTTagCompound n = new NBTTagCompound();
 			list4.appendTag(e.writeToNBT(n));
-			TileEntity t = e.getTileEntity();
-			if (t instanceof INeedNetwork) {
-				n.setBoolean("connected", ((INeedNetwork) t).isConnected());
-			}
+			n.setBoolean("connected", te.isConnected());
+			n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
 		});
 		tag.setTag("productions", list4);
 		List<Integer> lines = new ArrayList<Integer>();
 		List<WorldPos> l = new ArrayList<WorldPos>();
 		l.add(new WorldPos(this));
-		l.addAll(getNodes());
-		l.addAll(getStorages());
-		l.addAll(getDevices());
-		l.addAll(getProductions());
+		l.addAll(nodes);
+		l.addAll(storages);
+		l.addAll(devices);
+		l.addAll(productions);
 		for (int i = 0; i < l.size(); i++) {
 			WorldPos e = l.get(i);
 			for (int j = i + 1; j < l.size(); j++) {
@@ -775,6 +776,17 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		NetworkHandler.instance.sendTo(new MessageSendMapDataToClient(new WorldPos(this), tag,
 				lines.stream().mapToInt(Integer::valueOf).toArray()), player);
+	}
+
+	public void sendPackDataToClient(EntityPlayerMP player) {
+		NBTTagCompound tag = new NBTTagCompound();
+		NBTTagList list = new NBTTagList();
+		Set<LogisticPack> packs = getPacks();
+		packs.forEach(e -> {
+			list.appendTag(e.writeToNBT(new NBTTagCompound()));
+		});
+		tag.setTag("list", list);
+		NetworkHandler.instance.sendTo(new MessageSendPackDataToClient(new WorldPos(this), tag), player);
 	}
 
 	public void updatePack() {

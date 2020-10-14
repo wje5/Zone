@@ -19,6 +19,9 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int IO_PANEL = 8;
 	public static final int BURNING_BOX = 9;
 	public static final int BOILER = 10;
+	public static final int LATHE = 11;
+	public static final int FORMING_PRESS = 12;
+	public static final int PUMP = 13;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -47,6 +50,12 @@ public class GuiElementLoader implements IGuiHandler {
 			return new ContainerBurningBox(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case BOILER:
 			return new ContainerBoiler(player, world.getTileEntity(new BlockPos(x, y, z)));
+		case LATHE:
+			return new ContainerLathe(player, world.getTileEntity(new BlockPos(x, y, z)));
+		case FORMING_PRESS:
+			return new ContainerFormingPress(player, world.getTileEntity(new BlockPos(x, y, z)));
+		case PUMP:
+			return new ContainerPump(player, world.getTileEntity(new BlockPos(x, y, z)));
 		}
 		return null;
 	}
@@ -80,6 +89,13 @@ public class GuiElementLoader implements IGuiHandler {
 					new ContainerBurningBox(player, world.getTileEntity(new BlockPos(x, y, z))));
 		case BOILER:
 			return new GuiContainerBoiler(new ContainerBoiler(player, world.getTileEntity(new BlockPos(x, y, z))));
+		case LATHE:
+			return new GuiContainerLathe(new ContainerLathe(player, world.getTileEntity(new BlockPos(x, y, z))));
+		case FORMING_PRESS:
+			return new GuiContainerFormingPress(
+					new ContainerFormingPress(player, world.getTileEntity(new BlockPos(x, y, z))));
+		case PUMP:
+			return new GuiContainerPump(new ContainerPump(player, world.getTileEntity(new BlockPos(x, y, z))));
 		}
 		return null;
 	}

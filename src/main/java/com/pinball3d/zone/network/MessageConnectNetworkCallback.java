@@ -64,6 +64,7 @@ public class MessageConnectNetworkCallback implements IMessage {
 					if (screen instanceof ScreenTerminal) {
 						ScreenTerminal terminal = (ScreenTerminal) screen;
 						terminal.worldpos = message.pos;
+						terminal.flag = true;
 						if (terminal.stack != ItemStack.EMPTY) {
 							NBTTagCompound tag = terminal.stack.getTagCompound();
 							if (tag == null) {

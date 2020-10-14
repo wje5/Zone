@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "zone:pump" },
+        "facing=south": { "model": "zone:pump", "y": 180 },
+        "facing=west":  { "model": "zone:pump", "y": 270 },
+        "facing=east":  { "model": "zone:pump", "y": 90 }
+    }
+}

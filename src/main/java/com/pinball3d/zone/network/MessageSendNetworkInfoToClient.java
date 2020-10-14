@@ -1,6 +1,7 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
+import com.pinball3d.zone.sphinx.ScreenSphinxController;
 import com.pinball3d.zone.sphinx.ScreenTerminal;
 import com.pinball3d.zone.sphinx.Subscreen;
 import com.pinball3d.zone.sphinx.SubscreenNetworkInfo;
@@ -58,6 +59,14 @@ public class MessageSendNetworkInfoToClient implements IMessage {
 						}
 					} else if (screen instanceof ScreenNeedNetwork) {
 						ScreenNeedNetwork n = (ScreenNeedNetwork) screen;
+						if (!n.subscreens.empty()) {
+							Subscreen s = n.subscreens.get(0);
+							if (s instanceof SubscreenNetworkInfo) {
+								((SubscreenNetworkInfo) s).setData(message.pos, message.data);
+							}
+						}
+					} else if (screen instanceof ScreenSphinxController) {
+						ScreenSphinxController n = (ScreenSphinxController) screen;
 						if (!n.subscreens.empty()) {
 							Subscreen s = n.subscreens.get(0);
 							if (s instanceof SubscreenNetworkInfo) {

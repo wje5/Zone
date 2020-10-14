@@ -1,11 +1,8 @@
 package com.pinball3d.zone.sphinx;
 
 public class PointerProduction extends PointerNeedNetwork {
-	private boolean valid;
-
-	public PointerProduction(WorldPos pos, boolean valid) {
-		super(pos, 7, 4);
-		this.valid = valid;
+	public PointerProduction(WorldPos pos, int id, boolean valid) {
+		super(pos, id, valid, 7, 4);
 	}
 
 	@Override

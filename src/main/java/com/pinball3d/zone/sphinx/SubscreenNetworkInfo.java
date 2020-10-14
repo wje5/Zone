@@ -27,7 +27,6 @@ public class SubscreenNetworkInfo extends Subscreen {
 		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.confirm"), new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("QUIT");
 				parent.quitScreen(SubscreenNetworkInfo.this);
 			}
 		}));

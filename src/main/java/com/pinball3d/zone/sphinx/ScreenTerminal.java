@@ -13,11 +13,9 @@ import java.util.UUID;
 
 import org.lwjgl.input.Keyboard;
 
-import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.network.MessageTerminalRequestNetworkData;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -39,7 +37,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	private Set<Component> components = new HashSet<Component>();
 	private TexturedButton button;
 	public WorldPos worldpos;
-	private boolean flag;
+	public boolean flag;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	public ItemStack stack;
 	private List<Pointer> chosen = new ArrayList<Pointer>();
@@ -76,6 +74,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 				}
 				if (keyCode == Keyboard.KEY_TAB) {
 					setChosenIndex(chosenIndex + 1);
+					updateChosenUnitButton();
 				}
 			} else {
 				subscreens.peek().keyTyped(typedChar, keyCode);
@@ -115,7 +114,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			if (!chosen.isEmpty()) {
 				Util.drawTexture(TEXTURE_3, width - 128, height - 58, 256, 115, 0.5F);
 				Util.drawBorder(width - 106, height - 47, 28, 28, 1, 0xFF20E6E6);
-				chosen.get(0).renderThumbHuge(width - 105, height - 46);
+				chosen.get(chosenIndex).renderThumbHuge(width - 105, height - 46);
 				if (chosen.size() > 1) {
 					for (int i = 0; i < chosen.size(); i++) {
 						Util.drawBorder(width - 74 + (i % 5) * 15, height - (i < 5 ? 47 : 32), 13, 13, 1,
@@ -154,6 +153,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 
 	public void setChosen(List<Pointer> l) {
 		chosen = l.size() > 10 ? l.subList(0, 10) : l;
+		chosenIndex = 0;
 		updateChosenUnitButton();
 	}
 
@@ -182,7 +182,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			}
 		}
 		if (!chosen.isEmpty()) {
-			List<Component> l = chosen.get(0).getUnitButtons(this);
+			List<Component> l = chosen.get(chosenIndex).getUnitButtons(this);
 			it = l.iterator();
 			int index = 0;
 			while (it.hasNext()) {
@@ -206,25 +206,22 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 	}
 
 	public boolean isConnected() {
-		if (getNetwork() != null) {
-			if (getNetwork().getDim() == mc.world.provider.getDimension()
-					&& getNetwork().getBlockState().getBlock() instanceof BlockProcessingCenter
-					&& ((TEProcessingCenter) (getNetwork().getTileEntity())).isOn()
-					&& ((TEProcessingCenter) (getNetwork().getTileEntity())).isPointInRange(
-							mc.world.provider.getDimension(), mc.player.posX, mc.player.posY, mc.player.posZ)) {
-				NBTTagCompound tag = stack.getTagCompound();
-				if (tag == null) {
-					tag = new NBTTagCompound();
-					stack.setTagCompound(tag);
-				}
+		if (!flag) {
+			NBTTagCompound tag = stack.getTagCompound();
+			if (tag == null) {
+				tag = new NBTTagCompound();
+				stack.setTagCompound(tag);
+			}
+			if (tag.hasKey("networkMost")) {
 				String password = tag.getString("password");
-				if (((TEProcessingCenter) (getNetwork().getTileEntity())).isCorrectLoginPassword(password)) {
-					return true;
+				if (!password.isEmpty()) {
+					NetworkHandler.instance.sendToServer(
+							new MessageTerminalRequestNetworkData(tag.getUniqueId("network"), mc.player, password));
 				}
 			}
-			resetNetwork();
+			return false;
 		}
-		return false;
+		return worldpos != null;
 	}
 
 	public void resetNetwork() {
@@ -235,21 +232,10 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 		}
 		tag.removeTag("networkMost");
 		tag.removeTag("networkLeast");
+		tag.removeTag("password");
 	}
 
 	public WorldPos getNetwork() {
-		if (!flag) {
-			NBTTagCompound tag = stack.getTagCompound();
-			if (tag == null) {
-				tag = new NBTTagCompound();
-				stack.setTagCompound(tag);
-			}
-			if (tag.hasKey("networkMost")) {
-				NetworkHandler.instance
-						.sendToServer(new MessageTerminalRequestNetworkData(tag.getUniqueId("network"), mc.player));
-			}
-			return null;
-		}
 		return worldpos;
 	}
 
@@ -259,7 +245,7 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 			tag = new NBTTagCompound();
 			stack.setTagCompound(tag);
 		}
-		if (tag.hasKey("networkMost")) {
+		if (tag.hasUniqueId("network")) {
 			if (tag.getUniqueId("network").equals(uuid)) {
 				if (pos == null) {
 					resetNetwork();

@@ -40,5 +40,33 @@
         "sounds": [
             "zone:crystallizer"
         ]
+    },
+    "boiler": {
+        "category": "block",
+    	"subtitle": "sound.boiler",
+        "sounds": [
+            "zone:boiler"
+        ]
+    },
+    "lathe": {
+        "category": "block",
+    	"subtitle": "sound.lathe",
+        "sounds": [
+            "zone:lathe"
+        ]
+    },
+    "forming_press": {
+        "category": "block",
+    	"subtitle": "sound.forming_press",
+        "sounds": [
+            "zone:forming_press"
+        ]
+    },
+    "pump": {
+        "category": "block",
+    	"subtitle": "sound.pump",
+        "sounds": [
+            "zone:pump"
+        ]
     }
 }

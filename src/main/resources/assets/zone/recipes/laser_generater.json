@@ -7,7 +7,7 @@
   ],
   "key": {
     "#": {
-      "item": "zone:redstone_crystal"
+      "item": "zone:redstone_crystal_lens"
     },
     "*": {
       "item": "zone:etherium_plate_riveted"

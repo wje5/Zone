@@ -44,6 +44,7 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 							ScreenTerminal screen = (ScreenTerminal) ((SubscreenNetworkConfig) parent).parent;
 							screen.resetNetwork();
 							screen.worldpos = null;
+							screen.flag = true;
 							parent.quitScreen(SubscreenCheckConnectedNetwork.this);
 							NetworkHandler.instance.sendToServer(new MessageTerminalDisconnect(mc.player));
 						} else {

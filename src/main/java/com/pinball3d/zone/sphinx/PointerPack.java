@@ -1,8 +1,11 @@
 package com.pinball3d.zone.sphinx;
 
 public class PointerPack extends Pointer {
-	public PointerPack(int x, int z) {
-		super(x, z);
+	public LogisticPack pack;
+
+	public PointerPack(LogisticPack pack) {
+		super((int) pack.x, (int) pack.z);
+		this.pack = pack;
 	}
 
 	@Override

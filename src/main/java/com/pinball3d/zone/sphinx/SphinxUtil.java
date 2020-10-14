@@ -67,8 +67,12 @@ public class SphinxUtil {
 					UUID uuid = t.getUniqueId("network");
 					GlobalNetworkData data = GlobalNetworkData.getData(pos.getWorld());
 					WorldPos network = data.getNetwork(uuid);
-					if (network != null) {
+					if (network != null && list.contains(network)) {
 						tag.setTag("connected", network.writeToNBT(new NBTTagCompound()));
+					} else {
+						t.removeTag("networkMost");
+						t.removeTag("networkLeast");
+						t.removeTag("password");
 					}
 				}
 			}

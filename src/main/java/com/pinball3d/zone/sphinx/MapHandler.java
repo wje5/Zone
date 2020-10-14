@@ -1,18 +1,16 @@
 package com.pinball3d.zone.sphinx;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
 import com.pinball3d.zone.network.MessageRequestMapData;
+import com.pinball3d.zone.network.MessageRequestPackData;
 import com.pinball3d.zone.network.NetworkHandler;
 
 import net.minecraft.client.Minecraft;
@@ -35,16 +33,16 @@ public class MapHandler {
 	private PointerPlayer pointerPlayer;
 	private Map<Integer, PointerLiving> livings;
 	private PointerProcessingCenter processingCenter;
-	private Set<PointerNode> nodes;
-	private Set<PointerStorage> storages;
-	private Set<PointerDevice> devices;
-	private Set<PointerProduction> productions;
-	private Set<PointerPack> packs;
+	private List<PointerNode> nodes = new ArrayList<PointerNode>();
+	private List<PointerStorage> storages = new ArrayList<PointerStorage>();
+	private List<PointerDevice> devices = new ArrayList<PointerDevice>();
+	private List<PointerProduction> productions = new ArrayList<PointerProduction>();
+	private List<PointerPack> packs = new ArrayList<PointerPack>();
 	public WorldPos network;
 	private int dim;
 	private NBTTagCompound data;
 	private int[] lines;
-	private long updateTick;
+	private long updateTick, updatePackTick;
 	public static Minecraft mc = Minecraft.getMinecraft();
 	private static MapHandler instance;
 
@@ -59,48 +57,6 @@ public class MapHandler {
 		pointerPlayer = new PointerPlayer(xOffset, yOffset);
 		dim = mc.player.world.provider.getDimension();
 		processingCenter = new PointerProcessingCenter(network);
-		nodes = new TreeSet<PointerNode>(new Comparator<PointerNode>() {
-			@Override
-			public int compare(PointerNode o1, PointerNode o2) {
-				return o1.pos.getPos().getX() < o2.pos.getPos().getX() ? -1
-						: o1.pos.getPos().getX() > o2.pos.getPos().getX() ? 1
-								: o1.pos.getPos().getX() < o2.pos.getPos().getZ() ? -1
-										: o1.pos.getPos().getZ() > o2.pos.getPos().getZ() ? 1 : 0;
-			};
-		});
-		storages = new TreeSet<PointerStorage>(new Comparator<PointerStorage>() {
-			@Override
-			public int compare(PointerStorage o1, PointerStorage o2) {
-				return o1.pos.getPos().getX() < o2.pos.getPos().getX() ? -1
-						: o1.pos.getPos().getX() > o2.pos.getPos().getX() ? 1
-								: o1.pos.getPos().getZ() < o2.pos.getPos().getZ() ? -1
-										: o1.pos.getPos().getZ() > o2.pos.getPos().getZ() ? 1 : 0;
-			};
-		});
-		devices = new TreeSet<PointerDevice>(new Comparator<PointerDevice>() {
-			@Override
-			public int compare(PointerDevice o1, PointerDevice o2) {
-				return o1.pos.getPos().getX() < o2.pos.getPos().getX() ? -1
-						: o1.pos.getPos().getX() > o2.pos.getPos().getX() ? 1
-								: o1.pos.getPos().getZ() < o2.pos.getPos().getZ() ? -1
-										: o1.pos.getPos().getZ() > o2.pos.getPos().getZ() ? 1 : 0;
-			};
-		});
-		productions = new TreeSet<PointerProduction>(new Comparator<PointerProduction>() {
-			@Override
-			public int compare(PointerProduction o1, PointerProduction o2) {
-				return o1.pos.getPos().getX() < o2.pos.getPos().getX() ? -1
-						: o1.pos.getPos().getX() > o2.pos.getPos().getX() ? 1
-								: o1.pos.getPos().getZ() < o2.pos.getPos().getZ() ? -1
-										: o1.pos.getPos().getZ() > o2.pos.getPos().getZ() ? 1 : 0;
-			};
-		});
-		packs = new TreeSet<PointerPack>(new Comparator<PointerPack>() {
-			@Override
-			public int compare(PointerPack o1, PointerPack o2) {
-				return o1.x < o2.x ? -1 : o1.x > o2.x ? 1 : o1.z < o2.z ? -1 : o1.z > o2.z ? 1 : 0;
-			};
-		});
 	}
 
 	private boolean checkNetwork(WorldPos network) {
@@ -125,6 +81,10 @@ public class MapHandler {
 			NetworkHandler.instance.sendToServer(new MessageRequestMapData(mc.player, network));
 			instance.updateTick = mc.world.getTotalWorldTime() + 20;
 		}
+		if (instance.updatePackTick < mc.world.getTotalWorldTime()) {
+			NetworkHandler.instance.sendToServer(new MessageRequestPackData(mc.player, network));
+			instance.updateTick = mc.world.getTotalWorldTime() + 3;
+		}
 	}
 
 	public static void setData(WorldPos network, NBTTagCompound data, int[] lines) {
@@ -132,6 +92,16 @@ public class MapHandler {
 			instance.data = data;
 			instance.updateDevices();
 			instance.lines = lines;
+		}
+	}
+
+	public static void setPackData(WorldPos network, NBTTagCompound data) {
+		if (instance != null && instance.network.equals(network)) {
+			instance.packs.clear();
+			NBTTagList list = data.getTagList("list", 10);
+			list.forEach(e -> {
+				instance.packs.add(new PointerPack(new LogisticPack((NBTTagCompound) e)));
+			});
 		}
 	}
 
@@ -230,7 +200,7 @@ public class MapHandler {
 			NBTTagCompound tag = (NBTTagCompound) e;
 			WorldPos pos = WorldPos.load(tag);
 			if (pos.getDim() == mc.player.dimension) {
-				storages.add(new PointerStorage(pos, tag.getBoolean("connected")));
+				storages.add(new PointerStorage(pos, tag.getInteger("id"), tag.getBoolean("connected")));
 			}
 		});
 		list = data.getTagList("devices", 10);
@@ -239,7 +209,7 @@ public class MapHandler {
 			NBTTagCompound tag = (NBTTagCompound) e;
 			WorldPos pos = WorldPos.load(tag);
 			if (pos.getDim() == mc.player.dimension) {
-				devices.add(new PointerDevice(pos, tag.getBoolean("connected")));
+				devices.add(new PointerDevice(pos, tag.getInteger("id"), tag.getBoolean("connected")));
 			}
 		});
 		list = data.getTagList("productions", 10);
@@ -248,7 +218,7 @@ public class MapHandler {
 			NBTTagCompound tag = (NBTTagCompound) e;
 			WorldPos pos = WorldPos.load(tag);
 			if (pos.getDim() == mc.player.dimension) {
-				productions.add(new PointerProduction(pos, tag.getBoolean("connected")));
+				productions.add(new PointerProduction(pos, tag.getInteger("id"), tag.getBoolean("connected")));
 			}
 		});
 //		Set<LogisticPack> packset = te.getPacks();

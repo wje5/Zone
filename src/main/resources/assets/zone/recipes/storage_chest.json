@@ -10,7 +10,7 @@
       "item": "zone:etherium_plate_riveted"
     },
     "*": {
-      "item": "zone:storage_panel"
+      "item": "zone:half_interference_unit"
     }
   },
   "result": {

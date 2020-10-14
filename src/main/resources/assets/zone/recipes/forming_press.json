@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+-+",
+    "#O#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:etherium_plate_riveted"
+    },
+    "*": {
+      "item": "zone:kinetic_amplifier"
+    },
+    "+": {
+      "item": "minecraft:piston"
+    },
+    "-": {
+      "item": "zone:etherium_hull"
+    },
+    "O": {
+      "item": "zone:advenced_circuit_board"
+    }
+  },
+  "result": {
+    "item": "zone:forming_press"
+  }
+}

@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "zone:lathe_light" },
+        "facing=south": { "model": "zone:lathe_light", "y": 180 },
+        "facing=west":  { "model": "zone:lathe_light", "y": 270 },
+        "facing=east":  { "model": "zone:lathe_light", "y": 90 }
+    }
+}

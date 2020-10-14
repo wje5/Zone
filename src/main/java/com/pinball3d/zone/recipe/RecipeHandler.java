@@ -164,6 +164,7 @@ public class RecipeHandler {
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_quartz_ore),
 				new ItemStack(ItemLoader.tiny_pile_quartz_dust), new ItemStack(ItemLoader.tiny_pile_quartz_dust),
 				new ItemStack(ItemLoader.small_pile_netherrack_dust), 100));
+
 		register(new RecipeCrystallizer(new ItemStack(Items.REDSTONE, 16), new ItemStack(ItemLoader.redstone_crystal),
 				400));
 		register(new RecipeCrystallizer(new ItemStack(Items.BLAZE_POWDER, 16), new ItemStack(ItemLoader.blaze_crystal),
@@ -176,6 +177,24 @@ public class RecipeHandler {
 		register(new RecipeCrystallizer(new ItemStack(ItemLoader.quartz_dust, 1), new ItemStack(Items.QUARTZ), 400));
 		register(new RecipeCrystallizer(new ItemStack(ItemLoader.prismarine_dust, 8),
 				new ItemStack(Items.PRISMARINE_CRYSTALS), 400));
+
+		register(new RecipeLathe(new ItemStack(Items.IRON_NUGGET), new ItemStack(ItemLoader.rivet), 50));
+		register(new RecipeLathe(new ItemStack(ItemLoader.redstone_crystal),
+				new ItemStack(ItemLoader.redstone_crystal_lens), 400));
+		register(new RecipeLathe(new ItemStack(ItemLoader.etherium, 3), new ItemStack(ItemLoader.etherium_rod), 50));
+
+		register(new RecipeFormingPress(new ItemStack(Items.IRON_INGOT), new ItemStack(Items.IRON_INGOT),
+				new ItemStack(ItemLoader.iron_plate), 50));
+		register(new RecipeFormingPress(new ItemStack(Items.GOLD_INGOT), new ItemStack(Items.GOLD_INGOT),
+				new ItemStack(ItemLoader.gold_plate), 50));
+		register(new RecipeFormingPress(new ItemStack(ItemLoader.etherium), new ItemStack(ItemLoader.etherium),
+				new ItemStack(ItemLoader.etherium_plate), 50));
+		register(new RecipeFormingPress(new ItemStack(ItemLoader.iron_plate), new ItemStack(ItemLoader.rivet),
+				new ItemStack(ItemLoader.iron_plate_riveted), 50));
+		register(new RecipeFormingPress(new ItemStack(ItemLoader.gold_plate), new ItemStack(ItemLoader.rivet),
+				new ItemStack(ItemLoader.gold_plate_riveted), 50));
+		register(new RecipeFormingPress(new ItemStack(ItemLoader.etherium_plate), new ItemStack(ItemLoader.rivet),
+				new ItemStack(ItemLoader.etherium_plate_riveted), 50));
 	}
 
 	public static void register(Recipe recipe) {
@@ -210,6 +229,6 @@ public class RecipeHandler {
 	}
 
 	public static enum Type {
-		GRINDER, ALLOY_SMELTER, CENTRIFUGE, CRYSTALLIZER;
+		GRINDER, ALLOY_SMELTER, CENTRIFUGE, CRYSTALLIZER, LATHE, FORMING_PRESS;
 	}
 }

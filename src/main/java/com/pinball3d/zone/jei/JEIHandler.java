@@ -4,13 +4,17 @@ import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.inventory.GuiContainerAlloySmelter;
 import com.pinball3d.zone.inventory.GuiContainerCentrifuge;
 import com.pinball3d.zone.inventory.GuiContainerCrystallizer;
+import com.pinball3d.zone.inventory.GuiContainerFormingPress;
 import com.pinball3d.zone.inventory.GuiContainerGrinder;
+import com.pinball3d.zone.inventory.GuiContainerLathe;
 import com.pinball3d.zone.recipe.RecipeAlloySmelter;
 import com.pinball3d.zone.recipe.RecipeCentrifuge;
 import com.pinball3d.zone.recipe.RecipeCrystallizer;
+import com.pinball3d.zone.recipe.RecipeFormingPress;
 import com.pinball3d.zone.recipe.RecipeGrinder;
 import com.pinball3d.zone.recipe.RecipeHandler;
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
+import com.pinball3d.zone.recipe.RecipeLathe;
 
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IModPlugin;
@@ -28,6 +32,8 @@ public class JEIHandler implements IModPlugin {
 		registry.addRecipeCategories(new RecipeCategoryAlloySmelter(helper));
 		registry.addRecipeCategories(new RecipeCategoryCentrifuge(helper));
 		registry.addRecipeCategories(new RecipeCategoryCrystallizer(helper));
+		registry.addRecipeCategories(new RecipeCategoryLathe(helper));
+		registry.addRecipeCategories(new RecipeCategoryFormingPress(helper));
 	}
 
 	@Override
@@ -51,5 +57,14 @@ public class JEIHandler implements IModPlugin {
 				"zone:crystallizer");
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.crystallizer), "zone:crystallizer");
 		registry.addRecipeClickArea(GuiContainerCrystallizer.class, 80, 35, 22, 15, "zone:crystallizer");
+		registry.addRecipes(RecipeHandler.getRecipes(Type.LATHE), "zone:lathe");
+		registry.handleRecipes(RecipeLathe.class, recipe -> new RecipeWrapperLathe(recipe), "zone:lathe");
+		registry.addRecipeCatalyst(new ItemStack(BlockLoader.lathe), "zone:lathe");
+		registry.addRecipeClickArea(GuiContainerLathe.class, 80, 35, 22, 15, "zone:lathe");
+		registry.addRecipes(RecipeHandler.getRecipes(Type.FORMING_PRESS), "zone:forming_press");
+		registry.handleRecipes(RecipeFormingPress.class, recipe -> new RecipeWrapperFormingPress(recipe),
+				"zone:forming_press");
+		registry.addRecipeCatalyst(new ItemStack(BlockLoader.forming_press), "zone:forming_press");
+		registry.addRecipeClickArea(GuiContainerFormingPress.class, 80, 35, 22, 15, "zone:forming_press");
 	}
 }

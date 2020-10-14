@@ -1,11 +1,8 @@
 package com.pinball3d.zone.sphinx;
 
 public class PointerStorage extends PointerNeedNetwork {
-	private boolean valid;
-
-	public PointerStorage(WorldPos pos, boolean valid) {
-		super(pos, 7, 7);
-		this.valid = valid;
+	public PointerStorage(WorldPos pos, int id, boolean valid) {
+		super(pos, id, valid, 7, 7);
 	}
 
 	@Override

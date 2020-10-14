@@ -1,7 +1,5 @@
 package com.pinball3d.zone.sphinx;
 
-import com.pinball3d.zone.tileentity.INeedNetwork;
-
 import net.minecraft.util.ResourceLocation;
 
 public class ButtonUnitInfo extends TexturedButton implements IUnitButton {
@@ -12,9 +10,10 @@ public class ButtonUnitInfo extends TexturedButton implements IUnitButton {
 		super(parent, x, y, TEXTURE, 116, 68, 32, 32, 0.25F, new Runnable() {
 			@Override
 			public void run() {
-				if (unit instanceof PointerNeedNetwork) {
-					parent.putScreen(new SubscreenNeedNetworkInfo(parent,
-							(INeedNetwork) ((PointerNeedNetwork) unit).pos.getTileEntity()));
+				if (unit instanceof PointerProcessingCenter) {
+					parent.putScreen(new SubscreenNetworkInfo(parent, ((PointerProcessingCenter) unit).pos));
+				} else if (unit instanceof PointerNeedNetwork) {
+					parent.putScreen(new SubscreenNeedNetworkInfo(parent, ((PointerNeedNetwork) unit).pos));
 				}
 
 			}

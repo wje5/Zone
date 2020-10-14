@@ -1,11 +1,13 @@
 package com.pinball3d.zone.sphinx;
 
+import com.pinball3d.zone.block.BlockLoader;
+
+import net.minecraft.item.Item;
+
 public class PointerNode extends PointerNeedNetwork {
-	private boolean valid;
 
 	public PointerNode(WorldPos pos, boolean valid) {
-		super(pos, 7, 7);
-		this.valid = valid;
+		super(pos, Item.getIdFromItem(Item.getItemFromBlock(BlockLoader.node)), valid, 7, 7);
 	}
 
 	@Override

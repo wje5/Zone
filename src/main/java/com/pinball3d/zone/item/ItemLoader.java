@@ -2,10 +2,14 @@ package com.pinball3d.zone.item;
 
 import com.pinball3d.zone.psp.ItemFC;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -23,7 +27,7 @@ public class ItemLoader {
 			transistor, energy_group, restrain_circle, theile_tube, laser_generater, crystallization_accelerator,
 			redstone_crystal, dioptric_crystal, induction_tube, smoothing_unit, blaze_crystal, display_screen,
 			amplify_unit, network_adapter, interference_crystal, half_interference_unit, sagger, fire_brick, clay_mold,
-			ceramic_mold;
+			ceramic_mold, redstone_crystal_lens;
 
 	public static Item energy, construct_block, terminal, fc, drill, drill_heavy, drill_head, drill_heavy_head,
 			drill_empty, crucible_spoon, crucible_spoon_filled, manual, crucible, casting_table, hybrid_fuel;
@@ -44,7 +48,7 @@ public class ItemLoader {
 			tiny_pile_stone_dust, tiny_pile_netherrack_dust, tiny_pile_etherium_dust, tiny_pile_clarity_glass_dust,
 			tiny_pile_clay_dust, tiny_pile_flint_dust, tiny_pile_prismarine_dust;
 
-	public static Item construct_block_axis, construct_block_axis_rot, truss_x, truss_z;
+	public static Item construct_block_axis, construct_block_axis_rot, truss_x, truss_z, processing_center_light;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -91,6 +95,7 @@ public class ItemLoader {
 		register(registry, fire_brick = new ZoneItem("fire_brick"));
 		register(registry, clay_mold = new ZoneItem("clay_mold"));
 		register(registry, ceramic_mold = new ZoneItem("ceramic_mold"));
+		register(registry, redstone_crystal_lens = new ZoneItem("redstone_crystal_lens"));
 		register(registry, energy = new ZoneItem("energy"));
 		register(registry, terminal = new ItemTerminal());
 		register(registry, fc = new ItemFC());
@@ -159,6 +164,14 @@ public class ItemLoader {
 		register(registry, construct_block_axis_rot = new ZoneItem("construct_block_axis_rot").setCreativeTab(null));
 		register(registry, truss_x = new ZoneItem("truss_x").setCreativeTab(null));
 		register(registry, truss_z = new ZoneItem("truss_z").setCreativeTab(null));
+		register(registry, processing_center_light = new ZoneItem("processing_center_light").setCreativeTab(null));
+		Block.REGISTRY.forEach(e -> {
+			if (e instanceof IFluidBlock) {
+				register(registry, new ItemBlock(e));
+			}
+		});
+		register(registry, new ItemBlock(Blocks.WATER));
+		register(registry, new ItemBlock(Blocks.LAVA));
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {
