@@ -1,5 +1,6 @@
 package com.pinball3d.zone.item;
 
+import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.psp.ItemFC;
 
 import net.minecraft.block.Block;
@@ -7,6 +8,8 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -27,7 +30,7 @@ public class ItemLoader {
 			transistor, energy_group, restrain_circle, theile_tube, laser_generater, crystallization_accelerator,
 			redstone_crystal, dioptric_crystal, induction_tube, smoothing_unit, blaze_crystal, display_screen,
 			amplify_unit, network_adapter, interference_crystal, half_interference_unit, sagger, fire_brick, clay_mold,
-			ceramic_mold, redstone_crystal_lens;
+			ceramic_mold, redstone_crystal_lens, tar, paddle, impeller;
 
 	public static Item energy, construct_block, terminal, fc, drill, drill_heavy, drill_head, drill_heavy_head,
 			drill_empty, crucible_spoon, crucible_spoon_filled, manual, crucible, casting_table, hybrid_fuel;
@@ -36,19 +39,23 @@ public class ItemLoader {
 			crushed_redstone_ore, crushed_coal_ore, crushed_lapis_ore, crushed_quartz_ore;
 
 	public static Item iron_dust, gold_dust, diamond_dust, emerald_dust, coal_dust, lapis_dust, quartz_dust, stone_dust,
-			netherrack_dust, etherium_dust, clarity_glass_dust, clay_dust, flint_dust, prismarine_dust;
+			netherrack_dust, etherium_dust, clarity_glass_dust, clay_dust, flint_dust, prismarine_dust,
+			garton_metal_dust;
 
 	public static Item small_pile_iron_dust, small_pile_gold_dust, small_pile_diamond_dust, small_pile_emerald_dust,
 			small_pile_redstone_dust, small_pile_coal_dust, small_pile_lapis_dust, small_pile_quartz_dust,
 			small_pile_stone_dust, small_pile_netherrack_dust, small_pile_etherium_dust, small_pile_clarity_glass_dust,
-			small_pile_clay_dust, small_pile_flint_dust, small_pile_prismarine_dust;
+			small_pile_clay_dust, small_pile_flint_dust, small_pile_prismarine_dust, small_pile_garton_metal_dust,
+			small_pile_glowstone_dust, small_pile_blaze_powder;
 
 	public static Item tiny_pile_iron_dust, tiny_pile_gold_dust, tiny_pile_diamond_dust, tiny_pile_emerald_dust,
 			tiny_pile_redstone_dust, tiny_pile_coal_dust, tiny_pile_lapis_dust, tiny_pile_quartz_dust,
 			tiny_pile_stone_dust, tiny_pile_netherrack_dust, tiny_pile_etherium_dust, tiny_pile_clarity_glass_dust,
-			tiny_pile_clay_dust, tiny_pile_flint_dust, tiny_pile_prismarine_dust;
+			tiny_pile_clay_dust, tiny_pile_flint_dust, tiny_pile_prismarine_dust, tiny_pile_garton_metal_dust,
+			tiny_pile_glowstone_dust, tiny_pile_blaze_powder;
 
-	public static Item construct_block_axis, construct_block_axis_rot, truss_x, truss_z, processing_center_light;
+	public static Item construct_block_axis, construct_block_axis_rot, truss_x, truss_z, processing_center_light, water,
+			lava;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -96,6 +103,9 @@ public class ItemLoader {
 		register(registry, clay_mold = new ZoneItem("clay_mold"));
 		register(registry, ceramic_mold = new ZoneItem("ceramic_mold"));
 		register(registry, redstone_crystal_lens = new ZoneItem("redstone_crystal_lens"));
+		register(registry, tar = new ZoneItem("tar"));
+		register(registry, paddle = new ZoneItem("paddle"));
+		register(registry, impeller = new ZoneItem("impeller"));
 		register(registry, energy = new ZoneItem("energy"));
 		register(registry, terminal = new ItemTerminal());
 		register(registry, fc = new ItemFC());
@@ -130,6 +140,7 @@ public class ItemLoader {
 		register(registry, clay_dust = new ZoneItem("clay_dust"));
 		register(registry, flint_dust = new ZoneItem("flint_dust"));
 		register(registry, prismarine_dust = new ZoneItem("prismarine_dust"));
+		register(registry, garton_metal_dust = new ZoneItem("garton_metal_dust"));
 		register(registry, small_pile_iron_dust = new ZoneItem("small_pile_iron_dust"));
 		register(registry, small_pile_gold_dust = new ZoneItem("small_pile_gold_dust"));
 		register(registry, small_pile_diamond_dust = new ZoneItem("small_pile_diamond_dust"));
@@ -145,6 +156,9 @@ public class ItemLoader {
 		register(registry, small_pile_clay_dust = new ZoneItem("small_pile_clay_dust"));
 		register(registry, small_pile_flint_dust = new ZoneItem("small_pile_flint_dust"));
 		register(registry, small_pile_prismarine_dust = new ZoneItem("small_pile_prismarine_dust"));
+		register(registry, small_pile_garton_metal_dust = new ZoneItem("small_pile_garton_metal_dust"));
+		register(registry, small_pile_glowstone_dust = new ZoneItem("small_pile_glowstone_dust"));
+		register(registry, small_pile_blaze_powder = new ZoneItem("small_pile_blaze_powder"));
 		register(registry, tiny_pile_iron_dust = new ZoneItem("tiny_pile_iron_dust"));
 		register(registry, tiny_pile_gold_dust = new ZoneItem("tiny_pile_gold_dust"));
 		register(registry, tiny_pile_diamond_dust = new ZoneItem("tiny_pile_diamond_dust"));
@@ -160,6 +174,9 @@ public class ItemLoader {
 		register(registry, tiny_pile_clay_dust = new ZoneItem("tiny_pile_clay_dust"));
 		register(registry, tiny_pile_flint_dust = new ZoneItem("tiny_pile_flint_dust"));
 		register(registry, tiny_pile_prismarine_dust = new ZoneItem("tiny_pile_prismarine_dust"));
+		register(registry, tiny_pile_garton_metal_dust = new ZoneItem("tiny_pile_garton_metal_dust"));
+		register(registry, tiny_pile_glowstone_dust = new ZoneItem("tiny_pile_glowstone_dust"));
+		register(registry, tiny_pile_blaze_powder = new ZoneItem("tiny_pile_blaze_powder"));
 		register(registry, construct_block_axis = new ZoneItem("construct_block_axis").setCreativeTab(null));
 		register(registry, construct_block_axis_rot = new ZoneItem("construct_block_axis_rot").setCreativeTab(null));
 		register(registry, truss_x = new ZoneItem("truss_x").setCreativeTab(null));
@@ -167,11 +184,29 @@ public class ItemLoader {
 		register(registry, processing_center_light = new ZoneItem("processing_center_light").setCreativeTab(null));
 		Block.REGISTRY.forEach(e -> {
 			if (e instanceof IFluidBlock) {
-				register(registry, new ItemBlock(e));
+				Item item = new ItemBlock(e) {
+					@Override
+					public String getUnlocalizedName() {
+						return ((IFluidBlock) e).getFluid().getUnlocalizedName();
+					}
+
+					@Override
+					public String getUnlocalizedName(ItemStack stack) {
+						return ((IFluidBlock) e).getFluid().getUnlocalizedName();
+					}
+
+					@SuppressWarnings("deprecation")
+					@Override
+					public String getItemStackDisplayName(ItemStack stack) {
+						return I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack)).trim();
+					}
+				}.setRegistryName("zone", e.getRegistryName().getResourcePath()).setCreativeTab(TabZone.tab);
+				register(registry, item, false);
+				registerRender(item, new ModelResourceLocation(e.getRegistryName(), null));
 			}
 		});
-		register(registry, new ItemBlock(Blocks.WATER));
-		register(registry, new ItemBlock(Blocks.LAVA));
+		register(registry, water = new ItemBlock(Blocks.FLOWING_WATER).setRegistryName("water"));
+		register(registry, lava = new ItemBlock(Blocks.FLOWING_LAVA).setRegistryName("lava"));
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {

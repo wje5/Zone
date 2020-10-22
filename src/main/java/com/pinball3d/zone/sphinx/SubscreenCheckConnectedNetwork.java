@@ -4,7 +4,6 @@ import com.pinball3d.zone.network.MessageDisconnect;
 import com.pinball3d.zone.network.MessageTerminalDisconnect;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.INeedNetwork;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
@@ -49,21 +48,8 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 							NetworkHandler.instance.sendToServer(new MessageTerminalDisconnect(mc.player));
 						} else {
 							INeedNetwork te = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity;
-							WorldPos pos = te.getNetworkPos();
-							if (pos != null) {
-								TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
-								WorldPos pos2 = new WorldPos((TileEntity) te);
-								NetworkHandler.instance.sendToServer(new MessageDisconnect(mc.player, pos2));
-								pc.removeNeedNetwork(pos2);
-							} else if (te.getNetwork() != null) {
-								pos = GlobalNetworkData.getData(((TileEntity) te).getWorld())
-										.getNetwork(te.getNetwork());
-								WorldPos pos2 = new WorldPos((TileEntity) te);
-								NetworkHandler.instance.sendToServer(new MessageDisconnect(mc.player, pos2));
-								TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
-								pc.removeNeedNetwork(pos2);
-							}
-							te.deleteNetwork();
+							WorldPos pos2 = new WorldPos((TileEntity) te);
+							NetworkHandler.instance.sendToServer(new MessageDisconnect(mc.player, pos2));
 							parent.quitScreen(SubscreenCheckConnectedNetwork.this);
 						}
 					}

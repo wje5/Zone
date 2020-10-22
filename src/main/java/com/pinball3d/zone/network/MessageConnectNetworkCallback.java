@@ -96,7 +96,7 @@ public class MessageConnectNetworkCallback implements IMessage {
 						} else if (tileentity.getNetwork() != null) {
 							pos = GlobalNetworkData.getData(((TileEntity) tileentity).getWorld())
 									.getNetwork(tileentity.getNetwork());
-							if (pos.getTileEntity() instanceof TEProcessingCenter) {
+							if (pos != null && pos.getTileEntity() instanceof TEProcessingCenter) {
 								((TEProcessingCenter) pos.getTileEntity()).removeNeedNetwork(message.pos);
 							}
 						}

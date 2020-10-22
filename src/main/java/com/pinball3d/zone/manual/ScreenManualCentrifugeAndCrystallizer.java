@@ -20,7 +20,7 @@ public class ScreenManualCentrifugeAndCrystallizer extends ScreenManualBase {
 		if (flag) {
 			Minecraft.getMinecraft().displayGuiScreen(new ScreenManualBoilerAndDrill());
 		} else {
-			Minecraft.getMinecraft().displayGuiScreen(new ScreenManualSphinxSystem());
+			Minecraft.getMinecraft().displayGuiScreen(new ScreenManualLatheAndFormingPress());
 		}
 	}
 

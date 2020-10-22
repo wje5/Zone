@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*+",
+    "*+*",
+    "-*="
+  ],
+  "key": {
+    "#": {
+      "item": "zone:hammer",
+      "data": 32767
+    },
+    "*": {
+      "item": "zone:rivet"
+    },
+    "+": {
+      "item": "zone:etherium_plate"
+    },
+    "-": {
+      "item": "zone:etherium_rod"
+    },
+    "=": {
+      "item": "zone:file",
+      "data": 32767
+    }
+  },
+  "result": {
+    "item": "zone:paddle"
+  }
+}

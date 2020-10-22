@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "*+*",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:rivet"
+    },
+    "*": {
+      "item": "zone:paddle"
+    },
+    "+": {
+      "item": "zone:kinetic_amplifier"
+    }
+  },
+  "result": {
+    "item": "zone:impeller"
+  }
+}

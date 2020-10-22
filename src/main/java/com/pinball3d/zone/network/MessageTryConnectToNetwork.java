@@ -1,5 +1,6 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.WorldPos;
@@ -62,11 +63,8 @@ public class MessageTryConnectToNetwork implements IMessage {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
-					World world = message.network.getWorld();
+					World world = message.pos.getWorld();
 					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					if (!world.isAreaLoaded(message.network.getPos(), 5)) {
-						return;
-					}
 					TileEntity tileentity = message.network.getTileEntity();
 					if (tileentity instanceof TEProcessingCenter) {
 						TEProcessingCenter te = (TEProcessingCenter) tileentity;
@@ -98,7 +96,12 @@ public class MessageTryConnectToNetwork implements IMessage {
 									((INeedNetwork) t).setWorldPos(message.network, te.getUUID());
 									te.addNeedNetwork(message.pos);
 								}
-								NBTTagCompound tag = SphinxUtil.getValidNetworkData(message.pos, player, false);
+								NBTTagCompound tag;
+								if (message.pos.getBlockState().getBlock() == BlockLoader.beacon_control_matrix) {
+									tag = SphinxUtil.getValidNetworkDataWithoutRange(message.pos, player, false);
+								} else {
+									tag = SphinxUtil.getValidNetworkData(message.pos, player, false);
+								}
 								NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), player);
 							}
 						} else {

@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageRequestPackData implements IMessage {
 	String name;
+	int dim;
 	WorldPos pos;
 
 	public MessageRequestPackData() {
@@ -24,18 +25,21 @@ public class MessageRequestPackData implements IMessage {
 
 	public MessageRequestPackData(EntityPlayer player, WorldPos pos) {
 		name = player.getName();
+		dim = player.dimension;
 		this.pos = pos;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		name = ByteBufUtils.readUTF8String(buf);
+		dim = buf.readInt();
 		pos = WorldPos.readFromByte(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		ByteBufUtils.writeUTF8String(buf, name);
+		buf.writeInt(dim);
 		pos.writeToByte(buf);
 	}
 
@@ -45,7 +49,7 @@ public class MessageRequestPackData implements IMessage {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
-					World world = message.pos.getWorld();
+					World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
 					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
 					TileEntity tileentity = message.pos.getTileEntity();
 					if (tileentity instanceof TEProcessingCenter) {

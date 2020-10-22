@@ -68,6 +68,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 				}
 			} else {
 				deleteNetwork();
+				callUpdate();
 			}
 		}
 	}

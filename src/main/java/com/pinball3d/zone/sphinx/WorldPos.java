@@ -128,4 +128,8 @@ public class WorldPos {
 	public String toString() {
 		return "dim:" + dim + " pos:" + pos;
 	}
+
+	public int compare(WorldPos p) {
+		return dim > p.dim ? 1 : p.dim > dim ? -1 : pos.compareTo(p.getPos());
+	}
 }

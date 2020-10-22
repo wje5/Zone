@@ -24,9 +24,11 @@ public class TEProductionPanel extends TENeedNetwork implements IProduction {
 		TileEntity te = world.getTileEntity(newpos);
 		if (te != null) {
 			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
-			((TEProcessingCenter) worldpos.getTileEntity()).dispenceItems(new StorageWrapper(handler, false),
-					new WorldPos(this));
-			markDirty();
+			if (handler != null) {
+				((TEProcessingCenter) worldpos.getTileEntity()).dispenceItems(new StorageWrapper(handler, false),
+						new WorldPos(this));
+				markDirty();
+			}
 		}
 		super.work();
 	}

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.pinball3d.zone.block.BlockLoader;
+
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -42,10 +45,22 @@ public class LogisticPack {
 				y = next.getPos().getY();
 				z = next.getPos().getZ();
 				distance -= total;
-				if (routes.isEmpty()) {
-					return true;
-				} else {
-					routes.remove(0);
+				routes.remove(0);
+				while (!routes.isEmpty()) {
+					Block block = next.getBlockState().getBlock();
+					next = routes.get(0);
+					Block block2 = next.getBlockState().getBlock();
+					if ((block == BlockLoader.processing_center_light || block == BlockLoader.beacon_control_matrix)
+							&& (block2 == BlockLoader.processing_center_light
+									|| block2 == BlockLoader.beacon_control_matrix)) {
+						x = next.getPos().getX();
+						y = next.getPos().getY();
+						z = next.getPos().getZ();
+						dim = next.getDim();
+						routes.remove(0);
+					} else {
+						break;
+					}
 				}
 			} else {
 				double scale = distance / total;

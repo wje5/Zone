@@ -6,7 +6,7 @@ public class ScreenManualSphinxSystem extends ScreenManualBase {
 	@Override
 	public void onFlip(boolean flag) {
 		if (flag) {
-			Minecraft.getMinecraft().displayGuiScreen(new ScreenManualCentrifugeAndCrystallizer());
+			Minecraft.getMinecraft().displayGuiScreen(new ScreenManualLatheAndFormingPress());
 		} else {
 			Minecraft.getMinecraft().displayGuiScreen(new ScreenManualSphinxSystem2());
 		}

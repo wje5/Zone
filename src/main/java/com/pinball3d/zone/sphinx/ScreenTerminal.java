@@ -111,6 +111,21 @@ public class ScreenTerminal extends GuiScreen implements IParent {
 		if (isConnected()) {
 			button.setEnabled(true);
 			MapHandler.draw(getNetwork(), width, height);
+			boolean flag = false;
+			for (int i = 0; i < chosen.size(); i++) {
+				if (!MapHandler.isValidPointer(chosen.get(i))) {
+					chosen.remove(i);
+					if (i < chosenIndex) {
+						chosenIndex--;
+					} else if (i == chosenIndex) {
+						chosenIndex = 0;
+					}
+					flag = true;
+				}
+			}
+			if (flag) {
+				updateChosenUnitButton();
+			}
 			if (!chosen.isEmpty()) {
 				Util.drawTexture(TEXTURE_3, width - 128, height - 58, 256, 115, 0.5F);
 				Util.drawBorder(width - 106, height - 47, 28, 28, 1, 0xFF20E6E6);

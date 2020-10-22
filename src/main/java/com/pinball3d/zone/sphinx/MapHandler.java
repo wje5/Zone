@@ -9,9 +9,11 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
+import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.network.MessageRequestMapData;
 import com.pinball3d.zone.network.MessageRequestPackData;
 import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -39,7 +41,7 @@ public class MapHandler {
 	private List<PointerProduction> productions = new ArrayList<PointerProduction>();
 	private List<PointerPack> packs = new ArrayList<PointerPack>();
 	public WorldPos network;
-	private int dim;
+	private int dim, dataDim, packDim;
 	private NBTTagCompound data;
 	private int[] lines;
 	private long updateTick, updatePackTick;
@@ -49,7 +51,8 @@ public class MapHandler {
 	private MapHandler(WorldPos netWork) {
 		ChunkRenderCache.init();
 		this.network = netWork;
-		NetworkHandler.instance.sendToServer(new MessageRequestMapData(mc.player, network));
+		NetworkHandler.instance.sendToServer(new MessageRequestMapData(mc.player, netWork));
+		NetworkHandler.instance.sendToServer(new MessageRequestPackData(mc.player, netWork));
 		livings = new HashMap<Integer, PointerLiving>();
 		BlockPos pos = mc.player.getPosition();
 		xOffset = pos.getX();
@@ -67,6 +70,21 @@ public class MapHandler {
 		instance = new MapHandler(network);
 	}
 
+	public static void callRefresh(WorldPos pos) {
+		NetworkHandler.instance.sendToServer(new MessageRequestMapData(mc.player, pos));
+		instance.updateTick = mc.world.getTotalWorldTime() + ConfigLoader.mapUpdateRate;
+	}
+
+	public static void callRefreshPacks(WorldPos pos) {
+		NetworkHandler.instance.sendToServer(new MessageRequestPackData(mc.player, pos));
+		instance.updatePackTick = mc.world.getTotalWorldTime() + ConfigLoader.packUpdateRate;
+	}
+
+	public static boolean isValidPointer(Pointer p) {
+		return instance.processingCenter == p || instance.nodes.contains(p) || instance.storages.contains(p)
+				|| instance.devices.contains(p) || instance.productions.contains(p);
+	}
+
 	public static void draw(WorldPos network, int width, int height) {
 		if (instance == null || !instance.checkNetwork(network)) {
 			changeNetwork(network);
@@ -78,12 +96,10 @@ public class MapHandler {
 		instance.drawPointer(width, height);
 		instance.drawLines(width, height);
 		if (instance.updateTick < mc.world.getTotalWorldTime()) {
-			NetworkHandler.instance.sendToServer(new MessageRequestMapData(mc.player, network));
-			instance.updateTick = mc.world.getTotalWorldTime() + 20;
+			callRefresh(network);
 		}
 		if (instance.updatePackTick < mc.world.getTotalWorldTime()) {
-			NetworkHandler.instance.sendToServer(new MessageRequestPackData(mc.player, network));
-			instance.updateTick = mc.world.getTotalWorldTime() + 3;
+			callRefreshPacks(network);
 		}
 	}
 
@@ -92,6 +108,7 @@ public class MapHandler {
 			instance.data = data;
 			instance.updateDevices();
 			instance.lines = lines;
+			instance.dataDim = mc.player.dimension;
 		}
 	}
 
@@ -102,6 +119,7 @@ public class MapHandler {
 			list.forEach(e -> {
 				instance.packs.add(new PointerPack(new LogisticPack((NBTTagCompound) e)));
 			});
+			instance.packDim = mc.player.dimension;
 		}
 	}
 
@@ -117,7 +135,9 @@ public class MapHandler {
 			return;
 		}
 		List<PointerNeedNetwork> list = new ArrayList<PointerNeedNetwork>();
-		list.add(instance.processingCenter);
+		if (instance.processingCenter != null) {
+			list.add(instance.processingCenter);
+		}
 		list.addAll(instance.nodes);
 		list.addAll(instance.storages);
 		list.addAll(instance.devices);
@@ -175,7 +195,11 @@ public class MapHandler {
 
 	private void updateProcessingCenter() {
 		if (network.getDim() == mc.player.dimension) {
-			processingCenter.pos = network;
+			if (processingCenter == null) {
+				processingCenter = new PointerProcessingCenter(network);
+			} else {
+				processingCenter.pos = network;
+			}
 		} else {
 			processingCenter = null;
 		}
@@ -191,7 +215,7 @@ public class MapHandler {
 			NBTTagCompound tag = (NBTTagCompound) e;
 			WorldPos pos = WorldPos.load(tag);
 			if (pos.getDim() == mc.player.dimension) {
-				nodes.add(new PointerNode(pos, tag.getBoolean("connected")));
+				nodes.add(new PointerNode(pos, WorkingState.values()[tag.getInteger("state")]));
 			}
 		});
 		list = data.getTagList("storages", 10);
@@ -200,7 +224,8 @@ public class MapHandler {
 			NBTTagCompound tag = (NBTTagCompound) e;
 			WorldPos pos = WorldPos.load(tag);
 			if (pos.getDim() == mc.player.dimension) {
-				storages.add(new PointerStorage(pos, tag.getInteger("id"), tag.getBoolean("connected")));
+				storages.add(
+						new PointerStorage(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
 			}
 		});
 		list = data.getTagList("devices", 10);
@@ -209,7 +234,8 @@ public class MapHandler {
 			NBTTagCompound tag = (NBTTagCompound) e;
 			WorldPos pos = WorldPos.load(tag);
 			if (pos.getDim() == mc.player.dimension) {
-				devices.add(new PointerDevice(pos, tag.getInteger("id"), tag.getBoolean("connected")));
+				devices.add(
+						new PointerDevice(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
 			}
 		});
 		list = data.getTagList("productions", 10);
@@ -218,16 +244,10 @@ public class MapHandler {
 			NBTTagCompound tag = (NBTTagCompound) e;
 			WorldPos pos = WorldPos.load(tag);
 			if (pos.getDim() == mc.player.dimension) {
-				productions.add(new PointerProduction(pos, tag.getInteger("id"), tag.getBoolean("connected")));
+				productions.add(new PointerProduction(pos, tag.getInteger("id"),
+						WorkingState.values()[tag.getInteger("state")]));
 			}
 		});
-//		Set<LogisticPack> packset = te.getPacks();
-//		packs.clear();
-//		packset.forEach(e -> {
-//			if (e.dim == mc.player.dimension) {
-//				packs.add(new PointerPack((int) e.x, (int) e.z));
-//			}
-//		});
 	}
 
 	private void drawMap(int width, int height) {
@@ -305,6 +325,9 @@ public class MapHandler {
 	}
 
 	private void drawPointer(int width, int height) {
+		if (dataDim != mc.player.dimension) {
+			return;
+		}
 		GlStateManager.pushMatrix();
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 //		Iterator<PointerLiving> it = livings.values().iterator();
@@ -328,18 +351,22 @@ public class MapHandler {
 		productions.forEach(e -> {
 			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
 		});
-		packs.forEach(e -> {
-			e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
-		});
+		if (packDim == mc.player.dimension) {
+			packs.forEach(e -> {
+				e.doRender(getRenderOffsetX(width), getRenderOffsetY(height));
+			});
+		}
 		GlStateManager.popMatrix();
 	}
 
 	private void drawLines(int width, int height) {
-		if (lines == null) {
+		if (lines == null || dataDim != mc.player.dimension) {
 			return;
 		}
 		List<PointerNeedNetwork> list = new ArrayList<PointerNeedNetwork>();
-		list.add(processingCenter);
+		if (processingCenter != null) {
+			list.add(processingCenter);
+		}
 		list.addAll(nodes);
 		list.addAll(storages);
 		list.addAll(devices);

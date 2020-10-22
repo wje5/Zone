@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "zone:dust_from_tiny",
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:tiny_pile_blaze_powder"
+    }
+  },
+  "result": {
+    "item": "minecraft:blaze_powder"
+  }
+}

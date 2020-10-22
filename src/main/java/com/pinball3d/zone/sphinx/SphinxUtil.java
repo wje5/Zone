@@ -27,7 +27,7 @@ public class SphinxUtil {
 		List<WorldPos> list = new ArrayList<WorldPos>();
 		map.forEach((uuid, pos) -> {
 			TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-			if (te.isOn() && !te.needInit() && te.isPointInRange(dim, x, y, z)) {
+			if (te.isOn() && !te.needInit() && (te.isPointInRange(dim, x, y, z))) {
 				list.add(pos);
 			}
 		});
@@ -40,9 +40,77 @@ public class SphinxUtil {
 		return list;
 	}
 
+	public static List<WorldPos> getValidNetworksWithoutRange() {
+		World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0);
+		GlobalNetworkData data = GlobalNetworkData.getData(world);
+		Map<UUID, WorldPos> map = data.getNetworks();
+		List<WorldPos> list = new ArrayList<WorldPos>();
+		map.forEach((uuid, pos) -> {
+			TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
+			if (te.isOn() && !te.needInit()) {
+				list.add(pos);
+			}
+		});
+		Collections.sort(list, new Comparator<WorldPos>() {
+			@Override
+			public int compare(WorldPos o1, WorldPos o2) {
+				return o1.compare(o2);
+			}
+		});
+		return list;
+	}
+
 	public static NBTTagCompound getValidNetworkData(WorldPos pos, EntityPlayer player, boolean isPlayer) {
 		List<WorldPos> list = SphinxUtil.getValidNetworks(player.dimension, pos.getPos().getX(), pos.getPos().getY(),
 				pos.getPos().getZ());
+		NBTTagCompound tag = new NBTTagCompound();
+		if (!isPlayer) {
+			TileEntity tileentity = pos.getTileEntity();
+			if (tileentity instanceof INeedNetwork) {
+				WorldPos network = ((INeedNetwork) tileentity).getNetworkPos();
+				if (network != null) {
+					tag.setTag("connected", network.writeToNBT(new NBTTagCompound()));
+				}
+			}
+		} else {
+			ItemStack stack = player.getHeldItemMainhand();
+			if (stack.getItem() != ItemLoader.terminal) {
+				stack = player.getHeldItemOffhand();
+			}
+			if (stack.getItem() == ItemLoader.terminal) {
+				NBTTagCompound t = stack.getTagCompound();
+				if (t == null) {
+					t = new NBTTagCompound();
+					stack.setTagCompound(t);
+				}
+				if (t.hasUniqueId("network")) {
+					UUID uuid = t.getUniqueId("network");
+					GlobalNetworkData data = GlobalNetworkData.getData(pos.getWorld());
+					WorldPos network = data.getNetwork(uuid);
+					if (network != null && list.contains(network)) {
+						tag.setTag("connected", network.writeToNBT(new NBTTagCompound()));
+					} else {
+						t.removeTag("networkMost");
+						t.removeTag("networkLeast");
+						t.removeTag("password");
+					}
+				}
+			}
+		}
+		NBTTagList taglist = new NBTTagList();
+		list.forEach(e -> {
+			TEProcessingCenter te = (TEProcessingCenter) e.getTileEntity();
+			NBTTagCompound t = new NBTTagCompound();
+			t.setString("name", te.getName());
+			e.writeToNBT(t);
+			taglist.appendTag(t);
+		});
+		tag.setTag("list", taglist);
+		return tag;
+	}
+
+	public static NBTTagCompound getValidNetworkDataWithoutRange(WorldPos pos, EntityPlayer player, boolean isPlayer) {
+		List<WorldPos> list = SphinxUtil.getValidNetworksWithoutRange();
 		NBTTagCompound tag = new NBTTagCompound();
 		if (!isPlayer) {
 			TileEntity tileentity = pos.getTileEntity();

@@ -202,9 +202,6 @@ public class BlockProcessingCenter extends BlockContainer {
 				}
 			}
 		}
-		if (!world.isRemote) {
-
-		}
 		return true;
 	}
 

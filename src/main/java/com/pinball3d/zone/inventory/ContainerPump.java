@@ -76,7 +76,7 @@ public class ContainerPump extends Container {
 		boolean isMerged = false;
 		if (index <= 1) {
 			isMerged = mergeItemStack(newStack, 2, 38, true);
-		} else if (newStack.getItem() == ItemLoader.hybrid_fuel) {
+		} else if (newStack.getItem() == ItemLoader.energy) {
 			isMerged = mergeItemStack(newStack, 1, 2, false);
 		} else if ((index >= 2) && (index < 29)) {
 			isMerged = mergeItemStack(newStack, 29, 38, false);

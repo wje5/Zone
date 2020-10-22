@@ -158,7 +158,16 @@ Update Construct Block
 Fix Manual
 Now some devices can load chunk
 Update some recipes
+Add Lathe and Forming Press
 Add Boiler sound
 
 #1.7.1
 Update some recipe
+Fix Forming Press can't show recipes in JEI
+Add Pump
+
+#1.7.2
+Update Sphinx
+Fix some recipe
+Add Beacon Core and Beacon Control Matrix
+Fix Production Panel

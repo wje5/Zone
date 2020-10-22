@@ -1,5 +1,6 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.WorldPos;
 
@@ -49,7 +50,12 @@ public class MessageRequestValidNetworks implements IMessage {
 				@Override
 				public void run() {
 					EntityPlayer player = message.pos.getWorld().getPlayerEntityByName(message.name);
-					NBTTagCompound tag = SphinxUtil.getValidNetworkData(message.pos, player, message.isPlayer);
+					NBTTagCompound tag;
+					if (message.pos.getBlockState().getBlock() == BlockLoader.beacon_control_matrix) {
+						tag = SphinxUtil.getValidNetworkDataWithoutRange(message.pos, player, message.isPlayer);
+					} else {
+						tag = SphinxUtil.getValidNetworkData(message.pos, player, message.isPlayer);
+					}
 					NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), (EntityPlayerMP) player);
 				}
 			});

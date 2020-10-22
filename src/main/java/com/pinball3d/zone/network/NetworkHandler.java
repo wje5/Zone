@@ -50,6 +50,7 @@ public class NetworkHandler {
 				Side.CLIENT);
 		registerMessage(MessageRequestPackData.Handler.class, MessageRequestPackData.class, Side.SERVER);
 		registerMessage(MessageSendPackDataToClient.Handler.class, MessageSendPackDataToClient.class, Side.CLIENT);
+		registerMessage(MessageDeleteNeedNetworkUnit.Handler.class, MessageDeleteNeedNetworkUnit.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

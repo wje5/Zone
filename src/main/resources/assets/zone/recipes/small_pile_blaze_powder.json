@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "zone:small_pile_dust",
+  "pattern": [
+    "   ",
+    " # ",
+    "   "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:blaze_powder"
+    }
+  },
+  "result": {
+    "item": "zone:small_pile_blaze_powder",
+    "count": 4
+  }
+}

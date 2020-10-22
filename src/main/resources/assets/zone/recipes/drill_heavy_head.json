@@ -11,7 +11,7 @@
       "data":32767
     },
     "*": {
-      "item": "zone:etherium_plate_riveted"
+      "item": "zone:etherium_plate"
     },
     "+": {
       "item": "zone:etherium_rod"

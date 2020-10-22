@@ -1,5 +1,6 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.WorldPos;
@@ -51,9 +52,6 @@ public class MessageDisconnect implements IMessage {
 				public void run() {
 					World world = message.needNetwork.getWorld();
 					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					if (!world.isAreaLoaded(message.needNetwork.getPos(), 5)) {
-						return;
-					}
 					TileEntity te = message.needNetwork.getTileEntity();
 					if (te instanceof INeedNetwork) {
 						WorldPos pos = GlobalNetworkData.getData(te.getWorld())
@@ -63,7 +61,12 @@ public class MessageDisconnect implements IMessage {
 							TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
 							pc.removeNeedNetwork(message.needNetwork);
 						}
-						NBTTagCompound tag = SphinxUtil.getValidNetworkData(message.needNetwork, player, false);
+						NBTTagCompound tag;
+						if (message.needNetwork.getBlockState().getBlock() == BlockLoader.beacon_control_matrix) {
+							tag = SphinxUtil.getValidNetworkDataWithoutRange(message.needNetwork, player, false);
+						} else {
+							tag = SphinxUtil.getValidNetworkData(message.needNetwork, player, false);
+						}
 						NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), player);
 					}
 				}

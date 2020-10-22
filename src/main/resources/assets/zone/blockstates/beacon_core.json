@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "normal": { "model": "zone:beacon_core" }
+    }
+}
