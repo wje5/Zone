@@ -291,7 +291,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public boolean isDeviceInRange(WorldPos pos) {
-		if (pos.getTileEntity() instanceof TEBeaconControlMatrix) {
+		if (pos.getTileEntity() instanceof TEBeaconCore) {
 			return true;
 		}
 		if (Math.sqrt(this.pos.distanceSq(pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ())) < 25) {
@@ -406,7 +406,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 					continue;
 				}
 				TileEntity tileentity = i.getTileEntity();
-				if (i.getBlockState().getBlock() == BlockLoader.beacon_control_matrix) {
+				if (i.getBlockState().getBlock() == BlockLoader.beacon_core) {
 					flag = true;
 					temp.add(i);
 					((INeedNetwork) tileentity).setConnected(true);
@@ -537,6 +537,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 		}
+
 		Iterator<ItemStack> it2 = wrapper.other.iterator();
 		while (it2.hasNext()) {
 			ItemStack stack = it2.next();
@@ -602,7 +603,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		for (int i = 0; i < list.size(); i++) {
 			WorldPos pos = list.get(i);
-			if (pos.getTileEntity() instanceof TEBeaconControlMatrix) {
+			if (pos.getTileEntity() instanceof TEBeaconCore) {
 				map[0][i + 1] = 0;
 				map[i + 1][0] = 0;
 			}
@@ -618,8 +619,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			if (tileentity instanceof INode) {
 				for (int j = 0; j < list.size(); j++) {
 					WorldPos pos2 = list.get(j);
-					if (pos.getBlockState().getBlock() == BlockLoader.beacon_control_matrix
-							&& pos2.getBlockState().getBlock() == BlockLoader.beacon_control_matrix) {
+					if (pos.getBlockState().getBlock() == BlockLoader.beacon_core
+							&& pos2.getBlockState().getBlock() == BlockLoader.beacon_core) {
 						map[i + 1][j + 1] = 0;
 						map[j + 1][i + 1] = 0;
 					} else if (tileentity.getWorld().provider.getDimension() == pos.getDim()) {
@@ -731,6 +732,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				NBTTagCompound n = new NBTTagCompound();
 				list.appendTag(e.writeToNBT(n));
 				n.setInteger("state", te.getWorkingState().ordinal());
+				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
 			}
 		});
 		tag.setTag("nodes", list);

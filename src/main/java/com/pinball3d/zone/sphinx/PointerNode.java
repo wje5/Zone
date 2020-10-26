@@ -2,14 +2,11 @@ package com.pinball3d.zone.sphinx;
 
 import java.util.List;
 
-import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 
-import net.minecraft.item.Item;
-
 public class PointerNode extends PointerNeedNetwork {
-	public PointerNode(WorldPos pos, WorkingState state) {
-		super(pos, Item.getIdFromItem(Item.getItemFromBlock(BlockLoader.node)), state, 7, 7);
+	public PointerNode(WorldPos pos, int id, WorkingState state) {
+		super(pos, id, state, 7, 7);
 	}
 
 	@Override

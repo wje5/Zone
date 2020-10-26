@@ -62,7 +62,7 @@ public class MessageDisconnect implements IMessage {
 							pc.removeNeedNetwork(message.needNetwork);
 						}
 						NBTTagCompound tag;
-						if (message.needNetwork.getBlockState().getBlock() == BlockLoader.beacon_control_matrix) {
+						if (message.needNetwork.getBlockState().getBlock() == BlockLoader.beacon_core) {
 							tag = SphinxUtil.getValidNetworkDataWithoutRange(message.needNetwork, player, false);
 						} else {
 							tag = SphinxUtil.getValidNetworkData(message.needNetwork, player, false);

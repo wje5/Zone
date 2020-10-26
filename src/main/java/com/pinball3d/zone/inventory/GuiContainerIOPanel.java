@@ -180,11 +180,6 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 			}
 			return;
 		}
-		if (clickedMouseButton != 1) {
-			if (lastMouseX > 0 && lastMouseY > 0) {
-				MapHandler.dragMap(-moveX, -moveY);
-			}
-		}
 		super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
 	}
 

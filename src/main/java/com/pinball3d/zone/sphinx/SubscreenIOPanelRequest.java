@@ -66,6 +66,10 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		}));
 	}
 
+	private void updateTime() {
+
+	}
+
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);

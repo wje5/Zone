@@ -5,11 +5,12 @@ import com.pinball3d.zone.psp.ItemFC;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -195,18 +196,22 @@ public class ItemLoader {
 						return ((IFluidBlock) e).getFluid().getUnlocalizedName();
 					}
 
-					@SuppressWarnings("deprecation")
 					@Override
 					public String getItemStackDisplayName(ItemStack stack) {
-						return I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack)).trim();
+						return I18n.format(this.getUnlocalizedNameInefficiently(stack)).trim();
+					}
+
+					@Override
+					public CreativeTabs getCreativeTab() {
+						return TabZone.tab;
 					}
 				}.setRegistryName("zone", e.getRegistryName().getResourcePath()).setCreativeTab(TabZone.tab);
 				register(registry, item, false);
 				registerRender(item, new ModelResourceLocation(e.getRegistryName(), null));
 			}
 		});
-		register(registry, water = new ItemBlock(Blocks.FLOWING_WATER).setRegistryName("water"));
-		register(registry, lava = new ItemBlock(Blocks.FLOWING_LAVA).setRegistryName("lava"));
+		register(registry, water = new ItemVanillaFluid(Blocks.FLOWING_WATER, "water"));
+		register(registry, lava = new ItemVanillaFluid(Blocks.FLOWING_LAVA, "lava"));
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {

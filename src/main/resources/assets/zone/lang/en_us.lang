@@ -162,8 +162,8 @@ tile.storage_panel.name=Storage Panel
 tile.storage_chest.name=Storage Chest
 tile.io_panel.name=IO Panel
 tile.production_panel.name=Production Panel
+tile.beacon_amplifier_matrix.name=Beacon Amplifier Matrix
 tile.beacon_core.name=Beacon Core
-tile.beacon_control_matrix.name=Beacon Control Matrix
 
 container.drainer=Drainer
 container.grinder=Grinder
@@ -222,6 +222,7 @@ sphinx.off=Off
 sphinx.starting=Starting
 sphinx.uninit=Uninitialized
 sphinx.disconnected=Disconnected
+sphinx.break=Break
 sphinx.unit_info=Unit Infomation
 sphinx.unit_name=Unit name
 sphinx.waiting_for_server=Waiting For Server

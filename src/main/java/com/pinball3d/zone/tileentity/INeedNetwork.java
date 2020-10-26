@@ -30,7 +30,7 @@ public interface INeedNetwork {
 	public String getName();
 
 	public static enum WorkingState {
-		WORKING("sphinx.working"), DISCONNECTED("sphinx.disconnected");
+		WORKING("sphinx.working"), DISCONNECTED("sphinx.disconnected"), BREAK("sphinx.break");
 
 		String key;
 

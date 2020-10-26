@@ -162,8 +162,8 @@ tile.storage_panel.name=仓储面板
 tile.storage_chest.name=存储箱
 tile.io_panel.name=IO面板
 tile.production_panel.name=生产面板
+tile.beacon_amplifier_matrix.name=信标增幅矩阵
 tile.beacon_core.name=信标核心
-tile.beacon_control_matrix.name=信标控制矩阵
 
 container.drainer=收集器
 container.grinder=研磨机
@@ -222,6 +222,7 @@ sphinx.off=关闭
 sphinx.starting=开机
 sphinx.uninit=未初始化
 sphinx.disconnected=断线
+sphinx.break=故障
 sphinx.unit_info=单位信息
 sphinx.unit_name=单位名称
 sphinx.waiting_for_server=等待服务器中

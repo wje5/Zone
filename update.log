@@ -166,8 +166,11 @@ Update some recipe
 Fix Forming Press can't show recipes in JEI
 Add Pump
 
-#1.7.2
+#1.8.0
 Update Sphinx
 Fix some recipe
 Add Beacon Core and Beacon Control Matrix
 Fix Production Panel
+
+#1.8.1
+Fix some recipe

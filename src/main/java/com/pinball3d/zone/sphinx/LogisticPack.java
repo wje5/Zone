@@ -50,9 +50,9 @@ public class LogisticPack {
 					Block block = next.getBlockState().getBlock();
 					next = routes.get(0);
 					Block block2 = next.getBlockState().getBlock();
-					if ((block == BlockLoader.processing_center_light || block == BlockLoader.beacon_control_matrix)
+					if ((block == BlockLoader.processing_center_light || block == BlockLoader.beacon_core)
 							&& (block2 == BlockLoader.processing_center_light
-									|| block2 == BlockLoader.beacon_control_matrix)) {
+									|| block2 == BlockLoader.beacon_core)) {
 						x = next.getPos().getX();
 						y = next.getPos().getY();
 						z = next.getPos().getZ();

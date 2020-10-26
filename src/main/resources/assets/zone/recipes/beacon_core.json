@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    "*+*",
+    "-=-"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:half_interference_unit"
+    },
+    "*": {
+      "item": "zone:restrain_circle"
+    },
+    "+": {
+      "item": "zone:etherium_hull"
+    },
+    "-": {
+      "item": "zone:etherium_plate_riveted"
+    },
+    "=": {
+      "item": "zone:advenced_circuit_board"
+    }
+  },
+  "result": {
+    "item": "zone:beacon_core"
+  }
+}

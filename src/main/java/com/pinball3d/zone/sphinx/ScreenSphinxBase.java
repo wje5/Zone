@@ -1,53 +1,62 @@
-package com.pinball3d.zone.manual;
+package com.pinball3d.zone.sphinx;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.UUID;
 
 import org.lwjgl.input.Keyboard;
 
-import com.pinball3d.zone.sphinx.Component;
-import com.pinball3d.zone.sphinx.IParent;
-import com.pinball3d.zone.sphinx.MapHandler;
-import com.pinball3d.zone.sphinx.Subscreen;
-import com.pinball3d.zone.sphinx.Util;
-
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public abstract class ScreenManualBase extends GuiScreen implements IParent {
-	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/manual.png");
-	public static final ResourceLocation TEXTURE2 = new ResourceLocation("zone:textures/gui/manual_2.png");
+public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
+	protected Map<Long, ChunkRenderCache> mapCache = new HashMap<Long, ChunkRenderCache>();
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
+	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	public static final ResourceLocation TEXTURE_3 = new ResourceLocation("zone:textures/gui/sphinx/icons_3.png");
+	public static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
+			"zone:textures/gui/sphinx/no_network.png");
 	protected Set<Component> components = new HashSet<Component>();
+	public WorldPos worldpos;
+	public boolean flag;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
+
+	public abstract boolean canOpen();
+
+	public abstract boolean isConnected();
+
+	public abstract UUID getNetworkUUID();
+
+	public abstract void resetNetwork();
+
+	public void draw(int mouseX, int mouseY, float partialTicks) {
+	};
+
+	public void preDraw(boolean online, int mouseX, int mouseY, float partialTicks) {
+	};
+
+	public boolean needRequestNetworkPos() {
+		return false;
+	}
 
 	@Override
 	public void initGui() {
+		if (!canOpen()) {
+			mc.displayGuiScreen(null);
+			return;
+		}
 		applyComponents();
 		super.initGui();
-	}
-
-	protected void applyComponents() {
-		components.clear();
-		components.add(new ButtonPage(this, getXOffset() + 12, getYOffset() + 158, true, new Runnable() {
-			@Override
-			public void run() {
-				onFlip(true);
-			}
-		}));
-		components.add(new ButtonPage(this, getXOffset() + 270, getYOffset() + 158, false, new Runnable() {
-			@Override
-			public void run() {
-				onFlip(false);
-			}
-		}));
 	}
 
 	@Override
@@ -72,32 +81,51 @@ public abstract class ScreenManualBase extends GuiScreen implements IParent {
 		}
 	}
 
-	public abstract void onFlip(boolean flag);
-
-	public abstract void drawContents(int mouseX, int mouseY);
-
 	@Override
 	public void renderToolTip(ItemStack stack, int x, int y) {
 		super.renderToolTip(stack, x, y);
 	}
 
+	protected void applyComponents() {
+		components = new HashSet<Component>();
+	}
+
+	protected boolean isOnline() {
+		if (!needRequestNetworkPos()) {
+			return getNetwork() != null;
+		}
+		if (!flag) {
+			requestNetworkPos();
+		}
+		return getNetwork() != null;
+	}
+
+	protected void requestNetworkPos() {
+		if (!needRequestNetworkPos()) {
+			throw new RuntimeException("DRRRRRRRRRRRR!");
+		}
+	};
+
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		int x = width / 2 - 146;
-		int x2 = width / 2;
-		int y = height / 2 - 90;
-		Util.drawTexture(TEXTURE, x, y, 146, 180);
-		Util.drawTexture(TEXTURE2, x2, y, 146, 180);
-		drawContents(mouseX, mouseY);
+		if (!canOpen()) {
+			mc.displayGuiScreen(null);
+			return;
+		}
+		boolean flag = isOnline();
+		preDraw(flag, mouseX, mouseY, partialTicks);
+		if (flag) {
+			MapHandler.draw(getNetwork(), width, height);
+			draw(mouseX, mouseY, partialTicks);
+		} else {
+			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
+			Util.drawTexture(TEXTURE_NO_NETWORK, width / 2 - 32, height / 2 - 32, 256, 256, 0.25F);
+			String text = I18n.format("sphinx.no_network");
+			fontRenderer.drawString(text, width / 2 - fontRenderer.getStringWidth(text) / 2, height / 2 + 45,
+					0xFFE0E0E0);
+		}
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);
-		});
-		components.forEach(e -> {
-			if (e instanceof ItemFrame) {
-				((ItemFrame) e).renderToolTip(mouseX, mouseY);
-			} else if (e instanceof BlockShowWithTip) {
-				((BlockShowWithTip) e).renderToolTip(mouseX, mouseY);
-			}
 		});
 		Iterator<Subscreen> it = subscreens.iterator();
 		while (it.hasNext()) {
@@ -111,17 +139,29 @@ public abstract class ScreenManualBase extends GuiScreen implements IParent {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 
-	public void drawTextBlock(String key, int x, int y) {
-		String s = I18n.format(key);
-		String[] texts = s.split("\\\\n");
-		for (int i = 0; i < texts.length; i++) {
-			fontRenderer.drawString(texts[i], x, i * fontRenderer.FONT_HEIGHT + y, 0xFF000000);
-		}
-	}
-
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;
+	}
+
+	public WorldPos getNetwork() {
+		if (!needRequestNetworkPos()) {
+			throw new RuntimeException("DRRRRRRRRRRRR!");
+		}
+		return worldpos;
+	}
+
+	public void setWorldPos(WorldPos pos, UUID uuid) {
+		if (!needRequestNetworkPos()) {
+			throw new RuntimeException("DRRRRRRRRRRRR!");
+		}
+		if (uuid.equals(getNetworkUUID())) {
+			if (pos == null) {
+				resetNetwork();
+			}
+			worldpos = pos;
+			flag = true;
+		}
 	}
 
 	@Override
@@ -156,15 +196,20 @@ public abstract class ScreenManualBase extends GuiScreen implements IParent {
 		if ((clickX == -1 || Math.abs(mouseX - clickX) < 5) && (clickY == -1 || Math.abs(mouseY - clickY) < 5)) {
 			if (subscreens.empty()) {
 				Iterator<Component> it = components.iterator();
+				boolean flag = false;
 				while (it.hasNext()) {
 					Component c = it.next();
 					int x = mouseX - c.x;
 					int y = mouseY - c.y;
 					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
 						if (c.onClickScreen(x, y, state != 1)) {
+							flag = true;
 							break;
 						}
 					}
+				}
+				if (!flag) {
+					MapHandler.onClick(width, height, mouseX, mouseY);
 				}
 			} else {
 				Subscreen screen = subscreens.peek();
@@ -183,22 +228,22 @@ public abstract class ScreenManualBase extends GuiScreen implements IParent {
 
 	@Override
 	public int getWidth() {
-		return 292;
+		return width;
 	}
 
 	@Override
 	public int getHeight() {
-		return 180;
+		return height;
 	}
 
 	@Override
 	public int getXOffset() {
-		return width / 2 - 146;
+		return 0;
 	}
 
 	@Override
 	public int getYOffset() {
-		return height / 2 - 90;
+		return 0;
 	}
 
 	@Override
@@ -214,5 +259,10 @@ public abstract class ScreenManualBase extends GuiScreen implements IParent {
 	@Override
 	public void quitScreen(Subscreen screen) {
 		subscreens.remove(screen);
+	}
+
+	@Override
+	public ItemStack getTerminal() {
+		return null;
 	}
 }

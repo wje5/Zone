@@ -97,7 +97,7 @@ public class MessageTryConnectToNetwork implements IMessage {
 									te.addNeedNetwork(message.pos);
 								}
 								NBTTagCompound tag;
-								if (message.pos.getBlockState().getBlock() == BlockLoader.beacon_control_matrix) {
+								if (message.pos.getBlockState().getBlock() == BlockLoader.beacon_core) {
 									tag = SphinxUtil.getValidNetworkDataWithoutRange(message.pos, player, false);
 								} else {
 									tag = SphinxUtil.getValidNetworkData(message.pos, player, false);

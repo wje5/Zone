@@ -149,8 +149,8 @@ public class MapHandler {
 				l.add(e);
 			}
 		});
-		if (mc.currentScreen instanceof ScreenTerminal) {
-			((ScreenTerminal) mc.currentScreen).setChosen(l);
+		if (mc.currentScreen instanceof ScreenSphinxAdvenced) {
+			((ScreenSphinxAdvenced) mc.currentScreen).setChosen(l);
 		}
 	}
 
@@ -215,7 +215,7 @@ public class MapHandler {
 			NBTTagCompound tag = (NBTTagCompound) e;
 			WorldPos pos = WorldPos.load(tag);
 			if (pos.getDim() == mc.player.dimension) {
-				nodes.add(new PointerNode(pos, WorkingState.values()[tag.getInteger("state")]));
+				nodes.add(new PointerNode(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
 			}
 		});
 		list = data.getTagList("storages", 10);
