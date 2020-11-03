@@ -7,13 +7,24 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.settings.GameSettings;
+
 public abstract class ScreenSphinxAdvenced extends ScreenSphinxBase {
 	protected List<Pointer> chosen = new ArrayList<Pointer>();
 	protected int chosenIndex = 0;
 	protected String password;
+	private int dragBoxX, dragBoxY, dragBoxX2, dragBoxY2;
 
 	public String getPassword() {
 		return password;
+	}
+
+	@Override
+	public void initGui() {
+		super.initGui();
+		updateChosenUnitButton();
 	}
 
 	@Override
@@ -39,6 +50,68 @@ public abstract class ScreenSphinxAdvenced extends ScreenSphinxBase {
 			} else {
 				subscreens.peek().keyTyped(typedChar, keyCode);
 			}
+		}
+	}
+
+	@Override
+	protected void onDragScreen(int mouseX, int mouseY, int moveX, int moveY, int clickedMouseButton) {
+		super.onDragScreen(mouseX, mouseY, moveX, moveY, clickedMouseButton);
+		if (clickedMouseButton == 0) {
+			dragBoxX2 = mouseX;
+			dragBoxY2 = mouseY;
+		}
+	}
+
+	@Override
+	public void dragMap(int mouseX, int mouseY, float partialTicks) {
+		float sensitive = 5.0F;
+		float move = partialTicks * sensitive;
+		if (mouseX <= 1) {
+			partialMoveX -= move;
+		}
+
+		if (mouseX >= width - 1) {
+			partialMoveX += move;
+		}
+		if (mouseY <= 1) {
+			partialMoveY -= move;
+		}
+		if (mouseY >= height - 1) {
+			partialMoveY += move;
+		}
+		MapHandler.dragMap((int) partialMoveX, (int) partialMoveY);
+		if (dragBoxX != dragBoxX2 || dragBoxY != dragBoxY2) {
+			dragBoxX -= (int) partialMoveX;
+			dragBoxY -= (int) partialMoveY;
+		}
+		partialMoveX -= (int) partialMoveX;
+		partialMoveY -= (int) partialMoveY;
+	}
+
+	@Override
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+		super.mouseClicked(mouseX, mouseY, mouseButton);
+		if (mouseButton == 0) {
+			dragBoxX = mouseX;
+			dragBoxY = mouseY;
+			dragBoxX2 = mouseX;
+			dragBoxY2 = mouseY;
+		}
+	}
+
+	@Override
+	protected void onMouseReleaseScreen(int mouseX, int mouseY, int button, boolean flag) {
+		super.onMouseReleaseScreen(mouseX, mouseY, button, flag);
+		if (button == 0) {
+			if (dragBoxX != dragBoxX2 || dragBoxY != dragBoxY2) {
+				MapHandler.onReleaseDragBox(width, height, dragBoxX, dragBoxY, dragBoxX2, dragBoxY2);
+			} else {
+				MapHandler.onClick(width, height, mouseX, mouseY);
+			}
+			dragBoxX = 0;
+			dragBoxY = 0;
+			dragBoxX2 = 0;
+			dragBoxY2 = 0;
 		}
 	}
 
@@ -71,10 +144,37 @@ public abstract class ScreenSphinxAdvenced extends ScreenSphinxBase {
 				}
 			}
 		}
+		if (dragBoxX != dragBoxX2 || dragBoxY != dragBoxY2) {
+			Gui.drawRect(dragBoxX, dragBoxY, dragBoxX2, dragBoxY2, 0x28E0E0E0);
+			int x = dragBoxX < dragBoxX2 ? dragBoxX : dragBoxX2;
+			int y = dragBoxY < dragBoxY2 ? dragBoxY : dragBoxY2;
+			Util.drawBorder(x, y, Math.abs(dragBoxX2 - dragBoxX), Math.abs(dragBoxY2 - dragBoxY), 1, 0xFFD2D2D2);
+		}
 	}
 
 	public void setChosen(List<Pointer> l) {
-		chosen = l.size() > 10 ? l.subList(0, 10) : l;
+		boolean ctrl = GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSprint);
+		boolean shift = GameSettings.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak);
+		if (ctrl && shift) {
+			l.forEach(e -> {
+				if (!chosen.remove(e)) {
+					chosen.add(e);
+				}
+			});
+		} else if (ctrl) {
+			l.forEach(e -> {
+				chosen.remove(e);
+			});
+		} else if (shift) {
+			l.forEach(e -> {
+				if (!chosen.contains(e)) {
+					chosen.add(e);
+				}
+			});
+		} else {
+			chosen = l;
+		}
+		chosen = chosen.size() > 10 ? chosen.subList(0, 10) : chosen;
 		chosenIndex = 0;
 		updateChosenUnitButton();
 	}

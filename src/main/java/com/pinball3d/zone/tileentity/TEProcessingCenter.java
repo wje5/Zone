@@ -338,7 +338,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return wrapper;
 	}
 
-	public void requestItems(StorageWrapper wrapper, WorldPos target) {
+	public int requestItems(StorageWrapper wrapper, WorldPos target, boolean isSimulate) {
 		TreeSet<WorldPos> sortset = new TreeSet<WorldPos>(new Comparator<WorldPos>() {
 			@Override
 			public int compare(WorldPos o1, WorldPos o2) {
@@ -348,25 +348,32 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 		});
 		sortset.addAll(storages);
-		sortset.forEach(e -> {
+		int time = 0;
+		Iterator<WorldPos> it = sortset.iterator();
+		while (it.hasNext()) {
+			WorldPos e = it.next();
 			TileEntity te = e.getTileEntity();
 			if (te instanceof INeedNetwork && ((INeedNetwork) te).isConnected() && te instanceof IStorable) {
-				StorageWrapper w = ((IStorable) te).extract(wrapper);
+				StorageWrapper w = ((IStorable) te).extract(wrapper, isSimulate);
 				if (!w.isEmpty()) {
 					List<Path> l = dijkstra(target);
 					for (Path i : l) {
 						if (i.getTarget().equals(e)) {
-							LogisticPack pack = new LogisticPack(i.flip().routes, w, new WorldPos(te));
-							packs.add(pack);
+							if (!isSimulate) {
+								LogisticPack pack = new LogisticPack(i.flip().routes, w, new WorldPos(te));
+								packs.add(pack);
+							}
+							time = (int) (time < i.distance ? i.distance : time);
 						}
 					}
 				}
 			}
-		});
+		}
 		callUpdate();
+		return time;
 	}
 
-	public void dispenceItems(StorageWrapper wrapper, WorldPos pos) {
+	public StorageWrapper dispenceItems(StorageWrapper wrapper, WorldPos pos) {
 		TreeSet<WorldPos> sortset = new TreeSet<WorldPos>(new Comparator<WorldPos>() {
 			@Override
 			public int compare(WorldPos o1, WorldPos o2) {
@@ -392,6 +399,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 		});
 		callUpdate();
+		return wrapper;
 	}
 
 	public boolean updateNode() {
@@ -567,6 +575,41 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public int getEnergy() {
 		return energy;
+	}
+
+	public int getMaxStorage() {
+		int count = 0;
+		Iterator<WorldPos> it = storages.iterator();
+		while (it.hasNext()) {
+			WorldPos pos = it.next();
+			TileEntity tileentity = pos.getTileEntity();
+			if (tileentity instanceof IStorable
+					&& ((INeedNetwork) tileentity).getWorkingState() == INeedNetwork.WorkingState.WORKING) {
+				IStorable te = (IStorable) tileentity;
+				count += te.getStorage().getSlots();
+			}
+		}
+		return count;
+	}
+
+	public int getUsedStorage() {
+		int count = 0;
+		Iterator<WorldPos> it = storages.iterator();
+		while (it.hasNext()) {
+			WorldPos pos = it.next();
+			TileEntity tileentity = pos.getTileEntity();
+			if (tileentity instanceof IStorable
+					&& ((INeedNetwork) tileentity).getWorkingState() == INeedNetwork.WorkingState.WORKING) {
+				IStorable te = (IStorable) tileentity;
+				IItemHandler handler = te.getStorage();
+				for (int i = 0; i < handler.getSlots(); i++) {
+					if (!handler.getStackInSlot(i).isEmpty()) {
+						count++;
+					}
+				}
+			}
+		}
+		return count;
 	}
 
 	public void refreshMap() {
@@ -1073,6 +1116,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		@Override
 		public String toString() {
 			return I18n.format(key);
+		}
+	}
+
+	public static class LogisticTaskComputeResult {
+		public StorageWrapper remain;
+		public int tick;
+
+		public LogisticTaskComputeResult(StorageWrapper wrapper, int tick) {
+			this.remain = wrapper;
+			this.tick = tick;
 		}
 	}
 }

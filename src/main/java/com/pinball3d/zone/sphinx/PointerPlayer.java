@@ -12,14 +12,14 @@ public class PointerPlayer extends Pointer {
 	public float angle;
 
 	public PointerPlayer(int x, int z) {
-		super(x, z);
+		super(new BoundingBox(x - 3, z - 8, x + 3, z + 8));
 	}
 
 	@Override
 	public void doRender(int offsetX, int offsetZ) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x - offsetX, z - offsetZ, 0);
+		GlStateManager.translate(box.x + 3 - offsetX, box.y + 8 - offsetZ, 0);
 		GlStateManager.rotate(angle + 180F, 0, 0, 1);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -37,5 +37,9 @@ public class PointerPlayer extends Pointer {
 		bufferbuilder.pos(X, Y, 0).tex(162 * f, 0).endVertex();
 		tessellator.draw();
 		GlStateManager.popMatrix();
+	}
+
+	public void moveTo(int x, int z) {
+		box = new BoundingBox(x - 3, z - 8, x + 3, z + 8);
 	}
 }

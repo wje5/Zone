@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -61,7 +62,8 @@ public class TEPump extends ZoneMachine {
 									IFluidBlock f = (IFluidBlock) block;
 									FluidStack fluidstack = f.drain(world, p, false);
 									if (fluidstack != null && fluidstack.amount >= 1000) {
-										stack = new ItemStack(fluidstack.getFluid().getBlock());
+										stack = new ItemStack(Item
+												.getByNameOrId("zone:" + block.getRegistryName().getResourcePath()));
 										if (!stack.isEmpty() && fluid.insertItem(0, stack, true).isEmpty()) {
 											expectFluid.insertItem(0, stack, false);
 											tick = 10;

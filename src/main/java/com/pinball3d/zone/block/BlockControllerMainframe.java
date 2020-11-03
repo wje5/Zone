@@ -37,7 +37,6 @@ public class BlockControllerMainframe extends Block {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-
 		pos = pos.offset(state.getValue(FACING).getOpposite(), 3);
 		pos = pos.add(0, 2, 0);
 		Block block = worldIn.getBlockState(pos).getBlock();

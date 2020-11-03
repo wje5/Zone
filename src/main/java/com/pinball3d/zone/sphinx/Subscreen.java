@@ -43,7 +43,6 @@ public class Subscreen implements IParent {
 		GlStateManager.disableDepth();
 		GlStateManager.disableBlend();
 		GlStateManager.translate(0, 0, 300F);
-
 		if (renderCover) {
 			Minecraft mc = Minecraft.getMinecraft();
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0x8F000000);
@@ -112,7 +111,7 @@ public class Subscreen implements IParent {
 		}
 	}
 
-	public void onDrag(int x, int y, int moveX, int moveY, boolean isLeft) {
+	public void onDrag(int x, int y, int moveX, int moveY, int button) {
 		if (subscreens.empty()) {
 			if (draggingComponent == null) {
 				Iterator<Component> it = components.iterator();
@@ -133,7 +132,7 @@ public class Subscreen implements IParent {
 			int x1 = x + this.x;
 			int y1 = y + this.y;
 			if (x1 >= screen.x && x1 <= screen.x + width && y1 >= screen.y && y1 <= screen.y + height) {
-				screen.onDrag(x1 - screen.x, y1 - screen.y, moveX, moveY, isLeft);
+				screen.onDrag(x1 - screen.x, y1 - screen.y, moveX, moveY, button);
 			}
 		}
 	}

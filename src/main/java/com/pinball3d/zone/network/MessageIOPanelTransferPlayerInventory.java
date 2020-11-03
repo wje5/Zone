@@ -1,7 +1,5 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.inventory.ContainerIOPanel;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -12,16 +10,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageIOPanelPageChange implements IMessage {
+public class MessageIOPanelTransferPlayerInventory implements IMessage {
 	String name;
 	int world;
 	boolean flag;
 
-	public MessageIOPanelPageChange() {
+	public MessageIOPanelTransferPlayerInventory() {
 
 	}
 
-	public MessageIOPanelPageChange(EntityPlayer player, boolean flag) {
+	public MessageIOPanelTransferPlayerInventory(EntityPlayer player, boolean flag) {
 		name = player.getName();
 		world = player.world.provider.getDimension();
 		this.flag = flag;
@@ -41,21 +39,24 @@ public class MessageIOPanelPageChange implements IMessage {
 		buf.writeBoolean(flag);
 	}
 
-	public static class Handler implements IMessageHandler<MessageIOPanelPageChange, IMessage> {
+	public static class Handler implements IMessageHandler<MessageIOPanelTransferPlayerInventory, IMessage> {
 		@Override
-		public IMessage onMessage(MessageIOPanelPageChange message, MessageContext ctx) {
+		public IMessage onMessage(MessageIOPanelTransferPlayerInventory message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
 					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 					World world = server.getWorld(message.world);
 					EntityPlayer player = world.getPlayerEntityByName(message.name);
-					if (player != null && player.openContainer instanceof ContainerIOPanel) {
-						ContainerIOPanel container = (ContainerIOPanel) player.openContainer;
+					if (player != null && player.openContainer != null) {
 						if (message.flag) {
-							container.page = container.page - 1 < 1 ? container.maxPage : container.page - 1;
+							for (int i = 90; i < 126; i++) {
+								player.openContainer.transferStackInSlot(player, i);
+							}
 						} else {
-							container.page = container.page + 1 > container.maxPage ? 1 : container.page + 1;
+							for (int i = 0; i < 54; i++) {
+								player.openContainer.transferStackInSlot(player, i);
+							}
 						}
 					}
 				}

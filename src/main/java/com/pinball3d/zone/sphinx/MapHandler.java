@@ -13,6 +13,7 @@ import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.network.MessageRequestMapData;
 import com.pinball3d.zone.network.MessageRequestPackData;
 import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.sphinx.Pointer.BoundingBox;
 import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 
 import net.minecraft.client.Minecraft;
@@ -145,7 +146,32 @@ public class MapHandler {
 		List<Pointer> l = new ArrayList<Pointer>();
 		list.forEach(e -> {
 			if (e.pos.getDim() == mc.player.dimension
-					&& e.isClick(x + instance.getRenderOffsetX(width), y + instance.getRenderOffsetY(height))) {
+					&& e.box.isInBox(x + instance.getRenderOffsetX(width), y + instance.getRenderOffsetY(height))) {
+				l.add(e);
+			}
+		});
+		if (mc.currentScreen instanceof ScreenSphinxAdvenced) {
+			((ScreenSphinxAdvenced) mc.currentScreen).setChosen(l);
+		}
+	}
+
+	public static void onReleaseDragBox(int width, int height, int x, int y, int x2, int y2) {
+		if (instance == null) {
+			return;
+		}
+		List<PointerNeedNetwork> list = new ArrayList<PointerNeedNetwork>();
+		if (instance.processingCenter != null) {
+			list.add(instance.processingCenter);
+		}
+		list.addAll(instance.nodes);
+		list.addAll(instance.storages);
+		list.addAll(instance.devices);
+		list.addAll(instance.productions);
+		List<Pointer> l = new ArrayList<Pointer>();
+		list.forEach(e -> {
+			if (e.box.isCollision(
+					new BoundingBox(x + instance.getRenderOffsetX(width), y + instance.getRenderOffsetY(height),
+							x2 + instance.getRenderOffsetX(width), y2 + instance.getRenderOffsetY(height)))) {
 				l.add(e);
 			}
 		});
@@ -156,8 +182,7 @@ public class MapHandler {
 
 	private void updatePlayer() {
 		BlockPos pos = mc.player.getPosition();
-		pointerPlayer.x = pos.getX();
-		pointerPlayer.z = pos.getZ();
+		pointerPlayer.moveTo(pos.getX(), pos.getZ());
 		pointerPlayer.angle = mc.player.rotationYaw;
 		int temp = mc.player.world.provider.getDimension();
 		if (temp != dim) {
@@ -185,8 +210,7 @@ public class MapHandler {
 				pointer = new PointerLiving(pos.getX(), pos.getZ(), entity instanceof IMob);
 			} else {
 				BlockPos pos = entity.getPosition();
-				pointer.x = pos.getX();
-				pointer.z = pos.getZ();
+				pointer.moveTo(pos.getX(), pos.getZ());
 			}
 			temp.put(entity.getEntityId(), pointer);
 		}

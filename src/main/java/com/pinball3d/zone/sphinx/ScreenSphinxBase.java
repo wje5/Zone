@@ -22,6 +22,8 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 	protected Map<Long, ChunkRenderCache> mapCache = new HashMap<Long, ChunkRenderCache>();
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
+	protected float partialMoveX;
+	protected float partialMoveY;
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	public static final ResourceLocation TEXTURE_3 = new ResourceLocation("zone:textures/gui/sphinx/icons_3.png");
 	public static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
@@ -106,6 +108,25 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 		}
 	};
 
+	public void dragMap(int mouseX, int mouseY, float partialTicks) {
+		float sensitive = 5.0F;
+		if (mouseX <= 1) {
+			partialMoveX -= partialTicks * sensitive;
+		}
+		if (mouseX >= width - 1) {
+			partialMoveX += partialTicks * sensitive;
+		}
+		if (mouseY <= 1) {
+			partialMoveY -= partialTicks * sensitive;
+		}
+		if (mouseY >= height - 1) {
+			partialMoveY += partialTicks * sensitive;
+		}
+		MapHandler.dragMap((int) partialMoveX, (int) partialMoveY);
+		partialMoveX -= (int) partialMoveX;
+		partialMoveY -= (int) partialMoveY;
+	}
+
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		if (!canOpen()) {
@@ -115,6 +136,9 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 		boolean flag = isOnline();
 		preDraw(flag, mouseX, mouseY, partialTicks);
 		if (flag) {
+			if (subscreens.isEmpty()) {
+				dragMap(mouseX, mouseY, partialTicks);
+			}
 			MapHandler.draw(getNetwork(), width, height);
 			draw(mouseX, mouseY, partialTicks);
 		} else {
@@ -173,15 +197,15 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 		if (!subscreens.empty()) {
 			Subscreen screen = subscreens.peek();
 			if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y && mouseY <= screen.y + height) {
-				screen.onDrag(mouseX - screen.x, mouseY - screen.y, moveX, moveY, clickedMouseButton != 1);
+				screen.onDrag(mouseX - screen.x, mouseY - screen.y, moveX, moveY, clickedMouseButton);
 			}
 			return;
 		}
-		if (clickedMouseButton == 1) {
-			if (lastMouseX > 0 && lastMouseY > 0) {
-				MapHandler.dragMap(-moveX, -moveY);
-			}
-		}
+		onDragScreen(mouseX, mouseY, moveX, moveY, clickedMouseButton);
+	}
+
+	protected void onDragScreen(int mouseX, int mouseY, int moveX, int moveY, int clickedMouseButton) {
+
 	}
 
 	@Override
@@ -192,38 +216,40 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 	}
 
 	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int state) {
+	protected void mouseReleased(int mouseX, int mouseY, int button) {
+		boolean flag = false;
 		if ((clickX == -1 || Math.abs(mouseX - clickX) < 5) && (clickY == -1 || Math.abs(mouseY - clickY) < 5)) {
 			if (subscreens.empty()) {
 				Iterator<Component> it = components.iterator();
-				boolean flag = false;
 				while (it.hasNext()) {
 					Component c = it.next();
 					int x = mouseX - c.x;
 					int y = mouseY - c.y;
 					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
-						if (c.onClickScreen(x, y, state != 1)) {
+						if (c.onClickScreen(x, y, button != 1)) {
 							flag = true;
 							break;
 						}
 					}
 				}
-				if (!flag) {
-					MapHandler.onClick(width, height, mouseX, mouseY);
-				}
 			} else {
 				Subscreen screen = subscreens.peek();
 				if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y
 						&& mouseY <= screen.y + height) {
-					screen.onClick(mouseX - screen.x, mouseY - screen.y, state != 1);
+					screen.onClick(mouseX - screen.x, mouseY - screen.y, button != 1);
 				}
 			}
 		}
+		onMouseReleaseScreen(mouseX, mouseY, button, flag);
 		lastMouseX = -1;
 		lastMouseY = -1;
 		clickX = -1;
 		clickY = -1;
-		super.mouseReleased(mouseX, mouseY, state);
+		super.mouseReleased(mouseX, mouseY, button);
+	}
+
+	protected void onMouseReleaseScreen(int mouseX, int mouseY, int button, boolean flag) {
+
 	}
 
 	@Override

@@ -14,7 +14,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -97,38 +96,11 @@ public class ItemVanillaFluid extends Item {
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
-	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side, EntityPlayer player,
-			ItemStack stack) {
-		Block block = worldIn.getBlockState(pos).getBlock();
-		if (block == Blocks.SNOW_LAYER && block.isReplaceable(worldIn, pos)) {
-			side = EnumFacing.UP;
-		} else if (!block.isReplaceable(worldIn, pos)) {
-			pos = pos.offset(side);
-		}
-		return worldIn.mayPlace(this.block, pos, false, side, player);
-	}
-
-//	@Override
-//	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-//		if (this.isInCreativeTab(tab)) {
-//			block.getSubBlocks(tab, items);
-//		}
-//	}
-
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 		block.addInformation(stack, worldIn, tooltip, flagIn);
-	}
-
-	public Block getBlock() {
-		return getBlockRaw() == null ? null : getBlockRaw().delegate.get();
-	}
-
-	private Block getBlockRaw() {
-		return block;
 	}
 
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,

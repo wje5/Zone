@@ -28,7 +28,7 @@ public class MessageIOPanelRequest extends MessageSphinx {
 	@Override
 	public void run(MessageContext ctx) {
 		getTileEntity().requestItems(new StorageWrapper(tag.getCompoundTag("req")),
-				WorldPos.load(tag.getCompoundTag("target")));
+				WorldPos.load(tag.getCompoundTag("target")), false);
 	}
 
 	public static class Handler implements IMessageHandler<MessageIOPanelRequest, IMessage> {

@@ -1,15 +1,11 @@
 package com.pinball3d.zone.item;
 
-import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.psp.ItemFC;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -108,7 +104,8 @@ public class ItemLoader {
 		register(registry, paddle = new ZoneItem("paddle"));
 		register(registry, impeller = new ZoneItem("impeller"));
 		register(registry, energy = new ZoneItem("energy"));
-		register(registry, terminal = new ItemTerminal());
+		register(registry, terminal = new ItemTerminal(), false);
+
 		register(registry, fc = new ItemFC());
 		register(registry, drill = new ItemDrill());
 		register(registry, drill_heavy = new ItemDrillHeavy());
@@ -183,35 +180,28 @@ public class ItemLoader {
 		register(registry, truss_x = new ZoneItem("truss_x").setCreativeTab(null));
 		register(registry, truss_z = new ZoneItem("truss_z").setCreativeTab(null));
 		register(registry, processing_center_light = new ZoneItem("processing_center_light").setCreativeTab(null));
+		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+			ModelLoader.setCustomModelResourceLocation(terminal, 0,
+					new ModelResourceLocation("zone:terminal", "inventory"));
+			ModelLoader.setCustomModelResourceLocation(terminal, 1,
+					new ModelResourceLocation("zone:terminal_2", "inventory"));
+		}
 		Block.REGISTRY.forEach(e -> {
 			if (e instanceof IFluidBlock) {
-				Item item = new ItemBlock(e) {
-					@Override
-					public String getUnlocalizedName() {
-						return ((IFluidBlock) e).getFluid().getUnlocalizedName();
-					}
-
-					@Override
-					public String getUnlocalizedName(ItemStack stack) {
-						return ((IFluidBlock) e).getFluid().getUnlocalizedName();
-					}
-
-					@Override
-					public String getItemStackDisplayName(ItemStack stack) {
-						return I18n.format(this.getUnlocalizedNameInefficiently(stack)).trim();
-					}
-
-					@Override
-					public CreativeTabs getCreativeTab() {
-						return TabZone.tab;
-					}
-				}.setRegistryName("zone", e.getRegistryName().getResourcePath()).setCreativeTab(TabZone.tab);
+				Item item = new ItemFluid((IFluidBlock) e);
 				register(registry, item, false);
-				registerRender(item, new ModelResourceLocation(e.getRegistryName(), null));
+				if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+					registerRender(item, new ModelResourceLocation(e.getRegistryName(), null));
+				}
 			}
 		});
 		register(registry, water = new ItemVanillaFluid(Blocks.FLOWING_WATER, "water"));
-		register(registry, lava = new ItemVanillaFluid(Blocks.FLOWING_LAVA, "lava"));
+		register(registry, lava = new ItemVanillaFluid(Blocks.FLOWING_LAVA, "lava") {
+			@Override
+			public int getItemBurnTime(ItemStack itemStack) {
+				return 20000;
+			}
+		});
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {

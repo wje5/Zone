@@ -133,7 +133,7 @@ public abstract class ScreenManualBase extends GuiScreen implements IParent {
 		if (!subscreens.empty()) {
 			Subscreen screen = subscreens.peek();
 			if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y && mouseY <= screen.y + height) {
-				screen.onDrag(mouseX - screen.x, mouseY - screen.y, moveX, moveY, clickedMouseButton != 1);
+				screen.onDrag(mouseX - screen.x, mouseY - screen.y, moveX, moveY, clickedMouseButton);
 			}
 			return;
 		}

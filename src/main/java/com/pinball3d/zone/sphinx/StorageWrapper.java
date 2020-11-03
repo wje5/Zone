@@ -254,4 +254,25 @@ public class StorageWrapper {
 		tag.setTag("other", otherlist);
 		return tag;
 	}
+
+	public boolean isEquals(StorageWrapper wrapper) {
+		if (storges.size() == wrapper.storges.size() && other.size() == wrapper.other.size()) {
+			Iterator<HugeItemStack> i = storges.iterator();
+			Iterator<HugeItemStack> i2 = wrapper.storges.iterator();
+			while (i.hasNext() && i2.hasNext()) {
+				if (!i.next().isEquals(i2.next())) {
+					return false;
+				}
+			}
+			Iterator<ItemStack> j = other.iterator();
+			Iterator<ItemStack> j2 = wrapper.other.iterator();
+			while (j.hasNext() && j2.hasNext()) {
+				if (!Util.isItemStackEqualEgnoreCount(j.next(), j2.next())) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }

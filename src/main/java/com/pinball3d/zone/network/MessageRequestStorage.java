@@ -58,8 +58,12 @@ public class MessageRequestStorage implements IMessage {
 						if (message.network != null) {
 							TileEntity tileEntity = message.network.getTileEntity();
 							if (message.network.getTileEntity() instanceof TEProcessingCenter) {
-								StorageWrapper data = ((TEProcessingCenter) tileEntity).getNetworkUseableItems();
-								NetworkHandler.instance.sendTo(new MessageSendStorageToClient(data),
+								TEProcessingCenter te = (TEProcessingCenter) tileEntity;
+								StorageWrapper data = te.getNetworkUseableItems();
+								int usedStorage = te.getUsedStorage();
+								int maxStorage = te.getMaxStorage();
+								NetworkHandler.instance.sendTo(
+										new MessageSendStorageToClient(data, usedStorage, maxStorage),
 										(EntityPlayerMP) player);
 							}
 						}

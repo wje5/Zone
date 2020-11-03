@@ -13,14 +13,11 @@ public abstract class PointerNeedNetwork extends Pointer {
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	public WorldPos pos;
 	public int id;
-	public int width, height;
 	public WorkingState state;
 
-	public PointerNeedNetwork(WorldPos pos, int id, WorkingState state, int width, int height) {
-		super(pos.getPos().getX(), pos.getPos().getZ());
+	public PointerNeedNetwork(WorldPos pos, int id, WorkingState state, BoundingBox box) {
+		super(box);
 		this.pos = pos;
-		this.width = width;
-		this.height = height;
 		this.id = id;
 		this.state = state;
 	}
@@ -58,8 +55,6 @@ public abstract class PointerNeedNetwork extends Pointer {
 			GlStateManager.popMatrix();
 		}
 	}
-
-	public abstract boolean isClick(int x, int z);
 
 	@Override
 	public boolean equals(Object obj) {

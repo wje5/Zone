@@ -4,20 +4,22 @@ import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
 
 public class TextInputBox extends Component {
 	public String text = "";
 	public int maxLength;
-	protected Runnable event;
+	protected Runnable event, onInput;
 	public boolean isFocus;
 	public int flag;
+	public boolean isPixel;
 
 	public TextInputBox(IParent parent, int x, int y, int width, int maxLength, Runnable onClick) {
 		this(parent, x, y, width, 13, maxLength, onClick);
 	}
 
 	public TextInputBox(IParent parent, int x, int y, int width, int height, int maxLength, Runnable onClick) {
-		this(parent, x, y, width, height, maxLength, onClick, 7);
+		this(parent, x, y, width, height, maxLength, onClick, 8);
 	}
 
 	public TextInputBox(IParent parent, int x, int y, int width, int height, int maxLength, Runnable onClick,
@@ -28,6 +30,16 @@ public class TextInputBox extends Component {
 		this.maxLength = maxLength;
 		event = onClick;
 		this.flag = flag;
+	}
+
+	public TextInputBox setOnInput(Runnable r) {
+		onInput = r;
+		return this;
+	}
+
+	public TextInputBox setIsPixel(boolean flag) {
+		isPixel = flag;
+		return this;
 	}
 
 	@Override
@@ -44,13 +56,35 @@ public class TextInputBox extends Component {
 	@Override
 	public boolean onKeyTyped(char typedChar, int keyCode) {
 		if (isFocus) {
-			if (keyCode == Keyboard.KEY_BACK && text.length() >= 1) {
+			if (GuiScreen.isKeyComboCtrlV(keyCode)) {
+				text += GuiScreen.getClipboardString();
+				if (onInput != null) {
+					onInput.run();
+				}
+				return true;
+			} else if (keyCode == Keyboard.KEY_BACK && text.length() >= 1) {
 				text = text.substring(0, text.length() - 1);
+				if (onInput != null) {
+					onInput.run();
+				}
+				return true;
+			} else if (Util.isValidChar(typedChar, flag) && text.length() < maxLength) {
+				if (isPixel) {
+					if (parent.getFontRenderer().getStringWidth(text + typedChar) <= maxLength) {
+						text += typedChar;
+						if (onInput != null) {
+							onInput.run();
+						}
+						return true;
+					}
+				} else if (text.length() < maxLength) {
+					text += typedChar;
+					if (onInput != null) {
+						onInput.run();
+					}
+					return true;
+				}
 			}
-			if (Util.isValidChar(typedChar, flag) && text.length() < maxLength) {
-				text += typedChar;
-			}
-			return true;
 		}
 		return false;
 	}

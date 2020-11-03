@@ -2,7 +2,10 @@ package com.pinball3d.zone.sphinx;
 
 import java.util.Iterator;
 
+import org.lwjgl.input.Keyboard;
+
 import com.pinball3d.zone.inventory.GuiContainerIOPanel;
+import com.pinball3d.zone.network.MessageComputeLogisticTime;
 import com.pinball3d.zone.network.MessageIOPanelRequest;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.TEIOPanel;
@@ -19,6 +22,7 @@ public class SubscreenIOPanelRequest extends Subscreen {
 	private Slider slider;
 	public ItemStack stack;
 	public int amount;
+	public int time = -1;
 
 	public SubscreenIOPanelRequest(IParent parent, ItemStack stack, int amount) {
 		this(parent, parent.getWidth() / 2 - 70, parent.getHeight() / 2 - 28, stack, amount);
@@ -30,32 +34,39 @@ public class SubscreenIOPanelRequest extends Subscreen {
 				false);
 		this.stack = stack;
 		this.amount = amount;
-		components.add(box = new TextInputBox(parent, this.x + 70, this.y + 4, 60, 13, 9, null, 4));
+		components.add(
+				box = new TextInputBox(parent, this.x + 70, this.y + 4, 60, 13, 9, null, 4).setOnInput(new Runnable() {
+					@Override
+					public void run() {
+						int amount = -1;
+						if (!box.text.isEmpty()) {
+							amount = Integer.valueOf(box.text);
+						}
+						if (amount > SubscreenIOPanelRequest.this.amount) {
+							amount = SubscreenIOPanelRequest.this.amount;
+						}
+						if (amount != -1) {
+							box.text = "" + amount;
+							slider.set(1.0F * amount / SubscreenIOPanelRequest.this.amount);
+						}
+						refreshTime();
+					}
+				}));
 		box.isFocus = true;
 		box.text = "1";
+		refreshTime();
 		components.add(slider = new Slider(this, this.x + 33, this.y + 18, 96));
 		slider.setOnChange(new Runnable() {
 			@Override
 			public void run() {
 				box.text = String.valueOf((int) ((SubscreenIOPanelRequest.this.amount - 1) * slider.get() + 1));
+				refreshTime();
 			}
 		});
 		components.add(new TextButton(this, this.x + 15, this.y + 41, I18n.format("sphinx.confirm"), new Runnable() {
 			@Override
 			public void run() {
-				if (box.text.isEmpty()) {
-					return;
-				}
-				int amount = Integer.valueOf(box.text);
-				if (amount <= 0) {
-					return;
-				}
-				TEIOPanel te = ((GuiContainerIOPanel) parent).container.tileEntity;
-				StorageWrapper wrapper = stack.getMaxStackSize() <= 1 ? new StorageWrapper(stack)
-						: new StorageWrapper(new HugeItemStack(stack, amount));
-				NetworkHandler.instance.sendToServer(MessageIOPanelRequest.newMessage(te.getPassword(),
-						te.getNetworkPos(), wrapper, new WorldPos(te.getPos(), te.getWorld())));
-				parent.quitScreen(SubscreenIOPanelRequest.this);
+				onConfirm();
 			}
 		}));
 		components.add(new TextButton(this, this.x + 83, this.y + 41, I18n.format("sphinx.cancel"), new Runnable() {
@@ -66,23 +77,52 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		}));
 	}
 
-	private void updateTime() {
+	public void onConfirm() {
+		if (box.text.isEmpty()) {
+			return;
+		}
+		int amount = Integer.valueOf(box.text);
+		if (amount <= 0) {
+			return;
+		}
+		TEIOPanel te = ((GuiContainerIOPanel) parent).container.tileEntity;
+		StorageWrapper wrapper = stack.getMaxStackSize() <= 1 ? new StorageWrapper(stack)
+				: new StorageWrapper(new HugeItemStack(stack, amount));
+		NetworkHandler.instance.sendToServer(
+				MessageIOPanelRequest.newMessage(te.getPassword(), te.getNetworkPos(), wrapper, new WorldPos(te)));
+		parent.quitScreen(this);
+	}
 
+	public void refreshTime() {
+		time = -1;
+		if (box.text.isEmpty()) {
+			return;
+		}
+		int amount = Integer.valueOf(box.text);
+		if (amount <= 0) {
+			return;
+		}
+		StorageWrapper wrapper = stack.getMaxStackSize() <= 1 ? new StorageWrapper(stack.copy())
+				: new StorageWrapper(new HugeItemStack(stack.copy(), amount));
+		NetworkHandler.instance.sendToServer(new MessageComputeLogisticTime(mc.player,
+				new WorldPos(((GuiContainerIOPanel) parent).container.tileEntity), wrapper));
+	}
+
+	public void updateTime(int time, StorageWrapper wrapper) {
+		int amount = Integer.valueOf(box.text);
+		if (amount <= 0) {
+			return;
+		}
+		StorageWrapper w = stack.getMaxStackSize() <= 1 ? new StorageWrapper(stack.copy())
+				: new StorageWrapper(new HugeItemStack(stack.copy(), amount));
+		if (w.isEquals(wrapper)) {
+			this.time = time;
+		}
 	}
 
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		int amount = -1;
-		if (!box.text.isEmpty()) {
-			amount = Integer.valueOf(box.text);
-		}
-		if (amount > this.amount) {
-			amount = this.amount;
-		}
-		if (amount != -1) {
-			box.text = "" + amount;
-		}
 		Gui.drawRect(x, y, x + width, y + height, 0xFF0B5953);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
@@ -107,9 +147,11 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		Util.drawBorder(x, y, 140, 56, 1, 0xFF1ECCDE);
 		Util.drawBorder(x + 8, y + 8, 18, 18, 1, 0xFF1ECCDE);
 		getFontRenderer().drawString(I18n.format("sphinx.output") + ":", x + 30, y + 6, 0xFF1ECCDE);
-//		getFontRenderer().drawString(I18n.format("sphinx.time") + ":", x + 30, y + 30, 0xFF1ECCDE);
-//		String text = "103s";
-//		getFontRenderer().drawString(text, x + 128 - getFontRenderer().getStringWidth(text), y + 30, 0xFF1ECCDE);
+		if (time != -1) {
+			getFontRenderer().drawString(I18n.format("sphinx.time") + ":", x + 30, y + 30, 0xFF1ECCDE);
+			String text = (time / 20) + "s" + (time % 20) + "tick";
+			getFontRenderer().drawString(text, x + 128 - getFontRenderer().getStringWidth(text), y + 30, 0xFF1ECCDE);
+		}
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
@@ -125,6 +167,9 @@ public class SubscreenIOPanelRequest extends Subscreen {
 			while (!flag && it.hasNext()) {
 				Component c = it.next();
 				flag = c.onKeyTyped(typedChar, keyCode);
+			}
+			if (!flag && keyCode == Keyboard.KEY_RETURN) {
+				onConfirm();
 			}
 		} else {
 			subscreens.peek().keyTyped(typedChar, keyCode);

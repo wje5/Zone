@@ -51,6 +51,11 @@ public class NetworkHandler {
 		registerMessage(MessageRequestPackData.Handler.class, MessageRequestPackData.class, Side.SERVER);
 		registerMessage(MessageSendPackDataToClient.Handler.class, MessageSendPackDataToClient.class, Side.CLIENT);
 		registerMessage(MessageDeleteNeedNetworkUnit.Handler.class, MessageDeleteNeedNetworkUnit.class, Side.SERVER);
+		registerMessage(MessageComputeLogisticTime.Handler.class, MessageComputeLogisticTime.class, Side.SERVER);
+		registerMessage(MessageSendLogisticTimeToClient.Handler.class, MessageSendLogisticTimeToClient.class,
+				Side.CLIENT);
+		registerMessage(MessageIOPanelTransferPlayerInventory.Handler.class, MessageIOPanelTransferPlayerInventory.class,
+				Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

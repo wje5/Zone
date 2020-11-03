@@ -12,10 +12,8 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +22,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -37,8 +34,8 @@ public class ItemFluid extends Item {
 
 	public ItemFluid(IFluidBlock block) {
 		this.block = (Block) block;
-		setCreativeTab(TabZone.tab);
 		setRegistryName("zone", this.block.getRegistryName().getResourcePath());
+		setCreativeTab(TabZone.tab);
 	}
 
 	@Override
@@ -114,38 +111,11 @@ public class ItemFluid extends Item {
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
-	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side, EntityPlayer player,
-			ItemStack stack) {
-		Block block = worldIn.getBlockState(pos).getBlock();
-		if (block == Blocks.SNOW_LAYER && block.isReplaceable(worldIn, pos)) {
-			side = EnumFacing.UP;
-		} else if (!block.isReplaceable(worldIn, pos)) {
-			pos = pos.offset(side);
-		}
-		return worldIn.mayPlace(this.block, pos, false, side, player);
-	}
-
-	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-		if (this.isInCreativeTab(tab)) {
-			this.block.getSubBlocks(tab, items);
-		}
-	}
-
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		super.addInformation(stack, worldIn, tooltip, flagIn);
-		this.block.addInformation(stack, worldIn, tooltip, flagIn);
-	}
-
-	public Block getBlock() {
-		return this.getBlockRaw() == null ? null : this.getBlockRaw().delegate.get();
-	}
-
-	private Block getBlockRaw() {
-		return this.block;
+		block.addInformation(stack, worldIn, tooltip, flagIn);
 	}
 
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
@@ -153,9 +123,9 @@ public class ItemFluid extends Item {
 		if (!world.setBlockState(pos, newState, 11))
 			return false;
 		IBlockState state = world.getBlockState(pos);
-		if (state.getBlock() == this.block) {
+		if (state.getBlock() == block) {
 			setTileEntityNBT(world, player, pos, stack);
-			this.block.onBlockPlacedBy(world, pos, state, player, stack);
+			block.onBlockPlacedBy(world, pos, state, player, stack);
 			if (player instanceof EntityPlayerMP)
 				CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP) player, pos, stack);
 		}

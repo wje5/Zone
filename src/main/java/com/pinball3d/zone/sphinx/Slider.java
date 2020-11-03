@@ -32,6 +32,10 @@ public class Slider extends Component {
 		return 1.0F * scrollingDistance / (width - 5);
 	}
 
+	public void set(float f) {
+		scrollingDistance = (int) (f * (width - 5));
+	}
+
 	public void setOnChange(Runnable onChange) {
 		this.onChange = onChange;
 	}

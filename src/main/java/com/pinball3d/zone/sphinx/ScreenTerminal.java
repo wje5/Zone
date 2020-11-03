@@ -20,16 +20,23 @@ public class ScreenTerminal extends ScreenSphinxAdvenced {
 
 	@Override
 	protected void applyComponents() {
+		super.applyComponents();
 		components.add(new ButtonNetworkConfig(this, width - 10, 2, new Runnable() {
 			@Override
 			public void run() {
-				subscreens.push(new SubscreenNetworkConfig((ScreenTerminal) mc.currentScreen));
+				subscreens.push(new SubscreenNetworkConfig(ScreenTerminal.this));
 			}
 		}, true));
 		components.add(button = new TexturedButton(this, width - 20, 2, TEXTURE, 94, 68, 22, 30, 0.25F, new Runnable() {
 			@Override
 			public void run() {
-				subscreens.push(new SubscreenViewStorage((ScreenTerminal) mc.currentScreen));
+				subscreens.push(new SubscreenViewStorage(ScreenTerminal.this));
+			}
+		}));
+		components.add(new TexturedButton(this, width - 30, 2, TEXTURE, 116, 68, 32, 32, 0.25F, new Runnable() {
+			@Override
+			public void run() {
+				subscreens.push(new SubscreenSynodLibrary(ScreenTerminal.this));
 			}
 		}));
 	}

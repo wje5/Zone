@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -153,6 +154,9 @@ public class Util {
 	 * 
 	 */
 	public static boolean isValidChar(char input, int flag) {
+		if (flag > 7) {
+			return ChatAllowedCharacters.isAllowedCharacter(input);
+		}
 		String lowerCase = "abcdefghijklmnopqrstuvwxyz";
 		String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		String number = "1234567890";

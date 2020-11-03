@@ -12,7 +12,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.8.0"
+version = "1.8.1"
 group = "com.pinball3d.zone" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "zone"
 
@@ -43,9 +43,9 @@ repositories{
     maven {
         url = "https://dvs1.progwml6.com/files/maven/"
     }
-    maven {
-        url = "https://modmaven.k-4u.nl"
-    }
+    //maven {
+    //    url = "https://modmaven.k-4u.nl"
+    //}
     maven {
         url = 'http://maven.mcmoddev.com'
     }
@@ -55,6 +55,9 @@ repositories{
     maven {
         name = "Modmuss50"
         url = "http://maven.modmuss50.me"
+    }
+    maven {
+    	url "https://mirrors.tuna.tsinghua.edu.cn/"
     }
 }
 
@@ -81,6 +84,7 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
     deobfProvided "mezz.jei:jei_${mc_version}:${jei_version}:api"
     runtime "mezz.jei:jei_${mc_version}:${jei_version}"
+    compile "apache:pdfbox:2.0.21"
 }
 
 processResources {

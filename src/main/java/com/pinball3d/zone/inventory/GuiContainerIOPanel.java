@@ -7,15 +7,16 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import com.pinball3d.zone.network.MessageIOPanelPageChange;
 import com.pinball3d.zone.network.MessageIOPanelSearchChange;
 import com.pinball3d.zone.network.MessageIOPanelSendItemToStorage;
+import com.pinball3d.zone.network.MessageIOPanelTransferPlayerInventory;
 import com.pinball3d.zone.network.MessageUpdateIOPanelGui;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.Component;
 import com.pinball3d.zone.sphinx.IParent;
-import com.pinball3d.zone.sphinx.MapHandler;
 import com.pinball3d.zone.sphinx.ScreenIOPanel;
 import com.pinball3d.zone.sphinx.Subscreen;
 import com.pinball3d.zone.sphinx.TextInputBox;
@@ -60,12 +61,12 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 
 	protected void applyComponents() {
 		components = new HashSet<Component>();
-		components.add(box = new TextInputBox(this, getXOffset() + 7, getYOffset() + 7, 61, 15, 8, new Runnable() {
+		components.add(box = new TextInputBox(this, getXOffset() + 7, getYOffset() + 7, 61, 15, 55, new Runnable() {
 			@Override
 			public void run() {
 				box.isFocus = true;
 			}
-		}));
+		}).setIsPixel(true));
 		int offsetX = width / 2 - 184, offsetY = (height - ySize) / 2;
 		components.add(new TexturedButton(this, offsetX + 15, offsetY + 201, ICONS, 92, 32, 5, 9, 1.0F, new Runnable() {
 			@Override
@@ -102,6 +103,22 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 					@Override
 					public void run() {
 						System.out.println("config");
+					}
+				}));
+		components.add(
+				new TexturedButton(this, offsetX + 285, offsetY + 43, ICONS, 180, 68, 31, 32, 0.5F, new Runnable() {
+					@Override
+					public void run() {
+						NetworkHandler.instance
+								.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, true));
+					}
+				}));
+		components.add(
+				new TexturedButton(this, offsetX + 285, offsetY + 62, ICONS, 211, 68, 31, 32, 0.5F, new Runnable() {
+					@Override
+					public void run() {
+						NetworkHandler.instance
+								.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, false));
 					}
 				}));
 	}
@@ -161,6 +178,10 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		int d = Mouse.getDWheel();
+		if (d != 0) {
+			NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, d > 0));
+		}
 		NetworkHandler.instance.sendToServer(new MessageUpdateIOPanelGui(Minecraft.getMinecraft().player));
 		drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
@@ -176,7 +197,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		if (!subscreens.empty()) {
 			Subscreen screen = subscreens.peek();
 			if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y && mouseY <= screen.y + height) {
-				screen.onDrag(mouseX - screen.x, mouseY - screen.y, moveX, moveY, clickedMouseButton != 1);
+				screen.onDrag(mouseX - screen.x, mouseY - screen.y, moveX, moveY, clickedMouseButton);
 			}
 			return;
 		}
@@ -200,20 +221,15 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		if ((clickX == -1 || Math.abs(mouseX - clickX) < 5) && (clickY == -1 || Math.abs(mouseY - clickY) < 5)) {
 			if (subscreens.empty()) {
 				Iterator<Component> it = components.iterator();
-				boolean flag = false;
 				while (it.hasNext()) {
 					Component c = it.next();
 					int x = mouseX - c.x;
 					int y = mouseY - c.y;
 					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
 						if (c.onClickScreen(x, y, state != 1)) {
-							flag = true;
 							break;
 						}
 					}
-				}
-				if (!flag) {
-					MapHandler.onClick(width, height, mouseX, mouseY);
 				}
 			} else {
 				Subscreen screen = subscreens.peek();

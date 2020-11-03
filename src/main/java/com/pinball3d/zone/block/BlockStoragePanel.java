@@ -1,6 +1,7 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
+import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
 import com.pinball3d.zone.tileentity.TEStoragePanel;
 
@@ -58,6 +59,10 @@ public class BlockStoragePanel extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (playerIn.getHeldItem(hand).getItem() == ItemLoader.terminal
+				&& playerIn.getHeldItem(hand).getItemDamage() == 1) {
+			return false;
+		}
 		if (worldIn.isRemote) {
 			openScreen(worldIn, pos);
 		}

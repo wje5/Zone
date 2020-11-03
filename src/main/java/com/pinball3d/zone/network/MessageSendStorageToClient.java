@@ -1,7 +1,6 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.sphinx.ScreenSphinxController;
-import com.pinball3d.zone.sphinx.ScreenTerminal;
+import com.pinball3d.zone.sphinx.ScreenSphinxAdvenced;
 import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.Subscreen;
 import com.pinball3d.zone.sphinx.SubscreenViewStorage;
@@ -18,23 +17,30 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageSendStorageToClient implements IMessage {
 	StorageWrapper data;
+	int usedStorage, maxStorage;
 
 	public MessageSendStorageToClient() {
 
 	}
 
-	public MessageSendStorageToClient(StorageWrapper wrapper) {
+	public MessageSendStorageToClient(StorageWrapper wrapper, int usedStorage, int maxStorage) {
 		data = wrapper;
+		this.usedStorage = usedStorage;
+		this.maxStorage = maxStorage;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		data = new StorageWrapper(ByteBufUtils.readTag(buf));
+		usedStorage = buf.readInt();
+		maxStorage = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		ByteBufUtils.writeTag(buf, data.writeToNBT(new NBTTagCompound()));
+		buf.writeInt(usedStorage);
+		buf.writeInt(maxStorage);
 	}
 
 	public static class Handler implements IMessageHandler<MessageSendStorageToClient, IMessage> {
@@ -44,18 +50,13 @@ public class MessageSendStorageToClient implements IMessage {
 				@Override
 				public void run() {
 					GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-					if (screen instanceof ScreenTerminal) {
-						if (!((ScreenTerminal) screen).subscreens.empty()) {
-							Subscreen subscreen = ((ScreenTerminal) screen).subscreens.get(0);
+					if (screen instanceof ScreenSphinxAdvenced) {
+						ScreenSphinxAdvenced s = (ScreenSphinxAdvenced) screen;
+						if (!(s.subscreens.empty())) {
+							Subscreen subscreen = s.subscreens.get(0);
 							if (subscreen instanceof SubscreenViewStorage) {
-								((SubscreenViewStorage) subscreen).setData(message.data);
-							}
-						}
-					} else if (screen instanceof ScreenSphinxController) {
-						if (!((ScreenSphinxController) screen).subscreens.empty()) {
-							Subscreen subscreen = ((ScreenSphinxController) screen).subscreens.get(0);
-							if (subscreen instanceof SubscreenViewStorage) {
-								((SubscreenViewStorage) subscreen).setData(message.data);
+								((SubscreenViewStorage) subscreen).setData(message.data, message.usedStorage,
+										message.maxStorage);
 							}
 						}
 					}

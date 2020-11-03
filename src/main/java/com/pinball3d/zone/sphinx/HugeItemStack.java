@@ -89,4 +89,8 @@ public class HugeItemStack {
 		tag.setTag("stack", tag2);
 		return tag;
 	}
+
+	public boolean isEquals(HugeItemStack stack) {
+		return Util.isItemStackEqualEgnoreCount(this.stack, stack.stack) && count == stack.count;
+	}
 }

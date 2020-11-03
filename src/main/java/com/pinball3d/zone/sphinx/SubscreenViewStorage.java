@@ -23,6 +23,7 @@ public class SubscreenViewStorage extends Subscreen {
 	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	public StorageWrapper data = new StorageWrapper();
+	public int usedStorage, maxStorage;
 	public String search = "";
 	public int page = 1, maxPage = 1;
 	private TextInputBox box;
@@ -33,12 +34,12 @@ public class SubscreenViewStorage extends Subscreen {
 
 	public SubscreenViewStorage(IParent parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		components.add(box = new TextInputBox(this, getXOffset() + 27, getYOffset() + 27, 61, 15, 8, new Runnable() {
+		components.add(box = new TextInputBox(this, getXOffset() + 27, getYOffset() + 27, 61, 15, 55, new Runnable() {
 			@Override
 			public void run() {
 				box.isFocus = true;
 			}
-		}));
+		}).setIsPixel(true));
 		components.add(new TexturedButton(this, getXOffset() + 87, getYOffset() + 27, ICONS, 92, 41, 15, 15, 1.0F,
 				new Runnable() {
 					@Override
@@ -72,10 +73,34 @@ public class SubscreenViewStorage extends Subscreen {
 		GlStateManager.colorMask(true, true, true, true);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
-		if (parent instanceof ScreenTerminal) {
-			((ScreenTerminal) parent).renderToolTip(stack, mouseX, mouseY);
-		} else {
-			((ScreenSphinxController) parent).renderToolTip(stack, mouseX, mouseY);
+	}
+
+	@Override
+	public void doRenderForeground(int mouseX, int mouseY) {
+		super.doRenderForeground(mouseX, mouseY);
+		if (parent instanceof ScreenSphinxBase) {
+			int slot = getHoveredSlot(mouseX, mouseY);
+			if (slot != -1) {
+				StorageWrapper w = getItems();
+				Iterator<HugeItemStack> i = w.storges.iterator();
+				while (i.hasNext()) {
+					HugeItemStack s = i.next();
+					if (slot == 0) {
+						((ScreenSphinxBase) parent).renderToolTip(s.stack, mouseX, mouseY);
+						return;
+					}
+					slot--;
+				}
+				Iterator<ItemStack> j = w.other.iterator();
+				while (j.hasNext()) {
+					ItemStack s = j.next();
+					if (slot == 0) {
+						((ScreenSphinxBase) parent).renderToolTip(s, mouseX, mouseY);
+						return;
+					}
+					slot--;
+				}
+			}
 		}
 	}
 
@@ -90,8 +115,10 @@ public class SubscreenViewStorage extends Subscreen {
 		return -1;
 	}
 
-	public void setData(StorageWrapper data) {
+	public void setData(StorageWrapper data, int used, int max) {
 		this.data = data;
+		this.usedStorage = used;
+		this.maxStorage = max;
 		updateGlobalStorges();
 	}
 
@@ -122,26 +149,7 @@ public class SubscreenViewStorage extends Subscreen {
 		}
 	}
 
-	@Override
-	public void doRenderBackground(int mouseX, int mouseY) {
-		super.doRenderBackground(mouseX, mouseY);
-		WorldPos network;
-		if (parent instanceof ScreenTerminal) {
-			network = ((ScreenTerminal) parent).getNetwork();
-		} else {
-			network = new WorldPos(((ScreenSphinxController) parent).tileentity);
-		}
-		NetworkHandler.instance.sendToServer(new MessageRequestStorage(Minecraft.getMinecraft().player, network));
-		Util.drawTexture(TEXTURE, x, y, 0, 0, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 260, y, 80, 0, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x, y + 160, 0, 80, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 260, y + 160, 80, 80, 80, 80, 0.5F);
-		Gui.drawRect(x + 40, y, x + 260, y + 40, 0x2F000000);
-		Gui.drawRect(x, y + 40, x + 300, y + 160, 0x2F000000);
-		Gui.drawRect(x + 40, y + 160, x + 260, y + 200, 0x2F000000);
-		Gui.drawRect(x + 10, y + 20, x + 290, y + 22, 0xFF20E6EF);
-		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
-		RenderItem ir = mc.getRenderItem();
+	public StorageWrapper getItems() {
 		Set<HugeItemStack> storges = data.storges;
 		if (!search.isEmpty()) {
 			storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);
@@ -166,8 +174,39 @@ public class SubscreenViewStorage extends Subscreen {
 				}
 			}
 		}
-		Iterator<HugeItemStack> it = storges.iterator();
-		Iterator<ItemStack> it2 = other.iterator();
+		StorageWrapper r = new StorageWrapper();
+		storges.forEach(e -> {
+			r.merge(e.copy());
+		});
+		other.forEach(e -> {
+			r.merge(e.copy());
+		});
+		return r;
+	}
+
+	@Override
+	public void doRenderBackground(int mouseX, int mouseY) {
+		super.doRenderBackground(mouseX, mouseY);
+		WorldPos network;
+		if (parent instanceof ScreenTerminal) {
+			network = ((ScreenTerminal) parent).getNetwork();
+		} else {
+			network = new WorldPos(((ScreenSphinxController) parent).tileentity);
+		}
+		NetworkHandler.instance.sendToServer(new MessageRequestStorage(Minecraft.getMinecraft().player, network));
+		Util.drawTexture(TEXTURE, x, y, 0, 0, 80, 80, 0.5F);
+		Util.drawTexture(TEXTURE, x + 260, y, 80, 0, 80, 80, 0.5F);
+		Util.drawTexture(TEXTURE, x, y + 160, 0, 80, 80, 80, 0.5F);
+		Util.drawTexture(TEXTURE, x + 260, y + 160, 80, 80, 80, 80, 0.5F);
+		Gui.drawRect(x + 40, y, x + 260, y + 40, 0x2F000000);
+		Gui.drawRect(x, y + 40, x + 300, y + 160, 0x2F000000);
+		Gui.drawRect(x + 40, y + 160, x + 260, y + 200, 0x2F000000);
+		Gui.drawRect(x + 10, y + 20, x + 290, y + 22, 0xFF20E6EF);
+		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
+		RenderItem ir = mc.getRenderItem();
+		StorageWrapper w = getItems();
+		Iterator<HugeItemStack> it = w.storges.iterator();
+		Iterator<ItemStack> it2 = w.other.iterator();
 		for (int offset = (page - 1) * 91; offset > 0; offset--) {
 			if (it.hasNext()) {
 				it.next();
@@ -180,11 +219,13 @@ public class SubscreenViewStorage extends Subscreen {
 				Util.drawBorder(x + 27 + i * 19, y + 45 + j * 19, 18, 18, 1, 0xFF1ECCDE);
 			}
 		}
-		parent.getFontRenderer().drawString(I18n.format("sphinx.view_storages"), x + 15, y + 8, 0xFF1ECCDE);
+		FontRenderer fr = getFontRenderer();
+		fr.drawString(I18n.format("sphinx.view_storages"), x + 15, y + 8, 0xFF1ECCDE);
 		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
 		String text = page + "/" + maxPage;
-		FontRenderer fr = getFontRenderer();
 		fr.drawString(text, x + 150 - fr.getStringWidth(text) / 2, y + 181, 0xFF1ECCDE);
+		text = I18n.format("sphinx.storage_space") + ": " + usedStorage + "/" + maxStorage;
+		fr.drawString(text, x + 175, y + 30, 0xFF1ECCDE);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
@@ -224,10 +265,6 @@ public class SubscreenViewStorage extends Subscreen {
 		if (!temp.isEmpty()) {
 			renderCoverAndToolTip(temp, slot, mouseX, mouseY);
 		}
-//		RenderHelper.disableStandardItemLighting();
-//		GlStateManager.enableLighting();
-//		GlStateManager.enableDepth();
-//		GlStateManager.enableBlend();
 	}
 
 	@Override

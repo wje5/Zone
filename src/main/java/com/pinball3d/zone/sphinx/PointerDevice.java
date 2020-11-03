@@ -6,7 +6,8 @@ import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 
 public class PointerDevice extends PointerNeedNetwork {
 	public PointerDevice(WorldPos pos, int id, WorkingState state) {
-		super(pos, id, state, 7, 7);
+		super(pos, id, state, new BoundingBox(pos.getPos().getX() - 3, pos.getPos().getZ() - 3, pos.getPos().getX() + 4,
+				pos.getPos().getZ() + 4));
 	}
 
 	@Override
@@ -24,11 +25,5 @@ public class PointerDevice extends PointerNeedNetwork {
 			Util.drawTexture(TEXTURE, pos.getPos().getX() - offsetX, pos.getPos().getZ() - offsetZ, 116, 21, 9, 9,
 					0.5F);
 		}
-	}
-
-	@Override
-	public boolean isClick(int x, int z) {
-		return pos.getPos().getX() - 3 <= x && pos.getPos().getX() - 3 + width >= x && pos.getPos().getZ() - 3 <= z
-				&& pos.getPos().getZ() - 3 + width >= z;
 	}
 }
