@@ -24,6 +24,7 @@ public class PDFHelper {
 	public static final PDF PDF_EMPTY = new PDF(RESOURCE_LOCATION_EMPTY);
 	public final IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
 	private Map<ResourceLocation, PDF> map = new HashMap<ResourceLocation, PDF>();
+	public static PDFHelper instance = new PDFHelper();
 
 	public static PDDocument loadPdfFromStream(InputStream stream) throws IOException {
 		PDDocument pdf;
@@ -72,5 +73,14 @@ public class PDFHelper {
 			map.put(pdf.location, pdf);
 		}
 		return flag;
+	}
+
+	public void loadPdfImage(PDFImage image) {
+		try {
+			image.loadTexture(manager);
+		} catch (Throwable e) {
+			CrashReport crashreport = CrashReport.makeCrashReport(e, "Rendering PDF Image");
+			throw new ReportedException(crashreport);
+		}
 	}
 }

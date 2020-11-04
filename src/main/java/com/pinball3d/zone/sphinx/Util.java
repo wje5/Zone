@@ -2,6 +2,9 @@ package com.pinball3d.zone.sphinx;
 
 import org.lwjgl.opengl.GL11;
 
+import com.pinball3d.zone.pdf.PDFHelper;
+import com.pinball3d.zone.pdf.PDFImage;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -147,6 +150,51 @@ public class Util {
 		GlStateManager.scale(scale, scale, scale);
 		ir.renderItemAndEffectIntoGUI(stack, 0, 0);
 		GlStateManager.popMatrix();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void drawTexture(int x, int y, int width, int height) {
+		drawTexture(x, y, 0, 0, width, height, 1.0F);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void drawTexture(int x, int y, int uWidth, int vHeight, float scale) {
+		drawTexture(x, y, 0, 0, uWidth, vHeight, scale);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void drawTexture(int x, int y, int u, int v, int uWidth, int vHeight, float scale) {
+		drawTexture(x, y, (int) (scale * uWidth), (int) (scale * vHeight), u, v, uWidth, vHeight);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void drawTexture(int x, int y, int width, int height, int u, int v, int uWidth, int vHeight) {
+		GlStateManager.pushMatrix();
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder bufferbuilder = tessellator.getBuffer();
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		float f = 0.00390625F;
+		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		bufferbuilder.pos(x, y + height, 0).tex(u * f, (v + vHeight) * f).endVertex();
+		bufferbuilder.pos(x + width, y + height, 0).tex((u + uWidth) * f, (v + vHeight) * f).endVertex();
+		bufferbuilder.pos(x + width, y, 0).tex((u + uWidth) * f, v * f).endVertex();
+		bufferbuilder.pos(x, y, 0).tex(u * f, v * f).endVertex();
+		tessellator.draw();
+		GlStateManager.popMatrix();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void drawPDF(PDFImage image, int x, int y, int width, int yOffset, int maxHeight) {
+		PDFHelper.instance.loadPdfImage(image);
+		GlStateManager.bindTexture(image.getGlTextureId());
+		int height = (int) (width / image.width * image.height);
+		int renderHeight = 256 / height * maxHeight;
+		drawTexture(x, y, width, maxHeight, 0, (int) (yOffset / height * image.height), 256,
+				renderHeight > 256 ? 256 : renderHeight);
 	}
 
 	/**
