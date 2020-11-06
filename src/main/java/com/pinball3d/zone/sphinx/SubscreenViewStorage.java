@@ -81,6 +81,7 @@ public class SubscreenViewStorage extends Subscreen {
 		if (parent instanceof ScreenSphinxBase) {
 			int slot = getHoveredSlot(mouseX, mouseY);
 			if (slot != -1) {
+				slot += (page - 1) * 91;
 				StorageWrapper w = getItems();
 				Iterator<HugeItemStack> i = w.storges.iterator();
 				while (i.hasNext()) {

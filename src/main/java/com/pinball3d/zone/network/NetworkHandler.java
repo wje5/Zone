@@ -54,8 +54,9 @@ public class NetworkHandler {
 		registerMessage(MessageComputeLogisticTime.Handler.class, MessageComputeLogisticTime.class, Side.SERVER);
 		registerMessage(MessageSendLogisticTimeToClient.Handler.class, MessageSendLogisticTimeToClient.class,
 				Side.CLIENT);
-		registerMessage(MessageIOPanelTransferPlayerInventory.Handler.class, MessageIOPanelTransferPlayerInventory.class,
-				Side.SERVER);
+		registerMessage(MessageIOPanelTransferPlayerInventory.Handler.class,
+				MessageIOPanelTransferPlayerInventory.class, Side.SERVER);
+		registerMessage(MessageUpdateContainerIOPanel.Handler.class, MessageUpdateContainerIOPanel.class, Side.CLIENT);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

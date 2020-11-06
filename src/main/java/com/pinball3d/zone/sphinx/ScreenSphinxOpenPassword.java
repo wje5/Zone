@@ -58,6 +58,11 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	@Override
 	public void onGuiClosed() {
 		Keyboard.enableRepeatEvents(false);
+		Iterator<Subscreen> it = subscreens.iterator();
+		while (it.hasNext()) {
+			it.next().close();
+			it.remove();
+		}
 		super.onGuiClosed();
 	}
 
@@ -94,6 +99,7 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 			if (subscreens.empty()) {
 				super.keyTyped(typedChar, keyCode);
 			} else if (subscreens.peek().onQuit()) {
+				subscreens.peek().close();
 				subscreens.pop();
 			}
 		} else {
@@ -219,10 +225,7 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 				}
 			} else {
 				Subscreen screen = subscreens.peek();
-				if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y
-						&& mouseY <= screen.y + height) {
-					screen.onClick(mouseX - screen.x, mouseY - screen.y, state != 1);
-				}
+				screen.onClickScreen(mouseX, mouseY, state != 1);
 			}
 		}
 		lastMouseX = -1;

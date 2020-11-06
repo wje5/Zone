@@ -61,7 +61,6 @@ public class MessageUpdateIOPanelGui implements IMessage {
 					}
 				}
 			});
-
 			return null;
 		}
 	}

@@ -233,10 +233,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 				}
 			} else {
 				Subscreen screen = subscreens.peek();
-				if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y
-						&& mouseY <= screen.y + height) {
-					screen.onClick(mouseX - screen.x, mouseY - screen.y, state != 1);
-				}
+				screen.onClickScreen(mouseX, mouseY, state != 1);
 				return;
 			}
 		}
@@ -253,6 +250,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 			if (subscreens.empty()) {
 				mc.displayGuiScreen(new ScreenIOPanel(getNeedNetworkTileEntity()));
 			} else if (subscreens.peek().onQuit()) {
+				subscreens.peek().close();
 				subscreens.pop();
 			}
 			return;
@@ -277,6 +275,16 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		if (!box.isFocus) {
 			super.keyTyped(typedChar, keyCode);
 		}
+	}
+
+	@Override
+	public void onGuiClosed() {
+		Iterator<Subscreen> it = subscreens.iterator();
+		while (it.hasNext()) {
+			it.next().close();
+			it.remove();
+		}
+		super.onGuiClosed();
 	}
 
 	@Override

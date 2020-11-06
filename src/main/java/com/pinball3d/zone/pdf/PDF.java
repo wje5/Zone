@@ -20,7 +20,7 @@ import net.minecraft.util.ResourceLocation;
 public class PDF {
 	private static final Logger LOGGER = LogManager.getLogger();
 	protected final ResourceLocation location;
-	protected PDDocument doc;
+	public PDDocument doc;
 	protected PDFRenderer renderer;
 	volatile protected List<PDFImage> images = new ArrayList<PDFImage>();
 
@@ -38,6 +38,11 @@ public class PDF {
 			doc = PDFHelper.loadPdfFromStream(ir.getInputStream());
 		} finally {
 			IOUtils.closeQuietly(ir);
+		}
+		if (doc != null) {
+			for (int i = 0; i < doc.getNumberOfPages(); i++) {
+				images.add(null);
+			}
 		}
 	}
 
@@ -68,5 +73,28 @@ public class PDF {
 			}.start();
 		}
 		return images;
+	}
+
+	public PDFImage getImage(int page) {
+		PDFImage image = images.get(page);
+		if (renderer == null) {
+			renderer = new PDFRenderer(doc);
+		}
+		if (image == null && doc != null && doc.getNumberOfPages() > page) {
+			try {
+				BufferedImage img = renderer.renderImage(page, 1, ImageType.RGB, RenderDestination.VIEW);
+				image = new PDFImage(img, img.getWidth(), img.getHeight());
+				LOGGER.info(page);
+			} catch (Throwable e) {
+				LOGGER.error("Rendering PDF:");
+				e.printStackTrace();
+				LOGGER.error(e);
+				LOGGER.error("Resource location:" + location);
+			}
+		}
+		if (image != null) {
+			images.set(page, image);
+		}
+		return image;
 	}
 }

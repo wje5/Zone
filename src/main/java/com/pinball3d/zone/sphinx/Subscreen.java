@@ -81,33 +81,38 @@ public class Subscreen implements IParent {
 
 	}
 
-	public void onClickScreen(int x, int y, boolean isLeft) {
+	public boolean onClickScreen(int x, int y, boolean isLeft) {
 		draggingComponent = null;
 		if (x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height) {
-			onClick(x - this.x, y - this.y, isLeft);
+			if (subscreens.empty()) {
+				Iterator<Component> it = components.iterator();
+				while (it.hasNext()) {
+					Component c = it.next();
+					int cX = x - c.x;
+					int cY = y - c.y;
+					if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
+						if (c.onClickScreen(cX, cY, isLeft)) {
+							return true;
+						}
+					}
+				}
+				onClick(x - this.x, y - this.y, isLeft);
+			} else {
+				Subscreen screen = subscreens.peek();
+				screen.onClickScreen(x, y, isLeft);
+			}
+			return true;
 		}
+		return false;
 	}
 
 	public void onClick(int x, int y, boolean isLeft) {
-		if (subscreens.empty()) {
-			Iterator<Component> it = components.iterator();
-			while (it.hasNext()) {
-				Component c = it.next();
-				int cX = x + this.x - c.x;
-				int cY = y + this.y - c.y;
-				if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
-					if (c.onClickScreen(cX, cY, isLeft)) {
-						break;
-					}
-				}
-			}
-		} else {
-			Subscreen screen = subscreens.peek();
-			int x1 = x + this.x;
-			int y1 = y + this.y;
-			if (x1 >= screen.x && x1 <= screen.x + width && y1 >= screen.y && y1 <= screen.y + height) {
-				screen.onClick(x1 - screen.x, y1 - screen.y, isLeft);
-			}
+
+	}
+
+	public void onDragScreen(int x, int y, int moveX, int moveY, int button) {
+		if (x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height) {
+
 		}
 	}
 
@@ -137,6 +142,10 @@ public class Subscreen implements IParent {
 		}
 	}
 
+	public void onMouseScroll(int mouseX, int mouseY, boolean isUp) {
+
+	}
+
 	public boolean onQuit() {
 		if (subscreens.empty()) {
 			return true;
@@ -145,6 +154,10 @@ public class Subscreen implements IParent {
 			subscreens.pop();
 		}
 		return false;
+	}
+
+	public void close() {
+
 	}
 
 	public void keyTyped(char typedChar, int keyCode) {

@@ -67,6 +67,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 			if (subscreens.empty()) {
 				super.keyTyped(typedChar, keyCode);
 			} else if (subscreens.peek().onQuit()) {
+				subscreens.peek().close();
 				subscreens.pop();
 			}
 		} else {
@@ -81,6 +82,16 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 				subscreens.peek().keyTyped(typedChar, keyCode);
 			}
 		}
+	}
+
+	@Override
+	public void onGuiClosed() {
+		Iterator<Subscreen> it = subscreens.iterator();
+		while (it.hasNext()) {
+			it.next().close();
+			it.remove();
+		}
+		super.onGuiClosed();
 	}
 
 	@Override
@@ -234,10 +245,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 				}
 			} else {
 				Subscreen screen = subscreens.peek();
-				if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y
-						&& mouseY <= screen.y + height) {
-					screen.onClick(mouseX - screen.x, mouseY - screen.y, button != 1);
-				}
+				screen.onClickScreen(mouseX, mouseY, button != 1);
 			}
 		}
 		onMouseReleaseScreen(mouseX, mouseY, button, flag);

@@ -23,6 +23,7 @@
     }
   },
   "result": {
-    "item": "zone:terminal"
+    "item": "zone:terminal",
+    "data": 0
   }
 }

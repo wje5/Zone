@@ -1,9 +1,12 @@
 package com.pinball3d.zone.inventory;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.pinball3d.zone.network.MessageUpdateContainerIOPanel;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.SubscreenIOPanelRequest;
@@ -11,14 +14,12 @@ import com.pinball3d.zone.tileentity.TEIOPanel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -33,8 +34,10 @@ public class ContainerIOPanel extends Container {
 	public int[] list = new int[36];
 	public String search = "";
 	public int x, y;
+	public EntityPlayer player;
 
 	public ContainerIOPanel(EntityPlayer player, TileEntity tileEntity) {
+		this.player = player;
 		for (int i = 0; i < 36; i++) {
 			list[i] = 1;
 		}
@@ -160,6 +163,7 @@ public class ContainerIOPanel extends Container {
 		if (page < 1) {
 			page = 1;
 		}
+		updateAmountList();
 	}
 
 	public void updateAmountList() {
@@ -179,6 +183,7 @@ public class ContainerIOPanel extends Container {
 				}
 			}
 		}
+
 		Iterator<HugeItemStack> it = storges.iterator();
 		int i = 0;
 		while (it.hasNext()) {
@@ -196,34 +201,19 @@ public class ContainerIOPanel extends Container {
 			}
 			i++;
 		}
+		int[] data = new int[list.length + 2];
+		data[0] = page;
+		data[1] = maxPage;
+		for (int j = 0; j < list.length; j++) {
+			data[j + 2] = list[j];
+		}
+		NetworkHandler.instance.sendTo(new MessageUpdateContainerIOPanel(data), (EntityPlayerMP) player);
 	}
 
-	@Override
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
-		updateAmountList();
-		for (IContainerListener j : listeners) {
-			j.sendWindowProperty(this, 0, page);
-			j.sendWindowProperty(this, 1, maxPage);
-			for (int k = 0; k < 36; k++) {
-				j.sendWindowProperty(this, k + 2, list[k]);
-			}
-		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void updateProgressBar(int id, int data) {
-		super.updateProgressBar(id, data);
-		switch (id) {
-		case 0:
-			page = data;
-			return;
-		case 1:
-			maxPage = data;
-			return;
-		}
-		list[id - 2] = data;
+	public void setData(int[] data) {
+		page = data[0];
+		maxPage = data[1];
+		list = Arrays.copyOfRange(data, 2, data.length);
 	}
 
 	@Override

@@ -332,7 +332,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		storages.forEach(e -> {
 			TileEntity te = e.getTileEntity();
 			if (te instanceof INeedNetwork && ((INeedNetwork) te).isConnected() && te instanceof IStorable) {
-				wrapper.merge(((IStorable) te).getStorages());
+				StorageWrapper w = ((IStorable) te).getStorages();
+				wrapper.merge(w);
 			}
 		});
 		return wrapper;

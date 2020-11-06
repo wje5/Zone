@@ -33,6 +33,7 @@ public abstract class ScreenSphinxAdvenced extends ScreenSphinxBase {
 			if (subscreens.empty()) {
 				super.keyTyped(typedChar, keyCode);
 			} else if (subscreens.peek().onQuit()) {
+				subscreens.peek().close();
 				subscreens.pop();
 			}
 		} else {
@@ -51,6 +52,16 @@ public abstract class ScreenSphinxAdvenced extends ScreenSphinxBase {
 				subscreens.peek().keyTyped(typedChar, keyCode);
 			}
 		}
+	}
+
+	@Override
+	public void onGuiClosed() {
+		Iterator<Subscreen> it = subscreens.iterator();
+		while (it.hasNext()) {
+			it.next().close();
+			it.remove();
+		}
+		super.onGuiClosed();
 	}
 
 	@Override

@@ -2,8 +2,6 @@ package com.pinball3d.zone.pdf;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +21,6 @@ public class PDFHelper {
 	public static final ResourceLocation RESOURCE_LOCATION_EMPTY = new ResourceLocation("");
 	public static final PDF PDF_EMPTY = new PDF(RESOURCE_LOCATION_EMPTY);
 	public final IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
-	private Map<ResourceLocation, PDF> map = new HashMap<ResourceLocation, PDF>();
 	public static PDFHelper instance = new PDFHelper();
 
 	public static PDDocument loadPdfFromStream(InputStream stream) throws IOException {
@@ -37,12 +34,8 @@ public class PDFHelper {
 	}
 
 	public PDF getPdf(ResourceLocation loc) {
-		PDF pdf = map.get(loc);
-		if (pdf == null) {
-			pdf = new PDF(loc);
-			loadPdf(pdf);
-		}
-		return pdf;
+		PDF pdf = new PDF(loc);
+		return loadPdf(pdf) ? pdf : null;
 	}
 
 	public boolean loadPdf(PDF pdf) {
@@ -53,7 +46,6 @@ public class PDFHelper {
 			if (pdf.location != RESOURCE_LOCATION_EMPTY) {
 				LOGGER.warn("Failed to load pdf: {}", pdf.location, e);
 			}
-			map.put(pdf.location, PDF_EMPTY);
 			flag = false;
 		} catch (Throwable throwable) {
 			final PDF f = pdf;
@@ -68,9 +60,6 @@ public class PDFHelper {
 				}
 			});
 			throw new ReportedException(crashreport);
-		}
-		if (flag) {
-			map.put(pdf.location, pdf);
 		}
 		return flag;
 	}
