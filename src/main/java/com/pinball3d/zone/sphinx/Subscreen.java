@@ -110,39 +110,71 @@ public class Subscreen implements IParent {
 
 	}
 
-	public void onDragScreen(int x, int y, int moveX, int moveY, int button) {
+	public boolean onDragScreen(int x, int y, int moveX, int moveY, int button) {
 		if (x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height) {
-
+			if (subscreens.empty()) {
+				boolean flag = true;
+				if (draggingComponent == null) {
+					Iterator<Component> it = components.iterator();
+					while (it.hasNext()) {
+						Component c = it.next();
+						int cX = x - c.x;
+						int cY = y - c.y;
+						if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
+							if (c.onDrag(x - c.x, y - c.y, moveX, moveY)) {
+								draggingComponent = c;
+								break;
+							}
+						}
+					}
+				} else if (!draggingComponent.onDrag(x - draggingComponent.x, y - draggingComponent.y, moveX, moveY)) {
+					draggingComponent = null;
+					flag = false;
+				}
+				if (flag && draggingComponent == null) {
+					onDrag(x, y, moveX, moveY, button);
+				}
+			} else {
+				Subscreen screen = subscreens.peek();
+				if (x >= screen.x && x <= screen.x + width && y >= screen.y && y <= screen.y + height) {
+					screen.onDragScreen(x - screen.x, y - screen.y, moveX, moveY, button);
+				}
+			}
+			return true;
 		}
+		draggingComponent = null;
+		return false;
 	}
 
 	public void onDrag(int x, int y, int moveX, int moveY, int button) {
-		if (subscreens.empty()) {
-			if (draggingComponent == null) {
+
+	}
+
+	public boolean onMouseScrollScreen(int x, int y, boolean isUp) {
+		if (x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height) {
+			if (subscreens.empty()) {
 				Iterator<Component> it = components.iterator();
 				while (it.hasNext()) {
 					Component c = it.next();
-					if (x >= c.x - this.x && x <= c.x - this.x + c.width && y >= c.y - this.y
-							&& y <= c.y - this.y + c.height) {
-						draggingComponent = c;
+					int cX = x - c.x;
+					int cY = y - c.y;
+					if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
+						if (c.onMouseScroll(cX, cY, isUp)) {
+							return true;
+						}
 					}
 				}
+				onMouseScroll(x - this.x, y - this.y, isUp);
+			} else {
+				Subscreen screen = subscreens.peek();
+				screen.onClickScreen(x, y, isUp);
 			}
-			if (draggingComponent != null) {
-				draggingComponent.onDrag(x - draggingComponent.x + this.x, y - draggingComponent.y + this.y, moveX,
-						moveY);
-			}
-		} else {
-			Subscreen screen = subscreens.peek();
-			int x1 = x + this.x;
-			int y1 = y + this.y;
-			if (x1 >= screen.x && x1 <= screen.x + width && y1 >= screen.y && y1 <= screen.y + height) {
-				screen.onDrag(x1 - screen.x, y1 - screen.y, moveX, moveY, button);
-			}
+			return true;
 		}
+		return false;
 	}
 
-	public void onMouseScroll(int mouseX, int mouseY, boolean isUp) {
+	public void onMouseScroll(int x, int y, boolean isUp) {
 
 	}
 

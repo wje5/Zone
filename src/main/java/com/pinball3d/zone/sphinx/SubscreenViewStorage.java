@@ -50,15 +50,25 @@ public class SubscreenViewStorage extends Subscreen {
 		components.add(new TexturedButton(this, this.x + 120, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, new Runnable() {
 			@Override
 			public void run() {
-				page = page - 1 < 1 ? 1 : page - 1;
+				page = page - 1 < 1 ? maxPage : page - 1;
 			}
 		}));
 		components.add(new TexturedButton(this, this.x + 175, this.y + 180, ICONS, 97, 32, 5, 9, 1.0F, new Runnable() {
 			@Override
 			public void run() {
-				page = page + 1 > maxPage ? maxPage : page + 1;
+				page = page + 1 > maxPage ? 1 : page + 1;
 			}
 		}));
+	}
+
+	@Override
+	public void onMouseScroll(int x, int y, boolean isUp) {
+		super.onMouseScroll(x, y, isUp);
+		if (isUp) {
+			page = page - 1 < 1 ? maxPage : page - 1;
+		} else {
+			page = page + 1 > maxPage ? 1 : page + 1;
+		}
 	}
 
 	public void renderCoverAndToolTip(ItemStack stack, int slot, int mouseX, int mouseY) {

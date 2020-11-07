@@ -10,6 +10,7 @@ import java.util.Stack;
 import java.util.UUID;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -144,6 +145,30 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 			mc.displayGuiScreen(null);
 			return;
 		}
+		int d = Mouse.getDWheel();
+		if (d != 0) {
+			if (subscreens.empty()) {
+				Iterator<Component> it = components.iterator();
+				boolean flag = true;
+				while (it.hasNext()) {
+					Component c = it.next();
+					int x = mouseX - c.x;
+					int y = mouseY - c.y;
+					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
+						if (c.onMouseScroll(mouseX, mouseY, d < 0)) {
+							flag = false;
+							break;
+						}
+					}
+				}
+				if (flag) {
+
+				}
+			} else {
+				Subscreen screen = subscreens.peek();
+				screen.onMouseScroll(mouseX, mouseY, d < 0);
+			}
+		}
 		boolean flag = isOnline();
 		preDraw(flag, mouseX, mouseY, partialTicks);
 		if (flag) {
@@ -207,9 +232,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 		lastMouseY = mouseY;
 		if (!subscreens.empty()) {
 			Subscreen screen = subscreens.peek();
-			if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y && mouseY <= screen.y + height) {
-				screen.onDrag(mouseX - screen.x, mouseY - screen.y, moveX, moveY, clickedMouseButton);
-			}
+			screen.onDragScreen(mouseX, mouseY, moveX, moveY, clickedMouseButton);
 			return;
 		}
 		onDragScreen(mouseX, mouseY, moveX, moveY, clickedMouseButton);

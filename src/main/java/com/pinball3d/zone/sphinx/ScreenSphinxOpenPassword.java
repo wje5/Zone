@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import com.pinball3d.zone.network.MessageOpenSphinx;
 import com.pinball3d.zone.network.NetworkHandler;
@@ -135,6 +136,30 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 		if (!checkTileentity()) {
 			return;
 		}
+		int d = Mouse.getDWheel();
+		if (d != 0) {
+			if (subscreens.empty()) {
+				Iterator<Component> it = components.iterator();
+				boolean flag = true;
+				while (it.hasNext()) {
+					Component c = it.next();
+					int x = mouseX - c.x;
+					int y = mouseY - c.y;
+					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
+						if (c.onMouseScroll(mouseX, mouseY, d < 0)) {
+							flag = false;
+							break;
+						}
+					}
+				}
+				if (flag) {
+
+				}
+			} else {
+				Subscreen screen = subscreens.peek();
+				screen.onMouseScroll(mouseX, mouseY, d < 0);
+			}
+		}
 		int xOffset = -82;
 		int yOffset = 30;
 		Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
@@ -188,9 +213,7 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 		lastMouseY = mouseY;
 		if (!subscreens.empty()) {
 			Subscreen screen = subscreens.peek();
-			if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y && mouseY <= screen.y + height) {
-				screen.onDrag(mouseX - screen.x, mouseY - screen.y, moveX, moveY, clickedMouseButton);
-			}
+			screen.onDragScreen(mouseX, mouseY, moveX, moveY, clickedMouseButton);
 			return;
 		}
 		if (clickedMouseButton != 1) {

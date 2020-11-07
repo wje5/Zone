@@ -32,8 +32,12 @@ public class Component {
 		return false;
 	}
 
-	public void onDrag(int mouseX, int mouseY, int moveX, int moveY) {
+	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
+		return false;
+	}
 
+	public boolean onMouseScroll(int mouseX, int mouseY, boolean isUp) {
+		return false;
 	}
 
 	public void doRender(int mouseX, int mouseY) {

@@ -180,7 +180,28 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		int d = Mouse.getDWheel();
 		if (d != 0) {
-			NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, d > 0));
+			if (subscreens.empty()) {
+				Iterator<Component> it = components.iterator();
+				boolean flag = true;
+				while (it.hasNext()) {
+					Component c = it.next();
+					int x = mouseX - c.x;
+					int y = mouseY - c.y;
+					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
+						if (c.onMouseScroll(mouseX, mouseY, d < 0)) {
+							flag = false;
+							break;
+						}
+					}
+				}
+				if (flag) {
+					NetworkHandler.instance
+							.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, d > 0));
+				}
+			} else {
+				Subscreen screen = subscreens.peek();
+				screen.onMouseScroll(mouseX, mouseY, d < 0);
+			}
 		}
 		NetworkHandler.instance.sendToServer(new MessageUpdateIOPanelGui(Minecraft.getMinecraft().player));
 		drawDefaultBackground();
@@ -196,9 +217,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		lastMouseY = mouseY;
 		if (!subscreens.empty()) {
 			Subscreen screen = subscreens.peek();
-			if (mouseX >= screen.x && mouseX <= screen.x + width && mouseY >= screen.y && mouseY <= screen.y + height) {
-				screen.onDrag(mouseX - screen.x, mouseY - screen.y, moveX, moveY, clickedMouseButton);
-			}
+			screen.onDragScreen(mouseX, mouseY, moveX, moveY, clickedMouseButton);
 			return;
 		}
 		super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
@@ -211,8 +230,8 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		if (subscreens.empty()) {
 			container.x = clickX;
 			container.y = clickY;
-			super.mouseClicked(mouseX, mouseY, mouseButton);
 		}
+		super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
 	@Override

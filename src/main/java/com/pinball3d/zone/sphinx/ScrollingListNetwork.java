@@ -94,11 +94,12 @@ public class ScrollingListNetwork extends Component {
 	}
 
 	@Override
-	public void onDrag(int mouseX, int mouseY, int moveX, int moveY) {
+	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
 		super.onDrag(mouseX, mouseY, moveX, moveY);
 		scrollingDistance -= moveY;
 		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+		return true;
 	}
 
 	@Override
