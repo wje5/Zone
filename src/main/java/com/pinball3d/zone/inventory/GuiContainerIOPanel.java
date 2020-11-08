@@ -194,7 +194,9 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 						}
 					}
 				}
-				if (flag) {
+				int x = mouseX - guiLeft;
+				int y = mouseY - guiTop;
+				if (flag && x > 0 && y > 0) {
 					NetworkHandler.instance
 							.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, d > 0));
 				}

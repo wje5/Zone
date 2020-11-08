@@ -77,6 +77,12 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		}));
 	}
 
+	public void max() {
+		box.text = amount + "";
+		slider.set(1.0F);
+		refreshTime();
+	}
+
 	public void onConfirm() {
 		if (box.text.isEmpty()) {
 			return;

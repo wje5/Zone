@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.lwjgl.input.Keyboard;
+
 import com.pinball3d.zone.network.MessageUpdateContainerIOPanel;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.HugeItemStack;
@@ -68,8 +70,13 @@ public class ContainerIOPanel extends Container {
 								int slotY = (slotNumber - 54) / 4 * 19 + 29;
 								if (x - offsetX >= slotX && x - offsetX <= slotX + 16 && y - offsetY >= slotY
 										&& y - offsetY <= slotY + 16) {
-									container.putScreen(new SubscreenIOPanelRequest(container, x - offsetX, y - offsetY,
-											getStack(), list[slotNumber - 54]));
+									SubscreenIOPanelRequest s = new SubscreenIOPanelRequest(container, x - offsetX,
+											y - offsetY, getStack(), list[slotNumber - 54]);
+									if (Keyboard.isKeyDown(
+											Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+										s.max();
+									}
+									container.putScreen(s);
 								}
 							}
 						}

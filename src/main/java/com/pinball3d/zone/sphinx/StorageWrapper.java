@@ -33,11 +33,13 @@ public class StorageWrapper {
 				}
 				int hash1 = o1.stack.hasTagCompound() ? o1.stack.getTagCompound().hashCode() : 0;
 				int hash2 = o2.stack.hasTagCompound() ? o2.stack.getTagCompound().hashCode() : 0;
-				return o1.stack.hasTagCompound() || o2.stack.hasTagCompound()
+				return o1.stack.hasTagCompound() && o2.stack.hasTagCompound()
 						? hash1 > hash2 ? 1
 								: hash2 > hash1 ? -1
 										: o1.hashCode() > o2.hashCode() ? 1 : o2.hashCode() > o1.hashCode() ? -1 : 0
-						: o1.hashCode() > o2.hashCode() ? 1 : o2.hashCode() > o1.hashCode() ? -1 : 0;
+						: o1.stack.hasTagCompound() ? 1
+								: o2.stack.hasTagCompound() ? -1
+										: o1.hashCode() > o2.hashCode() ? 1 : o2.hashCode() > o1.hashCode() ? -1 : 0;
 			}
 		};
 	};
@@ -58,11 +60,13 @@ public class StorageWrapper {
 				} else if (d > c) {
 					return -1;
 				}
-				return o1.hasTagCompound() || o2.hasTagCompound()
+				return o1.hasTagCompound() && o2.hasTagCompound()
 						? o1.getTagCompound().hashCode() > o2.getTagCompound().hashCode() ? 1
 								: o2.getTagCompound().hashCode() > o1.getTagCompound().hashCode() ? -1
 										: o1.hashCode() > o2.hashCode() ? 1 : o2.hashCode() > o1.hashCode() ? -1 : 0
-						: o1.hashCode() > o2.hashCode() ? 1 : o2.hashCode() > o1.hashCode() ? -1 : 0;
+						: o1.hasTagCompound() ? 1
+								: o2.hasTagCompound() ? -1
+										: o1.hashCode() > o2.hashCode() ? 1 : o2.hashCode() > o1.hashCode() ? -1 : 0;
 			}
 		}
 	};
