@@ -155,7 +155,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 					int x = mouseX - c.x;
 					int y = mouseY - c.y;
 					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
-						if (c.onMouseScroll(mouseX, mouseY, d < 0)) {
+						if (c.onMouseScroll(x, y, d < 0)) {
 							flag = false;
 							break;
 						}
@@ -166,7 +166,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 				}
 			} else {
 				Subscreen screen = subscreens.peek();
-				screen.onMouseScroll(mouseX, mouseY, d < 0);
+				screen.onMouseScrollScreen(mouseX, mouseY, d < 0);
 			}
 		}
 		boolean flag = isOnline();

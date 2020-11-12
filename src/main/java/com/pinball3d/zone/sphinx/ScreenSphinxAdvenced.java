@@ -102,18 +102,20 @@ public abstract class ScreenSphinxAdvenced extends ScreenSphinxBase {
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
-		if (mouseButton == 0) {
-			dragBoxX = mouseX;
-			dragBoxY = mouseY;
-			dragBoxX2 = mouseX;
-			dragBoxY2 = mouseY;
+		if (subscreens.empty()) {
+			if (mouseButton == 0) {
+				dragBoxX = mouseX;
+				dragBoxY = mouseY;
+				dragBoxX2 = mouseX;
+				dragBoxY2 = mouseY;
+			}
 		}
 	}
 
 	@Override
 	protected void onMouseReleaseScreen(int mouseX, int mouseY, int button, boolean flag) {
 		super.onMouseReleaseScreen(mouseX, mouseY, button, flag);
-		if (button == 0) {
+		if (subscreens.empty() && button == 0) {
 			if (dragBoxX != dragBoxX2 || dragBoxY != dragBoxY2) {
 				MapHandler.onReleaseDragBox(width, height, dragBoxX, dragBoxY, dragBoxX2, dragBoxY2);
 			} else {

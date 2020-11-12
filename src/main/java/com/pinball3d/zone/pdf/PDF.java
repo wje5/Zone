@@ -3,12 +3,15 @@ package com.pinball3d.zone.pdf;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.rendering.RenderDestination;
@@ -23,6 +26,7 @@ public class PDF {
 	public PDDocument doc;
 	protected PDFRenderer renderer;
 	volatile protected List<PDFImage> images = new ArrayList<PDFImage>();
+	volatile public float[] widths, heights;
 
 	public PDF(ResourceLocation loc) {
 		location = loc;
@@ -40,8 +44,19 @@ public class PDF {
 			IOUtils.closeQuietly(ir);
 		}
 		if (doc != null) {
-			for (int i = 0; i < doc.getNumberOfPages(); i++) {
+			int max = doc.getNumberOfPages();
+			widths = new float[max];
+			heights = new float[max];
+			for (int i = 0; i < max; i++) {
 				images.add(null);
+			}
+			int i = 0;
+			Iterator<PDPage> it = doc.getPages().iterator();
+			while (it.hasNext()) {
+				PDRectangle r = it.next().getCropBox();
+				widths[i] = r.getWidth();
+				heights[i] = r.getHeight();
+				i++;
 			}
 		}
 	}
@@ -94,6 +109,15 @@ public class PDF {
 		}
 		if (image != null) {
 			images.set(page, image);
+		}
+		for (int i = 0; i < images.size(); i++) {
+			if (i < page - 2 || i > page + 2) {
+				PDFImage e = images.get(i);
+				if (e != null) {
+					images.get(i).deleteGlTexture();
+					images.set(i, null);
+				}
+			}
 		}
 		return image;
 	}

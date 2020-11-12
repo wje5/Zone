@@ -167,7 +167,7 @@ public class Subscreen implements IParent {
 				onMouseScroll(x - this.x, y - this.y, isUp);
 			} else {
 				Subscreen screen = subscreens.peek();
-				screen.onClickScreen(x, y, isUp);
+				screen.onMouseScrollScreen(x, y, isUp);
 			}
 			return true;
 		}

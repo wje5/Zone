@@ -29,7 +29,6 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
-	private int xOffset, yOffset;
 	private boolean flag;
 	public TEProcessingCenter tileentity;
 
@@ -146,7 +145,7 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 					int x = mouseX - c.x;
 					int y = mouseY - c.y;
 					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
-						if (c.onMouseScroll(mouseX, mouseY, d < 0)) {
+						if (c.onMouseScroll(x, y, d < 0)) {
 							flag = false;
 							break;
 						}
@@ -157,7 +156,7 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 				}
 			} else {
 				Subscreen screen = subscreens.peek();
-				screen.onMouseScroll(mouseX, mouseY, d < 0);
+				screen.onMouseScrollScreen(mouseX, mouseY, d < 0);
 			}
 		}
 		int xOffset = -82;
@@ -215,12 +214,6 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 			Subscreen screen = subscreens.peek();
 			screen.onDragScreen(mouseX, mouseY, moveX, moveY, clickedMouseButton);
 			return;
-		}
-		if (clickedMouseButton != 1) {
-			if (lastMouseX > 0 && lastMouseY > 0) {
-				xOffset = xOffset - moveX;
-				yOffset = yOffset - moveY;
-			}
 		}
 	}
 

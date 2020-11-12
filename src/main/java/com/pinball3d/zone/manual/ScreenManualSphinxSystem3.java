@@ -11,7 +11,7 @@ public class ScreenManualSphinxSystem3 extends ScreenManualBase {
 	protected void applyComponents() {
 		super.applyComponents();
 		components.add(new BlockShowWithTip(this, getXOffset() + 65, getYOffset() + 22, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_y)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 65, getYOffset() + 38, 1.0F,
 				new ItemStack(BlockLoader.truss)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 65, getYOffset() + 54, 1.0F,
@@ -19,7 +19,7 @@ public class ScreenManualSphinxSystem3 extends ScreenManualBase {
 		components.add(new BlockShowWithTip(this, getXOffset() + 65, getYOffset() + 70, 1.0F,
 				new ItemStack(BlockLoader.truss)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 65, getYOffset() + 86, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_y)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 49, getYOffset() + 30, 1.0F,
 				new ItemStack(BlockLoader.charged_glass)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 49, getYOffset() + 78, 1.0F,
@@ -49,18 +49,18 @@ public class ScreenManualSphinxSystem3 extends ScreenManualBase {
 		components.add(new BlockShowWithTip(this, getXOffset() + 113, getYOffset() + 62, 1.0F,
 				new ItemStack(BlockLoader.charged_glass)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 1, getYOffset() + 54, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_y)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 129, getYOffset() + 54, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_y)));
 
 		components.add(new BlockShowWithTip(this, getXOffset() + 211, getYOffset() + 22, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_y)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 211, getYOffset() + 38, 1.0F,
 				new ItemStack(BlockLoader.cluster_operation_module)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 211, getYOffset() + 70, 1.0F,
 				new ItemStack(BlockLoader.cluster_operation_module)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 211, getYOffset() + 86, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_y)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 196, getYOffset() + 30, 1.0F,
 				new ItemStack(BlockLoader.charged_glass)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 196, getYOffset() + 46, 1.0F,
@@ -98,9 +98,9 @@ public class ScreenManualSphinxSystem3 extends ScreenManualBase {
 		components.add(new BlockShowWithTip(this, getXOffset() + 259, getYOffset() + 62, 1.0F,
 				new ItemStack(BlockLoader.charged_glass)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 147, getYOffset() + 54, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_y)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 275, getYOffset() + 54, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_y)));
 	}
 
 	@Override

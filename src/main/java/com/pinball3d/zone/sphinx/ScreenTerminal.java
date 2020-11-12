@@ -33,7 +33,7 @@ public class ScreenTerminal extends ScreenSphinxAdvenced {
 				subscreens.push(new SubscreenViewStorage(ScreenTerminal.this));
 			}
 		}));
-		components.add(new TexturedButton(this, width - 30, 2, TEXTURE, 116, 68, 32, 32, 0.25F, new Runnable() {
+		components.add(new TexturedButton(this, width - 30, 2, TEXTURE, 24, 100, 23, 30, 0.25F, new Runnable() {
 			@Override
 			public void run() {
 				subscreens.push(new SubscreenSynodLibrary(ScreenTerminal.this));

@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+    	"particle": "zone:blocks/construct_block",
+        "down": "zone:blocks/construct_block_axis_rot",
+        "up": "zone:blocks/construct_block_axis_rot",
+        "north": "zone:blocks/construct_block_axis_rot",
+        "east": "zone:blocks/construct_block",
+        "south": "zone:blocks/construct_block_axis_rot",
+        "west": "zone:blocks/construct_block"
+    }
+}

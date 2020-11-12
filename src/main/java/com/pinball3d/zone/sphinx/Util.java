@@ -189,11 +189,13 @@ public class Util {
 
 	@SideOnly(Side.CLIENT)
 	public static void drawPDF(PDFImage image, int x, int y, int width, int yOffset, int maxHeight) {
-		PDFHelper.instance.loadPdfImage(image);
+		if (!image.isLoaded()) {
+			PDFHelper.instance.loadPdfImage(image);
+		}
 		GlStateManager.bindTexture(image.getGlTextureId());
 		int height = (int) (width / image.width * image.height);
-		int renderHeight = 256 / height * maxHeight;
-		drawTexture(x, y, width, maxHeight, 0, (int) (yOffset / height * image.height), 256,
+		int renderHeight = (int) (256F / height * maxHeight);
+		drawTexture(x, y, width, maxHeight, 0, (int) (yOffset * 256F / height), 256,
 				renderHeight > 256 ? 256 : renderHeight);
 	}
 
@@ -259,5 +261,10 @@ public class Util {
 			}
 			return false;
 		}
+	}
+
+	public static String formatString(String string) {
+		string = string.replaceAll("" + (char) 0x3000, "  ");
+		return string;
 	}
 }

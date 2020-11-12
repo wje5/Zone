@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 
 public class PDFImage extends AbstractTexture {
-	private final BufferedImage image;
+	public final BufferedImage image;
 	public final float width, height;
 
 	public PDFImage(BufferedImage img, float width, float height) {
@@ -21,5 +21,9 @@ public class PDFImage extends AbstractTexture {
 	public void loadTexture(IResourceManager resourceManager) throws IOException {
 		this.deleteGlTexture();
 		TextureUtil.uploadTextureImageAllocate(this.getGlTextureId(), image, false, false);
+	}
+
+	public boolean isLoaded() {
+		return glTextureId != -1;
 	}
 }

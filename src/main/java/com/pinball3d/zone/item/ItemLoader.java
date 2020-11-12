@@ -51,8 +51,8 @@ public class ItemLoader {
 			tiny_pile_clay_dust, tiny_pile_flint_dust, tiny_pile_prismarine_dust, tiny_pile_garton_metal_dust,
 			tiny_pile_glowstone_dust, tiny_pile_blaze_powder;
 
-	public static Item construct_block_axis, construct_block_axis_rot, truss_x, truss_z, processing_center_light, water,
-			lava;
+	public static Item construct_block_axis_x, construct_block_axis_y, construct_block_axis_z, truss_x, truss_z,
+			processing_center_light, water, lava;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -175,8 +175,9 @@ public class ItemLoader {
 		register(registry, tiny_pile_garton_metal_dust = new ZoneItem("tiny_pile_garton_metal_dust"));
 		register(registry, tiny_pile_glowstone_dust = new ZoneItem("tiny_pile_glowstone_dust"));
 		register(registry, tiny_pile_blaze_powder = new ZoneItem("tiny_pile_blaze_powder"));
-		register(registry, construct_block_axis = new ZoneItem("construct_block_axis").setCreativeTab(null));
-		register(registry, construct_block_axis_rot = new ZoneItem("construct_block_axis_rot").setCreativeTab(null));
+		register(registry, construct_block_axis_x = new ZoneItem("construct_block_axis_x").setCreativeTab(null));
+		register(registry, construct_block_axis_y = new ZoneItem("construct_block_axis_y").setCreativeTab(null));
+		register(registry, construct_block_axis_z = new ZoneItem("construct_block_axis_z").setCreativeTab(null));
 		register(registry, truss_x = new ZoneItem("truss_x").setCreativeTab(null));
 		register(registry, truss_z = new ZoneItem("truss_z").setCreativeTab(null));
 		register(registry, processing_center_light = new ZoneItem("processing_center_light").setCreativeTab(null));

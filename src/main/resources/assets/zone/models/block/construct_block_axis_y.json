@@ -1,0 +1,7 @@
+{
+    "parent": "block/cube_column",
+    "textures": {
+        "end": "zone:blocks/construct_block",
+        "side": "zone:blocks/construct_block"
+    }
+}

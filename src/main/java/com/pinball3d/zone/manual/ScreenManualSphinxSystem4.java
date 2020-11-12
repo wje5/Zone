@@ -22,41 +22,41 @@ public class ScreenManualSphinxSystem4 extends ScreenManualBase {
 		components.add(new BlockShowWithTip(this, getXOffset() + 65, getYOffset() + 86, 1.0F,
 				new ItemStack(BlockLoader.construct_block_all)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 49, getYOffset() + 30, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis_rot)));
+				new ItemStack(ItemLoader.construct_block_axis_z)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 49, getYOffset() + 46, 1.0F,
 				new ItemStack(BlockLoader.charged_glass)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 49, getYOffset() + 62, 1.0F,
 				new ItemStack(BlockLoader.charged_glass)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 49, getYOffset() + 78, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_x)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 81, getYOffset() + 30, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_x)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 81, getYOffset() + 46, 1.0F,
 				new ItemStack(BlockLoader.charged_glass)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 81, getYOffset() + 62, 1.0F,
 				new ItemStack(BlockLoader.charged_glass)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 81, getYOffset() + 78, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis_rot)));
+				new ItemStack(ItemLoader.construct_block_axis_z)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 33, getYOffset() + 38, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis_rot)));
+				new ItemStack(ItemLoader.construct_block_axis_z)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 33, getYOffset() + 54, 1.0F,
 				new ItemStack(BlockLoader.charged_glass)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 33, getYOffset() + 70, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_x)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 97, getYOffset() + 38, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_x)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 97, getYOffset() + 54, 1.0F,
 				new ItemStack(BlockLoader.charged_glass)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 97, getYOffset() + 70, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis_rot)));
+				new ItemStack(ItemLoader.construct_block_axis_z)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 17, getYOffset() + 46, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis_rot)));
+				new ItemStack(ItemLoader.construct_block_axis_z)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 17, getYOffset() + 62, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_x)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 113, getYOffset() + 46, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis)));
+				new ItemStack(ItemLoader.construct_block_axis_x)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 113, getYOffset() + 62, 1.0F,
-				new ItemStack(ItemLoader.construct_block_axis_rot)));
+				new ItemStack(ItemLoader.construct_block_axis_z)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 1, getYOffset() + 54, 1.0F,
 				new ItemStack(BlockLoader.construct_block_all)));
 		components.add(new BlockShowWithTip(this, getXOffset() + 129, getYOffset() + 54, 1.0F,
