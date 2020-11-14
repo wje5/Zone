@@ -1,9 +1,11 @@
 package com.pinball3d.zone.sphinx;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 
 public class Component {
 	public static Minecraft mc = Minecraft.getMinecraft();
+	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	public int x, y;
 	public int width, height;
 	public IParent parent;
