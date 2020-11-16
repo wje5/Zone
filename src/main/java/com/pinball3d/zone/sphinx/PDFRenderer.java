@@ -25,6 +25,19 @@ public class PDFRenderer extends Component {
 		maxScrollingDistance = (int) (totalHeight * scale) - height;
 	}
 
+	public void setPage(int page) {
+		float f = 0;
+		if (pdf != null) {
+			int max = pdf.doc.getNumberOfPages();
+			for (int i = 0; i < max; i++) {
+				if (page > i) {
+					f += pdf.heights[i] * scale;
+				}
+			}
+			scrollingDistance = (int) f;
+		}
+	}
+
 	@Override
 	public boolean onMouseScroll(int mouseX, int mouseY, boolean isUp) {
 		super.onMouseScroll(mouseX, mouseY, isUp);

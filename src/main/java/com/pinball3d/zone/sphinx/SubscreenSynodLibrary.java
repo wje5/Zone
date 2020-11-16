@@ -2,7 +2,6 @@ package com.pinball3d.zone.sphinx;
 
 import java.io.IOException;
 
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
 import com.pinball3d.zone.pdf.PDF;
@@ -30,24 +29,24 @@ public class SubscreenSynodLibrary extends Subscreen {
 			@Override
 			public void run() {
 				long time = System.currentTimeMillis();
-				pdf = PDFHelper.instance.getPdf(new ResourceLocation("zone:pdf/test2.pdf"));
+				pdf = PDFHelper.instance.getPdf(new ResourceLocation("zone:pdf/test.pdf"));
 				long time2 = System.currentTimeMillis();
 				System.out.println(time2 - time);
 				if (pdf == null) {
 					failed = true;
 				} else {
 					pdfbox.setPDF(pdf);
-					PDDocumentOutline outline = pdf.doc.getDocumentCatalog().getDocumentOutline();
-					outline.children().forEach(e -> {
-						printOutline(e);
-						System.out.println("#####");
-					});
-					tree.setData(outline);
+//					PDDocumentOutline outline = pdf.doc.getDocumentCatalog().getDocumentOutline();
+//					outline.children().forEach(e -> {
+//						printOutline(e);
+//						System.out.println("#####");
+//					});
+					tree.setData(pdf.doc);
 				}
 			};
 		}.start();
 		components.add(pdfbox = new PDFRenderer(this, x + 76, y + 24, 224, 170));
-		components.add(tree = new OutlineTree(this, x, y + 9, 180));
+		components.add(tree = new OutlineTree(this, x, y + 9, 195));
 	}
 
 	private static void printOutline(PDOutlineItem item) {
@@ -59,6 +58,10 @@ public class SubscreenSynodLibrary extends Subscreen {
 			});
 			System.out.println("}");
 		}
+	}
+
+	public void setPage(int page) {
+		pdfbox.setPage(page);
 	}
 
 	@Override
@@ -106,6 +109,5 @@ public class SubscreenSynodLibrary extends Subscreen {
 		Gui.drawRect(x + 76, y + 24, x + 300, y + 194, 0x651CC3B5);
 		parent.getFontRenderer().drawString(I18n.format("sphinx.synod_library"), x + 75, y + 8, 0xFF1ECCDE);
 		Util.drawBorder(x + 75, y + 23, 226, 172, 1, 0xFF1ECCDE);
-//		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
 	}
 }
