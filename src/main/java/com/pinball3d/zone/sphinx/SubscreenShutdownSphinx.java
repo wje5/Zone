@@ -16,23 +16,15 @@ public class SubscreenShutdownSphinx extends Subscreen {
 	public SubscreenShutdownSphinx(IParent parent, int x, int y) {
 		super(parent, x, y, 160, 90, false);
 		components.add(new MultilineText(this, this.x + 5, this.y + 5, 150, I18n.format("sphinx.shutdown_sphinx")));
-		components.add(new TextButton(this, this.x + 25, this.y + 75, I18n.format("sphinx.yes"), new Runnable() {
-			@Override
-			public void run() {
-				TEProcessingCenter tileentity = ((ScreenSphinxController) parent).tileentity;
-				NetworkHandler.instance
-						.sendToServer(new MessageShutdownSphinx(((ScreenSphinxController) parent).password,
-								new WorldPos(tileentity.getPos(), tileentity.getWorld()), new NBTTagCompound()));
-				tileentity.shutdown();
-				mc.displayGuiScreen(null);
-
-			}
+		components.add(new TextButton(this, this.x + 25, this.y + 75, I18n.format("sphinx.yes"), () -> {
+			TEProcessingCenter tileentity = ((ScreenSphinxController) parent).tileentity;
+			NetworkHandler.instance.sendToServer(new MessageShutdownSphinx(((ScreenSphinxController) parent).password,
+					new WorldPos(tileentity.getPos(), tileentity.getWorld()), new NBTTagCompound()));
+			tileentity.shutdown();
+			mc.displayGuiScreen(null);
 		}));
-		components.add(new TextButton(this, this.x + 120, this.y + 75, I18n.format("sphinx.no"), new Runnable() {
-			@Override
-			public void run() {
-				parent.quitScreen(SubscreenShutdownSphinx.this);
-			}
+		components.add(new TextButton(this, this.x + 120, this.y + 75, I18n.format("sphinx.no"), () -> {
+			parent.quitScreen(SubscreenShutdownSphinx.this);
 		}));
 	}
 

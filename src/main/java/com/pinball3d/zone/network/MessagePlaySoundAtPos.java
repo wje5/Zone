@@ -45,19 +45,15 @@ public class MessagePlaySoundAtPos implements IMessage {
 	public static class Handler implements IMessageHandler<MessagePlaySoundAtPos, IMessage> {
 		@Override
 		public IMessage onMessage(MessagePlaySoundAtPos message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					World world = Minecraft.getMinecraft().world;
-					BlockPos pos = new BlockPos(message.x, message.y, message.z);
-					if (!world.isAreaLoaded(pos, 16)) {
-						return;
-					}
-					world.playSound(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
-							SoundUtil.getSoundEventFromId(message.id), SoundCategory.BLOCKS, 1.0F, 1.0F, false);
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				World world = Minecraft.getMinecraft().world;
+				BlockPos pos = new BlockPos(message.x, message.y, message.z);
+				if (!world.isAreaLoaded(pos, 16)) {
+					return;
 				}
+				world.playSound(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
+						SoundUtil.getSoundEventFromId(message.id), SoundCategory.BLOCKS, 1.0F, 1.0F, false);
 			});
-
 			return null;
 		}
 	}

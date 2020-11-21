@@ -48,12 +48,12 @@ public class ContainerIOPanel extends Container {
 		global = new ItemStackHandler(36);
 		for (int i = 0; i < 6; ++i) {
 			for (int j = 0; j < 9; ++j) {
-				addSlotToContainer(new SlotItemHandler(inv, j + i * 9, 54 + j * 19, 10 + i * 19));
+				addSlotToContainer(new SlotItemHandler(inv, j + i * 9, 100 + j * 19, 10 + i * 19));
 			}
 		}
 		for (int i = 0; i < 9; ++i) {
 			for (int j = 0; j < 4; ++j) {
-				addSlotToContainer(new SlotItemHandler(global, j + i * 4, j * 19 - 38, 29 + i * 19) {
+				addSlotToContainer(new SlotItemHandler(global, j + i * 4, j * 19 + 8, 29 + i * 19) {
 					@Override
 					public boolean isItemValid(ItemStack stack) {
 						return false;
@@ -87,11 +87,11 @@ public class ContainerIOPanel extends Container {
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
-				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 54 + j * 19, 129 + i * 19));
+				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 100 + j * 19, 129 + i * 19));
 			}
 		}
 		for (int i = 0; i < 9; ++i) {
-			addSlotToContainer(new Slot(player.inventory, i, 54 + i * 19, 189));
+			addSlotToContainer(new Slot(player.inventory, i, 100 + i * 19, 189));
 		}
 	}
 

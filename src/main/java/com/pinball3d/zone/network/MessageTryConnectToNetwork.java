@@ -60,53 +60,50 @@ public class MessageTryConnectToNetwork implements IMessage {
 	public static class Handler implements IMessageHandler<MessageTryConnectToNetwork, IMessage> {
 		@Override
 		public IMessage onMessage(MessageTryConnectToNetwork message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					World world = message.pos.getWorld();
-					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					TileEntity tileentity = message.network.getTileEntity();
-					if (tileentity instanceof TEProcessingCenter) {
-						TEProcessingCenter te = (TEProcessingCenter) tileentity;
-						if (te.isDeviceInRange(message.pos) && te.isCorrectLoginPassword(message.password)) {
-							NetworkHandler.instance.sendTo(
-									new MessageConnectNetworkCallback(te.getUUID(), message.network, message.password),
-									player);
-							if (message.isPlayer) {
-								ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				World world = message.pos.getWorld();
+				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
+				TileEntity tileentity = message.network.getTileEntity();
+				if (tileentity instanceof TEProcessingCenter) {
+					TEProcessingCenter te = (TEProcessingCenter) tileentity;
+					if (te.isDeviceInRange(message.pos) && te.isCorrectLoginPassword(message.password)) {
+						NetworkHandler.instance.sendTo(
+								new MessageConnectNetworkCallback(te.getUUID(), message.network, message.password),
+								player);
+						if (message.isPlayer) {
+							ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+							if (stack.getItem() != ItemLoader.terminal) {
+								stack = player.getHeldItem(EnumHand.OFF_HAND);
 								if (stack.getItem() != ItemLoader.terminal) {
-									stack = player.getHeldItem(EnumHand.OFF_HAND);
-									if (stack.getItem() != ItemLoader.terminal) {
-										return;
-									}
+									return;
 								}
-								NBTTagCompound tag = stack.getTagCompound();
-								if (tag == null) {
-									tag = new NBTTagCompound();
-								}
-								tag.setUniqueId("network", te.getUUID());
-								tag.setString("password", message.password);
-								stack.setTagCompound(tag);
-								NBTTagCompound data = SphinxUtil.getValidNetworkData(message.pos, player, true);
-								NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(data), player);
-							} else {
-								TileEntity t = message.pos.getTileEntity();
-								if (t instanceof INeedNetwork) {
-									((INeedNetwork) t).connect(te.getUUID(), message.password);
-									((INeedNetwork) t).setWorldPos(message.network, te.getUUID());
-									te.addNeedNetwork(message.pos);
-								}
-								NBTTagCompound tag;
-								if (message.pos.getBlockState().getBlock() == BlockLoader.beacon_core) {
-									tag = SphinxUtil.getValidNetworkDataWithoutRange(message.pos, player, false);
-								} else {
-									tag = SphinxUtil.getValidNetworkData(message.pos, player, false);
-								}
-								NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), player);
 							}
+							NBTTagCompound tag = stack.getTagCompound();
+							if (tag == null) {
+								tag = new NBTTagCompound();
+							}
+							tag.setUniqueId("network", te.getUUID());
+							tag.setString("password", message.password);
+							stack.setTagCompound(tag);
+							NBTTagCompound data = SphinxUtil.getValidNetworkData(message.pos, player, true);
+							NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(data), player);
 						} else {
-							NetworkHandler.instance.sendTo(new MessageConnectNetworkCallbackWrong(), player);
+							TileEntity t = message.pos.getTileEntity();
+							if (t instanceof INeedNetwork) {
+								((INeedNetwork) t).connect(te.getUUID(), message.password);
+								((INeedNetwork) t).setWorldPos(message.network, te.getUUID());
+								te.addNeedNetwork(message.pos);
+							}
+							NBTTagCompound tag;
+							if (message.pos.getBlockState().getBlock() == BlockLoader.beacon_core) {
+								tag = SphinxUtil.getValidNetworkDataWithoutRange(message.pos, player, false);
+							} else {
+								tag = SphinxUtil.getValidNetworkData(message.pos, player, false);
+							}
+							NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), player);
 						}
+					} else {
+						NetworkHandler.instance.sendTo(new MessageConnectNetworkCallbackWrong(), player);
 					}
 				}
 			});

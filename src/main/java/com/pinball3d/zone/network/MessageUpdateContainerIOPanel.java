@@ -41,13 +41,10 @@ public class MessageUpdateContainerIOPanel implements IMessage {
 	public static class Handler implements IMessageHandler<MessageUpdateContainerIOPanel, IMessage> {
 		@Override
 		public IMessage onMessage(MessageUpdateContainerIOPanel message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					Container container = Minecraft.getMinecraft().player.openContainer;
-					if (container instanceof ContainerIOPanel) {
-						((ContainerIOPanel) container).setData(message.data);
-					}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				Container container = Minecraft.getMinecraft().player.openContainer;
+				if (container instanceof ContainerIOPanel) {
+					((ContainerIOPanel) container).setData(message.data);
 				}
 			});
 			return null;

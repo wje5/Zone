@@ -1,6 +1,7 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
+import com.pinball3d.zone.sphinx.ScreenSphinxBase;
 import com.pinball3d.zone.sphinx.ScreenTerminal;
 import com.pinball3d.zone.sphinx.SubscreenNetworkConfig;
 
@@ -38,22 +39,12 @@ public class MessageSendValidNetworkData implements IMessage {
 	public static class Handler implements IMessageHandler<MessageSendValidNetworkData, IMessage> {
 		@Override
 		public IMessage onMessage(MessageSendValidNetworkData message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-					if (screen instanceof ScreenTerminal) {
-						ScreenTerminal terminal = (ScreenTerminal) screen;
-						if (!terminal.subscreens.empty()
-								&& terminal.subscreens.get(0) instanceof SubscreenNetworkConfig) {
-							((SubscreenNetworkConfig) terminal.subscreens.get(0)).list.setData(message.tag);
-						}
-					}
-					if (screen instanceof ScreenNeedNetwork) {
-						ScreenNeedNetwork s = (ScreenNeedNetwork) screen;
-						if (!s.subscreens.empty() && s.subscreens.get(0) instanceof SubscreenNetworkConfig) {
-							((SubscreenNetworkConfig) s.subscreens.get(0)).list.setData(message.tag);
-						}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+				if (screen instanceof ScreenTerminal || screen instanceof ScreenNeedNetwork) {
+					ScreenSphinxBase base = (ScreenSphinxBase) screen;
+					if (!base.subscreens.empty() && base.subscreens.get(0) instanceof SubscreenNetworkConfig) {
+						((SubscreenNetworkConfig) base.subscreens.get(0)).list.setData(message.tag);
 					}
 				}
 			});

@@ -10,12 +10,9 @@ public class ButtonUnitDelete extends TexturedButton implements IUnitButton {
 	private Pointer unit;
 
 	public ButtonUnitDelete(IParent parent, Pointer unit, int x, int y) {
-		super(parent, x, y, TEXTURE, 148, 68, 32, 32, 0.25F, new Runnable() {
-			@Override
-			public void run() {
-				WorldPos pos = ((PointerNeedNetwork) unit).pos;
-				NetworkHandler.instance.sendToServer(new MessageDeleteNeedNetworkUnit(pos));
-			}
+		super(parent, x, y, TEXTURE, 148, 68, 32, 32, 0.25F, () -> {
+			WorldPos pos = ((PointerNeedNetwork) unit).pos;
+			NetworkHandler.instance.sendToServer(new MessageDeleteNeedNetworkUnit(pos));
 		});
 		this.unit = unit;
 	}

@@ -44,19 +44,16 @@ public class MessageIOPanelPageChange implements IMessage {
 	public static class Handler implements IMessageHandler<MessageIOPanelPageChange, IMessage> {
 		@Override
 		public IMessage onMessage(MessageIOPanelPageChange message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					World world = server.getWorld(message.world);
-					EntityPlayer player = world.getPlayerEntityByName(message.name);
-					if (player != null && player.openContainer instanceof ContainerIOPanel) {
-						ContainerIOPanel container = (ContainerIOPanel) player.openContainer;
-						if (message.flag) {
-							container.page = container.page - 1 < 1 ? container.maxPage : container.page - 1;
-						} else {
-							container.page = container.page + 1 > container.maxPage ? 1 : container.page + 1;
-						}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+				World world = server.getWorld(message.world);
+				EntityPlayer player = world.getPlayerEntityByName(message.name);
+				if (player != null && player.openContainer instanceof ContainerIOPanel) {
+					ContainerIOPanel container = (ContainerIOPanel) player.openContainer;
+					if (message.flag) {
+						container.page = container.page - 1 < 1 ? container.maxPage : container.page - 1;
+					} else {
+						container.page = container.page + 1 > container.maxPage ? 1 : container.page + 1;
 					}
 				}
 			});

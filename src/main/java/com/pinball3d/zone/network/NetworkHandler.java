@@ -57,6 +57,7 @@ public class NetworkHandler {
 		registerMessage(MessageIOPanelTransferPlayerInventory.Handler.class,
 				MessageIOPanelTransferPlayerInventory.class, Side.SERVER);
 		registerMessage(MessageUpdateContainerIOPanel.Handler.class, MessageUpdateContainerIOPanel.class, Side.CLIENT);
+		registerMessage(MessageErrorStorageFull.Handler.class, MessageErrorStorageFull.class, Side.CLIENT);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

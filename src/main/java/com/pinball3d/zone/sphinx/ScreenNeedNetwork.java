@@ -16,12 +16,9 @@ public class ScreenNeedNetwork extends ScreenSphinxBase {
 	@Override
 	protected void applyComponents() {
 		super.applyComponents();
-		components.add(new ButtonNetworkConfig(this, width - 10, 2, new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenNetworkConfig((ScreenNeedNetwork) mc.currentScreen,
-						new WorldPos((TileEntity) tileentity)));
-			}
+		components.add(new ButtonNetworkConfig(this, width - 10, 2, () -> {
+			subscreens.push(new SubscreenNetworkConfig((ScreenNeedNetwork) mc.currentScreen,
+					new WorldPos((TileEntity) tileentity)));
 		}, false));
 	}
 

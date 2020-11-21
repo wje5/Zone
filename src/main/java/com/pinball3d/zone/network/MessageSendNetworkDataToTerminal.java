@@ -49,13 +49,10 @@ public class MessageSendNetworkDataToTerminal implements IMessage {
 	public static class Handler implements IMessageHandler<MessageSendNetworkDataToTerminal, IMessage> {
 		@Override
 		public IMessage onMessage(MessageSendNetworkDataToTerminal message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-					if (screen instanceof ScreenTerminal) {
-						((ScreenTerminal) screen).setWorldPos(message.worldpos, message.uuid);
-					}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+				if (screen instanceof ScreenTerminal) {
+					((ScreenTerminal) screen).setWorldPos(message.worldpos, message.uuid);
 				}
 			});
 			return null;

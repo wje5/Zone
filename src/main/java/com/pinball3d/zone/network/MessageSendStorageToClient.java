@@ -46,18 +46,15 @@ public class MessageSendStorageToClient implements IMessage {
 	public static class Handler implements IMessageHandler<MessageSendStorageToClient, IMessage> {
 		@Override
 		public IMessage onMessage(MessageSendStorageToClient message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-					if (screen instanceof ScreenSphinxAdvenced) {
-						ScreenSphinxAdvenced s = (ScreenSphinxAdvenced) screen;
-						if (!(s.subscreens.empty())) {
-							Subscreen subscreen = s.subscreens.get(0);
-							if (subscreen instanceof SubscreenViewStorage) {
-								((SubscreenViewStorage) subscreen).setData(message.data, message.usedStorage,
-										message.maxStorage);
-							}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+				if (screen instanceof ScreenSphinxAdvenced) {
+					ScreenSphinxAdvenced s = (ScreenSphinxAdvenced) screen;
+					if (!(s.subscreens.empty())) {
+						Subscreen subscreen = s.subscreens.get(0);
+						if (subscreen instanceof SubscreenViewStorage) {
+							((SubscreenViewStorage) subscreen).setData(message.data, message.usedStorage,
+									message.maxStorage);
 						}
 					}
 				}

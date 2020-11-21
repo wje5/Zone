@@ -15,26 +15,17 @@ public class SubscreenSphinxConfig extends Subscreen {
 	public SubscreenSphinxConfig(IParent parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
 		list = new ScrollingList(this, this.x + 16, this.y + 24, 268, 170);
-		list.addListBar(I18n.format("sphinx.change_admin_password"), new Runnable() {
-			@Override
-			public void run() {
-				parent.quitScreen(SubscreenSphinxConfig.this);
-				parent.putScreen(new SubscreenChangePassword(parent, true));
-			};
+		list.addListBar(I18n.format("sphinx.change_admin_password"), () -> {
+			parent.quitScreen(SubscreenSphinxConfig.this);
+			parent.putScreen(new SubscreenChangePassword(parent, true));
 		}, 0, 140, 32, 32, 0.5F);
-		list.addListBar(I18n.format("sphinx.change_login_password"), new Runnable() {
-			@Override
-			public void run() {
-				parent.quitScreen(SubscreenSphinxConfig.this);
-				parent.putScreen(new SubscreenChangePassword(parent, false));
-			};
+		list.addListBar(I18n.format("sphinx.change_login_password"), () -> {
+			parent.quitScreen(SubscreenSphinxConfig.this);
+			parent.putScreen(new SubscreenChangePassword(parent, false));
 		}, 0, 140, 32, 32, 0.5F);
-		list.addListBar(I18n.format("sphinx.change_sphinx_name"), new Runnable() {
-			@Override
-			public void run() {
-				parent.quitScreen(SubscreenSphinxConfig.this);
-				parent.putScreen(new SubscreenChangeName(parent));
-			};
+		list.addListBar(I18n.format("sphinx.change_sphinx_name"), () -> {
+			parent.quitScreen(SubscreenSphinxConfig.this);
+			parent.putScreen(new SubscreenChangeName(parent));
 		}, 0, 172, 16, 15, 1.0F);
 		components.add(list);
 	}

@@ -7,6 +7,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
@@ -38,10 +40,21 @@ public class PDFHelper {
 		return loadPdf(pdf) ? pdf : null;
 	}
 
+	public void closeNode(PDOutlineItem node) {
+		node.children().forEach(e -> {
+			closeNode(e);
+		});
+		node.closeNode();
+	}
+
 	public boolean loadPdf(PDF pdf) {
 		boolean flag = true;
 		try {
 			pdf.load(manager);
+			PDDocumentOutline outline = pdf.doc.getDocumentCatalog().getDocumentOutline();
+			outline.children().forEach(e -> {
+				closeNode(e);
+			});
 		} catch (IOException e) {
 			if (pdf.location != RESOURCE_LOCATION_EMPTY) {
 				LOGGER.warn("Failed to load pdf: {}", pdf.location, e);

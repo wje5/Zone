@@ -37,17 +37,11 @@ public abstract class ScreenManualBase extends GuiScreen implements IParent {
 
 	protected void applyComponents() {
 		components.clear();
-		components.add(new ButtonPage(this, getXOffset() + 12, getYOffset() + 158, true, new Runnable() {
-			@Override
-			public void run() {
-				onFlip(true);
-			}
+		components.add(new ButtonPage(this, getXOffset() + 12, getYOffset() + 158, true, () -> {
+			onFlip(true);
 		}));
-		components.add(new ButtonPage(this, getXOffset() + 270, getYOffset() + 158, false, new Runnable() {
-			@Override
-			public void run() {
-				onFlip(false);
-			}
+		components.add(new ButtonPage(this, getXOffset() + 270, getYOffset() + 158, false, () -> {
+			onFlip(false);
 		}));
 	}
 

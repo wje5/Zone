@@ -34,46 +34,34 @@ public class SubscreenIOPanelRequest extends Subscreen {
 				false);
 		this.stack = stack;
 		this.amount = amount;
-		components.add(
-				box = new TextInputBox(parent, this.x + 70, this.y + 4, 60, 13, 9, null, 4).setOnInput(new Runnable() {
-					@Override
-					public void run() {
-						int amount = -1;
-						if (!box.text.isEmpty()) {
-							amount = Integer.valueOf(box.text);
-						}
-						if (amount > SubscreenIOPanelRequest.this.amount) {
-							amount = SubscreenIOPanelRequest.this.amount;
-						}
-						if (amount != -1) {
-							box.text = "" + amount;
-							slider.set(1.0F * amount / SubscreenIOPanelRequest.this.amount);
-						}
-						refreshTime();
-					}
-				}));
+		components.add(box = new TextInputBox(parent, this.x + 70, this.y + 4, 60, 13, 9, null, 4).setOnInput(() -> {
+			int count = -1;
+			if (!box.text.isEmpty()) {
+				count = Integer.valueOf(box.text);
+			}
+			if (count > SubscreenIOPanelRequest.this.amount) {
+				count = SubscreenIOPanelRequest.this.amount;
+			}
+			if (count != -1) {
+				box.text = "" + count;
+				slider.set(1.0F * count / SubscreenIOPanelRequest.this.amount);
+			}
+			refreshTime();
+		}));
 		box.isFocus = true;
 		box.text = "1";
+
 		refreshTime();
 		components.add(slider = new Slider(this, this.x + 33, this.y + 18, 96));
-		slider.setOnChange(new Runnable() {
-			@Override
-			public void run() {
-				box.text = String.valueOf((int) ((SubscreenIOPanelRequest.this.amount - 1) * slider.get() + 1));
-				refreshTime();
-			}
+		slider.setOnChange(() -> {
+			box.text = String.valueOf((int) ((SubscreenIOPanelRequest.this.amount - 1) * slider.get() + 1));
+			refreshTime();
 		});
-		components.add(new TextButton(this, this.x + 15, this.y + 41, I18n.format("sphinx.confirm"), new Runnable() {
-			@Override
-			public void run() {
-				onConfirm();
-			}
+		components.add(new TextButton(this, this.x + 15, this.y + 41, I18n.format("sphinx.confirm"), () -> {
+			onConfirm();
 		}));
-		components.add(new TextButton(this, this.x + 83, this.y + 41, I18n.format("sphinx.cancel"), new Runnable() {
-			@Override
-			public void run() {
-				parent.quitScreen(SubscreenIOPanelRequest.this);
-			}
+		components.add(new TextButton(this, this.x + 83, this.y + 41, I18n.format("sphinx.cancel"), () -> {
+			parent.quitScreen(SubscreenIOPanelRequest.this);
 		}));
 	}
 

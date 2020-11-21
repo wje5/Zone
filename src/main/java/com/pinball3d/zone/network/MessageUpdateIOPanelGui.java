@@ -43,20 +43,17 @@ public class MessageUpdateIOPanelGui implements IMessage {
 	public static class Handler implements IMessageHandler<MessageUpdateIOPanelGui, IMessage> {
 		@Override
 		public IMessage onMessage(MessageUpdateIOPanelGui message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					World world = server.getWorld(message.world);
-					EntityPlayer player = world.getPlayerEntityByName(message.name);
-					if (player != null && player.openContainer instanceof ContainerIOPanel) {
-						ContainerIOPanel container = (ContainerIOPanel) player.openContainer;
-						WorldPos pos = container.tileEntity.getNetworkPos();
-						if (container.tileEntity.isConnected() && pos != null) {
-							TileEntity tileEntity = pos.getTileEntity();
-							if (pos.getTileEntity() instanceof TEProcessingCenter) {
-								container.setData(((TEProcessingCenter) tileEntity).getNetworkUseableItems());
-							}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+				World world = server.getWorld(message.world);
+				EntityPlayer player = world.getPlayerEntityByName(message.name);
+				if (player != null && player.openContainer instanceof ContainerIOPanel) {
+					ContainerIOPanel container = (ContainerIOPanel) player.openContainer;
+					WorldPos pos = container.tileEntity.getNetworkPos();
+					if (container.tileEntity.isConnected() && pos != null) {
+						TileEntity tileEntity = pos.getTileEntity();
+						if (pos.getTileEntity() instanceof TEProcessingCenter) {
+							container.setData(((TEProcessingCenter) tileEntity).getNetworkUseableItems());
 						}
 					}
 				}

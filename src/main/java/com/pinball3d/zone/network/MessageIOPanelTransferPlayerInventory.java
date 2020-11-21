@@ -42,21 +42,18 @@ public class MessageIOPanelTransferPlayerInventory implements IMessage {
 	public static class Handler implements IMessageHandler<MessageIOPanelTransferPlayerInventory, IMessage> {
 		@Override
 		public IMessage onMessage(MessageIOPanelTransferPlayerInventory message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					World world = server.getWorld(message.world);
-					EntityPlayer player = world.getPlayerEntityByName(message.name);
-					if (player != null && player.openContainer != null) {
-						if (message.flag) {
-							for (int i = 90; i < 126; i++) {
-								player.openContainer.transferStackInSlot(player, i);
-							}
-						} else {
-							for (int i = 0; i < 54; i++) {
-								player.openContainer.transferStackInSlot(player, i);
-							}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+				World world = server.getWorld(message.world);
+				EntityPlayer player = world.getPlayerEntityByName(message.name);
+				if (player != null && player.openContainer != null) {
+					if (message.flag) {
+						for (int i = 90; i < 126; i++) {
+							player.openContainer.transferStackInSlot(player, i);
+						}
+					} else {
+						for (int i = 0; i < 54; i++) {
+							player.openContainer.transferStackInSlot(player, i);
 						}
 					}
 				}

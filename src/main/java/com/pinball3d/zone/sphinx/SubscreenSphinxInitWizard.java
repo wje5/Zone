@@ -14,18 +14,12 @@ public class SubscreenSphinxInitWizard extends Subscreen {
 	public SubscreenSphinxInitWizard(IParent parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
 		components.add(new MultilineText(this, this.x + 27, this.y + 35, 250, I18n.format("sphinx.init_wizard")));
-		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.next"), new Runnable() {
-			@Override
-			public void run() {
-				parent.quitScreen(SubscreenSphinxInitWizard.this);
-				parent.putScreen(new SubscreenWizardSetAdminPassword(parent));
-			}
+		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.next"), () -> {
+			parent.quitScreen(SubscreenSphinxInitWizard.this);
+			parent.putScreen(new SubscreenWizardSetAdminPassword(parent));
 		}));
-		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenQuitWizard(SubscreenSphinxInitWizard.this));
-			}
+		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), () -> {
+			subscreens.push(new SubscreenQuitWizard(SubscreenSphinxInitWizard.this));
 		}));
 	}
 

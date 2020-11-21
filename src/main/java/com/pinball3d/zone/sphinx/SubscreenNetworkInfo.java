@@ -24,13 +24,9 @@ public class SubscreenNetworkInfo extends Subscreen {
 		super(parent, x, y, 300, 200, true);
 		this.pos = pos;
 		NetworkHandler.instance.sendToServer(new MessageRequestNetworkInfo(mc.player, pos));
-		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.confirm"), new Runnable() {
-			@Override
-			public void run() {
-				parent.quitScreen(SubscreenNetworkInfo.this);
-			}
+		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.confirm"), () -> {
+			parent.quitScreen(SubscreenNetworkInfo.this);
 		}));
-
 	}
 
 	public void setData(WorldPos pos, NBTTagCompound tag) {

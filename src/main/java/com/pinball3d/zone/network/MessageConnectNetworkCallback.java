@@ -57,63 +57,60 @@ public class MessageConnectNetworkCallback implements IMessage {
 	public static class Handler implements IMessageHandler<MessageConnectNetworkCallback, IMessage> {
 		@Override
 		public IMessage onMessage(MessageConnectNetworkCallback message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-					if (screen instanceof ScreenTerminal) {
-						ScreenTerminal terminal = (ScreenTerminal) screen;
-						terminal.worldpos = message.pos;
-						terminal.flag = true;
-						if (terminal.stack != ItemStack.EMPTY) {
-							NBTTagCompound tag = terminal.stack.getTagCompound();
-							if (tag == null) {
-								tag = new NBTTagCompound();
-								terminal.stack.setTagCompound(tag);
-							}
-							tag.setUniqueId("network", message.uuid);
-							tag.setString("password", message.password);
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+				if (screen instanceof ScreenTerminal) {
+					ScreenTerminal terminal = (ScreenTerminal) screen;
+					terminal.worldpos = message.pos;
+					terminal.flag = true;
+					if (terminal.stack != ItemStack.EMPTY) {
+						NBTTagCompound tag = terminal.stack.getTagCompound();
+						if (tag == null) {
+							tag = new NBTTagCompound();
+							terminal.stack.setTagCompound(tag);
 						}
-						if (!terminal.subscreens.isEmpty()) {
-							Subscreen subscreen = terminal.subscreens.get(0);
-							if (subscreen instanceof SubscreenNetworkConfig) {
-								if (!subscreen.subscreens.empty()) {
-									Subscreen s = subscreen.subscreens.get(0);
-									if (s instanceof SubscreenConnectToNetwork) {
-										((SubscreenConnectToNetwork) s).setData(true);
-									}
+						tag.setUniqueId("network", message.uuid);
+						tag.setString("password", message.password);
+					}
+					if (!terminal.subscreens.isEmpty()) {
+						Subscreen subscreen = terminal.subscreens.get(0);
+						if (subscreen instanceof SubscreenNetworkConfig) {
+							if (!subscreen.subscreens.empty()) {
+								Subscreen s = subscreen.subscreens.get(0);
+								if (s instanceof SubscreenConnectToNetwork) {
+									((SubscreenConnectToNetwork) s).setData(true);
 								}
-								((SubscreenNetworkConfig) subscreen).refresh();
 							}
+							((SubscreenNetworkConfig) subscreen).refresh();
 						}
-					} else if (screen instanceof ScreenNeedNetwork) {
-						INeedNetwork tileentity = ((ScreenNeedNetwork) screen).tileentity;
-						WorldPos pos = tileentity.getNetworkPos();
-						if (pos != null) {
-							if (pos.getTileEntity() instanceof TEProcessingCenter) {
-								((TEProcessingCenter) pos.getTileEntity()).removeNeedNetwork(message.pos);
-							}
-						} else if (tileentity.getNetwork() != null) {
-							pos = GlobalNetworkData.getData(((TileEntity) tileentity).getWorld())
-									.getNetwork(tileentity.getNetwork());
-							if (pos != null && pos.getTileEntity() instanceof TEProcessingCenter) {
-								((TEProcessingCenter) pos.getTileEntity()).removeNeedNetwork(message.pos);
-							}
+					}
+				} else if (screen instanceof ScreenNeedNetwork) {
+					INeedNetwork tileentity = ((ScreenNeedNetwork) screen).tileentity;
+					WorldPos pos = tileentity.getNetworkPos();
+					if (pos != null) {
+						if (pos.getTileEntity() instanceof TEProcessingCenter) {
+							((TEProcessingCenter) pos.getTileEntity()).removeNeedNetwork(message.pos);
 						}
-						tileentity.connect(message.uuid, message.password);
-						tileentity.setWorldPos(message.pos, message.uuid);
-						ScreenNeedNetwork s = (ScreenNeedNetwork) screen;
-						if (!s.subscreens.isEmpty()) {
-							Subscreen subscreen = s.subscreens.get(0);
-							if (subscreen instanceof SubscreenNetworkConfig) {
-								if (!subscreen.subscreens.empty()) {
-									Subscreen sub = subscreen.subscreens.get(0);
-									if (sub instanceof SubscreenConnectToNetwork) {
-										((SubscreenConnectToNetwork) sub).setData(true);
-									}
+					} else if (tileentity.getNetwork() != null) {
+						pos = GlobalNetworkData.getData(((TileEntity) tileentity).getWorld())
+								.getNetwork(tileentity.getNetwork());
+						if (pos != null && pos.getTileEntity() instanceof TEProcessingCenter) {
+							((TEProcessingCenter) pos.getTileEntity()).removeNeedNetwork(message.pos);
+						}
+					}
+					tileentity.connect(message.uuid, message.password);
+					tileentity.setWorldPos(message.pos, message.uuid);
+					ScreenNeedNetwork s = (ScreenNeedNetwork) screen;
+					if (!s.subscreens.isEmpty()) {
+						Subscreen subscreen = s.subscreens.get(0);
+						if (subscreen instanceof SubscreenNetworkConfig) {
+							if (!subscreen.subscreens.empty()) {
+								Subscreen sub = subscreen.subscreens.get(0);
+								if (sub instanceof SubscreenConnectToNetwork) {
+									((SubscreenConnectToNetwork) sub).setData(true);
 								}
-								((SubscreenNetworkConfig) subscreen).refresh();
 							}
+							((SubscreenNetworkConfig) subscreen).refresh();
 						}
 					}
 				}

@@ -43,20 +43,16 @@ public class MessageRequestNeedNetworkInfo implements IMessage {
 	public static class Handler implements IMessageHandler<MessageRequestNeedNetworkInfo, IMessage> {
 		@Override
 		public IMessage onMessage(MessageRequestNeedNetworkInfo message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					World world = message.pos.getWorld();
-					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					TileEntity tileentity = message.pos.getTileEntity();
-					if (tileentity instanceof INeedNetwork) {
-						INeedNetwork te = (INeedNetwork) tileentity;
-						NBTTagCompound tag = new NBTTagCompound();
-						tag.setString("name", te.getName());
-						tag.setInteger("state", te.getWorkingState().ordinal());
-						NetworkHandler.instance.sendTo(new MessageSendNeedNetworkInfoToClient(message.pos, tag),
-								player);
-					}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				World world = message.pos.getWorld();
+				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
+				TileEntity tileentity = message.pos.getTileEntity();
+				if (tileentity instanceof INeedNetwork) {
+					INeedNetwork te = (INeedNetwork) tileentity;
+					NBTTagCompound tag = new NBTTagCompound();
+					tag.setString("name", te.getName());
+					tag.setInteger("state", te.getWorkingState().ordinal());
+					NetworkHandler.instance.sendTo(new MessageSendNeedNetworkInfoToClient(message.pos, tag), player);
 				}
 			});
 			return null;

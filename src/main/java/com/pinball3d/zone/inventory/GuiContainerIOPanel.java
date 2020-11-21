@@ -49,78 +49,47 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	public GuiContainerIOPanel(ContainerIOPanel container) {
 		super(container);
 		this.container = container;
-		xSize = 276;
+		xSize = 306;
 		ySize = 213;
 	}
 
 	@Override
 	public void initGui() {
-		applyComponents();
 		super.initGui();
+		guiLeft -= 31;
+		applyComponents();
 	}
 
 	protected void applyComponents() {
 		components = new HashSet<Component>();
-		components.add(box = new TextInputBox(this, getXOffset() + 7, getYOffset() + 7, 61, 15, 55, new Runnable() {
-			@Override
-			public void run() {
-				box.isFocus = true;
-			}
+		components.add(box = new TextInputBox(this, getXOffset() + 7, getYOffset() + 7, 61, 15, 55, () -> {
+			box.isFocus = true;
 		}).setIsPixel(true));
 		int offsetX = width / 2 - 184, offsetY = (height - ySize) / 2;
-		components.add(new TexturedButton(this, offsetX + 15, offsetY + 201, ICONS, 92, 32, 5, 9, 1.0F, new Runnable() {
-			@Override
-			public void run() {
-				NetworkHandler.instance
-						.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, true));
-			}
+		components.add(new TexturedButton(this, offsetX + 15, offsetY + 201, ICONS, 92, 32, 5, 9, 1.0F, () -> {
+			NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, true));
 		}));
-		components.add(new TexturedButton(this, offsetX + 70, offsetY + 201, ICONS, 97, 32, 5, 9, 1.0F, new Runnable() {
-			@Override
-			public void run() {
-				NetworkHandler.instance
-						.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, false));
-			}
+		components.add(new TexturedButton(this, offsetX + 70, offsetY + 201, ICONS, 97, 32, 5, 9, 1.0F, () -> {
+			NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, false));
 		}));
-		components.add(new TexturedButton(this, offsetX + 67, offsetY + 7, ICONS, 92, 41, 15, 15, 1.0F, new Runnable() {
-			@Override
-			public void run() {
-				NetworkHandler.instance
-						.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));
-			}
+		components.add(new TexturedButton(this, offsetX + 67, offsetY + 7, ICONS, 92, 41, 15, 15, 1.0F, () -> {
+			NetworkHandler.instance
+					.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));
 		}));
-		components
-				.add(new TexturedButton(this, offsetX + 285, offsetY + 5, ICONS, 64, 68, 30, 28, 0.5F, new Runnable() {
-					@Override
-					public void run() {
-						NetworkHandler.instance.sendToServer(
-								MessageIOPanelSendItemToStorage.newMessage(container.tileEntity.getPassword(),
-										container.tileEntity.getNetworkPos(), new WorldPos(container.tileEntity)));
-					}
-				}));
-		components
-				.add(new TexturedButton(this, offsetX + 285, offsetY + 24, ICONS, 0, 68, 32, 32, 0.5F, new Runnable() {
-					@Override
-					public void run() {
-						System.out.println("config");
-					}
-				}));
-		components.add(
-				new TexturedButton(this, offsetX + 285, offsetY + 43, ICONS, 180, 68, 31, 32, 0.5F, new Runnable() {
-					@Override
-					public void run() {
-						NetworkHandler.instance
-								.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, true));
-					}
-				}));
-		components.add(
-				new TexturedButton(this, offsetX + 285, offsetY + 62, ICONS, 211, 68, 31, 32, 0.5F, new Runnable() {
-					@Override
-					public void run() {
-						NetworkHandler.instance
-								.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, false));
-					}
-				}));
+		components.add(new TexturedButton(this, offsetX + 285, offsetY + 5, ICONS, 64, 68, 30, 28, 0.5F, () -> {
+			NetworkHandler.instance
+					.sendToServer(MessageIOPanelSendItemToStorage.newMessage(container.tileEntity.getPassword(),
+							container.tileEntity.getNetworkPos(), new WorldPos(container.tileEntity), mc.player));
+		}));
+		components.add(new TexturedButton(this, offsetX + 285, offsetY + 24, ICONS, 0, 68, 32, 32, 0.5F, () -> {
+			System.out.println("config");
+		}));
+		components.add(new TexturedButton(this, offsetX + 285, offsetY + 43, ICONS, 180, 68, 31, 32, 0.5F, () -> {
+			NetworkHandler.instance.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, true));
+		}));
+		components.add(new TexturedButton(this, offsetX + 285, offsetY + 62, ICONS, 211, 68, 31, 32, 0.5F, () -> {
+			NetworkHandler.instance.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, false));
+		}));
 	}
 
 	public RenderItem getItemRenderer() {
@@ -131,17 +100,15 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(TEXTURE);
-		int offsetX = (width - 184) / 2, offsetY = (height - ySize) / 2;
-		drawTexturedModalRect(offsetX, offsetY, 0, 0, 214, 213);
+		drawTexturedModalRect(guiLeft + 92, guiTop, 0, 0, 214, 213);
 		mc.getTextureManager().bindTexture(TEXTURE2);
-		drawTexturedModalRect(offsetX - 92, offsetY, 0, 0, 89, 213);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, 89, 213);
 		String text = container.page + "/" + container.maxPage;
-		fontRenderer.drawString(text, offsetX - 47 - fontRenderer.getStringWidth(text) / 2, offsetY + 202, 0xFF1ECCDE);
+		fontRenderer.drawString(text, guiLeft + 45 - fontRenderer.getStringWidth(text) / 2, guiTop + 202, 0xFF1ECCDE);
 	}
 
 	@Override
 	protected void renderHoveredToolTip(int mouseX, int mouseY) {
-		int offsetX = (width - 184) / 2 - 46, offsetY = (height - ySize) / 2;
 		GlStateManager.pushMatrix();
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
@@ -149,8 +116,8 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		for (int i = 0; i < 36; i++) {
 			if (container.list[i] > 1) {
 				String text = Util.transferString(container.list[i]);
-				int x = (i % 4) * 19 - 38 + offsetX;
-				int y = (i / 4) * 19 + 29 + offsetY;
+				int x = (i % 4) * 19 + 8 + guiLeft;
+				int y = (i / 4) * 19 + 29 + guiTop;
 				fontRenderer.drawStringWithShadow(text, x + 17 - fontRenderer.getStringWidth(text), y + 9, 0xFFFFFFFF);
 			}
 		}
@@ -194,7 +161,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 						}
 					}
 				}
-				int x = mouseX - guiLeft + 46;
+				int x = mouseX - guiLeft;
 				int y = mouseY - guiTop;
 				if (flag && x >= 0 && y >= 0 && x <= 89 && y <= 213) {
 					NetworkHandler.instance
@@ -310,22 +277,22 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 
 	@Override
 	public int getWidth() {
-		return width;
+		return xSize;
 	}
 
 	@Override
 	public int getHeight() {
-		return height;
+		return ySize;
 	}
 
 	@Override
 	public int getXOffset() {
-		return (width - xSize) / 2 - 46;
+		return guiLeft;
 	}
 
 	@Override
 	public int getYOffset() {
-		return (height - ySize) / 2;
+		return guiTop;
 	}
 
 	@Override

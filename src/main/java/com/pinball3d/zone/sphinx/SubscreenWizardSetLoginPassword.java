@@ -14,51 +14,33 @@ public class SubscreenWizardSetLoginPassword extends Subscreen {
 
 	public SubscreenWizardSetLoginPassword(IParent parent, int x, int y, String adminPassword) {
 		super(parent, x, y, 300, 200, true);
-		components.add(box1 = new TextInputBox(this, x + 30, y + 50, 100, 12, new Runnable() {
-			@Override
-			public void run() {
-				box1.isFocus = true;
-				box2.isFocus = false;
-				box3.isFocus = false;
-			}
+		components.add(box1 = new TextInputBox(this, x + 30, y + 50, 100, 12, () -> {
+			box1.isFocus = true;
+			box2.isFocus = false;
+			box3.isFocus = false;
 		}));
-		components.add(box2 = new TextInputBox(this, x + 30, y + 90, 100, 8, new Runnable() {
-			@Override
-			public void run() {
-				box1.isFocus = false;
-				box2.isFocus = true;
-				box3.isFocus = false;
-			}
+		components.add(box2 = new TextInputBox(this, x + 30, y + 90, 100, 8, () -> {
+			box1.isFocus = false;
+			box2.isFocus = true;
+			box3.isFocus = false;
 		}));
-		components.add(box3 = new TextInputBox(this, x + 30, y + 130, 100, 8, new Runnable() {
-			@Override
-			public void run() {
-				box1.isFocus = false;
-				box2.isFocus = false;
-				box3.isFocus = true;
-			}
+		components.add(box3 = new TextInputBox(this, x + 30, y + 130, 100, 8, () -> {
+			box1.isFocus = false;
+			box2.isFocus = false;
+			box3.isFocus = true;
 		}));
-		components.add(new TextButton(this, this.x + 150, this.y + 175, I18n.format("sphinx.back"), new Runnable() {
-			@Override
-			public void run() {
+		components.add(new TextButton(this, this.x + 150, this.y + 175, I18n.format("sphinx.back"), () -> {
+			parent.quitScreen(SubscreenWizardSetLoginPassword.this);
+			parent.putScreen(new SubscreenWizardSetAdminPassword(parent));
+		}));
+		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.next"), () -> {
+			if (box1.text.length() >= 4 && box2.text.length() == 8 && box2.text.equals(box3.text)) {
 				parent.quitScreen(SubscreenWizardSetLoginPassword.this);
-				parent.putScreen(new SubscreenWizardSetAdminPassword(parent));
+				parent.putScreen(new SubscreenWizardFinish(parent, adminPassword, box1.text, box2.text));
 			}
 		}));
-		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.next"), new Runnable() {
-			@Override
-			public void run() {
-				if (box1.text.length() >= 4 && box2.text.length() == 8 && box2.text.equals(box3.text)) {
-					parent.quitScreen(SubscreenWizardSetLoginPassword.this);
-					parent.putScreen(new SubscreenWizardFinish(parent, adminPassword, box1.text, box2.text));
-				}
-			}
-		}));
-		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenQuitWizard(SubscreenWizardSetLoginPassword.this));
-			}
+		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), () -> {
+			subscreens.push(new SubscreenQuitWizard(SubscreenWizardSetLoginPassword.this));
 		}));
 	}
 

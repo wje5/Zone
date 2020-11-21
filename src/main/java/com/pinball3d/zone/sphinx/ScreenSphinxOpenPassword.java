@@ -68,13 +68,9 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 
 	private void applyComponents() {
 		components = new HashSet<Component>();
-		components.add(new TexturedButton(this, width / 2 + 52, height / 2 + 22, TEXTURE, 32, 36, 60, 32, 0.5F,
-				new Runnable() {
-					@Override
-					public void run() {
-						onConfirm();
-					}
-				}));
+		components.add(new TexturedButton(this, width / 2 + 52, height / 2 + 22, TEXTURE, 32, 36, 60, 32, 0.5F, () -> {
+			onConfirm();
+		}));
 	}
 
 	private void onConfirm() {

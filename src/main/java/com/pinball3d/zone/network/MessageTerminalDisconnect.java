@@ -46,14 +46,22 @@ public class MessageTerminalDisconnect implements IMessage {
 	public static class Handler implements IMessageHandler<MessageTerminalDisconnect, IMessage> {
 		@Override
 		public IMessage onMessage(MessageTerminalDisconnect message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					World world = server.getWorld(message.world);
-					EntityPlayer player = world.getPlayerEntityByName(message.name);
-					if (player != null) {
-						ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+				World world = server.getWorld(message.world);
+				EntityPlayer player = world.getPlayerEntityByName(message.name);
+				if (player != null) {
+					ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+					if (stack.getItem() == ItemLoader.terminal) {
+						NBTTagCompound tag = stack.getTagCompound();
+						if (tag == null) {
+							tag = new NBTTagCompound();
+							stack.setTagCompound(tag);
+						}
+						tag.removeTag("networkMost");
+						tag.removeTag("networkLeast");
+					} else {
+						stack = player.getHeldItem(EnumHand.OFF_HAND);
 						if (stack.getItem() == ItemLoader.terminal) {
 							NBTTagCompound tag = stack.getTagCompound();
 							if (tag == null) {
@@ -62,21 +70,10 @@ public class MessageTerminalDisconnect implements IMessage {
 							}
 							tag.removeTag("networkMost");
 							tag.removeTag("networkLeast");
-						} else {
-							stack = player.getHeldItem(EnumHand.OFF_HAND);
-							if (stack.getItem() == ItemLoader.terminal) {
-								NBTTagCompound tag = stack.getTagCompound();
-								if (tag == null) {
-									tag = new NBTTagCompound();
-									stack.setTagCompound(tag);
-								}
-								tag.removeTag("networkMost");
-								tag.removeTag("networkLeast");
-							}
 						}
-						NBTTagCompound tag = SphinxUtil.getValidNetworkData(new WorldPos(player), player, true);
-						NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), (EntityPlayerMP) player);
 					}
+					NBTTagCompound tag = SphinxUtil.getValidNetworkData(new WorldPos(player), player, true);
+					NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), (EntityPlayerMP) player);
 				}
 			});
 			return null;

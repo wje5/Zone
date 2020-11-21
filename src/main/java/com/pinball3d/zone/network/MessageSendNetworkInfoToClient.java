@@ -1,8 +1,6 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
-import com.pinball3d.zone.sphinx.ScreenSphinxController;
-import com.pinball3d.zone.sphinx.ScreenTerminal;
+import com.pinball3d.zone.sphinx.ScreenSphinxBase;
 import com.pinball3d.zone.sphinx.Subscreen;
 import com.pinball3d.zone.sphinx.SubscreenNetworkInfo;
 import com.pinball3d.zone.sphinx.WorldPos;
@@ -45,33 +43,14 @@ public class MessageSendNetworkInfoToClient implements IMessage {
 	public static class Handler implements IMessageHandler<MessageSendNetworkInfoToClient, IMessage> {
 		@Override
 		public IMessage onMessage(MessageSendNetworkInfoToClient message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-					if (screen instanceof ScreenTerminal) {
-						ScreenTerminal terminal = (ScreenTerminal) screen;
-						if (!terminal.subscreens.empty()) {
-							Subscreen s = terminal.subscreens.get(0);
-							if (s instanceof SubscreenNetworkInfo) {
-								((SubscreenNetworkInfo) s).setData(message.pos, message.data);
-							}
-						}
-					} else if (screen instanceof ScreenNeedNetwork) {
-						ScreenNeedNetwork n = (ScreenNeedNetwork) screen;
-						if (!n.subscreens.empty()) {
-							Subscreen s = n.subscreens.get(0);
-							if (s instanceof SubscreenNetworkInfo) {
-								((SubscreenNetworkInfo) s).setData(message.pos, message.data);
-							}
-						}
-					} else if (screen instanceof ScreenSphinxController) {
-						ScreenSphinxController n = (ScreenSphinxController) screen;
-						if (!n.subscreens.empty()) {
-							Subscreen s = n.subscreens.get(0);
-							if (s instanceof SubscreenNetworkInfo) {
-								((SubscreenNetworkInfo) s).setData(message.pos, message.data);
-							}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+				if (screen instanceof ScreenSphinxBase) {
+					ScreenSphinxBase base = (ScreenSphinxBase) screen;
+					if (!base.subscreens.empty()) {
+						Subscreen s = base.subscreens.get(0);
+						if (s instanceof SubscreenNetworkInfo) {
+							((SubscreenNetworkInfo) s).setData(message.pos, message.data);
 						}
 					}
 				}

@@ -39,11 +39,8 @@ public class MessageSendPackDataToClient implements IMessage {
 	public static class Handler implements IMessageHandler<MessageSendPackDataToClient, IMessage> {
 		@Override
 		public IMessage onMessage(MessageSendPackDataToClient message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					MapHandler.setPackData(message.pos, message.data);
-				}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				MapHandler.setPackData(message.pos, message.data);
 			});
 			return null;
 		}

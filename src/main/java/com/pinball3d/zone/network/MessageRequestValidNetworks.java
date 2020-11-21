@@ -46,18 +46,15 @@ public class MessageRequestValidNetworks implements IMessage {
 	public static class Handler implements IMessageHandler<MessageRequestValidNetworks, IMessage> {
 		@Override
 		public IMessage onMessage(MessageRequestValidNetworks message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					EntityPlayer player = message.pos.getWorld().getPlayerEntityByName(message.name);
-					NBTTagCompound tag;
-					if (message.pos.getBlockState().getBlock() == BlockLoader.beacon_core) {
-						tag = SphinxUtil.getValidNetworkDataWithoutRange(message.pos, player, message.isPlayer);
-					} else {
-						tag = SphinxUtil.getValidNetworkData(message.pos, player, message.isPlayer);
-					}
-					NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), (EntityPlayerMP) player);
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				EntityPlayer player = message.pos.getWorld().getPlayerEntityByName(message.name);
+				NBTTagCompound tag;
+				if (message.pos.getBlockState().getBlock() == BlockLoader.beacon_core) {
+					tag = SphinxUtil.getValidNetworkDataWithoutRange(message.pos, player, message.isPlayer);
+				} else {
+					tag = SphinxUtil.getValidNetworkData(message.pos, player, message.isPlayer);
 				}
+				NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), (EntityPlayerMP) player);
 			});
 			return null;
 		}

@@ -18,34 +18,25 @@ public class SubscreenChangeName extends Subscreen {
 
 	public SubscreenChangeName(IParent parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		components.add(box = new TextInputBox(this, x + 30, y + 50, 100, 12, new Runnable() {
-			@Override
-			public void run() {
-				box.isFocus = true;
-			}
+		components.add(box = new TextInputBox(this, x + 30, y + 50, 100, 12, () -> {
+			box.isFocus = true;
 		}));
 		TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
 		box.text = te.getName();
-		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.confirm"), new Runnable() {
-			@Override
-			public void run() {
-				if (box.text.length() >= 4) {
-					TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
-					NetworkHandler.instance
-							.sendToServer(MessageChangeName.newMessage(((ScreenSphinxController) parent).password,
-									new WorldPos(te.getPos(), te.getWorld()), box.text));
-					te.setName(box.text);
-					parent.quitScreen(SubscreenChangeName.this);
-					parent.putScreen(new SubscreenSphinxConfig(parent));
-				}
-			}
-		}));
-		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), new Runnable() {
-			@Override
-			public void run() {
+		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.confirm"), () -> {
+			if (box.text.length() >= 4) {
+				TEProcessingCenter pc = ((ScreenSphinxController) parent).tileentity;
+				NetworkHandler.instance
+						.sendToServer(MessageChangeName.newMessage(((ScreenSphinxController) parent).password,
+								new WorldPos(pc.getPos(), pc.getWorld()), box.text));
+				pc.setName(box.text);
 				parent.quitScreen(SubscreenChangeName.this);
 				parent.putScreen(new SubscreenSphinxConfig(parent));
 			}
+		}));
+		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), () -> {
+			parent.quitScreen(SubscreenChangeName.this);
+			parent.putScreen(new SubscreenSphinxConfig(parent));
 		}));
 	}
 

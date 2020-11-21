@@ -15,13 +15,10 @@ public class ScreenIOPanel extends ScreenNeedNetwork {
 	@Override
 	protected void applyComponents() {
 		super.applyComponents();
-		components.add(new TexturedButton(this, width - 20, 2, TEXTURE, 32, 68, 32, 32, 0.25F, new Runnable() {
-			@Override
-			public void run() {
-				BlockPos pos = ((TileEntity) tileentity).getPos();
-				NetworkHandler.instance
-						.sendToServer(new MessageOpenIOPanelGui(mc.player, pos.getX(), pos.getY(), pos.getZ()));
-			}
+		components.add(new TexturedButton(this, width - 20, 2, TEXTURE, 32, 68, 32, 32, 0.25F, () -> {
+			BlockPos pos = ((TileEntity) tileentity).getPos();
+			NetworkHandler.instance
+					.sendToServer(new MessageOpenIOPanelGui(mc.player, pos.getX(), pos.getY(), pos.getZ()));
 		}));
 	}
 }

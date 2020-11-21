@@ -14,41 +14,26 @@ public class SubscreenWizardSetAdminPassword extends Subscreen {
 
 	public SubscreenWizardSetAdminPassword(IParent parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		components.add(box1 = new TextInputBox(this, x + 30, y + 50, 100, 8, new Runnable() {
-			@Override
-			public void run() {
-				box1.isFocus = true;
-				box2.isFocus = false;
-			}
+		components.add(box1 = new TextInputBox(this, x + 30, y + 50, 100, 8, () -> {
+			box1.isFocus = true;
+			box2.isFocus = false;
 		}));
-		components.add(box2 = new TextInputBox(this, x + 30, y + 90, 100, 8, new Runnable() {
-			@Override
-			public void run() {
-				box1.isFocus = false;
-				box2.isFocus = true;
-			}
+		components.add(box2 = new TextInputBox(this, x + 30, y + 90, 100, 8, () -> {
+			box1.isFocus = false;
+			box2.isFocus = true;
 		}));
-		components.add(new TextButton(this, this.x + 150, this.y + 175, I18n.format("sphinx.back"), new Runnable() {
-			@Override
-			public void run() {
+		components.add(new TextButton(this, this.x + 150, this.y + 175, I18n.format("sphinx.back"), () -> {
+			parent.quitScreen(SubscreenWizardSetAdminPassword.this);
+			parent.putScreen(new SubscreenSphinxInitWizard(parent));
+		}));
+		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.next"), () -> {
+			if (box1.text.length() == 8 && box1.text.equals(box2.text)) {
 				parent.quitScreen(SubscreenWizardSetAdminPassword.this);
-				parent.putScreen(new SubscreenSphinxInitWizard(parent));
+				parent.putScreen(new SubscreenWizardSetLoginPassword(parent, box1.text));
 			}
 		}));
-		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.next"), new Runnable() {
-			@Override
-			public void run() {
-				if (box1.text.length() == 8 && box1.text.equals(box2.text)) {
-					parent.quitScreen(SubscreenWizardSetAdminPassword.this);
-					parent.putScreen(new SubscreenWizardSetLoginPassword(parent, box1.text));
-				}
-			}
-		}));
-		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenQuitWizard(SubscreenWizardSetAdminPassword.this));
-			}
+		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), () -> {
+			subscreens.push(new SubscreenQuitWizard(SubscreenWizardSetAdminPassword.this));
 		}));
 	}
 

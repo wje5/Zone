@@ -43,20 +43,17 @@ public class MessageRequestNetworkInfo implements IMessage {
 	public static class Handler implements IMessageHandler<MessageRequestNetworkInfo, IMessage> {
 		@Override
 		public IMessage onMessage(MessageRequestNetworkInfo message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					World world = message.pos.getWorld();
-					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					TileEntity tileentity = message.pos.getTileEntity();
-					if (tileentity instanceof TEProcessingCenter) {
-						TEProcessingCenter te = (TEProcessingCenter) tileentity;
-						NBTTagCompound tag = new NBTTagCompound();
-						tag.setString("name", te.getName());
-						tag.setInteger("state", te.getWorkingState().ordinal());
-						tag.setInteger("energy", te.getEnergy());
-						NetworkHandler.instance.sendTo(new MessageSendNetworkInfoToClient(message.pos, tag), player);
-					}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				World world = message.pos.getWorld();
+				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
+				TileEntity tileentity = message.pos.getTileEntity();
+				if (tileentity instanceof TEProcessingCenter) {
+					TEProcessingCenter te = (TEProcessingCenter) tileentity;
+					NBTTagCompound tag = new NBTTagCompound();
+					tag.setString("name", te.getName());
+					tag.setInteger("state", te.getWorkingState().ordinal());
+					tag.setInteger("energy", te.getEnergy());
+					NetworkHandler.instance.sendTo(new MessageSendNetworkInfoToClient(message.pos, tag), player);
 				}
 			});
 			return null;

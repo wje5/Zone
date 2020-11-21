@@ -56,39 +56,36 @@ public class MessageTerminalRequestNetworkData implements IMessage {
 	public static class Handler implements IMessageHandler<MessageTerminalRequestNetworkData, IMessage> {
 		@Override
 		public IMessage onMessage(MessageTerminalRequestNetworkData message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
-					WorldPos pos = GlobalNetworkData.getData(world).getNetwork(message.uuid);
-					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					if (pos != null) {
-						TileEntity tileentity = pos.getTileEntity();
-						if (tileentity instanceof TEProcessingCenter) {
-							TEProcessingCenter te = (TEProcessingCenter) tileentity;
-							if (te.isOn() && !te.needInit() && te.isDeviceInRange(new WorldPos(player))
-									&& te.isCorrectLoginPassword(message.password)) {
-								NetworkHandler.instance.sendTo(new MessageSendNetworkDataToTerminal(pos, message.uuid),
-										player);
-								return;
-							}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
+				WorldPos pos = GlobalNetworkData.getData(world).getNetwork(message.uuid);
+				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
+				if (pos != null) {
+					TileEntity tileentity = pos.getTileEntity();
+					if (tileentity instanceof TEProcessingCenter) {
+						TEProcessingCenter te = (TEProcessingCenter) tileentity;
+						if (te.isOn() && !te.needInit() && te.isDeviceInRange(new WorldPos(player))
+								&& te.isCorrectLoginPassword(message.password)) {
+							NetworkHandler.instance.sendTo(new MessageSendNetworkDataToTerminal(pos, message.uuid),
+									player);
+							return;
 						}
 					}
-					NetworkHandler.instance.sendTo(new MessageSendNetworkDataToTerminal(null, message.uuid), player);
-					ItemStack stack = player.getHeldItemMainhand();
-					if (stack.getItem() != ItemLoader.terminal) {
-						stack = player.getHeldItemOffhand();
+				}
+				NetworkHandler.instance.sendTo(new MessageSendNetworkDataToTerminal(null, message.uuid), player);
+				ItemStack stack = player.getHeldItemMainhand();
+				if (stack.getItem() != ItemLoader.terminal) {
+					stack = player.getHeldItemOffhand();
+				}
+				if (stack.getItem() == ItemLoader.terminal) {
+					NBTTagCompound tag = stack.getTagCompound();
+					if (tag == null) {
+						tag = new NBTTagCompound();
+						stack.setTagCompound(tag);
 					}
-					if (stack.getItem() == ItemLoader.terminal) {
-						NBTTagCompound tag = stack.getTagCompound();
-						if (tag == null) {
-							tag = new NBTTagCompound();
-							stack.setTagCompound(tag);
-						}
-						tag.removeTag("networkMost");
-						tag.removeTag("networkLeast");
-						tag.removeTag("password");
-					}
+					tag.removeTag("networkMost");
+					tag.removeTag("networkLeast");
+					tag.removeTag("password");
 				}
 			});
 			return null;

@@ -43,16 +43,13 @@ public class MessageIOPanelSearchChange implements IMessage {
 	public static class Handler implements IMessageHandler<MessageIOPanelSearchChange, IMessage> {
 		@Override
 		public IMessage onMessage(MessageIOPanelSearchChange message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					World world = server.getWorld(message.world);
-					EntityPlayer player = world.getPlayerEntityByName(message.name);
-					if (player != null && player.openContainer instanceof ContainerIOPanel) {
-						ContainerIOPanel container = (ContainerIOPanel) player.openContainer;
-						container.search = message.search;
-					}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+				World world = server.getWorld(message.world);
+				EntityPlayer player = world.getPlayerEntityByName(message.name);
+				if (player != null && player.openContainer instanceof ContainerIOPanel) {
+					ContainerIOPanel container = (ContainerIOPanel) player.openContainer;
+					container.search = message.search;
 				}
 			});
 			return null;

@@ -50,19 +50,14 @@ public class MessageOpenIOPanelGui implements IMessage {
 	public static class Handler implements IMessageHandler<MessageOpenIOPanelGui, IMessage> {
 		@Override
 		public IMessage onMessage(MessageOpenIOPanelGui message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					World world = server.getWorld(message.world);
-					EntityPlayer player = world.getPlayerEntityByName(message.name);
-					if (player != null) {
-						player.openGui(Zone.instance, GuiElementLoader.IO_PANEL, world, message.x, message.y,
-								message.z);
-					}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+				World world = server.getWorld(message.world);
+				EntityPlayer player = world.getPlayerEntityByName(message.name);
+				if (player != null) {
+					player.openGui(Zone.instance, GuiElementLoader.IO_PANEL, world, message.x, message.y, message.z);
 				}
 			});
-
 			return null;
 		}
 	}

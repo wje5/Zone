@@ -19,16 +19,13 @@ public class SubscreenWizardFinish extends Subscreen {
 			String loginPassword) {
 		super(parent, x, y, 300, 200, true);
 		components.add(new MultilineText(this, this.x + 27, this.y + 35, 250, I18n.format("sphinx.finish_wizard")));
-		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.finish"), new Runnable() {
-			@Override
-			public void run() {
-				parent.quitScreen(SubscreenWizardFinish.this);
-				TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
-				te.saveWizardData(adminPassword, name, loginPassword);
-				NetworkHandler.instance.sendToServer(new MessageWizardData(new WorldPos(te.getPos(), te.getWorld()),
-						adminPassword, name, loginPassword));
-				((ScreenSphinxController) parent).password = adminPassword;
-			}
+		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.finish"), () -> {
+			parent.quitScreen(SubscreenWizardFinish.this);
+			TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
+			te.saveWizardData(adminPassword, name, loginPassword);
+			NetworkHandler.instance.sendToServer(new MessageWizardData(new WorldPos(te.getPos(), te.getWorld()),
+					adminPassword, name, loginPassword));
+			((ScreenSphinxController) parent).password = adminPassword;
 		}));
 	}
 

@@ -46,16 +46,13 @@ public class MessageRequestPackData implements IMessage {
 	public static class Handler implements IMessageHandler<MessageRequestPackData, IMessage> {
 		@Override
 		public IMessage onMessage(MessageRequestPackData message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
-					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					TileEntity tileentity = message.pos.getTileEntity();
-					if (tileentity instanceof TEProcessingCenter) {
-						TEProcessingCenter te = (TEProcessingCenter) tileentity;
-						te.sendPackDataToClient(player);
-					}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
+				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
+				TileEntity tileentity = message.pos.getTileEntity();
+				if (tileentity instanceof TEProcessingCenter) {
+					TEProcessingCenter te = (TEProcessingCenter) tileentity;
+					te.sendPackDataToClient(player);
 				}
 			});
 			return null;

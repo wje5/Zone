@@ -50,11 +50,8 @@ public class MessageSendMapDataToClient implements IMessage {
 	public static class Handler implements IMessageHandler<MessageSendMapDataToClient, IMessage> {
 		@Override
 		public IMessage onMessage(MessageSendMapDataToClient message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					MapHandler.setData(message.pos, message.data, message.lines);
-				}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				MapHandler.setData(message.pos, message.data, message.lines);
 			});
 			return null;
 		}

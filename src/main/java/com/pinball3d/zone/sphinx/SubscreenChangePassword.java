@@ -21,49 +21,35 @@ public class SubscreenChangePassword extends Subscreen {
 	public SubscreenChangePassword(IParent parent, int x, int y, boolean flag) {
 		super(parent, x, y, 300, 200, true);
 		isChangeAdminPassword = flag;
-		components.add(box1 = new TextInputBox(this, x + 30, y + 50, 100, 8, new Runnable() {
-			@Override
-			public void run() {
-				box1.isFocus = true;
-				box2.isFocus = false;
-			}
+		components.add(box1 = new TextInputBox(this, x + 30, y + 50, 100, 8, () -> {
+			box1.isFocus = true;
+			box2.isFocus = false;
 		}));
-		components.add(box2 = new TextInputBox(this, x + 30, y + 90, 100, 8, new Runnable() {
-			@Override
-			public void run() {
-				box1.isFocus = false;
-				box2.isFocus = true;
-			}
+		components.add(box2 = new TextInputBox(this, x + 30, y + 90, 100, 8, () -> {
+			box1.isFocus = false;
+			box2.isFocus = true;
 		}));
-		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.confirm"), new Runnable() {
-			@Override
-			public void run() {
-				if (box1.text.length() == 8 && box1.text.equals(box2.text)) {
-					TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
-					if (isChangeAdminPassword) {
-						NetworkHandler.instance.sendToServer(
-								MessageChangeAdminPassword.newMessage(((ScreenSphinxController) parent).password,
-										new WorldPos(te.getPos(), te.getWorld()), box1.text));
-						te.setAdminPassword(box1.text);
-						parent.quitScreen(SubscreenChangePassword.this);
-						parent.putScreen(new SubscreenSphinxConfig(parent));
-					} else {
-						NetworkHandler.instance.sendToServer(
-								MessageChangePassword.newMessage(((ScreenSphinxController) parent).password,
-										new WorldPos(te.getPos(), te.getWorld()), box1.text));
-						te.setPassword(box1.text);
-						parent.quitScreen(SubscreenChangePassword.this);
-						parent.putScreen(new SubscreenSphinxConfig(parent));
-					}
+		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.confirm"), () -> {
+			if (box1.text.length() == 8 && box1.text.equals(box2.text)) {
+				TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
+				if (isChangeAdminPassword) {
+					NetworkHandler.instance.sendToServer(
+							MessageChangeAdminPassword.newMessage(((ScreenSphinxController) parent).password,
+									new WorldPos(te.getPos(), te.getWorld()), box1.text));
+					te.setAdminPassword(box1.text);
+				} else {
+					NetworkHandler.instance
+							.sendToServer(MessageChangePassword.newMessage(((ScreenSphinxController) parent).password,
+									new WorldPos(te.getPos(), te.getWorld()), box1.text));
+					te.setPassword(box1.text);
 				}
-			}
-		}));
-		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), new Runnable() {
-			@Override
-			public void run() {
 				parent.quitScreen(SubscreenChangePassword.this);
 				parent.putScreen(new SubscreenSphinxConfig(parent));
 			}
+		}));
+		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), () -> {
+			parent.quitScreen(SubscreenChangePassword.this);
+			parent.putScreen(new SubscreenSphinxConfig(parent));
 		}));
 	}
 

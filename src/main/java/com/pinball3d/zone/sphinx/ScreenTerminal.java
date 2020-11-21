@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 
 public class ScreenTerminal extends ScreenSphinxAdvenced {
-	private TexturedButton button;
+	private TexturedButton button, button2, button3;
 	public ItemStack stack;
 
 	public ScreenTerminal(ItemStack stack) {
@@ -21,23 +21,17 @@ public class ScreenTerminal extends ScreenSphinxAdvenced {
 	@Override
 	protected void applyComponents() {
 		super.applyComponents();
-		components.add(new ButtonNetworkConfig(this, width - 10, 2, new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenNetworkConfig(ScreenTerminal.this));
-			}
+		components.add(new ButtonNetworkConfig(this, width - 10, 2, () -> {
+			subscreens.push(new SubscreenNetworkConfig(ScreenTerminal.this));
 		}, true));
-		components.add(button = new TexturedButton(this, width - 20, 2, TEXTURE, 94, 68, 22, 30, 0.25F, new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenViewStorage(ScreenTerminal.this));
-			}
+		components.add(button = new TexturedButton(this, width - 20, 2, TEXTURE, 94, 68, 22, 30, 0.25F, () -> {
+			subscreens.push(new SubscreenViewStorage(ScreenTerminal.this));
 		}));
-		components.add(new TexturedButton(this, width - 30, 2, TEXTURE, 24, 100, 23, 30, 0.25F, new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenSynodLibrary(ScreenTerminal.this));
-			}
+		components.add(button2 = new TexturedButton(this, width - 30, 2, TEXTURE, 24, 100, 23, 30, 0.25F, () -> {
+			subscreens.push(new SubscreenSynodLibrary(ScreenTerminal.this));
+		}));
+		components.add(button3 = new TexturedButton(this, width - 40, 2, TEXTURE, 47, 100, 28, 25, 0.25F, () -> {
+			subscreens.push(new SubscreenManageClassify(ScreenTerminal.this));
 		}));
 	}
 
@@ -73,6 +67,8 @@ public class ScreenTerminal extends ScreenSphinxAdvenced {
 	public void preDraw(boolean online, int mouseX, int mouseY, float partialTicks) {
 		super.preDraw(online, mouseX, mouseY, partialTicks);
 		button.setEnabled(online);
+		button2.setEnabled(online);
+		button3.setEnabled(online);
 	}
 
 	@Override

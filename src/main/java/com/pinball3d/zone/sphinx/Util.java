@@ -6,6 +6,7 @@ import com.pinball3d.zone.pdf.PDFHelper;
 import com.pinball3d.zone.pdf.PDFImage;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -266,5 +267,19 @@ public class Util {
 	public static String formatString(String string) {
 		string = string.replaceAll("" + (char) 0x3000, "  ");
 		return string;
+	}
+
+	public static String formatStringToWidth(FontRenderer fr, String string, int width) {
+		int total = 0;
+		String s = "";
+		for (int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
+			total += fr.getCharWidth(c);
+			if (total > width) {
+				return s;
+			}
+			s += c;
+		}
+		return s;
 	}
 }

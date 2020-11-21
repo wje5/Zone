@@ -2,8 +2,6 @@ package com.pinball3d.zone.sphinx;
 
 import java.io.IOException;
 
-import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
-
 import com.pinball3d.zone.pdf.PDF;
 import com.pinball3d.zone.pdf.PDFHelper;
 
@@ -28,36 +26,17 @@ public class SubscreenSynodLibrary extends Subscreen {
 		new Thread() {
 			@Override
 			public void run() {
-				long time = System.currentTimeMillis();
-				pdf = PDFHelper.instance.getPdf(new ResourceLocation("zone:pdf/test.pdf"));
-				long time2 = System.currentTimeMillis();
-				System.out.println(time2 - time);
+				pdf = PDFHelper.instance.getPdf(new ResourceLocation("zone:pdf/test2.pdf"));
 				if (pdf == null) {
 					failed = true;
 				} else {
 					pdfbox.setPDF(pdf);
-//					PDDocumentOutline outline = pdf.doc.getDocumentCatalog().getDocumentOutline();
-//					outline.children().forEach(e -> {
-//						printOutline(e);
-//						System.out.println("#####");
-//					});
 					tree.setData(pdf.doc);
 				}
 			};
 		}.start();
 		components.add(pdfbox = new PDFRenderer(this, x + 76, y + 24, 224, 170));
 		components.add(tree = new OutlineTree(this, x, y + 9, 195));
-	}
-
-	private static void printOutline(PDOutlineItem item) {
-		System.out.println(item.getTitle());
-		if (item.hasChildren()) {
-			System.out.println("{");
-			item.children().forEach(e -> {
-				printOutline(e);
-			});
-			System.out.println("}");
-		}
 	}
 
 	public void setPage(int page) {

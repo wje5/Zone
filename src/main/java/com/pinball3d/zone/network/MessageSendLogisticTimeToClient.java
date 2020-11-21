@@ -43,17 +43,14 @@ public class MessageSendLogisticTimeToClient implements IMessage {
 	public static class Handler implements IMessageHandler<MessageSendLogisticTimeToClient, IMessage> {
 		@Override
 		public IMessage onMessage(MessageSendLogisticTimeToClient message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-					if (screen instanceof GuiContainerIOPanel) {
-						GuiContainerIOPanel panel = (GuiContainerIOPanel) screen;
-						if (!panel.subscreens.empty()) {
-							Subscreen s = panel.subscreens.get(0);
-							if (s instanceof SubscreenIOPanelRequest) {
-								((SubscreenIOPanelRequest) s).updateTime(message.time, message.wrapper);
-							}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+				if (screen instanceof GuiContainerIOPanel) {
+					GuiContainerIOPanel panel = (GuiContainerIOPanel) screen;
+					if (!panel.subscreens.empty()) {
+						Subscreen s = panel.subscreens.get(0);
+						if (s instanceof SubscreenIOPanelRequest) {
+							((SubscreenIOPanelRequest) s).updateTime(message.time, message.wrapper);
 						}
 					}
 				}

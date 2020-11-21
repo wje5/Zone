@@ -31,23 +31,20 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 	@Override
 	protected void applyComponents() {
 		super.applyComponents();
-		components.add(new TexturedButton(this, width - 30, 3, TEXTURE, 94, 68, 22, 30, 0.25F, new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenViewStorage((ScreenSphinxController) mc.currentScreen));
-			}
+		components.add(new TexturedButton(this, width - 8, 2, TEXTURE, 0, 42, 24, 26, 0.25F, () -> {
+			subscreens.push(new SubscreenShutdownSphinx(ScreenSphinxController.this));
 		}));
-		components.add(new TexturedButton(this, width - 20, 2, TEXTURE, 0, 68, 32, 32, 0.25F, new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenSphinxConfig((ScreenSphinxController) mc.currentScreen));
-			}
+		components.add(new TexturedButton(this, width - 20, 2, TEXTURE, 0, 68, 32, 32, 0.25F, () -> {
+			subscreens.push(new SubscreenSphinxConfig(ScreenSphinxController.this));
 		}));
-		components.add(new TexturedButton(this, width - 8, 3, TEXTURE, 0, 42, 24, 26, 0.25F, new Runnable() {
-			@Override
-			public void run() {
-				subscreens.push(new SubscreenShutdownSphinx((ScreenSphinxController) mc.currentScreen));
-			}
+		components.add(new TexturedButton(this, width - 30, 2, TEXTURE, 94, 68, 22, 30, 0.25F, () -> {
+			subscreens.push(new SubscreenViewStorage(ScreenSphinxController.this));
+		}));
+		components.add(new TexturedButton(this, width - 39, 2, TEXTURE, 24, 100, 23, 30, 0.25F, () -> {
+			subscreens.push(new SubscreenSynodLibrary(ScreenSphinxController.this));
+		}));
+		components.add(new TexturedButton(this, width - 49, 2, TEXTURE, 47, 100, 28, 25, 0.25F, () -> {
+			subscreens.push(new SubscreenManageClassify(ScreenSphinxController.this));
 		}));
 	}
 

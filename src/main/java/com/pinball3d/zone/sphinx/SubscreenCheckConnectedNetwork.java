@@ -25,35 +25,27 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 				false);
 		this.pos = pos;
 		this.name = name;
-		components.add(new HyperTextButton(this, this.x + 35, this.y + 24, I18n.format("sphinx.info"), new Runnable() {
-			@Override
-			public void run() {
-				SubscreenNetworkConfig screen = (SubscreenNetworkConfig) parent;
-				screen.quitScreen(SubscreenCheckConnectedNetwork.this);
-				screen.parent.quitScreen(screen);
-				screen.parent.putScreen(new SubscreenNetworkInfo(screen.parent, pos));
-
+		components.add(new HyperTextButton(this, this.x + 35, this.y + 24, I18n.format("sphinx.info"), () -> {
+			SubscreenNetworkConfig screen = (SubscreenNetworkConfig) parent;
+			screen.quitScreen(SubscreenCheckConnectedNetwork.this);
+			screen.parent.quitScreen(screen);
+			screen.parent.putScreen(new SubscreenNetworkInfo(screen.parent, pos));
+		}));
+		components.add(new HyperTextButton(this, this.x + 70, this.y + 24, I18n.format("sphinx.disconnect"), () -> {
+			if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
+				ScreenTerminal screen = (ScreenTerminal) ((SubscreenNetworkConfig) parent).parent;
+				screen.resetNetwork();
+				screen.worldpos = null;
+				screen.flag = true;
+				parent.quitScreen(SubscreenCheckConnectedNetwork.this);
+				NetworkHandler.instance.sendToServer(new MessageTerminalDisconnect(mc.player));
+			} else {
+				INeedNetwork te = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity;
+				WorldPos pos2 = new WorldPos((TileEntity) te);
+				NetworkHandler.instance.sendToServer(new MessageDisconnect(mc.player, pos2));
+				parent.quitScreen(SubscreenCheckConnectedNetwork.this);
 			}
 		}));
-		components.add(
-				new HyperTextButton(this, this.x + 70, this.y + 24, I18n.format("sphinx.disconnect"), new Runnable() {
-					@Override
-					public void run() {
-						if (((SubscreenNetworkConfig) parent).parent instanceof ScreenTerminal) {
-							ScreenTerminal screen = (ScreenTerminal) ((SubscreenNetworkConfig) parent).parent;
-							screen.resetNetwork();
-							screen.worldpos = null;
-							screen.flag = true;
-							parent.quitScreen(SubscreenCheckConnectedNetwork.this);
-							NetworkHandler.instance.sendToServer(new MessageTerminalDisconnect(mc.player));
-						} else {
-							INeedNetwork te = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity;
-							WorldPos pos2 = new WorldPos((TileEntity) te);
-							NetworkHandler.instance.sendToServer(new MessageDisconnect(mc.player, pos2));
-							parent.quitScreen(SubscreenCheckConnectedNetwork.this);
-						}
-					}
-				}));
 	}
 
 	@Override

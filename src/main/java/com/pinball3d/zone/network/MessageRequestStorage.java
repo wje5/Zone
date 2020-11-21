@@ -48,24 +48,21 @@ public class MessageRequestStorage implements IMessage {
 	public static class Handler implements IMessageHandler<MessageRequestStorage, IMessage> {
 		@Override
 		public IMessage onMessage(MessageRequestStorage message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					World world = server.getWorld(message.world);
-					EntityPlayer player = world.getPlayerEntityByName(message.name);
-					if (player != null) {
-						if (message.network != null) {
-							TileEntity tileEntity = message.network.getTileEntity();
-							if (message.network.getTileEntity() instanceof TEProcessingCenter) {
-								TEProcessingCenter te = (TEProcessingCenter) tileEntity;
-								StorageWrapper data = te.getNetworkUseableItems();
-								int usedStorage = te.getUsedStorage();
-								int maxStorage = te.getMaxStorage();
-								NetworkHandler.instance.sendTo(
-										new MessageSendStorageToClient(data, usedStorage, maxStorage),
-										(EntityPlayerMP) player);
-							}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+				World world = server.getWorld(message.world);
+				EntityPlayer player = world.getPlayerEntityByName(message.name);
+				if (player != null) {
+					if (message.network != null) {
+						TileEntity tileEntity = message.network.getTileEntity();
+						if (message.network.getTileEntity() instanceof TEProcessingCenter) {
+							TEProcessingCenter te = (TEProcessingCenter) tileEntity;
+							StorageWrapper data = te.getNetworkUseableItems();
+							int usedStorage = te.getUsedStorage();
+							int maxStorage = te.getMaxStorage();
+							NetworkHandler.instance.sendTo(
+									new MessageSendStorageToClient(data, usedStorage, maxStorage),
+									(EntityPlayerMP) player);
 						}
 					}
 				}

@@ -1,15 +1,13 @@
 package com.pinball3d.zone.sphinx;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.lwjgl.input.Keyboard;
 
-import com.pinball3d.zone.network.MessageRequestStorage;
-import com.pinball3d.zone.network.NetworkHandler;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -19,34 +17,72 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class SubscreenViewStorage extends Subscreen {
+public class SubscreenManageClassify extends Subscreen {
 	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	public StorageWrapper data = new StorageWrapper();
-	public int usedStorage, maxStorage;
 	public String search = "";
 	public int page = 1, maxPage = 1;
 	private TextInputBox box;
+	private ScrollingEdgeList list;
+	public List<String> classes = new ArrayList<String>();
 
-	public SubscreenViewStorage(IParent parent) {
-		this(parent, parent.getWidth() / 2 - 150, parent.getHeight() / 2 - 100);
+	public SubscreenManageClassify(IParent parent) {
+		this(parent, parent.getWidth() / 2 - 210, parent.getHeight() / 2 - 100);
 	}
 
-	public SubscreenViewStorage(IParent parent, int x, int y) {
-		super(parent, x, y, 300, 200, true);
-		components.add(box = new TextInputBox(this, getXOffset() + 27, getYOffset() + 27, 61, 15, 55, () -> {
+	public SubscreenManageClassify(IParent parent, int x, int y) {
+		super(parent, x, y, 360, 200, true);
+		components.add(box = new TextInputBox(this, this.x + 82, this.y + 27, 61, 15, 55, () -> {
 			box.isFocus = true;
 		}).setIsPixel(true));
-		components
-				.add(new TexturedButton(this, getXOffset() + 87, getYOffset() + 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
-					search = box.text;
-				}));
-		components.add(new TexturedButton(this, this.x + 120, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, () -> {
+		components.add(new TexturedButton(this, this.x + 142, this.y + 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
+			search = box.text;
+		}));
+		components.add(new TexturedButton(this, this.x + 175, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, () -> {
 			page = page - 1 < 1 ? maxPage : page - 1;
 		}));
-		components.add(new TexturedButton(this, this.x + 175, this.y + 180, ICONS, 97, 32, 5, 9, 1.0F, () -> {
+		components.add(new TexturedButton(this, this.x + 230, this.y + 180, ICONS, 97, 32, 5, 9, 1.0F, () -> {
 			page = page + 1 > maxPage ? 1 : page + 1;
 		}));
+		components.add(new TexturedButton(this, this.x + 82, this.y + 48, ICONS, 137, 41, 15, 15, 1.0F, () -> {
+			System.out.println("button1");
+		}));
+		components.add(new TexturedButton(this, this.x + 102, this.y + 48, ICONS, 152, 41, 15, 15, 1.0F, () -> {
+			System.out.println("button2");
+		}));
+		components.add(new TexturedButton(this, this.x + 122, this.y + 49, ICONS, 167, 41, 15, 13, 1.0F, () -> {
+			System.out.println("button3");
+		}));
+		components.add(new TexturedButton(this, this.x + 142, this.y + 51, ICONS, 182, 41, 14, 12, 1.0F, () -> {
+			System.out.println("button4");
+		}));
+		components.add(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195));
+		classes.add("1234");
+		classes.add("5rdx");
+		classes.add("^&YT");
+		classes.add("########################################");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("####");
+		classes.add("/u0072");
+		classes.forEach(e -> {
+			list.addBar(e, () -> {
+
+			});
+		});
 	}
 
 	@Override
@@ -64,7 +100,7 @@ public class SubscreenViewStorage extends Subscreen {
 		GlStateManager.disableDepth();
 		int slotX = slot % 13;
 		int slotY = slot / 13;
-		int j1 = slotX * 19 + 1 + x + 27;
+		int j1 = slotX * 19 + 1 + x + 87;
 		int k1 = slotY * 19 + 1 + y + 45;
 		GlStateManager.colorMask(true, true, true, false);
 		Gui.drawRect(j1, k1, j1 + 16, k1 + 16, 0x80FFFFFF);
@@ -76,9 +112,6 @@ public class SubscreenViewStorage extends Subscreen {
 	@Override
 	public void doRenderForeground(int mouseX, int mouseY) {
 		super.doRenderForeground(mouseX, mouseY);
-		if (!subscreens.empty()) {
-			return;
-		}
 		if (parent instanceof ScreenSphinxBase) {
 			int slot = getHoveredSlot(mouseX, mouseY);
 			if (slot != -1) {
@@ -107,7 +140,7 @@ public class SubscreenViewStorage extends Subscreen {
 	}
 
 	public int getHoveredSlot(int mouseX, int mouseY) {
-		int mX = mouseX - x - 27;
+		int mX = mouseX - x - 87;
 		int mY = mouseY - y - 45;
 		if (mX >= 0 && mX <= 246 && mY >= 0 && mY <= 132 && mX % 19 < 18 && mY % 19 < 18) {
 			int slotX = mX / 19;
@@ -117,10 +150,8 @@ public class SubscreenViewStorage extends Subscreen {
 		return -1;
 	}
 
-	public void setData(StorageWrapper data, int used, int max) {
+	public void setData(StorageWrapper data) {
 		this.data = data;
-		this.usedStorage = used;
-		this.maxStorage = max;
 		updateGlobalStorges();
 	}
 
@@ -195,16 +226,16 @@ public class SubscreenViewStorage extends Subscreen {
 		} else {
 			network = new WorldPos(((ScreenSphinxController) parent).tileentity);
 		}
-		NetworkHandler.instance.sendToServer(new MessageRequestStorage(Minecraft.getMinecraft().player, network));
-		Util.drawTexture(TEXTURE, x, y, 0, 0, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 260, y, 80, 0, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x, y + 160, 0, 80, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 260, y + 160, 80, 80, 80, 80, 0.5F);
-		Gui.drawRect(x + 40, y, x + 260, y + 40, 0x2F000000);
-		Gui.drawRect(x, y + 40, x + 300, y + 160, 0x2F000000);
-		Gui.drawRect(x + 40, y + 160, x + 260, y + 200, 0x2F000000);
-		Gui.drawRect(x + 10, y + 20, x + 290, y + 22, 0xFF20E6EF);
-		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
+//		NetworkHandler.instance.sendToServer(new MessageRequestStorage(Minecraft.getMinecraft().player, network));
+		Util.drawTexture(TEXTURE, x + 60, y, 0, 0, 80, 80, 0.5F);
+		Util.drawTexture(TEXTURE, x + 320, y, 80, 0, 80, 80, 0.5F);
+		Util.drawTexture(TEXTURE, x + 60, y + 160, 0, 80, 80, 80, 0.5F);
+		Util.drawTexture(TEXTURE, x + 320, y + 160, 80, 80, 80, 80, 0.5F);
+		Gui.drawRect(x + 100, y, x + 320, y + 40, 0x2F000000);
+		Gui.drawRect(x + 60, y + 40, x + 360, y + 160, 0x2F000000);
+		Gui.drawRect(x + 100, y + 160, x + 320, y + 200, 0x2F000000);
+		Gui.drawRect(x + 70, y + 20, x + 350, y + 22, 0xFF20E6EF);
+		Gui.drawRect(x + 76, y + 24, x + 344, y + 194, 0x651CC3B5);
 		RenderItem ir = mc.getRenderItem();
 		StorageWrapper w = getItems();
 		Iterator<HugeItemStack> it = w.storges.iterator();
@@ -217,17 +248,15 @@ public class SubscreenViewStorage extends Subscreen {
 			}
 		}
 		for (int j = 0; j < 7; j++) {
-			for (int i = 0; i < 13; i++) {
-				Util.drawBorder(x + 27 + i * 19, y + 45 + j * 19, 18, 18, 1, 0xFF1ECCDE);
+			for (int i = 0; i < 9; i++) {
+				Util.drawBorder(x + 163 + i * 19, y + 45 + j * 19, 18, 18, 1, 0xFF1ECCDE);
 			}
 		}
 		FontRenderer fr = getFontRenderer();
-		fr.drawString(I18n.format("sphinx.view_storages"), x + 15, y + 8, 0xFF1ECCDE);
-		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
+		fr.drawString(I18n.format("sphinx.view_storages"), x + 75, y + 8, 0xFF1ECCDE);
+		Util.drawBorder(x + 75, y + 23, 270, 172, 1, 0xFF1ECCDE);
 		String text = page + "/" + maxPage;
-		fr.drawString(text, x + 150 - fr.getStringWidth(text) / 2, y + 181, 0xFF1ECCDE);
-		text = I18n.format("sphinx.storage_space") + ": " + usedStorage + "/" + maxStorage;
-		fr.drawString(text, x + 175, y + 30, 0xFF1ECCDE);
+		fr.drawString(text, x + 210 - fr.getStringWidth(text) / 2, y + 181, 0xFF1ECCDE);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
@@ -239,7 +268,7 @@ public class SubscreenViewStorage extends Subscreen {
 		ItemStack temp = ItemStack.EMPTY;
 		int slot = -1;
 		for (int j = 0; j < 7; j++) {
-			for (int i = 0; i < 13; i++) {
+			for (int i = 0; i < 9; i++) {
 				ItemStack stack = ItemStack.EMPTY;
 				int amount = 0;
 				if (it.hasNext()) {
@@ -252,12 +281,12 @@ public class SubscreenViewStorage extends Subscreen {
 				}
 				stack = stack.copy();
 				stack.setCount(1);
-				ir.renderItemAndEffectIntoGUI(stack, x + 28 + i * 19, y + 46 + j * 19);
+				ir.renderItemAndEffectIntoGUI(stack, x + 164 + i * 19, y + 46 + j * 19);
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(0, 0, 300F);
 				text = amount <= 1 ? null : Util.transferString(amount);
 				GlStateManager.popMatrix();
-				ir.renderItemOverlayIntoGUI(getFontRenderer(), stack, x + 28 + i * 19, y + 46 + j * 19, text);
+				ir.renderItemOverlayIntoGUI(getFontRenderer(), stack, x + 164 + i * 19, y + 46 + j * 19, text);
 				if (getHoveredSlot(mouseX, mouseY) == j * 13 + i) {
 					temp = stack;
 					slot = j * 13 + i;

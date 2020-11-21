@@ -46,21 +46,17 @@ public class MessageWizardData implements IMessage {
 	public static class Handler implements IMessageHandler<MessageWizardData, IMessage> {
 		@Override
 		public IMessage onMessage(MessageWizardData message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					World world = message.pos.getWorld();
-					if (!world.isAreaLoaded(message.pos.getPos(), 5)) {
-						return;
-					}
-					TileEntity te = message.pos.getTileEntity();
-					if (te instanceof TEProcessingCenter && ((TEProcessingCenter) te).needInit()) {
-						((TEProcessingCenter) te).saveWizardData(message.adminPassword, message.name,
-								message.loginPassword);
-					}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				World world = message.pos.getWorld();
+				if (!world.isAreaLoaded(message.pos.getPos(), 5)) {
+					return;
+				}
+				TileEntity te = message.pos.getTileEntity();
+				if (te instanceof TEProcessingCenter && ((TEProcessingCenter) te).needInit()) {
+					((TEProcessingCenter) te).saveWizardData(message.adminPassword, message.name,
+							message.loginPassword);
 				}
 			});
-
 			return null;
 		}
 	}

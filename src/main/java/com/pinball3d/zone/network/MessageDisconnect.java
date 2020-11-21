@@ -47,28 +47,25 @@ public class MessageDisconnect implements IMessage {
 	public static class Handler implements IMessageHandler<MessageDisconnect, IMessage> {
 		@Override
 		public IMessage onMessage(MessageDisconnect message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					World world = message.needNetwork.getWorld();
-					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					TileEntity te = message.needNetwork.getTileEntity();
-					if (te instanceof INeedNetwork) {
-						WorldPos pos = GlobalNetworkData.getData(te.getWorld())
-								.getNetwork(((INeedNetwork) te).getNetwork());
-						((INeedNetwork) te).deleteNetwork();
-						if (pos != null) {
-							TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
-							pc.removeNeedNetwork(message.needNetwork);
-						}
-						NBTTagCompound tag;
-						if (message.needNetwork.getBlockState().getBlock() == BlockLoader.beacon_core) {
-							tag = SphinxUtil.getValidNetworkDataWithoutRange(message.needNetwork, player, false);
-						} else {
-							tag = SphinxUtil.getValidNetworkData(message.needNetwork, player, false);
-						}
-						NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), player);
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				World world = message.needNetwork.getWorld();
+				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
+				TileEntity te = message.needNetwork.getTileEntity();
+				if (te instanceof INeedNetwork) {
+					WorldPos pos = GlobalNetworkData.getData(te.getWorld())
+							.getNetwork(((INeedNetwork) te).getNetwork());
+					((INeedNetwork) te).deleteNetwork();
+					if (pos != null) {
+						TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
+						pc.removeNeedNetwork(message.needNetwork);
 					}
+					NBTTagCompound tag;
+					if (message.needNetwork.getBlockState().getBlock() == BlockLoader.beacon_core) {
+						tag = SphinxUtil.getValidNetworkDataWithoutRange(message.needNetwork, player, false);
+					} else {
+						tag = SphinxUtil.getValidNetworkData(message.needNetwork, player, false);
+					}
+					NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), player);
 				}
 			});
 			return null;

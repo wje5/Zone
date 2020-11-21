@@ -52,12 +52,9 @@ public abstract class MessageSphinx implements IMessage {
 	}
 
 	public void doHandler(MessageContext ctx) {
-		FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-			@Override
-			public void run() {
-				if (doCheck(MessageSphinx.this)) {
-					MessageSphinx.this.run(ctx);
-				}
+		FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+			if (doCheck(MessageSphinx.this)) {
+				MessageSphinx.this.run(ctx);
 			}
 		});
 	}

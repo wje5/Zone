@@ -50,21 +50,18 @@ public class MessageComputeLogisticTime implements IMessage {
 	public static class Handler implements IMessageHandler<MessageComputeLogisticTime, IMessage> {
 		@Override
 		public IMessage onMessage(MessageComputeLogisticTime message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					World world = message.needNetwork.getWorld();
-					EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-					TileEntity te = message.needNetwork.getTileEntity();
-					if (te instanceof INeedNetwork) {
-						WorldPos pos = GlobalNetworkData.getData(te.getWorld())
-								.getNetwork(((INeedNetwork) te).getNetwork());
-						if (pos != null) {
-							TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
-							int time = pc.requestItems(message.wrapper.copy(), message.needNetwork, true);
-							NetworkHandler.instance.sendTo(new MessageSendLogisticTimeToClient(time, message.wrapper),
-									player);
-						}
+			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+				World world = message.needNetwork.getWorld();
+				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
+				TileEntity te = message.needNetwork.getTileEntity();
+				if (te instanceof INeedNetwork) {
+					WorldPos pos = GlobalNetworkData.getData(te.getWorld())
+							.getNetwork(((INeedNetwork) te).getNetwork());
+					if (pos != null) {
+						TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
+						int time = pc.requestItems(message.wrapper.copy(), message.needNetwork, true);
+						NetworkHandler.instance.sendTo(new MessageSendLogisticTimeToClient(time, message.wrapper),
+								player);
 					}
 				}
 			});
