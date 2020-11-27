@@ -237,7 +237,7 @@ public class MapHandler {
 		nodes.clear();
 		list.forEach(e -> {
 			NBTTagCompound tag = (NBTTagCompound) e;
-			WorldPos pos = WorldPos.load(tag);
+			WorldPos pos = new WorldPos(tag);
 			if (pos.getDim() == mc.player.dimension) {
 				nodes.add(new PointerNode(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
 			}
@@ -246,7 +246,7 @@ public class MapHandler {
 		storages.clear();
 		list.forEach(e -> {
 			NBTTagCompound tag = (NBTTagCompound) e;
-			WorldPos pos = WorldPos.load(tag);
+			WorldPos pos = new WorldPos(tag);
 			if (pos.getDim() == mc.player.dimension) {
 				storages.add(
 						new PointerStorage(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
@@ -256,7 +256,7 @@ public class MapHandler {
 		devices.clear();
 		list.forEach(e -> {
 			NBTTagCompound tag = (NBTTagCompound) e;
-			WorldPos pos = WorldPos.load(tag);
+			WorldPos pos = new WorldPos(tag);
 			if (pos.getDim() == mc.player.dimension) {
 				devices.add(
 						new PointerDevice(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
@@ -266,7 +266,7 @@ public class MapHandler {
 		productions.clear();
 		list.forEach(e -> {
 			NBTTagCompound tag = (NBTTagCompound) e;
-			WorldPos pos = WorldPos.load(tag);
+			WorldPos pos = new WorldPos(tag);
 			if (pos.getDim() == mc.player.dimension) {
 				productions.add(new PointerProduction(pos, tag.getInteger("id"),
 						WorkingState.values()[tag.getInteger("state")]));

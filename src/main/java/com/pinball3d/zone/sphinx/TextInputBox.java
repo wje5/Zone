@@ -25,8 +25,6 @@ public class TextInputBox extends Component {
 	public TextInputBox(IParent parent, int x, int y, int width, int height, int maxLength, Runnable onClick,
 			int flag) {
 		super(parent, x, y, width, height);
-		this.x = x;
-		this.y = y;
 		this.maxLength = maxLength;
 		event = onClick;
 		this.flag = flag;

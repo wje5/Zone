@@ -2,22 +2,18 @@ package com.pinball3d.zone.network;
 
 import java.util.UUID;
 
-import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
 import com.pinball3d.zone.sphinx.ScreenTerminal;
 import com.pinball3d.zone.sphinx.Subscreen;
 import com.pinball3d.zone.sphinx.SubscreenConnectToNetwork;
 import com.pinball3d.zone.sphinx.SubscreenNetworkConfig;
 import com.pinball3d.zone.sphinx.WorldPos;
-import com.pinball3d.zone.tileentity.INeedNetwork;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -85,34 +81,34 @@ public class MessageConnectNetworkCallback implements IMessage {
 						}
 					}
 				} else if (screen instanceof ScreenNeedNetwork) {
-					INeedNetwork tileentity = ((ScreenNeedNetwork) screen).tileentity;
-					WorldPos pos = tileentity.getNetworkPos();
-					if (pos != null) {
-						if (pos.getTileEntity() instanceof TEProcessingCenter) {
-							((TEProcessingCenter) pos.getTileEntity()).removeNeedNetwork(message.pos);
-						}
-					} else if (tileentity.getNetwork() != null) {
-						pos = GlobalNetworkData.getData(((TileEntity) tileentity).getWorld())
-								.getNetwork(tileentity.getNetwork());
-						if (pos != null && pos.getTileEntity() instanceof TEProcessingCenter) {
-							((TEProcessingCenter) pos.getTileEntity()).removeNeedNetwork(message.pos);
-						}
-					}
-					tileentity.connect(message.uuid, message.password);
-					tileentity.setWorldPos(message.pos, message.uuid);
-					ScreenNeedNetwork s = (ScreenNeedNetwork) screen;
-					if (!s.subscreens.isEmpty()) {
-						Subscreen subscreen = s.subscreens.get(0);
-						if (subscreen instanceof SubscreenNetworkConfig) {
-							if (!subscreen.subscreens.empty()) {
-								Subscreen sub = subscreen.subscreens.get(0);
-								if (sub instanceof SubscreenConnectToNetwork) {
-									((SubscreenConnectToNetwork) sub).setData(true);
-								}
-							}
-							((SubscreenNetworkConfig) subscreen).refresh();
-						}
-					}
+//					INeedNetwork tileentity = ((ScreenNeedNetwork) screen).tileentity;
+//					WorldPos pos = tileentity.getNetworkPos();
+//					if (pos != null) {
+//						if (pos.getTileEntity() instanceof TEProcessingCenter) {
+//							((TEProcessingCenter) pos.getTileEntity()).removeNeedNetwork(message.pos);
+//						}
+//					} else if (tileentity.getNetwork() != null) {
+//						pos = GlobalNetworkData.getData(((TileEntity) tileentity).getWorld())
+//								.getNetwork(tileentity.getNetwork());
+//						if (pos != null && pos.getTileEntity() instanceof TEProcessingCenter) {
+//							((TEProcessingCenter) pos.getTileEntity()).removeNeedNetwork(message.pos);
+//						}
+//					}
+//					tileentity.connect(message.uuid, message.password);
+//					tileentity.setWorldPos(message.pos, message.uuid);
+//					ScreenNeedNetwork s = (ScreenNeedNetwork) screen;
+//					if (!s.subscreens.isEmpty()) {
+//						Subscreen subscreen = s.subscreens.get(0);
+//						if (subscreen instanceof SubscreenNetworkConfig) {
+//							if (!subscreen.subscreens.empty()) {
+//								Subscreen sub = subscreen.subscreens.get(0);
+//								if (sub instanceof SubscreenConnectToNetwork) {
+//									((SubscreenConnectToNetwork) sub).setData(true);
+//								}
+//							}
+//							((SubscreenNetworkConfig) subscreen).refresh();
+//						}
+//					}TODO
 				}
 			});
 			return null;

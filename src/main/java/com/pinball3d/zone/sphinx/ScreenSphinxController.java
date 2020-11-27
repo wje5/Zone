@@ -3,6 +3,7 @@ package com.pinball3d.zone.sphinx;
 import java.util.UUID;
 
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 
 public class ScreenSphinxController extends ScreenSphinxAdvenced {
 	public TEProcessingCenter tileentity;
@@ -10,14 +11,6 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 	public ScreenSphinxController(TEProcessingCenter te, String password) {
 		this.password = password;
 		tileentity = te;
-	}
-
-	public boolean checkTileentity() {
-		if (tileentity == null) {
-			mc.displayGuiScreen(null);
-			return false;
-		}
-		return true;
 	}
 
 	@Override
@@ -50,7 +43,8 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 
 	@Override
 	public boolean canOpen() {
-		return tileentity != null;
+		return tileentity != null && tileentity.getWorkingState() == WorkingState.WORKING
+				|| tileentity.getWorkingState() == WorkingState.UNINIT;
 	}
 
 	@Override

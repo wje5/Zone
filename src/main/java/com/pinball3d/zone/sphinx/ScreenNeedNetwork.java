@@ -2,58 +2,49 @@ package com.pinball3d.zone.sphinx;
 
 import java.util.UUID;
 
-import com.pinball3d.zone.tileentity.INeedNetwork;
+import com.pinball3d.zone.network.ConnectHelperClient;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class ScreenNeedNetwork extends ScreenSphinxBase {
-	public INeedNetwork tileentity;
+	public final WorldPos pos;
+	public NBTTagCompound data;
 
-	public ScreenNeedNetwork(INeedNetwork te) {
-		tileentity = te;
+	public ScreenNeedNetwork(WorldPos pos) {
+		this.pos = pos;
 	}
 
 	@Override
 	protected void applyComponents() {
 		super.applyComponents();
 		components.add(new ButtonNetworkConfig(this, width - 10, 2, () -> {
-			subscreens.push(new SubscreenNetworkConfig((ScreenNeedNetwork) mc.currentScreen,
-					new WorldPos((TileEntity) tileentity)));
+			subscreens.push(new SubscreenNetworkConfig((ScreenNeedNetwork) mc.currentScreen, pos));
 		}, false));
 	}
 
 	@Override
 	public boolean isConnected() {
-		return tileentity.isConnected();
-	}
-
-	@Override
-	public INeedNetwork getNeedNetworkTileEntity() {
-		return tileentity;
+		return ConnectHelperClient.instance.isConnected;
 	}
 
 	@Override
 	public WorldPos getNetwork() {
-		return tileentity.getNetworkPos();
+		return ConnectHelperClient.instance.networkPos;
 	}
 
 	@Override
 	public boolean canOpen() {
-		if (tileentity == null) {
-			mc.displayGuiScreen(null);
-			return false;
-		}
 		return true;
 	}
 
 	@Override
 	public UUID getNetworkUUID() {
-		return tileentity.getNetwork();
+		return ConnectHelperClient.instance.network;
 	}
 
 	@Override
 	public void resetNetwork() {
-		tileentity.deleteNetwork();
+//		tileentity.deleteNetwork(); TODO
 	}
 
 	@Override

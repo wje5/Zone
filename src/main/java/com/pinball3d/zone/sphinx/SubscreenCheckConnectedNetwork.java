@@ -3,11 +3,9 @@ package com.pinball3d.zone.sphinx;
 import com.pinball3d.zone.network.MessageDisconnect;
 import com.pinball3d.zone.network.MessageTerminalDisconnect;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.tileentity.INeedNetwork;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class SubscreenCheckConnectedNetwork extends Subscreen {
@@ -40,9 +38,8 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 				parent.quitScreen(SubscreenCheckConnectedNetwork.this);
 				NetworkHandler.instance.sendToServer(new MessageTerminalDisconnect(mc.player));
 			} else {
-				INeedNetwork te = ((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).tileentity;
-				WorldPos pos2 = new WorldPos((TileEntity) te);
-				NetworkHandler.instance.sendToServer(new MessageDisconnect(mc.player, pos2));
+				NetworkHandler.instance.sendToServer(new MessageDisconnect(mc.player,
+						((ScreenNeedNetwork) ((SubscreenNetworkConfig) parent).parent).pos));
 				parent.quitScreen(SubscreenCheckConnectedNetwork.this);
 			}
 		}));

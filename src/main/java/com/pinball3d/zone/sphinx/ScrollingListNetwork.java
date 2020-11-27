@@ -36,7 +36,7 @@ public class ScrollingListNetwork extends Component {
 
 	public void setData(NBTTagCompound tag) {
 		data.clear();
-		connected = WorldPos.load(tag.getCompoundTag("connected"));
+		connected = new WorldPos(tag.getCompoundTag("connected"));
 		NBTTagList list = tag.getTagList("list", 10);
 		list.forEach(e -> {
 			data.add((NBTTagCompound) e);
@@ -47,13 +47,13 @@ public class ScrollingListNetwork extends Component {
 	public void sort() {
 		List<NBTTagCompound> temp = new ArrayList<NBTTagCompound>();
 		data.forEach(e -> {
-			WorldPos p = WorldPos.load(e);
+			WorldPos p = new WorldPos(e);
 			if (p != null && p.equals(connected)) {
 				temp.add(e);
 			}
 		});
 		data.forEach(e -> {
-			WorldPos p = WorldPos.load(e);
+			WorldPos p = new WorldPos(e);
 			if (!(p != null && p.equals(connected))) {
 				temp.add(e);
 			}
@@ -67,7 +67,7 @@ public class ScrollingListNetwork extends Component {
 		length = 0;
 		scrollingDistance = 0;
 		data.forEach(e -> {
-			WorldPos pos = WorldPos.load(e);
+			WorldPos pos = new WorldPos(e);
 			String name = e.getString("name");
 			list.add(new ListBar(pos, name, pos.equals(connected), width, lineHeight));
 			length += lineHeight;

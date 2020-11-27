@@ -41,6 +41,10 @@ public class WorldPos {
 		this(entity.getPosition(), entity.getEntityWorld());
 	}
 
+	public WorldPos(NBTTagCompound tag) {
+		readFromNBT(tag);
+	}
+
 	public World getWorld() {
 		FMLCommonHandler handler = FMLCommonHandler.instance();
 		if (handler.getEffectiveSide() == Side.SERVER) {
@@ -80,22 +84,16 @@ public class WorldPos {
 		return new WorldPos(from.readInt(), from.readInt(), from.readInt(), from.readInt());
 	}
 
-	public static WorldPos load(NBTTagCompound tag) {
-		if (tag.hasKey("worldpos")) {
-			NBTTagCompound subtag = tag.getCompoundTag("worldpos");
-			return new WorldPos(subtag.getInteger("x"), subtag.getInteger("y"), subtag.getInteger("z"),
-					subtag.getInteger("dim"));
-		}
-		return null;
+	public void readFromNBT(NBTTagCompound tag) {
+		pos = new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z"));
+		dim = tag.getInteger("dim");
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
-		NBTTagCompound subtag = new NBTTagCompound();
-		subtag.setInteger("x", pos.getX());
-		subtag.setInteger("y", pos.getY());
-		subtag.setInteger("z", pos.getZ());
-		subtag.setInteger("dim", dim);
-		tag.setTag("worldpos", subtag);
+		tag.setInteger("x", pos.getX());
+		tag.setInteger("y", pos.getY());
+		tag.setInteger("z", pos.getZ());
+		tag.setInteger("dim", dim);
 		return tag;
 	}
 

@@ -23,7 +23,6 @@ import com.pinball3d.zone.sphinx.TextInputBox;
 import com.pinball3d.zone.sphinx.TexturedButton;
 import com.pinball3d.zone.sphinx.Util;
 import com.pinball3d.zone.sphinx.WorldPos;
-import com.pinball3d.zone.tileentity.INeedNetwork;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -236,7 +235,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (keyCode == Keyboard.KEY_ESCAPE) {
 			if (subscreens.empty()) {
-				mc.displayGuiScreen(new ScreenIOPanel(getNeedNetworkTileEntity()));
+				mc.displayGuiScreen(new ScreenIOPanel(container.tileEntity.getNetworkPos()));
 			} else if (subscreens.peek().onQuit()) {
 				subscreens.peek().close();
 				subscreens.pop();
@@ -309,9 +308,4 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	public void quitScreen(Subscreen screen) {
 		subscreens.remove(screen);
 	}
-
-	@Override
-	public INeedNetwork getNeedNetworkTileEntity() {
-		return container.tileEntity;
-	};
 }

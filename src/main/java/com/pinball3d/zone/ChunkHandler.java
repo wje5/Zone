@@ -50,7 +50,7 @@ public class ChunkHandler implements LoadingCallback {
 			switch (ticket.getType()) {
 			case NORMAL:
 				NBTTagCompound tag = ticket.getModData();
-				WorldPos pos = WorldPos.load(tag);
+				WorldPos pos = new WorldPos(tag);
 				TileEntity tileentity = pos.getTileEntity();
 				if (tileentity instanceof IChunkLoader) {
 					IChunkLoader te = (IChunkLoader) tileentity;

@@ -77,7 +77,7 @@ public class GlobalNetworkData extends WorldSavedData {
 		map = new HashMap<UUID, WorldPos>();
 		list.forEach(e -> {
 			UUID uuid = ((NBTTagCompound) e).getUniqueId("uuid");
-			WorldPos pos = WorldPos.load((NBTTagCompound) e);
+			WorldPos pos = new WorldPos((NBTTagCompound) e);
 			setUUID(pos, uuid);
 		});
 		checkData();

@@ -3,6 +3,7 @@ package com.pinball3d.zone.block;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
+import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEStoragePanel;
 
 import net.minecraft.block.BlockContainer;
@@ -71,7 +72,7 @@ public class BlockStoragePanel extends BlockContainer {
 
 	@SideOnly(Side.CLIENT)
 	public void openScreen(World worldIn, BlockPos pos) {
-		Minecraft.getMinecraft().displayGuiScreen(new ScreenNeedNetwork((TEStoragePanel) worldIn.getTileEntity(pos)));
+		Minecraft.getMinecraft().displayGuiScreen(new ScreenNeedNetwork(new WorldPos(pos, worldIn)));
 	}
 
 	@Override

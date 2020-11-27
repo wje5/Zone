@@ -51,8 +51,7 @@ public class LogisticPack {
 					next = routes.get(0);
 					Block block2 = next.getBlockState().getBlock();
 					if ((block == BlockLoader.processing_center_light || block == BlockLoader.beacon_core)
-							&& (block2 == BlockLoader.processing_center_light
-									|| block2 == BlockLoader.beacon_core)) {
+							&& (block2 == BlockLoader.processing_center_light || block2 == BlockLoader.beacon_core)) {
 						x = next.getPos().getX();
 						y = next.getPos().getY();
 						z = next.getPos().getZ();
@@ -81,7 +80,7 @@ public class LogisticPack {
 		routes = new ArrayList<WorldPos>();
 		NBTTagList list = tag.getTagList("routes", 10);
 		list.forEach(e -> {
-			routes.add(WorldPos.load((NBTTagCompound) e));
+			routes.add(new WorldPos((NBTTagCompound) e));
 		});
 		items = new StorageWrapper(tag.getCompoundTag("items"));
 		x = tag.getDouble("x");

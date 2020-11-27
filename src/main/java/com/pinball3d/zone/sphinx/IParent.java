@@ -1,7 +1,5 @@
 package com.pinball3d.zone.sphinx;
 
-import com.pinball3d.zone.tileentity.INeedNetwork;
-
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 
@@ -22,9 +20,5 @@ public interface IParent {
 
 	default public ItemStack getTerminal() {
 		return ItemStack.EMPTY;
-	}
-
-	default public INeedNetwork getNeedNetworkTileEntity() {
-		return null;
 	}
 }

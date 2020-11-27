@@ -170,6 +170,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 			}
 		}
 		boolean flag = isOnline();
+		System.out.println(flag);
 		preDraw(flag, mouseX, mouseY, partialTicks);
 		if (flag) {
 			if (subscreens.isEmpty()) {

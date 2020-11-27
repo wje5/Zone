@@ -178,7 +178,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 
 	public void readNetworkData(NBTTagCompound tag) {
 		if (tag.hasKey("worldpos")) {
-			worldpos = WorldPos.load(tag);
+			worldpos = new WorldPos(tag);
 		} else {
 			worldpos = null;
 		}

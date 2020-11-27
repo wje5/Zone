@@ -26,7 +26,7 @@ public class SubscreenSynodLibrary extends Subscreen {
 		new Thread() {
 			@Override
 			public void run() {
-				pdf = PDFHelper.instance.getPdf(new ResourceLocation("zone:pdf/test2.pdf"));
+				pdf = PDFHelper.instance.getPdf(new ResourceLocation("zone:pdf/test.pdf"));
 				if (pdf == null) {
 					failed = true;
 				} else {

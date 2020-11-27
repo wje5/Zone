@@ -25,6 +25,7 @@ public class SubscreenManageClassify extends Subscreen {
 	public int page = 1, maxPage = 1;
 	private TextInputBox box;
 	private ScrollingEdgeList list;
+	private DropDownList list2, list3;
 	public List<String> classes = new ArrayList<String>();
 
 	public SubscreenManageClassify(IParent parent) {
@@ -58,6 +59,8 @@ public class SubscreenManageClassify extends Subscreen {
 			System.out.println("button4");
 		}));
 		components.add(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195));
+		components.add(list2 = new DropDownList(this, this.x + 180, this.y + 27, 61));
+		components.add(list3 = new DropDownList(this, this.x + 272, this.y + 27, 61));
 		classes.add("1234");
 		classes.add("5rdx");
 		classes.add("^&YT");

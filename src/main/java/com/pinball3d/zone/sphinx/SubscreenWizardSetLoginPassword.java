@@ -29,18 +29,24 @@ public class SubscreenWizardSetLoginPassword extends Subscreen {
 			box2.isFocus = false;
 			box3.isFocus = true;
 		}));
-		components.add(new TextButton(this, this.x + 150, this.y + 175, I18n.format("sphinx.back"), () -> {
-			parent.quitScreen(SubscreenWizardSetLoginPassword.this);
-			parent.putScreen(new SubscreenWizardSetAdminPassword(parent));
+		String s = I18n.format("sphinx.cancel");
+		int w = getFontRenderer().getStringWidth(s);
+		components.add(new TextButton(this, this.x + 262 - w, this.y + 175, s, () -> {
+			subscreens.push(new SubscreenQuitWizard(SubscreenWizardSetLoginPassword.this));
 		}));
-		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.next"), () -> {
+		s = I18n.format("sphinx.next");
+		w += getFontRenderer().getStringWidth(s);
+		components.add(new TextButton(this, this.x + 242 - w, this.y + 175, s, () -> {
 			if (box1.text.length() >= 4 && box2.text.length() == 8 && box2.text.equals(box3.text)) {
 				parent.quitScreen(SubscreenWizardSetLoginPassword.this);
 				parent.putScreen(new SubscreenWizardFinish(parent, adminPassword, box1.text, box2.text));
 			}
 		}));
-		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), () -> {
-			subscreens.push(new SubscreenQuitWizard(SubscreenWizardSetLoginPassword.this));
+		s = I18n.format("sphinx.back");
+		w += getFontRenderer().getStringWidth(s);
+		components.add(new TextButton(this, this.x + 222 - w, this.y + 175, I18n.format("sphinx.back"), () -> {
+			parent.quitScreen(SubscreenWizardSetLoginPassword.this);
+			parent.putScreen(new SubscreenWizardSetAdminPassword(parent));
 		}));
 	}
 

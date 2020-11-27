@@ -3,6 +3,7 @@ package com.pinball3d.zone.block;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.sphinx.ScreenIOPanel;
+import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEIOPanel;
 
 import net.minecraft.block.Block;
@@ -55,7 +56,7 @@ public class BlockIOPanel extends BlockContainer {
 
 	@SideOnly(Side.CLIENT)
 	public void openScreen(World worldIn, BlockPos pos) {
-		Minecraft.getMinecraft().displayGuiScreen(new ScreenIOPanel((TEIOPanel) worldIn.getTileEntity(pos)));
+		Minecraft.getMinecraft().displayGuiScreen(new ScreenIOPanel(new WorldPos(pos, worldIn)));
 	}
 
 	@Override

@@ -935,6 +935,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public void update() {
 		load();
 		markDirty();
+		callUpdate();
 		if (world.isRemote) {
 			if (loadTick > 0) {
 				loadTick--;
@@ -961,6 +962,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			} else {
 				shutdown();
 			}
+			return;
 		}
 		if (!on) {
 			return;
@@ -992,22 +994,22 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		nodes.clear();
 		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
-			nodes.add(WorldPos.load((NBTTagCompound) e));
+			nodes.add(new WorldPos((NBTTagCompound) e));
 		});
 		storages.clear();
 		list = compound.getTagList("storges", 10);
 		list.forEach(e -> {
-			storages.add(WorldPos.load((NBTTagCompound) e));
+			storages.add(new WorldPos((NBTTagCompound) e));
 		});
 		devices.clear();
 		list = compound.getTagList("devices", 10);
 		list.forEach(e -> {
-			devices.add(WorldPos.load((NBTTagCompound) e));
+			devices.add(new WorldPos((NBTTagCompound) e));
 		});
 		productions.clear();
 		list = compound.getTagList("productions", 10);
 		list.forEach(e -> {
-			productions.add(WorldPos.load((NBTTagCompound) e));
+			productions.add(new WorldPos((NBTTagCompound) e));
 		});
 		if (compound.hasKey("uuidMost")) {
 			uuid = compound.getUniqueId("uuid");
