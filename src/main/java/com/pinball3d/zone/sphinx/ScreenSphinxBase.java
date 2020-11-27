@@ -33,6 +33,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 	public WorldPos worldpos;
 	public boolean flag;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
+	public boolean inited;
 
 	public abstract boolean canOpen();
 
@@ -60,6 +61,14 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 		}
 		applyComponents();
 		super.initGui();
+		if (!inited) {
+			init();
+			inited = true;
+		}
+	}
+
+	public void init() {
+
 	}
 
 	@Override
@@ -170,7 +179,6 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 			}
 		}
 		boolean flag = isOnline();
-		System.out.println(flag);
 		preDraw(flag, mouseX, mouseY, partialTicks);
 		if (flag) {
 			if (subscreens.isEmpty()) {

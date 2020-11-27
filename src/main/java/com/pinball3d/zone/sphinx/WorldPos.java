@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class WorldPos {
+	public static final WorldPos ORIGIN = new WorldPos(0, 0, 0, 0);
 	private BlockPos pos;
 	private int dim;
 
@@ -80,10 +81,6 @@ public class WorldPos {
 		return getWorld().getTileEntity(pos);
 	}
 
-	public static WorldPos readFromByte(ByteBuf from) {
-		return new WorldPos(from.readInt(), from.readInt(), from.readInt(), from.readInt());
-	}
-
 	public void readFromNBT(NBTTagCompound tag) {
 		pos = new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z"));
 		dim = tag.getInteger("dim");
@@ -97,10 +94,12 @@ public class WorldPos {
 		return tag;
 	}
 
+	public static WorldPos readFromByte(ByteBuf from) {
+		return new WorldPos(BlockPos.fromLong(from.readLong()), from.readInt());
+	}
+
 	public void writeToByte(ByteBuf to) {
-		to.writeInt(pos.getX());
-		to.writeInt(pos.getY());
-		to.writeInt(pos.getZ());
+		to.writeLong(pos.toLong());
 		to.writeInt(dim);
 	}
 

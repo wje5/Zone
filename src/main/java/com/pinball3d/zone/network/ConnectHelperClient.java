@@ -24,9 +24,7 @@ public class ConnectHelperClient {
 
 	public void setData(UUID network, NBTTagCompound data) {
 		clear();
-		if (!network.equals(this.network)) {
-			this.network = network;
-		}
+		this.network = network;
 		for (Type e : Type.values()) {
 			if (data.hasKey(e.name())) {
 				switch (e) {
@@ -42,6 +40,7 @@ public class ConnectHelperClient {
 				}
 			}
 		}
+		System.out.println(data);
 	}
 
 	public void clear() {

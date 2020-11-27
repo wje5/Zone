@@ -3,6 +3,7 @@ package com.pinball3d.zone.sphinx;
 import java.util.UUID;
 
 import com.pinball3d.zone.item.ItemLoader;
+import com.pinball3d.zone.network.MessageConnectionRequest;
 import com.pinball3d.zone.network.MessageTerminalRequestNetworkData;
 import com.pinball3d.zone.network.NetworkHandler;
 
@@ -16,6 +17,12 @@ public class ScreenTerminal extends ScreenSphinxAdvenced {
 
 	public ScreenTerminal(ItemStack stack) {
 		this.stack = stack;
+	}
+
+	@Override
+	public void init() {
+		super.init();
+		NetworkHandler.instance.sendToServer(new MessageConnectionRequest(mc.player, getNetworkUUID(), null));
 	}
 
 	@Override

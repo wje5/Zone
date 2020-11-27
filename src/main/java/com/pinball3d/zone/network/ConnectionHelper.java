@@ -1,8 +1,10 @@
 package com.pinball3d.zone.network;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,7 +23,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 
 @Mod.EventBusSubscriber
 public class ConnectionHelper {
-	private static Set<Connect> pool = new HashSet<Connect>();
+	private static Map<UUID, Connect> pool = new HashMap<UUID, Connect>();
 
 	@SubscribeEvent
 	public static void onServerTick(ServerTickEvent event) {
@@ -31,7 +33,7 @@ public class ConnectionHelper {
 	}
 
 	public static void update() {
-		Iterator<Connect> it = pool.iterator();
+		Iterator<Connect> it = pool.values().iterator();
 		while (it.hasNext()) {
 			Connect c = it.next();
 			if (!c.isValid()) {
@@ -39,6 +41,17 @@ public class ConnectionHelper {
 			}
 			c.update();
 		}
+	}
+
+	public static void refreshRequest(UUID uuid, UUID network, WorldPos needNetwork, Type... types) {
+		pool.put(uuid,
+				new Connect(
+						FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(uuid),
+						network, needNetwork, types));
+	}
+
+	public static void disconnect(UUID uuid) {
+		pool.remove(uuid);
 	}
 
 	public static class Connect {

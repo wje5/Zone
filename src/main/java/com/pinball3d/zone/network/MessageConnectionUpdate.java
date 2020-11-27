@@ -25,14 +25,25 @@ public class MessageConnectionUpdate implements IMessage {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		network = new UUID(buf.readLong(), buf.readLong());
+		long l = buf.readLong();
+		long l2 = buf.readLong();
+		if (l == 0 && l2 == 0) {
+			network = null;
+		} else {
+			network = new UUID(l, l2);
+		}
 		tag = ByteBufUtils.readTag(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeLong(network.getMostSignificantBits());
-		buf.writeLong(network.getLeastSignificantBits());
+		if (network != null) {
+			buf.writeLong(network.getMostSignificantBits());
+			buf.writeLong(network.getLeastSignificantBits());
+		} else {
+			buf.writeLong(0);
+			buf.writeLong(0);
+		}
 		ByteBufUtils.writeTag(buf, tag);
 	}
 
