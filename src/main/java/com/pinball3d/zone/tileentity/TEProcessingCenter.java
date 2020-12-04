@@ -13,9 +13,6 @@ import com.pinball3d.zone.ChunkHandler;
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
-import com.pinball3d.zone.network.MessageSendMapDataToClient;
-import com.pinball3d.zone.network.MessageSendPackDataToClient;
-import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.IDevice;
@@ -29,10 +26,11 @@ import com.pinball3d.zone.sphinx.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -766,9 +764,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		} while (true);
 	}
 
-	public void sendMapDataToClient(EntityPlayerMP player) {
+	public NBTTagCompound genMapData(EntityPlayer player, NBTTagCompound tag) {
 		updateDevice();
-		NBTTagCompound tag = new NBTTagCompound();
+		NBTTagCompound units = new NBTTagCompound();
 		NBTTagList list = new NBTTagList();
 		nodes.forEach(e -> {
 			if (e.getDim() == player.dimension) {
@@ -779,7 +777,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
 			}
 		});
-		tag.setTag("nodes", list);
+		units.setTag("nodes", list);
 		NBTTagList list2 = new NBTTagList();
 		storages.forEach(e -> {
 			if (e.getDim() == player.dimension) {
@@ -790,7 +788,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
 			}
 		});
-		tag.setTag("storages", list2);
+		units.setTag("storages", list2);
 		NBTTagList list3 = new NBTTagList();
 		devices.forEach(e -> {
 			if (e.getDim() == player.dimension) {
@@ -801,7 +799,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
 			}
 		});
-		tag.setTag("devices", list3);
+		units.setTag("devices", list3);
 		NBTTagList list4 = new NBTTagList();
 		productions.forEach(e -> {
 			if (e.getDim() == player.dimension) {
@@ -812,7 +810,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
 			}
 		});
-		tag.setTag("productions", list4);
+		units.setTag("productions", list4);
 		List<Integer> lines = new ArrayList<Integer>();
 		List<WorldPos> l = new ArrayList<WorldPos>();
 		WorldPos w = new WorldPos(this);
@@ -860,19 +858,19 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 		}
-		NetworkHandler.instance.sendTo(new MessageSendMapDataToClient(new WorldPos(this), tag,
-				lines.stream().mapToInt(Integer::valueOf).toArray()), player);
+		tag.setTag("units", units);
+		tag.setTag("lines", new NBTTagIntArray(lines));
+		return tag;
 	}
 
-	public void sendPackDataToClient(EntityPlayerMP player) {
-		NBTTagCompound tag = new NBTTagCompound();
+	public NBTTagCompound genPackData(EntityPlayer player, NBTTagCompound tag) {
 		NBTTagList list = new NBTTagList();
 		Set<LogisticPack> packs = getPacks();
 		packs.forEach(e -> {
 			list.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		tag.setTag("list", list);
-		NetworkHandler.instance.sendTo(new MessageSendPackDataToClient(new WorldPos(this), tag), player);
+		return tag;
 	}
 
 	public void updatePack() {

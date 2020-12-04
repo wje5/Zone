@@ -8,12 +8,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -38,12 +41,17 @@ public class ConnectionHelper {
 			Connect c = it.next();
 			if (!c.isValid()) {
 				it.remove();
+				continue;
 			}
 			c.update();
 		}
 	}
 
 	public static void refreshRequest(UUID uuid, UUID network, WorldPos needNetwork, Type... types) {
+		if (types.length == 0) {
+			pool.remove(uuid);
+			return;
+		}
 		pool.put(uuid,
 				new Connect(
 						FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(uuid),
@@ -55,14 +63,25 @@ public class ConnectionHelper {
 	}
 
 	public static class Connect {
-		private final UUID uuid, network;
-		private WorldPos needNetwork;
-		private Set<Type> reqDataType;
+		public final UUID uuid;
+		public UUID network;
+		public WorldPos needNetwork;
+		public String password, adminPassword;
+		public Set<Type> reqDataType;
+		public int mapRefreshColddown, packRefreshColddown;
 
 		public Connect(EntityPlayer player, UUID network, WorldPos needNetwork, Type... types) {
 			uuid = player.getUniqueID();
 			this.network = network;
 			this.needNetwork = needNetwork;
+			reqDataType = new HashSet<Type>(Arrays.asList(types));
+		}
+
+		public Connect(EntityPlayer player, NBTTagCompound clientData, Type... types) {
+			uuid = player.getUniqueID();
+			if (clientData.hasUniqueId("network")) {
+				network = clientData.getUniqueId("network");
+			}
 			reqDataType = new HashSet<Type>(Arrays.asList(types));
 		}
 
@@ -73,38 +92,66 @@ public class ConnectionHelper {
 
 		public void update() {
 			NBTTagCompound data = new NBTTagCompound();
+			EntityPlayerMP player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+					.getPlayerByUUID(uuid);
 			reqDataType.forEach(e -> {
-				e.writeToNBT(data, network, needNetwork);
+				e.writeToNBT(data, player, this);
 			});
-			NetworkHandler.instance.sendTo(new MessageConnectionUpdate(network, data),
-					FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(uuid));
+			NetworkHandler.instance.sendTo(new MessageConnectionUpdate(network, data), player);
 		}
 	}
 
 	public static enum Type {
-		ITEMS, ISCONNECTED, NETWORKPOS;
+		ITEMS, ISCONNECTED, NETWORKPOS, ISCORRECTPASSWORD, ISCORRECTADMINPASSWORD, PLAYERVALIDNETWORK, MAP, PACK;
 
-		public void writeToNBT(NBTTagCompound tag, UUID network, WorldPos needNetworkPos) {
-			WorldPos pos = null;
+		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
+			WorldPos pos = WorldPos.ORIGIN;
 			TEProcessingCenter te = null;
 			INeedNetwork needNetwork = null;
-			if (network != null) {
+			if (connect.network != null) {
 				pos = GlobalNetworkData.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
-						.getNetwork(network);
+						.getNetwork(connect.network);
 				te = (TEProcessingCenter) pos.getTileEntity();
 			}
-			if (needNetworkPos != null) {
-				needNetwork = (INeedNetwork) needNetworkPos.getTileEntity();
+			if (!connect.needNetwork.equals(WorldPos.ORIGIN)) {
+				needNetwork = (INeedNetwork) connect.needNetwork.getTileEntity();
 			}
 			switch (this) {
 			case ITEMS:
 				tag.setTag(name(), te.getNetworkUseableItems().writeToNBT(new NBTTagCompound()));
 				break;
 			case ISCONNECTED:
-				tag.setBoolean(name(), needNetwork.isConnected() && network.equals(needNetwork.getNetwork()));
+				tag.setBoolean(name(), needNetwork.isConnected() && connect.network.equals(needNetwork.getNetwork()));
 				break;
 			case NETWORKPOS:
 				tag.setTag(name(), pos.writeToNBT(new NBTTagCompound()));
+				break;
+			case ISCORRECTPASSWORD:
+				tag.setBoolean(name(), te.isCorrectLoginPassword(connect.password));
+				break;
+			case ISCORRECTADMINPASSWORD:
+				tag.setBoolean(name(), te.isCorrectAdminPassword(connect.adminPassword));
+				break;
+			case PLAYERVALIDNETWORK:
+				tag.setTag(name(), SphinxUtil.getValidNetworkData(new WorldPos(player), player, true));
+				break;
+			case MAP:
+				if (te != null) {
+					if (connect.mapRefreshColddown < 0) {
+						tag.setTag(name(), te.genMapData(player, new NBTTagCompound()));
+						connect.mapRefreshColddown += ConfigLoader.mapUpdateRate;
+					}
+					connect.mapRefreshColddown--;
+				}
+				break;
+			case PACK:
+				if (te != null) {
+					if (connect.packRefreshColddown < 0) {
+						tag.setTag(name(), te.genPackData(player, new NBTTagCompound()));
+						connect.packRefreshColddown += ConfigLoader.packUpdateRate;
+					}
+					connect.packRefreshColddown--;
+				}
 				break;
 			}
 		}

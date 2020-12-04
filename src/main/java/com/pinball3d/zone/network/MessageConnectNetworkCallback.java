@@ -95,20 +95,20 @@ public class MessageConnectNetworkCallback implements IMessage {
 //						}
 //					}
 //					tileentity.connect(message.uuid, message.password);
-//					tileentity.setWorldPos(message.pos, message.uuid);
-//					ScreenNeedNetwork s = (ScreenNeedNetwork) screen;
-//					if (!s.subscreens.isEmpty()) {
-//						Subscreen subscreen = s.subscreens.get(0);
-//						if (subscreen instanceof SubscreenNetworkConfig) {
-//							if (!subscreen.subscreens.empty()) {
-//								Subscreen sub = subscreen.subscreens.get(0);
-//								if (sub instanceof SubscreenConnectToNetwork) {
-//									((SubscreenConnectToNetwork) sub).setData(true);
-//								}
-//							}
-//							((SubscreenNetworkConfig) subscreen).refresh();
-//						}
-//					}TODO
+//					tileentity.setWorldPos(message.pos, message.uuid);TODO
+					ScreenNeedNetwork s = (ScreenNeedNetwork) screen;
+					if (!s.subscreens.isEmpty()) {
+						Subscreen subscreen = s.subscreens.get(0);
+						if (subscreen instanceof SubscreenNetworkConfig) {
+							if (!subscreen.subscreens.empty()) {
+								Subscreen sub = subscreen.subscreens.get(0);
+								if (sub instanceof SubscreenConnectToNetwork) {
+									((SubscreenConnectToNetwork) sub).setData(true);
+								}
+							}
+							((SubscreenNetworkConfig) subscreen).refresh();
+						}
+					}
 				}
 			});
 			return null;

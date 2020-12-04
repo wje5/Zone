@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
 import com.pinball3d.zone.ConfigLoader;
-import com.pinball3d.zone.network.MessageRequestMapData;
 import com.pinball3d.zone.network.MessageRequestPackData;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.Pointer.BoundingBox;
@@ -41,7 +40,7 @@ public class MapHandler {
 	private List<PointerDevice> devices = new ArrayList<PointerDevice>();
 	private List<PointerProduction> productions = new ArrayList<PointerProduction>();
 	private List<PointerPack> packs = new ArrayList<PointerPack>();
-	public WorldPos network;
+	public WorldPos network = WorldPos.ORIGIN;
 	private int dim, dataDim, packDim;
 	private NBTTagCompound data;
 	private int[] lines;
@@ -52,7 +51,6 @@ public class MapHandler {
 	private MapHandler(WorldPos netWork) {
 		ChunkRenderCache.init();
 		this.network = netWork;
-		NetworkHandler.instance.sendToServer(new MessageRequestMapData(mc.player, netWork));
 		NetworkHandler.instance.sendToServer(new MessageRequestPackData(mc.player, netWork));
 		livings = new HashMap<Integer, PointerLiving>();
 		BlockPos pos = mc.player.getPosition();
@@ -72,7 +70,6 @@ public class MapHandler {
 	}
 
 	public static void callRefresh(WorldPos pos) {
-		NetworkHandler.instance.sendToServer(new MessageRequestMapData(mc.player, pos));
 		instance.updateTick = mc.world.getTotalWorldTime() + ConfigLoader.mapUpdateRate;
 	}
 

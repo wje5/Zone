@@ -3,6 +3,7 @@ package com.pinball3d.zone.sphinx;
 import java.util.UUID;
 
 import com.pinball3d.zone.item.ItemLoader;
+import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.network.MessageConnectionRequest;
 import com.pinball3d.zone.network.MessageTerminalRequestNetworkData;
 import com.pinball3d.zone.network.NetworkHandler;
@@ -22,12 +23,14 @@ public class ScreenTerminal extends ScreenSphinxAdvenced {
 	@Override
 	public void init() {
 		super.init();
-		NetworkHandler.instance.sendToServer(new MessageConnectionRequest(mc.player, getNetworkUUID(), null));
+		NetworkHandler.instance.sendToServer(new MessageConnectionRequest(mc.player, getNetworkUUID(), null,
+				Type.PLAYERVALIDNETWORK, Type.NETWORKPOS, Type.MAP));
 	}
 
 	@Override
 	protected void applyComponents() {
 		super.applyComponents();
+
 		components.add(new ButtonNetworkConfig(this, width - 10, 2, () -> {
 			subscreens.push(new SubscreenNetworkConfig(ScreenTerminal.this));
 		}, true));

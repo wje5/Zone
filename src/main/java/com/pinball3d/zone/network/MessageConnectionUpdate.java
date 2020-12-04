@@ -45,6 +45,7 @@ public class MessageConnectionUpdate implements IMessage {
 			buf.writeLong(0);
 		}
 		ByteBufUtils.writeTag(buf, tag);
+		System.out.println(buf.readableBytes());
 	}
 
 	public static class Handler implements IMessageHandler<MessageConnectionUpdate, IMessage> {

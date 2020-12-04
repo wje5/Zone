@@ -61,7 +61,7 @@ public class SphinxUtil {
 	}
 
 	public static NBTTagCompound getValidNetworkData(WorldPos pos, EntityPlayer player, boolean isPlayer) {
-		List<WorldPos> list = SphinxUtil.getValidNetworks(player.dimension, pos.getPos().getX(), pos.getPos().getY(),
+		List<WorldPos> list = SphinxUtil.getValidNetworks(pos.getDim(), pos.getPos().getX(), pos.getPos().getY(),
 				pos.getPos().getZ());
 		NBTTagCompound tag = new NBTTagCompound();
 		if (!isPlayer) {

@@ -11,6 +11,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MessagePlaySoundAtPos implements IMessage {
 	int x, y, z, id;
@@ -43,6 +45,7 @@ public class MessagePlaySoundAtPos implements IMessage {
 	}
 
 	public static class Handler implements IMessageHandler<MessagePlaySoundAtPos, IMessage> {
+		@SideOnly(Side.CLIENT)
 		@Override
 		public IMessage onMessage(MessagePlaySoundAtPos message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {

@@ -22,7 +22,8 @@ public class GlobalNetworkData extends WorldSavedData {
 	}
 
 	public WorldPos getNetwork(UUID uuid) {
-		return map.get(uuid);
+		WorldPos p = map.get(uuid);
+		return p == null ? WorldPos.ORIGIN : p;
 	}
 
 	public void setUUID(WorldPos pos, UUID uuid) {

@@ -61,11 +61,7 @@ public class MessageConnectionRequest implements IMessage {
 			buf.writeLong(0);
 			buf.writeLong(0);
 		}
-		if (needNetwork != null) {
-			needNetwork.writeToByte(buf);
-		} else {
-			WorldPos.ORIGIN.writeToByte(buf);
-		}
+		needNetwork.writeToByte(buf);
 		for (Type i : Type.values()) {
 			buf.writeBoolean(types.contains(i));
 		}
@@ -75,8 +71,7 @@ public class MessageConnectionRequest implements IMessage {
 		@Override
 		public IMessage onMessage(MessageConnectionRequest message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-				ConnectionHelper.refreshRequest(message.uuid, message.network,
-						WorldPos.ORIGIN.equals(message.needNetwork) ? null : message.needNetwork,
+				ConnectionHelper.refreshRequest(message.uuid, message.network, message.needNetwork,
 						message.types.toArray(new Type[] {}));
 			});
 			return null;

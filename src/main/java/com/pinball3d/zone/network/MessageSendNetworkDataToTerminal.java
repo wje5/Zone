@@ -28,20 +28,13 @@ public class MessageSendNetworkDataToTerminal implements IMessage {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		if (!buf.readBoolean()) {
-			worldpos = WorldPos.readFromByte(buf);
-		}
+		worldpos = WorldPos.readFromByte(buf);
 		uuid = new UUID(buf.readLong(), buf.readLong());
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		if (worldpos == null) {
-			buf.writeBoolean(true);
-		} else {
-			buf.writeBoolean(false);
-			worldpos.writeToByte(buf);
-		}
+		worldpos.writeToByte(buf);
 		buf.writeLong(uuid.getMostSignificantBits());
 		buf.writeLong(uuid.getLeastSignificantBits());
 	}

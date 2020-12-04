@@ -52,9 +52,11 @@ public class PDFHelper {
 		try {
 			pdf.load(manager);
 			PDDocumentOutline outline = pdf.doc.getDocumentCatalog().getDocumentOutline();
-			outline.children().forEach(e -> {
-				closeNode(e);
-			});
+			if (outline != null) {
+				outline.children().forEach(e -> {
+					closeNode(e);
+				});
+			}
 		} catch (IOException e) {
 			if (pdf.location != RESOURCE_LOCATION_EMPTY) {
 				LOGGER.warn("Failed to load pdf: {}", pdf.location, e);

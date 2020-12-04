@@ -12,6 +12,8 @@ import java.util.UUID;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.pinball3d.zone.network.ConnectHelperClient;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -30,7 +32,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 	public static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");
 	protected Set<Component> components = new HashSet<Component>();
-	public WorldPos worldpos;
+	public WorldPos worldpos = WorldPos.ORIGIN;
 	public boolean flag;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	public boolean inited;
@@ -101,6 +103,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 			it.next().close();
 			it.remove();
 		}
+		ConnectHelperClient.instance.disconnect(getNetworkUUID());
 		super.onGuiClosed();
 	}
 
@@ -115,12 +118,12 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 
 	protected boolean isOnline() {
 		if (!needRequestNetworkPos()) {
-			return getNetwork() != null;
+			return !getNetwork().equals(WorldPos.ORIGIN);
 		}
 		if (!flag) {
 			requestNetworkPos();
 		}
-		return getNetwork() != null;
+		return !getNetwork().equals(WorldPos.ORIGIN);
 	}
 
 	protected void requestNetworkPos() {
@@ -225,7 +228,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 			throw new RuntimeException("DRRRRRRRRRRRR!");
 		}
 		if (uuid.equals(getNetworkUUID())) {
-			if (pos == null) {
+			if (pos.equals(WorldPos.ORIGIN)) {
 				resetNetwork();
 			}
 			worldpos = pos;

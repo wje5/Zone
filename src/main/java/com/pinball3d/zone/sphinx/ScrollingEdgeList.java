@@ -31,8 +31,6 @@ public class ScrollingEdgeList extends Component {
 			int cutUp = posY < 0 ? -posY : 0;
 			int cutDown = posY + 13 - height > 0 ? posY + 13 - height : 0;
 			if (cutUp < 13 && cutDown < 13) {
-//				if (mouseX >= x && mouseX <= x + width && mouseY >= y + posY + cutUp
-//						&& mouseY <= y + posY + 13 - cutDown) {
 				Util.drawTexture(ICONS, x + 43 - stretch, y + posY + cutUp, 0, 187 + cutUp * 4,
 						stretch >= 43 ? 225 : stretch * 4 + 52, 50 - cutUp * 4 - cutDown * 4, 0.25F);
 				if (cutUp <= 3 && cutDown <= 3 && stretch > 7) {
@@ -40,17 +38,13 @@ public class ScrollingEdgeList extends Component {
 					text = Util.formatStringToWidth(fr, text, stretch - 7);
 					fr.drawString(text, x + 63 - stretch, y + 3 + posY, 0xFF1ECCDE);
 				}
-//				} else {
-//					Util.drawTexture(ICONS, x + 43, y + posY + cutUp, 0, 187 + cutUp * 4, 52,
-//							50 - cutUp * 4 - cutDown * 4, 0.25F);
-//				}
-			}
-			if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
-				stretch = stretch + 3 >= 43 ? 43 : stretch + 3;
-			} else {
-				stretch = 0;
 			}
 			index++;
+		}
+		if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
+			stretch = stretch + 5 >= 43 ? 43 : stretch + 5;
+		} else {
+			stretch = 0;
 		}
 	}
 

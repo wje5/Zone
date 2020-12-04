@@ -4,13 +4,9 @@ import net.minecraft.util.ResourceLocation;
 
 public class ButtonNetworkConfig extends TexturedButton {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
-	private boolean flag, connected;
 
 	public ButtonNetworkConfig(IParent parent, int x, int y, Runnable onClick, boolean flag) {
-		super(parent, x, y, TEXTURE, 0, 16, 32,
-				(flag ? ((ScreenTerminal) parent).isConnected() : ((ScreenNeedNetwork) parent).isConnected()) ? 26 : 32,
-				0.25F, onClick);
-		this.flag = flag;
+		super(parent, x, y, TEXTURE, 0, 16, 32, 32, 0.25F, onClick);
 	}
 
 	@Override
@@ -21,7 +17,10 @@ public class ButtonNetworkConfig extends TexturedButton {
 //			INeedNetwork te = ((ScreenNeedNetwork) parent).getNeedNetworkTileEntity();
 //			connected = te.getNetwork() != null && te.isConnected();
 //		}
-		Util.drawTexture(texture, x, y, width, connected ? 6 : 8, connected ? 0 : 84, connected ? 16 : 0, uWidth,
-				connected ? 26 : 32);
+		boolean flag = false;
+		if (parent instanceof ScreenSphinxBase) {
+			flag = ((ScreenSphinxBase) parent).isOnline();
+		}
+		Util.drawTexture(texture, x, y, width, flag ? 6 : 8, flag ? 0 : 84, flag ? 16 : 0, uWidth, flag ? 26 : 32);
 	}
 }

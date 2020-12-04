@@ -40,7 +40,6 @@ public class NetworkHandler {
 		registerMessage(MessageConnectNetworkCallback.Handler.class, MessageConnectNetworkCallback.class, Side.CLIENT);
 		registerMessage(MessageConnectNetworkCallbackWrong.Handler.class, MessageConnectNetworkCallbackWrong.class,
 				Side.CLIENT);
-		registerMessage(MessageRequestMapData.Handler.class, MessageRequestMapData.class, Side.SERVER);
 		registerMessage(MessageSendMapDataToClient.Handler.class, MessageSendMapDataToClient.class, Side.CLIENT);
 		registerMessage(MessageRequestNetworkInfo.Handler.class, MessageRequestNetworkInfo.class, Side.SERVER);
 		registerMessage(MessageSendNetworkInfoToClient.Handler.class, MessageSendNetworkInfoToClient.class,

@@ -60,7 +60,7 @@ public class MessageTerminalRequestNetworkData implements IMessage {
 				World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.dim);
 				WorldPos pos = GlobalNetworkData.getData(world).getNetwork(message.uuid);
 				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-				if (pos != null) {
+				if (!pos.equals(WorldPos.ORIGIN)) {
 					TileEntity tileentity = pos.getTileEntity();
 					if (tileentity instanceof TEProcessingCenter) {
 						TEProcessingCenter te = (TEProcessingCenter) tileentity;
