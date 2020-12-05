@@ -1,8 +1,7 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.block.BlockLoader;
+import com.pinball3d.zone.network.ConnectionHelper.Connect;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
-import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
@@ -10,7 +9,6 @@ import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -59,13 +57,8 @@ public class MessageDisconnect implements IMessage {
 						TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
 						pc.removeNeedNetwork(message.needNetwork);
 					}
-					NBTTagCompound tag;
-					if (message.needNetwork.getBlockState().getBlock() == BlockLoader.beacon_core) {
-						tag = SphinxUtil.getValidNetworkDataWithoutRange(message.needNetwork, player, false);
-					} else {
-						tag = SphinxUtil.getValidNetworkData(message.needNetwork, player, false);
-					}
-					NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), player);
+					Connect c = ConnectionHelper.getConnect(player.getUniqueID());
+					c.network = null;
 				}
 			});
 			return null;

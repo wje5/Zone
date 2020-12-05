@@ -1,75 +1,58 @@
 package com.pinball3d.zone.sphinx;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
-import com.pinball3d.zone.network.MessageRequestValidNetworks;
-import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.network.ConnectHelperClient;
 
 import net.minecraft.client.gui.Gui;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 
 public class ScrollingListNetwork extends Component {
 	protected int length, lineHeight, scrollingDistance;
 	protected List<ListBar> list = new ArrayList<ListBar>();
-	protected List<NBTTagCompound> data = new ArrayList<NBTTagCompound>();
-	protected WorldPos pos, connected;
-
-	public ScrollingListNetwork(IParent parent, int x, int y, int width, int height) {
-		this(parent, x, y, width, height, null);
-	}
+	protected WorldPos pos;
 
 	public ScrollingListNetwork(IParent parent, int x, int y, int width, int height, WorldPos pos) {
 		super(parent, x, y, width, height);
 		this.parent = parent;
 		this.lineHeight = 25;
 		this.pos = pos;
-		boolean flag = pos == null;
-		NetworkHandler.instance.sendToServer(new MessageRequestValidNetworks(mc.player,
-				flag ? new WorldPos((int) mc.player.posX, (int) mc.player.posY, (int) mc.player.posZ, mc.player.world)
-						: pos,
-				flag));
-	}
-
-	public void setData(NBTTagCompound tag) {
-		data.clear();
-		connected = new WorldPos(tag.getCompoundTag("connected"));
-		NBTTagList list = tag.getTagList("list", 10);
-		list.forEach(e -> {
-			data.add((NBTTagCompound) e);
-		});
-		refresh();
-	}
-
-	public void sort() {
-		List<NBTTagCompound> temp = new ArrayList<NBTTagCompound>();
-		data.forEach(e -> {
-			WorldPos p = new WorldPos(e);
-			if (p != null && p.equals(connected)) {
-				temp.add(e);
-			}
-		});
-		data.forEach(e -> {
-			WorldPos p = new WorldPos(e);
-			if (!(p != null && p.equals(connected))) {
-				temp.add(e);
-			}
-		});
-		data = temp;
 	}
 
 	public void refresh() {
-		sort();
+		Set<WorldPos> s = new TreeSet<WorldPos>(new Comparator<WorldPos>() {
+			@Override
+			public int compare(WorldPos o1, WorldPos o2) {
+				return o1.compare(o2);
+			}
+		});
+		Map<WorldPos, String> m = pos.isOrigin() ? ConnectHelperClient.getInstance().getPlayerValidNetworks()
+				: ConnectHelperClient.getInstance().getNeedNetworkValidNetworks();
+		s.addAll(m.keySet());
+		WorldPos connected = ConnectHelperClient.getInstance().getNetworkPos();
+		List<WorldPos> l = new ArrayList<WorldPos>();
+		s.forEach(e -> {
+			if (!e.isOrigin() && e.equals(connected)) {
+				l.add(e);
+			}
+		});
+		s.forEach(e -> {
+			if (!e.isOrigin() && !e.equals(connected)) {
+				l.add(e);
+			}
+		});
 		list = new ArrayList<ListBar>();
 		length = 0;
 		scrollingDistance = 0;
-		data.forEach(e -> {
-			WorldPos pos = new WorldPos(e);
-			String name = e.getString("name");
-			list.add(new ListBar(pos, name, pos.equals(connected), width, lineHeight));
+		l.forEach(e -> {
+			String name = m.get(e);
+			list.add(new ListBar(e, name, e.equals(connected), width, lineHeight));
 			length += lineHeight;
 		});
 
@@ -78,6 +61,7 @@ public class ScrollingListNetwork extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
+		refresh();
 		Iterator<ListBar> it = list.iterator();
 		int yOffset = 0;
 		while (it.hasNext()) {

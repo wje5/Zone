@@ -6,10 +6,6 @@ import java.util.TreeSet;
 
 import org.lwjgl.input.Keyboard;
 
-import com.pinball3d.zone.network.MessageRequestStorage;
-import com.pinball3d.zone.network.NetworkHandler;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -189,13 +185,7 @@ public class SubscreenViewStorage extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		WorldPos network;
-		if (parent instanceof ScreenTerminal) {
-			network = ((ScreenTerminal) parent).getNetwork();
-		} else {
-			network = new WorldPos(((ScreenSphinxController) parent).tileentity);
-		}
-		NetworkHandler.instance.sendToServer(new MessageRequestStorage(Minecraft.getMinecraft().player, network));
+//		NetworkHandler.instance.sendToServer(new MessageRequestStorage(Minecraft.getMinecraft().player, network));TODO
 		Util.drawTexture(TEXTURE, x, y, 0, 0, 80, 80, 0.5F);
 		Util.drawTexture(TEXTURE, x + 260, y, 80, 0, 80, 80, 0.5F);
 		Util.drawTexture(TEXTURE, x, y + 160, 0, 80, 80, 80, 0.5F);

@@ -52,7 +52,7 @@ public class MessageConnectionUpdate implements IMessage {
 		@Override
 		public IMessage onMessage(MessageConnectionUpdate message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-				ConnectHelperClient.instance.setData(message.network, message.tag);
+				ConnectHelperClient.getInstance().setData(message.network, message.tag);
 			});
 			return null;
 		}

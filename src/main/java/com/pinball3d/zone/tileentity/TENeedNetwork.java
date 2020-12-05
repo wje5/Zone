@@ -19,7 +19,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.common.util.Constants;
 
 public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable, IChunkLoader {
-	protected WorldPos worldpos;
+	protected WorldPos worldpos = WorldPos.ORIGIN;
 	protected UUID network;
 	protected String password = "";
 	protected boolean connected = false;
@@ -53,11 +53,11 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 		if (world.isRemote) {
 			return;
 		}
-		if (network != null && worldpos == null) {
+		if (network != null && worldpos.isOrigin()) {
 			worldpos = GlobalNetworkData.getData(world).getNetwork(network);
 			callUpdate();
 		}
-		if (worldpos != null) {
+		if (!worldpos.isOrigin()) {
 			if (worldpos.getTileEntity() instanceof TEProcessingCenter) {
 				if (((TEProcessingCenter) worldpos.getTileEntity()).isOn()) {
 					if (connected) {
@@ -80,7 +80,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	@Override
 	public void connect(UUID uuid, String password) {
 		network = uuid;
-		worldpos = null;
+		worldpos = WorldPos.ORIGIN;
 		this.password = password;
 		connected = true;
 		callUpdate();
@@ -95,7 +95,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	public void setWorldPos(WorldPos pos, UUID uuid) {
 		if (uuid.equals(network)) {
 			worldpos = pos;
-			if (worldpos == null) {
+			if (worldpos.isOrigin()) {
 				deleteNetwork();
 			}
 			callUpdate();
@@ -121,7 +121,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	@Override
 	public void deleteNetwork() {
 		network = null;
-		worldpos = null;
+		worldpos = WorldPos.ORIGIN;
 		password = "";
 		connected = false;
 		callUpdate();
@@ -170,7 +170,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	}
 
 	public NBTTagCompound writeNetworkData(NBTTagCompound tag) {
-		if (worldpos != null) {
+		if (!worldpos.isOrigin()) {
 			worldpos.writeToNBT(tag);
 		}
 		return tag;
@@ -180,7 +180,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 		if (tag.hasKey("worldpos")) {
 			worldpos = new WorldPos(tag);
 		} else {
-			worldpos = null;
+			worldpos = WorldPos.ORIGIN;
 		}
 	}
 

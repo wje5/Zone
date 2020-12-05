@@ -223,13 +223,7 @@ public class SubscreenManageClassify extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		WorldPos network;
-		if (parent instanceof ScreenTerminal) {
-			network = ((ScreenTerminal) parent).getNetwork();
-		} else {
-			network = new WorldPos(((ScreenSphinxController) parent).tileentity);
-		}
-//		NetworkHandler.instance.sendToServer(new MessageRequestStorage(Minecraft.getMinecraft().player, network));
+//		NetworkHandler.instance.sendToServer(new MessageRequestStorage(Minecraft.getMinecraft().player, network));TODO
 		Util.drawTexture(TEXTURE, x + 60, y, 0, 0, 80, 80, 0.5F);
 		Util.drawTexture(TEXTURE, x + 320, y, 80, 0, 80, 80, 0.5F);
 		Util.drawTexture(TEXTURE, x + 60, y + 160, 0, 80, 80, 80, 0.5F);

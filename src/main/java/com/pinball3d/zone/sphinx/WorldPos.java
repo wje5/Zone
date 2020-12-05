@@ -46,7 +46,14 @@ public class WorldPos {
 		readFromNBT(tag);
 	}
 
+	public boolean isOrigin() {
+		return equals(ORIGIN);
+	}
+
 	public World getWorld() {
+		if (isOrigin()) {
+			return null;
+		}
 		FMLCommonHandler handler = FMLCommonHandler.instance();
 		if (handler.getEffectiveSide() == Side.SERVER) {
 			return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim);
@@ -57,6 +64,9 @@ public class WorldPos {
 
 	@SideOnly(Side.CLIENT)
 	private World getClientWorld() {
+		if (isOrigin()) {
+			return null;
+		}
 		World world = Minecraft.getMinecraft().world;
 		if (world.provider.getDimension() == dim) {
 			return Minecraft.getMinecraft().world;
@@ -66,6 +76,9 @@ public class WorldPos {
 	}
 
 	public BlockPos getPos() {
+		if (isOrigin()) {
+			return BlockPos.ORIGIN;
+		}
 		return pos;
 	}
 
@@ -74,10 +87,16 @@ public class WorldPos {
 	}
 
 	public IBlockState getBlockState() {
+		if (isOrigin()) {
+			return null;
+		}
 		return getWorld().getBlockState(pos);
 	}
 
 	public TileEntity getTileEntity() {
+		if (isOrigin()) {
+			return null;
+		}
 		return getWorld().getTileEntity(pos);
 	}
 

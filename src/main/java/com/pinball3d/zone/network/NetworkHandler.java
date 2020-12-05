@@ -15,12 +15,6 @@ public class NetworkHandler {
 		registerMessage(MessageWizardData.Handler.class, MessageWizardData.class, Side.SERVER);
 		registerMessage(MessageOpenSphinx.Handler.class, MessageOpenSphinx.class, Side.SERVER);
 		registerMessage(MessageShutdownSphinx.Handler.class, MessageShutdownSphinx.class, Side.SERVER);
-		registerMessage(MessageTerminalRequestNetworkData.Handler.class, MessageTerminalRequestNetworkData.class,
-				Side.SERVER);
-		registerMessage(MessageSendNetworkDataToTerminal.Handler.class, MessageSendNetworkDataToTerminal.class,
-				Side.CLIENT);
-		registerMessage(MessageRequestValidNetworks.Handler.class, MessageRequestValidNetworks.class, Side.SERVER);
-		registerMessage(MessageSendValidNetworkData.Handler.class, MessageSendValidNetworkData.class, Side.CLIENT);
 		registerMessage(MessageChangePassword.Handler.class, MessageChangePassword.class, Side.SERVER);
 		registerMessage(MessageChangeAdminPassword.Handler.class, MessageChangeAdminPassword.class, Side.SERVER);
 		registerMessage(MessageChangeName.Handler.class, MessageChangeName.class, Side.SERVER);
@@ -40,15 +34,12 @@ public class NetworkHandler {
 		registerMessage(MessageConnectNetworkCallback.Handler.class, MessageConnectNetworkCallback.class, Side.CLIENT);
 		registerMessage(MessageConnectNetworkCallbackWrong.Handler.class, MessageConnectNetworkCallbackWrong.class,
 				Side.CLIENT);
-		registerMessage(MessageSendMapDataToClient.Handler.class, MessageSendMapDataToClient.class, Side.CLIENT);
 		registerMessage(MessageRequestNetworkInfo.Handler.class, MessageRequestNetworkInfo.class, Side.SERVER);
 		registerMessage(MessageSendNetworkInfoToClient.Handler.class, MessageSendNetworkInfoToClient.class,
 				Side.CLIENT);
 		registerMessage(MessageRequestNeedNetworkInfo.Handler.class, MessageRequestNeedNetworkInfo.class, Side.SERVER);
 		registerMessage(MessageSendNeedNetworkInfoToClient.Handler.class, MessageSendNeedNetworkInfoToClient.class,
 				Side.CLIENT);
-		registerMessage(MessageRequestPackData.Handler.class, MessageRequestPackData.class, Side.SERVER);
-		registerMessage(MessageSendPackDataToClient.Handler.class, MessageSendPackDataToClient.class, Side.CLIENT);
 		registerMessage(MessageDeleteNeedNetworkUnit.Handler.class, MessageDeleteNeedNetworkUnit.class, Side.SERVER);
 		registerMessage(MessageComputeLogisticTime.Handler.class, MessageComputeLogisticTime.class, Side.SERVER);
 		registerMessage(MessageSendLogisticTimeToClient.Handler.class, MessageSendLogisticTimeToClient.class,
@@ -59,6 +50,8 @@ public class NetworkHandler {
 		registerMessage(MessageErrorStorageFull.Handler.class, MessageErrorStorageFull.class, Side.CLIENT);
 		registerMessage(MessageConnectionUpdate.Handler.class, MessageConnectionUpdate.class, Side.CLIENT);
 		registerMessage(MessageConnectionRequest.Handler.class, MessageConnectionRequest.class, Side.SERVER);
+		registerMessage(MessageConnectionNeedNetworkRequest.Handler.class, MessageConnectionNeedNetworkRequest.class,
+				Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

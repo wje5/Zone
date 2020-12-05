@@ -1,9 +1,11 @@
 package com.pinball3d.zone.sphinx;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -13,6 +15,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.network.MessageConnectionRequest;
+import com.pinball3d.zone.network.NetworkHandler;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -51,10 +56,6 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 	public void preDraw(boolean online, int mouseX, int mouseY, float partialTicks) {
 	};
 
-	public boolean needRequestNetworkPos() {
-		return false;
-	}
-
 	@Override
 	public void initGui() {
 		if (!canOpen()) {
@@ -70,7 +71,15 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 	}
 
 	public void init() {
+		NetworkHandler.instance.sendToServer(
+				new MessageConnectionRequest(mc.player, getNetworkUUID(), getDataTypes().toArray(new Type[] {})));
+	}
 
+	public List<Type> getDataTypes() {
+		List<Type> list = new ArrayList<Type>();
+		list.add(Type.MAP);
+		list.add(Type.PACK);
+		return list;
 	}
 
 	@Override
@@ -103,7 +112,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 			it.next().close();
 			it.remove();
 		}
-		ConnectHelperClient.instance.disconnect(getNetworkUUID());
+		ConnectHelperClient.getInstance().disconnect(getNetworkUUID());
 		super.onGuiClosed();
 	}
 
@@ -115,22 +124,6 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 	protected void applyComponents() {
 		components = new HashSet<Component>();
 	}
-
-	protected boolean isOnline() {
-		if (!needRequestNetworkPos()) {
-			return !getNetwork().equals(WorldPos.ORIGIN);
-		}
-		if (!flag) {
-			requestNetworkPos();
-		}
-		return !getNetwork().equals(WorldPos.ORIGIN);
-	}
-
-	protected void requestNetworkPos() {
-		if (!needRequestNetworkPos()) {
-			throw new RuntimeException("DRRRRRRRRRRRR!");
-		}
-	};
 
 	public void dragMap(int mouseX, int mouseY, float partialTicks) {
 		float sensitive = 5.0F;
@@ -181,13 +174,12 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 				screen.onMouseScrollScreen(mouseX, mouseY, d < 0);
 			}
 		}
-		boolean flag = isOnline();
-		preDraw(flag, mouseX, mouseY, partialTicks);
-		if (flag) {
+		preDraw(ConnectHelperClient.getInstance().isConnected(), mouseX, mouseY, partialTicks);
+		if (ConnectHelperClient.getInstance().isConnected()) {
 			if (subscreens.isEmpty()) {
 				dragMap(mouseX, mouseY, partialTicks);
 			}
-			MapHandler.draw(getNetwork(), width, height);
+			MapHandler.draw(ConnectHelperClient.getInstance().getNetworkPos(), width, height);
 			draw(mouseX, mouseY, partialTicks);
 		} else {
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0xFF003434);
@@ -214,26 +206,6 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;
-	}
-
-	public WorldPos getNetwork() {
-		if (!needRequestNetworkPos()) {
-			throw new RuntimeException("DRRRRRRRRRRRR!");
-		}
-		return worldpos;
-	}
-
-	public void setWorldPos(WorldPos pos, UUID uuid) {
-		if (!needRequestNetworkPos()) {
-			throw new RuntimeException("DRRRRRRRRRRRR!");
-		}
-		if (uuid.equals(getNetworkUUID())) {
-			if (pos.equals(WorldPos.ORIGIN)) {
-				resetNetwork();
-			}
-			worldpos = pos;
-			flag = true;
-		}
 	}
 
 	@Override

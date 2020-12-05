@@ -190,7 +190,7 @@ public class Util {
 
 	@SideOnly(Side.CLIENT)
 	public static void drawPDF(PDFImage image, int x, int y, int width, int yOffset, int maxHeight) {
-		if (!image.isLoaded()) {
+		if (image != null && !image.isLoaded()) {
 			PDFHelper.instance.loadPdfImage(image);
 		}
 		GlStateManager.bindTexture(image.getGlTextureId());

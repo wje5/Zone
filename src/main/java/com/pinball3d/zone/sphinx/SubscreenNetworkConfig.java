@@ -17,7 +17,7 @@ public class SubscreenNetworkConfig extends Subscreen {
 	}
 
 	public SubscreenNetworkConfig(IParent parent, int x, int y) {
-		this(parent, x, y, null);
+		this(parent, x, y, WorldPos.ORIGIN);
 	}
 
 	public SubscreenNetworkConfig(IParent parent, int x, int y, WorldPos pos) {

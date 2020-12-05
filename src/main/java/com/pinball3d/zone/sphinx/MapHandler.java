@@ -9,9 +9,6 @@ import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
-import com.pinball3d.zone.ConfigLoader;
-import com.pinball3d.zone.network.MessageRequestPackData;
-import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.Pointer.BoundingBox;
 import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 
@@ -44,14 +41,12 @@ public class MapHandler {
 	private int dim, dataDim, packDim;
 	private NBTTagCompound data;
 	private int[] lines;
-	private long updateTick, updatePackTick;
 	public static Minecraft mc = Minecraft.getMinecraft();
 	private static MapHandler instance;
 
 	private MapHandler(WorldPos netWork) {
 		ChunkRenderCache.init();
 		this.network = netWork;
-		NetworkHandler.instance.sendToServer(new MessageRequestPackData(mc.player, netWork));
 		livings = new HashMap<Integer, PointerLiving>();
 		BlockPos pos = mc.player.getPosition();
 		xOffset = pos.getX();
@@ -69,15 +64,6 @@ public class MapHandler {
 		instance = new MapHandler(network);
 	}
 
-	public static void callRefresh(WorldPos pos) {
-		instance.updateTick = mc.world.getTotalWorldTime() + ConfigLoader.mapUpdateRate;
-	}
-
-	public static void callRefreshPacks(WorldPos pos) {
-		NetworkHandler.instance.sendToServer(new MessageRequestPackData(mc.player, pos));
-		instance.updatePackTick = mc.world.getTotalWorldTime() + ConfigLoader.packUpdateRate;
-	}
-
 	public static boolean isValidPointer(Pointer p) {
 		return instance.processingCenter == p || instance.nodes.contains(p) || instance.storages.contains(p)
 				|| instance.devices.contains(p) || instance.productions.contains(p);
@@ -93,12 +79,6 @@ public class MapHandler {
 		instance.drawMap(width, height);
 		instance.drawPointer(width, height);
 		instance.drawLines(width, height);
-		if (instance.updateTick < mc.world.getTotalWorldTime()) {
-			callRefresh(network);
-		}
-		if (instance.updatePackTick < mc.world.getTotalWorldTime()) {
-			callRefreshPacks(network);
-		}
 	}
 
 	public static void setData(WorldPos network, NBTTagCompound data, int[] lines) {

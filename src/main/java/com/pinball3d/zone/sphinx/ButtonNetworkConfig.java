@@ -1,5 +1,7 @@
 package com.pinball3d.zone.sphinx;
 
+import com.pinball3d.zone.network.ConnectHelperClient;
+
 import net.minecraft.util.ResourceLocation;
 
 public class ButtonNetworkConfig extends TexturedButton {
@@ -11,16 +13,7 @@ public class ButtonNetworkConfig extends TexturedButton {
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
-//		if (flag) {
-//			connected = ((ScreenTerminal) parent).isConnected();
-//		} else {
-//			INeedNetwork te = ((ScreenNeedNetwork) parent).getNeedNetworkTileEntity();
-//			connected = te.getNetwork() != null && te.isConnected();
-//		}
-		boolean flag = false;
-		if (parent instanceof ScreenSphinxBase) {
-			flag = ((ScreenSphinxBase) parent).isOnline();
-		}
+		boolean flag = ConnectHelperClient.getInstance().isConnected();
 		Util.drawTexture(texture, x, y, width, flag ? 6 : 8, flag ? 0 : 84, flag ? 16 : 0, uWidth, flag ? 26 : 32);
 	}
 }

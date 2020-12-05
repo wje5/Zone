@@ -235,6 +235,8 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (keyCode == Keyboard.KEY_ESCAPE) {
 			if (subscreens.empty()) {
+				WorldPos p = container.tileEntity.getNetworkPos();
+				System.out.println(p);
 				mc.displayGuiScreen(new ScreenIOPanel(container.tileEntity.getNetworkPos()));
 			} else if (subscreens.peek().onQuit()) {
 				subscreens.peek().close();

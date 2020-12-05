@@ -1,12 +1,10 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.sphinx.SphinxUtil;
-import com.pinball3d.zone.sphinx.WorldPos;
+import com.pinball3d.zone.network.ConnectionHelper.Connect;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -72,8 +70,8 @@ public class MessageTerminalDisconnect implements IMessage {
 							tag.removeTag("networkLeast");
 						}
 					}
-					NBTTagCompound tag = SphinxUtil.getValidNetworkData(new WorldPos(player), player, true);
-					NetworkHandler.instance.sendTo(new MessageSendValidNetworkData(tag), (EntityPlayerMP) player);
+					Connect c = ConnectionHelper.getConnect(player.getUniqueID());
+					c.network = null;
 				}
 			});
 			return null;

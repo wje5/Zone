@@ -13,6 +13,7 @@ import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
+import com.pinball3d.zone.tileentity.TEBeaconCore;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,6 +63,10 @@ public class ConnectionHelper {
 		pool.remove(uuid);
 	}
 
+	public static Connect getConnect(UUID uuid) {
+		return pool.get(uuid);
+	}
+
 	public static class Connect {
 		public final UUID uuid;
 		public UUID network;
@@ -74,14 +79,6 @@ public class ConnectionHelper {
 			uuid = player.getUniqueID();
 			this.network = network;
 			this.needNetwork = needNetwork;
-			reqDataType = new HashSet<Type>(Arrays.asList(types));
-		}
-
-		public Connect(EntityPlayer player, NBTTagCompound clientData, Type... types) {
-			uuid = player.getUniqueID();
-			if (clientData.hasUniqueId("network")) {
-				network = clientData.getUniqueId("network");
-			}
 			reqDataType = new HashSet<Type>(Arrays.asList(types));
 		}
 
@@ -102,7 +99,8 @@ public class ConnectionHelper {
 	}
 
 	public static enum Type {
-		ITEMS, ISCONNECTED, NETWORKPOS, ISCORRECTPASSWORD, ISCORRECTADMINPASSWORD, PLAYERVALIDNETWORK, MAP, PACK;
+		NETWORKUUID, ITEMS, NETWORKPOS, ISCORRECTPASSWORD, ISCORRECTADMINPASSWORD, PLAYERVALIDNETWORK, MAP, PACK,
+		NEEDNETWORKVALIDNETWORK;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
 			WorldPos pos = WorldPos.ORIGIN;
@@ -113,15 +111,18 @@ public class ConnectionHelper {
 						.getNetwork(connect.network);
 				te = (TEProcessingCenter) pos.getTileEntity();
 			}
-			if (!connect.needNetwork.equals(WorldPos.ORIGIN)) {
+			if (!connect.needNetwork.isOrigin()) {
 				needNetwork = (INeedNetwork) connect.needNetwork.getTileEntity();
 			}
 			switch (this) {
+			case NETWORKUUID:
+				tag.setUniqueId(name(),
+						needNetwork != null
+								? needNetwork.getNetwork() != null ? needNetwork.getNetwork() : new UUID(0, 0)
+								: new UUID(0, 0));
+				break;
 			case ITEMS:
 				tag.setTag(name(), te.getNetworkUseableItems().writeToNBT(new NBTTagCompound()));
-				break;
-			case ISCONNECTED:
-				tag.setBoolean(name(), needNetwork.isConnected() && connect.network.equals(needNetwork.getNetwork()));
 				break;
 			case NETWORKPOS:
 				tag.setTag(name(), pos.writeToNBT(new NBTTagCompound()));
@@ -151,6 +152,16 @@ public class ConnectionHelper {
 						connect.packRefreshColddown += ConfigLoader.packUpdateRate;
 					}
 					connect.packRefreshColddown--;
+				}
+				break;
+			case NEEDNETWORKVALIDNETWORK:
+				if (needNetwork != null) {
+					if (needNetwork instanceof TEBeaconCore) {
+						tag.setTag(name(),
+								SphinxUtil.getValidNetworkDataWithoutRange(connect.needNetwork, player, false));
+					} else {
+						tag.setTag(name(), SphinxUtil.getValidNetworkData(connect.needNetwork, player, false));
+					}
 				}
 				break;
 			}

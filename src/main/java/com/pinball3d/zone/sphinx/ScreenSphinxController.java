@@ -66,9 +66,4 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 	public String getPassword() {
 		return password;
 	}
-
-	@Override
-	public WorldPos getNetwork() {
-		return new WorldPos(tileentity);
-	}
 }
