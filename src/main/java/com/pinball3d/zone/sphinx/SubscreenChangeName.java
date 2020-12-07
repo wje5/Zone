@@ -1,8 +1,8 @@
 package com.pinball3d.zone.sphinx;
 
+import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageChangeName;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
@@ -11,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 public class SubscreenChangeName extends Subscreen {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	private TextInputBox box;
+	private boolean hasData;
 
 	public SubscreenChangeName(IParent parent) {
 		this(parent, parent.getWidth() / 2 - 150, parent.getHeight() / 2 - 100);
@@ -21,15 +22,11 @@ public class SubscreenChangeName extends Subscreen {
 		components.add(box = new TextInputBox(this, x + 30, y + 50, 100, 12, () -> {
 			box.isFocus = true;
 		}));
-		TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
-		box.text = te.getName();
 		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.confirm"), () -> {
-			if (box.text.length() >= 4) {
-				TEProcessingCenter pc = ((ScreenSphinxController) parent).tileentity;
+			if (hasData && box.text.length() >= 4) {
 				NetworkHandler.instance
 						.sendToServer(MessageChangeName.newMessage(((ScreenSphinxController) parent).password,
-								new WorldPos(pc.getPos(), pc.getWorld()), box.text));
-				pc.setName(box.text);
+								ConnectHelperClient.getInstance().getNetworkPos(), box.text));
 				parent.quitScreen(SubscreenChangeName.this);
 				parent.putScreen(new SubscreenSphinxConfig(parent));
 			}
@@ -38,6 +35,18 @@ public class SubscreenChangeName extends Subscreen {
 			parent.quitScreen(SubscreenChangeName.this);
 			parent.putScreen(new SubscreenSphinxConfig(parent));
 		}));
+	}
+
+	@Override
+	public void update() {
+		super.update();
+		if (!hasData) {
+			String name = ConnectHelperClient.getInstance().getName();
+			if (!name.isEmpty()) {
+				box.text = name;
+				hasData = true;
+			}
+		}
 	}
 
 	@Override

@@ -74,8 +74,9 @@ public class SubscreenConnectToNetwork extends Subscreen {
 			if (Util.isValidChar(typedChar, 7)) {
 				input += typedChar;
 				if (input.length() == 8) {
-					NetworkHandler.instance.sendToServer(new MessageTryConnectToNetwork(mc.player, pos == null,
-							pos == null ? new WorldPos(mc.player.getPosition(), mc.world.provider.getDimension()) : pos,
+					NetworkHandler.instance.sendToServer(new MessageTryConnectToNetwork(mc.player, pos.isOrigin(),
+							pos.isOrigin() ? new WorldPos(mc.player.getPosition(), mc.world.provider.getDimension())
+									: pos,
 							network, input));
 					waiting = true;
 					quit = mc.world.getTotalWorldTime();

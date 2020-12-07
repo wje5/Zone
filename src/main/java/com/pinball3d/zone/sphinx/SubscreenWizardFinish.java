@@ -1,8 +1,8 @@
 package com.pinball3d.zone.sphinx;
 
+import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageWizardData;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
@@ -21,10 +21,8 @@ public class SubscreenWizardFinish extends Subscreen {
 		components.add(new MultilineText(this, this.x + 27, this.y + 35, 250, I18n.format("sphinx.finish_wizard")));
 		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.finish"), () -> {
 			parent.quitScreen(SubscreenWizardFinish.this);
-			TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
-			te.saveWizardData(adminPassword, name, loginPassword);
-			NetworkHandler.instance.sendToServer(new MessageWizardData(new WorldPos(te.getPos(), te.getWorld()),
-					adminPassword, name, loginPassword));
+			NetworkHandler.instance.sendToServer(new MessageWizardData(
+					ConnectHelperClient.getInstance().getNetworkPos(), adminPassword, name, loginPassword));
 			((ScreenSphinxController) parent).password = adminPassword;
 		}));
 	}

@@ -1,11 +1,9 @@
 package com.pinball3d.zone.sphinx;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -48,12 +46,16 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 
 	public abstract UUID getNetworkUUID();
 
-	public abstract void resetNetwork();
+	public void resetNetwork() {
+	};
 
 	public void draw(int mouseX, int mouseY, float partialTicks) {
 	};
 
 	public void preDraw(boolean online, int mouseX, int mouseY, float partialTicks) {
+	};
+
+	public void update(boolean online, int mouseX, int mouseY, float partialTicks) {
 	};
 
 	@Override
@@ -75,11 +77,12 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 				new MessageConnectionRequest(mc.player, getNetworkUUID(), getDataTypes().toArray(new Type[] {})));
 	}
 
-	public List<Type> getDataTypes() {
-		List<Type> list = new ArrayList<Type>();
-		list.add(Type.MAP);
-		list.add(Type.PACK);
-		return list;
+	public Set<Type> getDataTypes() {
+		Set<Type> set = new HashSet<Type>();
+		set.add(Type.NETWORKPOS);
+		set.add(Type.MAP);
+		set.add(Type.PACK);
+		return set;
 	}
 
 	@Override
@@ -112,7 +115,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 			it.next().close();
 			it.remove();
 		}
-		ConnectHelperClient.getInstance().disconnect(getNetworkUUID());
+		ConnectHelperClient.getInstance().disconnect();
 		super.onGuiClosed();
 	}
 
@@ -150,6 +153,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 			mc.displayGuiScreen(null);
 			return;
 		}
+		update(ConnectHelperClient.getInstance().isConnected(), mouseX, mouseY, partialTicks);
 		int d = Mouse.getDWheel();
 		if (d != 0) {
 			if (subscreens.empty()) {

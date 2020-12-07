@@ -9,9 +9,11 @@ import java.util.Stack;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.network.MessageConnectionControllerRequest;
 import com.pinball3d.zone.network.MessageOpenSphinx;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -29,26 +31,20 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
-	private boolean flag;
-	public TEProcessingCenter tileentity;
+	private boolean flag, inited;
+	private WorldPos center;
 
-	public ScreenSphinxOpenPassword(TEProcessingCenter te, boolean flag) {
-		tileentity = te;
+	public ScreenSphinxOpenPassword(WorldPos center, boolean flag) {
 		this.flag = flag;
-	}
-
-	public boolean checkTileentity() {
-		if (tileentity == null) {
-			mc.displayGuiScreen(null);
-			return false;
-		}
-		return true;
+		this.center = center;
 	}
 
 	@Override
 	public void initGui() {
-		if (!checkTileentity()) {
-			return;
+		if (!inited) {
+			NetworkHandler.instance.sendToServer(new MessageConnectionControllerRequest(mc.player, center,
+					Type.NETWORKPOS, Type.ADMINPASSWORD, Type.INITED));
+			inited = true;
 		}
 		applyComponents();
 		Keyboard.enableRepeatEvents(true);
@@ -63,6 +59,7 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 			it.next().close();
 			it.remove();
 		}
+		ConnectHelperClient.getInstance().disconnect();
 		super.onGuiClosed();
 	}
 
@@ -74,18 +71,22 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	}
 
 	private void onConfirm() {
-		if ((input.length() == 8 || input.length() == 0) && tileentity.isCorrectAdminPassword(input)) {
-			if (flag) {
-				NetworkHandler.instance.sendToServer(new MessageOpenSphinx(input,
-						new WorldPos(tileentity.getPos(), tileentity.getWorld()), new NBTTagCompound()));
-				tileentity.open();
-				mc.displayGuiScreen(new ScreenLoadSphinx(tileentity));
+		boolean inited = ConnectHelperClient.getInstance().isInited();
+		String adminPassword = ConnectHelperClient.getInstance().getAdminPassword();
+		if (!adminPassword.isEmpty() || !inited) {
+			if ((input.length() == 8 || input.length() == 0)
+					&& input.equals(ConnectHelperClient.getInstance().getAdminPassword())) {
+				if (flag) {
+					NetworkHandler.instance.sendToServer(new MessageOpenSphinx(input,
+							ConnectHelperClient.getInstance().getNetworkPos(), new NBTTagCompound()));
+					mc.displayGuiScreen(new ScreenLoadSphinx(center));
+				} else {
+					mc.displayGuiScreen(new ScreenSphinxController(center, input));
+				}
 			} else {
-				mc.displayGuiScreen(new ScreenSphinxController(tileentity, input));
+				input = "";
+				incorrect = true;
 			}
-		} else {
-			input = "";
-			incorrect = true;
 		}
 	}
 
@@ -128,9 +129,7 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		if (!checkTileentity()) {
-			return;
-		}
+//		System.out.println(ConnectHelperClient.getInstance().getAdminPassword());
 		int d = Mouse.getDWheel();
 		if (d != 0) {
 			if (subscreens.empty()) {

@@ -1,6 +1,6 @@
 package com.pinball3d.zone.sphinx;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.pinball3d.zone.network.ConnectHelperClient;
@@ -25,12 +25,11 @@ public class ScreenNeedNetwork extends ScreenSphinxBase {
 	}
 
 	@Override
-	public List<Type> getDataTypes() {
-		List<Type> list = super.getDataTypes();
-		list.add(Type.NETWORKUUID);
-		list.add(Type.NETWORKPOS);
-		list.add(Type.NEEDNETWORKVALIDNETWORK);
-		return list;
+	public Set<Type> getDataTypes() {
+		Set<Type> set = super.getDataTypes();
+		set.add(Type.NETWORKUUID);
+		set.add(Type.NEEDNETWORKVALIDNETWORK);
+		return set;
 	}
 
 	@Override
@@ -54,11 +53,6 @@ public class ScreenNeedNetwork extends ScreenSphinxBase {
 	@Override
 	public UUID getNetworkUUID() {
 		return ConnectHelperClient.getInstance().getNetwork();
-	}
-
-	@Override
-	public void resetNetwork() {
-//		tileentity.deleteNetwork(); TODO
 	}
 
 	@Override

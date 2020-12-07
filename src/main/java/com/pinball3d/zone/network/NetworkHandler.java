@@ -52,6 +52,8 @@ public class NetworkHandler {
 		registerMessage(MessageConnectionRequest.Handler.class, MessageConnectionRequest.class, Side.SERVER);
 		registerMessage(MessageConnectionNeedNetworkRequest.Handler.class, MessageConnectionNeedNetworkRequest.class,
 				Side.SERVER);
+		registerMessage(MessageConnectionControllerRequest.Handler.class, MessageConnectionControllerRequest.class,
+				Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

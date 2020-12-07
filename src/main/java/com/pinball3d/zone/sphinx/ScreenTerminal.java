@@ -1,6 +1,6 @@
 package com.pinball3d.zone.sphinx;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.pinball3d.zone.item.ItemLoader;
@@ -19,11 +19,10 @@ public class ScreenTerminal extends ScreenSphinxAdvenced {
 	}
 
 	@Override
-	public List<Type> getDataTypes() {
-		List<Type> list = super.getDataTypes();
-		list.add(Type.PLAYERVALIDNETWORK);
-		list.add(Type.NETWORKPOS);
-		return list;
+	public Set<Type> getDataTypes() {
+		Set<Type> set = super.getDataTypes();
+		set.add(Type.PLAYERVALIDNETWORK);
+		return set;
 	}
 
 	@Override

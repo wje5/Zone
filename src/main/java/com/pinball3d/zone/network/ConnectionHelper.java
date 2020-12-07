@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.pinball3d.zone.ConfigLoader;
+import com.pinball3d.zone.block.BlockControllerMainframe;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.WorldPos;
@@ -19,6 +20,7 @@ import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -59,10 +61,6 @@ public class ConnectionHelper {
 						network, needNetwork, types));
 	}
 
-	public static void disconnect(UUID uuid) {
-		pool.remove(uuid);
-	}
-
 	public static Connect getConnect(UUID uuid) {
 		return pool.get(uuid);
 	}
@@ -71,7 +69,6 @@ public class ConnectionHelper {
 		public final UUID uuid;
 		public UUID network;
 		public WorldPos needNetwork;
-		public String password, adminPassword;
 		public Set<Type> reqDataType;
 		public int mapRefreshColddown, packRefreshColddown;
 
@@ -99,8 +96,8 @@ public class ConnectionHelper {
 	}
 
 	public static enum Type {
-		NETWORKUUID, ITEMS, NETWORKPOS, ISCORRECTPASSWORD, ISCORRECTADMINPASSWORD, PLAYERVALIDNETWORK, MAP, PACK,
-		NEEDNETWORKVALIDNETWORK;
+		NETWORKUUID, ITEMS, NETWORKPOS, PASSWORD, ADMINPASSWORD, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
+		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, INITED;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
 			WorldPos pos = WorldPos.ORIGIN;
@@ -112,7 +109,10 @@ public class ConnectionHelper {
 				te = (TEProcessingCenter) pos.getTileEntity();
 			}
 			if (!connect.needNetwork.isOrigin()) {
-				needNetwork = (INeedNetwork) connect.needNetwork.getTileEntity();
+				TileEntity tileentity = connect.needNetwork.getTileEntity();
+				if (tileentity instanceof INeedNetwork) {
+					needNetwork = (INeedNetwork) tileentity;
+				}
 			}
 			switch (this) {
 			case NETWORKUUID:
@@ -127,11 +127,11 @@ public class ConnectionHelper {
 			case NETWORKPOS:
 				tag.setTag(name(), pos.writeToNBT(new NBTTagCompound()));
 				break;
-			case ISCORRECTPASSWORD:
-				tag.setBoolean(name(), te.isCorrectLoginPassword(connect.password));
+			case PASSWORD:
+				tag.setString(name(), te.getPassword());
 				break;
-			case ISCORRECTADMINPASSWORD:
-				tag.setBoolean(name(), te.isCorrectAdminPassword(connect.adminPassword));
+			case ADMINPASSWORD:
+				tag.setString(name(), te.getAdminPassword());
 				break;
 			case PLAYERVALIDNETWORK:
 				tag.setTag(name(), SphinxUtil.getValidNetworkData(new WorldPos(player), player, true));
@@ -164,6 +164,35 @@ public class ConnectionHelper {
 					}
 				}
 				break;
+			case NETWORKUUIDFROMCONTROLLER:
+				if (!connect.needNetwork.isOrigin()) {
+					WorldPos p = BlockControllerMainframe.getProcessingCenterPos(connect.needNetwork);
+					if (!p.isOrigin()) {
+						tag.setUniqueId(name(), ((TEProcessingCenter) p.getTileEntity()).getUUID());
+					}
+				}
+			case NAME:
+				if (te != null) {
+					tag.setString(name(), te.getName());
+				}
+				break;
+			case LOADTICK:
+				if (te != null) {
+					tag.setInteger(name(), te.getLoadTick());
+				}
+				break;
+			case ON:
+				if (te != null) {
+					tag.setBoolean(name(), te.isOn());
+				}
+			case WORKINGSTATE:
+				if (te != null) {
+					tag.setInteger(name(), te.getWorkingState().ordinal() + 1);
+				}
+			case INITED:
+				if (te != null) {
+					tag.setBoolean(name(), !te.needInit());
+				}
 			}
 		}
 	}

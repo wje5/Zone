@@ -3,6 +3,7 @@ package com.pinball3d.zone.block;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.sphinx.ScreenLoadSphinx;
 import com.pinball3d.zone.sphinx.ScreenSphinxOpenPassword;
+import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.block.Block;
@@ -49,19 +50,29 @@ public class BlockControllerMainframe extends Block {
 		return false;
 	}
 
+	public static WorldPos getProcessingCenterPos(WorldPos pos) {
+		IBlockState state = pos.getBlockState();
+		if (state != null && state.getBlock() == BlockLoader.controller_mainframe) {
+			pos = new WorldPos(pos.getPos().offset(state.getValue(FACING).getOpposite(), 3), pos.getDim());
+			if (pos.getBlockState().getBlock() instanceof BlockProcessingCenter) {
+				return pos;
+			}
+		}
+		return WorldPos.ORIGIN;
+	}
+
 	@SideOnly(Side.CLIENT)
 	public void openScreen(World worldIn, BlockPos pos) {
 		Block block = worldIn.getBlockState(pos).getBlock();
 		Minecraft mc = Minecraft.getMinecraft();
 		TEProcessingCenter te = (TEProcessingCenter) worldIn.getTileEntity(pos);
 		if (block == BlockLoader.processing_center) {
-			mc.displayGuiScreen(new ScreenSphinxOpenPassword((TEProcessingCenter) worldIn.getTileEntity(pos), true));
+			mc.displayGuiScreen(new ScreenSphinxOpenPassword(new WorldPos(pos, worldIn), true));
 		} else {
 			if (te.isLoading()) {
-				mc.displayGuiScreen(new ScreenLoadSphinx((TEProcessingCenter) worldIn.getTileEntity(pos)));
+				mc.displayGuiScreen(new ScreenLoadSphinx(new WorldPos(pos, worldIn)));
 			} else {
-				mc.displayGuiScreen(
-						new ScreenSphinxOpenPassword((TEProcessingCenter) worldIn.getTileEntity(pos), false));
+				mc.displayGuiScreen(new ScreenSphinxOpenPassword(new WorldPos(pos, worldIn), false));
 			}
 		}
 

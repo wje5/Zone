@@ -171,14 +171,14 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 
 	public NBTTagCompound writeNetworkData(NBTTagCompound tag) {
 		if (!worldpos.isOrigin()) {
-			worldpos.writeToNBT(tag);
+			tag.setTag("networkPos", worldpos.writeToNBT(new NBTTagCompound()));
 		}
 		return tag;
 	}
 
 	public void readNetworkData(NBTTagCompound tag) {
-		if (tag.hasKey("worldpos")) {
-			worldpos = new WorldPos(tag);
+		if (tag.hasKey("networkPos")) {
+			worldpos = new WorldPos(tag.getCompoundTag("networkPos"));
 		} else {
 			worldpos = WorldPos.ORIGIN;
 		}

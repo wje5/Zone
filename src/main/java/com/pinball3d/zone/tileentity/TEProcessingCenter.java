@@ -24,7 +24,6 @@ import com.pinball3d.zone.sphinx.LogisticPack.Path;
 import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -39,7 +38,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -89,9 +87,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	@SuppressWarnings("deprecation")
 	public void callUpdate() {
 		markDirty();
-		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
-		world.notifyBlockUpdate(pos, state, state,
-				Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+//		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
+//		world.notifyBlockUpdate(pos, state, state,
+//				Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
 	}
 
 	public void shutdown() {
@@ -112,6 +110,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public boolean isCorrectLoginPassword(String password) {
 		return password.equals(loginPassword);
+	}
+
+	public String getPassword() {
+		return loginPassword;
+	}
+
+	public String getAdminPassword() {
+		return adminPassword;
 	}
 
 	public boolean isLoading() {
@@ -954,6 +960,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			if (consumeEnergy(1)) {
 				loadTick--;
 				if (loadTick == 0) {
+					loadTick = -1;
 					on = true;
 					callUpdate();
 				}

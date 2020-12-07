@@ -1,24 +1,41 @@
 package com.pinball3d.zone.sphinx;
 
+import java.util.Set;
 import java.util.UUID;
 
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
-import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
+import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.network.MessageConnectionControllerRequest;
+import com.pinball3d.zone.network.NetworkHandler;
 
 public class ScreenSphinxController extends ScreenSphinxAdvenced {
-	public TEProcessingCenter tileentity;
+	private WorldPos center;
 
-	public ScreenSphinxController(TEProcessingCenter te, String password) {
+	public ScreenSphinxController(WorldPos center, String password) {
 		this.password = password;
-		tileentity = te;
+		this.center = center;
 	}
 
 	@Override
-	public void initGui() {
-		super.initGui();
-		if (tileentity.needInit() && subscreens.empty()) {
-			subscreens.add(new SubscreenSphinxInitWizard(this));
-		}
+	public void update(boolean online, int mouseX, int mouseY, float partialTicks) {
+		super.update(online, mouseX, mouseY, partialTicks);
+//		if (tileentity.needInit() && subscreens.empty()) {
+//			subscreens.add(new SubscreenSphinxInitWizard(this));
+//		}TODO
+	}
+
+	@Override
+	public void init() {
+		NetworkHandler.instance.sendToServer(
+				new MessageConnectionControllerRequest(mc.player, center, getDataTypes().toArray(new Type[] {})));
+	}
+
+	@Override
+	public Set<Type> getDataTypes() {
+		Set<Type> set = super.getDataTypes();
+		set.add(Type.PLAYERVALIDNETWORK);
+		set.add(Type.NETWORKPOS);
+		return set;
 	}
 
 	@Override
@@ -43,8 +60,9 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 
 	@Override
 	public boolean canOpen() {
-		return tileentity != null && tileentity.getWorkingState() == WorkingState.WORKING
-				|| tileentity.getWorkingState() == WorkingState.UNINIT;
+//		return tileentity != null && tileentity.getWorkingState() == WorkingState.WORKING
+//				|| tileentity.getWorkingState() == WorkingState.UNINIT;TODO
+		return true;
 	}
 
 	@Override
@@ -54,7 +72,7 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 
 	@Override
 	public UUID getNetworkUUID() {
-		return tileentity.getUUID();
+		return ConnectHelperClient.getInstance().getNetworkFromController();
 	}
 
 	@Override
@@ -65,5 +83,10 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 	@Override
 	public String getPassword() {
 		return password;
+	}
+
+	@Override
+	public void draw(int mouseX, int mouseY, float partialTicks) {
+		super.draw(mouseX, mouseY, partialTicks);
 	}
 }

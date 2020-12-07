@@ -1,9 +1,9 @@
 package com.pinball3d.zone.sphinx;
 
+import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageChangeAdminPassword;
 import com.pinball3d.zone.network.MessageChangePassword;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
@@ -31,17 +31,13 @@ public class SubscreenChangePassword extends Subscreen {
 		}));
 		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.confirm"), () -> {
 			if (box1.text.length() == 8 && box1.text.equals(box2.text)) {
-				TEProcessingCenter te = ((ScreenSphinxController) parent).tileentity;
+				WorldPos p = ConnectHelperClient.getInstance().getNetworkPos();
 				if (isChangeAdminPassword) {
-					NetworkHandler.instance.sendToServer(
-							MessageChangeAdminPassword.newMessage(((ScreenSphinxController) parent).password,
-									new WorldPos(te.getPos(), te.getWorld()), box1.text));
-					te.setAdminPassword(box1.text);
+					NetworkHandler.instance.sendToServer(MessageChangeAdminPassword
+							.newMessage(((ScreenSphinxController) parent).password, p, box1.text));
 				} else {
-					NetworkHandler.instance
-							.sendToServer(MessageChangePassword.newMessage(((ScreenSphinxController) parent).password,
-									new WorldPos(te.getPos(), te.getWorld()), box1.text));
-					te.setPassword(box1.text);
+					NetworkHandler.instance.sendToServer(
+							MessageChangePassword.newMessage(((ScreenSphinxController) parent).password, p, box1.text));
 				}
 				parent.quitScreen(SubscreenChangePassword.this);
 				parent.putScreen(new SubscreenSphinxConfig(parent));

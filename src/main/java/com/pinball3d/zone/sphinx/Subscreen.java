@@ -36,6 +36,7 @@ public class Subscreen implements IParent {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
+		update();
 		GlStateManager.pushMatrix();
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
@@ -76,6 +77,10 @@ public class Subscreen implements IParent {
 	}
 
 	public void doRenderBackground(int mouseX, int mouseY) {
+
+	}
+
+	public void update() {
 
 	}
 

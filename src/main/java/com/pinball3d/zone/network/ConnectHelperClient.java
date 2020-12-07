@@ -8,6 +8,7 @@ import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.MapHandler;
 import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.WorldPos;
+import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,12 +19,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ConnectHelperClient {
 	private static ConnectHelperClient instance = new ConnectHelperClient();
-	private UUID network;
-	private StorageWrapper items;
-	private boolean isCorrectPassword, isCorrectAdminPassword;
+	private UUID network, networkFromController;
+	private StorageWrapper items = new StorageWrapper();
+	private String password = "";
+	private String adminPassword = "";
 	private WorldPos networkPos = WorldPos.ORIGIN;
 	private Map<WorldPos, String> playerValidNetworks = new HashMap<WorldPos, String>();
 	private Map<WorldPos, String> needNetworkValidNetworks = new HashMap<WorldPos, String>();
+	private String name = "";
+	private int loadTick;
+	private boolean on, inited;
+	private WorkingState workingState;
 
 	public ConnectHelperClient() {
 
@@ -48,11 +54,11 @@ public class ConnectHelperClient {
 				case NETWORKPOS:
 					networkPos = new WorldPos(data.getCompoundTag(e.name()));
 					break;
-				case ISCORRECTPASSWORD:
-					isCorrectPassword = data.getBoolean(e.name());
+				case PASSWORD:
+					password = data.getString(e.name());
 					break;
-				case ISCORRECTADMINPASSWORD:
-					isCorrectAdminPassword = data.getBoolean(e.name());
+				case ADMINPASSWORD:
+					adminPassword = data.getString(e.name());
 					break;
 				case PLAYERVALIDNETWORK:
 					NBTTagList taglist = data.getTagList(e.name(), 10);
@@ -76,6 +82,29 @@ public class ConnectHelperClient {
 								((NBTTagCompound) i).getString("name"));
 					});
 					break;
+				case NETWORKUUIDFROMCONTROLLER:
+					networkFromController = data.getUniqueId(e.name());
+					if (networkFromController.getMostSignificantBits() == 0
+							&& networkFromController.getLeastSignificantBits() == 0) {
+						networkFromController = null;
+					}
+					break;
+				case NAME:
+					name = data.getString(e.name());
+					break;
+				case LOADTICK:
+					loadTick = data.getInteger(e.name());
+					break;
+				case ON:
+					on = data.getBoolean(e.name());
+					break;
+				case WORKINGSTATE:
+					int ord = data.getInteger(e.name());
+					workingState = ord == 0 ? null : WorkingState.values()[ord];
+					break;
+				case INITED:
+					inited = data.getBoolean(e.name());
+					break;
 				}
 			}
 		}
@@ -84,14 +113,20 @@ public class ConnectHelperClient {
 	public void clear() {
 		items = null;
 		networkPos = WorldPos.ORIGIN;
-		isCorrectPassword = false;
-		isCorrectAdminPassword = false;
+		password = "";
+		adminPassword = "";
 		playerValidNetworks.clear();
 		needNetworkValidNetworks.clear();
+		name = "";
+		loadTick = 0;
+		on = false;
+		workingState = null;
+		inited = false;
 	}
 
-	public void disconnect(UUID network) {
-		NetworkHandler.instance.sendToServer(new MessageConnectionRequest(Minecraft.getMinecraft().player, network));
+	public void disconnect() {
+		NetworkHandler.instance
+				.sendToServer(new MessageConnectionRequest(Minecraft.getMinecraft().player, new UUID(0, 0)));
 		clear();
 	}
 
@@ -119,15 +154,39 @@ public class ConnectHelperClient {
 		return instance;
 	}
 
-	public boolean isCorrectAdminPassword() {
-		return isCorrectAdminPassword;
+	public String getPassword() {
+		return password;
 	}
 
-	public boolean isCorrectPassword() {
-		return isCorrectPassword;
+	public String getAdminPassword() {
+		return adminPassword;
 	}
 
 	public Map<WorldPos, String> getNeedNetworkValidNetworks() {
 		return needNetworkValidNetworks;
+	}
+
+	public UUID getNetworkFromController() {
+		return networkFromController;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getLoadTick() {
+		return loadTick;
+	}
+
+	public boolean isOn() {
+		return on;
+	}
+
+	public WorkingState getWorkingState() {
+		return workingState;
+	}
+
+	public boolean isInited() {
+		return inited;
 	}
 }
