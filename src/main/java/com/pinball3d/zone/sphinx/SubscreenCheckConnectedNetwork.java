@@ -18,9 +18,10 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 	}
 
 	public SubscreenCheckConnectedNetwork(IParent parent, WorldPos pos, String name, int x, int y) {
-		super(parent, x + 165 + parent.getXOffset() > displayWidth ? displayWidth - 165 - parent.getXOffset() : x,
-				y + 35 + parent.getYOffset() > displayHeight ? displayHeight - 35 - parent.getYOffset() : y, 165, 35,
-				false);
+		super(parent,
+				x + 165 + parent.getXOffset() > getDisplayWidth() ? getDisplayWidth() - 165 - parent.getXOffset() : x,
+				y + 35 + parent.getYOffset() > getDisplayHeight() ? getDisplayHeight() - 35 - parent.getYOffset() : y,
+				165, 35, false);
 		this.pos = pos;
 		this.name = name;
 		components.add(new HyperTextButton(this, this.x + 35, this.y + 24, I18n.format("sphinx.info"), () -> {

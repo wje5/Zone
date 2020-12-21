@@ -2,7 +2,6 @@ package com.pinball3d.zone.sphinx;
 
 import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.lwjgl.input.Keyboard;
 
@@ -21,7 +20,6 @@ import net.minecraft.util.ResourceLocation;
 public class SubscreenViewStorage extends Subscreen {
 	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
-	public String search = "";
 	public int page = 1, maxPage = 1;
 	private TextInputBox box;
 
@@ -36,7 +34,7 @@ public class SubscreenViewStorage extends Subscreen {
 		}).setIsPixel(true));
 		components
 				.add(new TexturedButton(this, getXOffset() + 87, getYOffset() + 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
-					search = box.text;
+					box.isFocus = false;// TODO
 				}));
 		components.add(new TexturedButton(this, this.x + 120, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, () -> {
 			page = page - 1 < 1 ? maxPage : page - 1;
@@ -123,81 +121,26 @@ public class SubscreenViewStorage extends Subscreen {
 		return -1;
 	}
 
-	public void updateGlobalStorges() {
-		ConnectHelperClient instance = ConnectHelperClient.getInstance();
-		if (!instance.hasData()) {
-			return;
+	public StorageWrapper getItems() {
+		StorageWrapper s;
+		if (!ConnectHelperClient.getInstance().hasData()) {
+			s = new StorageWrapper();
+		} else {
+			s = Util.search(ConnectHelperClient.getInstance().getItems(), box.text);
 		}
-		int size = 0;
-		StorageWrapper data = instance.getItems();
-		Iterator<HugeItemStack> it = data.storges.iterator();
-		while (it.hasNext()) {
-			HugeItemStack hugestack = it.next();
-			if (hugestack.stack.getItem().getRegistryName().getResourcePath().contains(search)
-					|| hugestack.stack.getDisplayName().contains(search)) {
-				size++;
-			}
-		}
-		Iterator<ItemStack> it2 = data.other.iterator();
-		while (it2.hasNext()) {
-			ItemStack stack = it2.next();
-			if (stack.getItem().getRegistryName().getResourcePath().contains(search)
-					|| stack.getDisplayName().contains(search)) {
-				size++;
-			}
-		}
-		maxPage = (size - 1) / 91 + 1;
+		maxPage = (s.getSize() - 1) / 63 + 1;
 		if (page > maxPage) {
 			page = maxPage;
 		}
 		if (page < 1) {
 			page = 1;
 		}
-	}
-
-	public StorageWrapper getItems() {
-		if (!ConnectHelperClient.getInstance().hasData()) {
-			return new StorageWrapper();
-		}
-		StorageWrapper data = ConnectHelperClient.getInstance().getItems();
-		Set<HugeItemStack> storges = data.storges;
-		if (!search.isEmpty()) {
-			storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);
-			Iterator<HugeItemStack> it = data.storges.iterator();
-			while (it.hasNext()) {
-				HugeItemStack hugestack = it.next();
-				if (hugestack.stack.getItem().getRegistryName().getResourcePath().contains(search)
-						|| hugestack.stack.getDisplayName().contains(search)) {
-					storges.add(hugestack);
-				}
-			}
-		}
-		Set<ItemStack> other = data.other;
-		if (!search.isEmpty()) {
-			other = new TreeSet<ItemStack>(StorageWrapper.stackComparator);
-			Iterator<ItemStack> it2 = data.other.iterator();
-			while (it2.hasNext()) {
-				ItemStack stack = it2.next();
-				if (stack.getItem().getRegistryName().getResourcePath().contains(search)
-						|| stack.getDisplayName().contains(search)) {
-					other.add(stack);
-				}
-			}
-		}
-		StorageWrapper r = new StorageWrapper();
-		storges.forEach(e -> {
-			r.merge(e.copy());
-		});
-		other.forEach(e -> {
-			r.merge(e.copy());
-		});
-		return r;
+		return s;
 	}
 
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		updateGlobalStorges();
 		Util.drawTexture(TEXTURE, x, y, 0, 0, 80, 80, 0.5F);
 		Util.drawTexture(TEXTURE, x + 260, y, 80, 0, 80, 80, 0.5F);
 		Util.drawTexture(TEXTURE, x, y + 160, 0, 80, 80, 80, 0.5F);
@@ -283,7 +226,6 @@ public class SubscreenViewStorage extends Subscreen {
 				flag = c.onKeyTyped(typedChar, keyCode);
 			}
 			if (keyCode == Keyboard.KEY_RETURN && box.isFocus) {
-				search = box.text;
 				box.isFocus = false;
 			}
 		} else {

@@ -9,6 +9,7 @@ import java.util.Stack;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.network.MessageIOPanelPageChange;
 import com.pinball3d.zone.network.MessageIOPanelSearchChange;
 import com.pinball3d.zone.network.MessageIOPanelSendItemToStorage;
@@ -178,7 +179,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 
 	@Override
 	public void updateScreen() {
-		if (Minecraft.getMinecraft().world.getTotalWorldTime() % 10 == 0) {
+		if (Minecraft.getMinecraft().world.getTotalWorldTime() % ConfigLoader.itemUpdateRate == 0) {
 			NetworkHandler.instance.sendToServer(new MessageUpdateIOPanelGui(Minecraft.getMinecraft().player));
 		}
 		super.updateScreen();

@@ -29,9 +29,10 @@ public class SubscreenIOPanelRequest extends Subscreen {
 	}
 
 	public SubscreenIOPanelRequest(IParent parent, int x, int y, ItemStack stack, int amount) {
-		super(parent, x + 140 + parent.getXOffset() > displayWidth ? displayWidth - 140 - parent.getXOffset() : x,
-				y + 56 + parent.getYOffset() > displayHeight ? displayHeight - 56 - parent.getYOffset() : y, 140, 56,
-				false);
+		super(parent,
+				x + 140 + parent.getXOffset() > getDisplayWidth() ? getDisplayWidth() - 140 - parent.getXOffset() : x,
+				y + 56 + parent.getYOffset() > getDisplayHeight() ? getDisplayHeight() - 56 - parent.getYOffset() : y,
+				140, 56, false);
 		this.stack = stack;
 		this.amount = amount;
 		components.add(box = new TextInputBox(parent, this.x + 70, this.y + 4, 60, 13, 9, null, 4).setOnInput(() -> {

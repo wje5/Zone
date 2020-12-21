@@ -1,6 +1,8 @@
 package com.pinball3d.zone.sphinx;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -311,29 +313,43 @@ public class Util {
 	}
 
 	public static StorageWrapper search(StorageWrapper wrapper, String search) {
-		Set<HugeItemStack> storges = wrapper.storges;
-		if (!search.isEmpty()) {
-			storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);
-			Iterator<HugeItemStack> it = wrapper.storges.iterator();
-			while (it.hasNext()) {
-				HugeItemStack hugestack = it.next();
-				if (hugestack.stack.getItem().getRegistryName().getResourcePath().contains(search)
-						|| hugestack.stack.getDisplayName().contains(search)) {
-					storges.add(hugestack);
-				}
-			}
+		if (search.isEmpty()) {
+			return wrapper.copy();
 		}
-		Set<ItemStack> other = wrapper.other;
-		if (!search.isEmpty()) {
-			other = new TreeSet<ItemStack>(StorageWrapper.stackComparator);
-			Iterator<ItemStack> it2 = wrapper.other.iterator();
-			while (it2.hasNext()) {
-				ItemStack stack = it2.next();
-				if (stack.getItem().getRegistryName().getResourcePath().contains(search)
-						|| stack.getDisplayName().contains(search)) {
-					other.add(stack);
+		search = search.toLowerCase();
+		List<String[]> l = new ArrayList<String[]>();
+		for (String s : search.split("\\s+")) {
+			l.add(s.split("\\|+"));
+		}
+		Set<HugeItemStack> storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);
+		Iterator<HugeItemStack> it = wrapper.storges.iterator();
+		tag2: while (it.hasNext()) {
+			HugeItemStack hugestack = it.next();
+			String name = hugestack.stack.getDisplayName().toLowerCase();
+			tag: for (String[] e : l) {
+				for (String s : e) {
+					if (name.contains(s)) {
+						continue tag;
+					}
 				}
+				continue tag2;
 			}
+			storges.add(hugestack);
+		}
+		Set<ItemStack> other = new TreeSet<ItemStack>(StorageWrapper.stackComparator);
+		Iterator<ItemStack> it2 = wrapper.other.iterator();
+		tag4: while (it2.hasNext()) {
+			ItemStack stack = it2.next();
+			String name = stack.getDisplayName().toLowerCase();
+			tag3: for (String[] e : l) {
+				for (String s : e) {
+					if (name.contains(s)) {
+						continue tag3;
+					}
+				}
+				continue tag4;
+			}
+			other.add(stack);
 		}
 		StorageWrapper r = new StorageWrapper();
 		storges.forEach(e -> {

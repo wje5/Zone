@@ -3,7 +3,6 @@ package com.pinball3d.zone.inventory;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.lwjgl.input.Keyboard;
 
@@ -12,6 +11,7 @@ import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.StorageWrapper;
 import com.pinball3d.zone.sphinx.SubscreenIOPanelRequest;
+import com.pinball3d.zone.sphinx.Util;
 import com.pinball3d.zone.tileentity.TEIOPanel;
 
 import net.minecraft.client.Minecraft;
@@ -111,19 +111,8 @@ public class ContainerIOPanel extends Container {
 		}
 		int index = 0;
 		int offset = (page - 1) * 36;
-		Set<HugeItemStack> storges = data.storges;
-		if (!search.isEmpty()) {
-			storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);
-			Iterator<HugeItemStack> it = data.storges.iterator();
-			while (it.hasNext()) {
-				HugeItemStack hugestack = it.next();
-				if (hugestack.stack.getItem().getRegistryName().getResourcePath().contains(search)
-						|| hugestack.stack.getDisplayName().contains(search)) {
-					storges.add(hugestack);
-				}
-			}
-		}
-		Iterator<HugeItemStack> it = storges.iterator();
+		StorageWrapper s = Util.search(data, search);
+		Iterator<HugeItemStack> it = s.storges.iterator();
 		while (it.hasNext()) {
 			if (offset > 0) {
 				offset--;
@@ -137,19 +126,7 @@ public class ContainerIOPanel extends Container {
 			}
 			index++;
 		}
-		Set<ItemStack> other = data.other;
-		if (!search.isEmpty()) {
-			other = new TreeSet<ItemStack>(StorageWrapper.stackComparator);
-			Iterator<ItemStack> it2 = data.other.iterator();
-			while (it2.hasNext()) {
-				ItemStack stack = it2.next();
-				if (stack.getItem().getRegistryName().getResourcePath().contains(search)
-						|| stack.getDisplayName().contains(search)) {
-					other.add(stack);
-				}
-			}
-		}
-		Iterator<ItemStack> it2 = other.iterator();
+		Iterator<ItemStack> it2 = s.other.iterator();
 		while (it2.hasNext()) {
 			if (offset > 0) {
 				offset--;
@@ -163,7 +140,7 @@ public class ContainerIOPanel extends Container {
 			}
 			index++;
 		}
-		maxPage = (storges.size() + other.size() - 1) / 36 + 1;
+		maxPage = (s.getSize() - 1) / 36 + 1;
 		if (page > maxPage) {
 			page = maxPage;
 		}
@@ -178,19 +155,7 @@ public class ContainerIOPanel extends Container {
 			list[i] = 1;
 		}
 		int offset = (page - 1) * 36;
-		Set<HugeItemStack> storges = data.storges;
-		if (!search.isEmpty()) {
-			storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);
-			Iterator<HugeItemStack> it = data.storges.iterator();
-			while (it.hasNext()) {
-				HugeItemStack hugestack = it.next();
-				if (hugestack.stack.getItem().getRegistryName().getResourcePath().contains(search)
-						|| hugestack.stack.getDisplayName().contains(search)) {
-					storges.add(hugestack);
-				}
-			}
-		}
-
+		Set<HugeItemStack> storges = Util.search(data, search).storges;
 		Iterator<HugeItemStack> it = storges.iterator();
 		int i = 0;
 		while (it.hasNext()) {

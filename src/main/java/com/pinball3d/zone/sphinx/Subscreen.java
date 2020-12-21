@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
+import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 
 import net.minecraft.client.Minecraft;
@@ -14,8 +15,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
 public class Subscreen implements IParent {
-	public static int displayWidth = Minecraft.getMinecraft().displayWidth / 2;
-	public static int displayHeight = Minecraft.getMinecraft().displayHeight / 2;
 	public static Minecraft mc = Minecraft.getMinecraft();
 	public boolean renderCover;
 	public int width, height;
@@ -32,9 +31,15 @@ public class Subscreen implements IParent {
 		this.y = y + parent.getYOffset();
 		this.width = width;
 		this.height = height;
-		this.x = this.x + width > displayWidth / 2 ? displayWidth / 2 - width : this.x;
-		this.y = this.y + height > displayHeight / 2 ? displayHeight / 2 - height : this.y;
 		renderCover = rendercover;
+	}
+
+	public static int getDisplayWidth() {
+		return Minecraft.getMinecraft().displayWidth / 2;
+	}
+
+	public static int getDisplayHeight() {
+		return Minecraft.getMinecraft().displayHeight / 2;
 	}
 
 	public void doRender(int mouseX, int mouseY) {
@@ -48,6 +53,7 @@ public class Subscreen implements IParent {
 			Minecraft mc = Minecraft.getMinecraft();
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0x8F000000);
 		}
+		System.out.println(ConnectHelperClient.getInstance().hasData());
 		doRenderBackground(mouseX, mouseY);
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();

@@ -22,7 +22,6 @@ public class SubscreenManageClassify extends Subscreen {
 	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	public StorageWrapper data = new StorageWrapper();
-	public String search = "";
 	public int page = 1, maxPage = 1;
 	private TextInputBox box;
 	private ScrollingEdgeList list;
@@ -39,7 +38,7 @@ public class SubscreenManageClassify extends Subscreen {
 			box.isFocus = true;
 		}).setIsPixel(true));
 		components.add(new TexturedButton(this, this.x + 142, this.y + 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
-			search = box.text;
+			box.isFocus = false;// TODO
 		}));
 		components.add(new TexturedButton(this, this.x + 175, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, () -> {
 			page = page - 1 < 1 ? maxPage : page - 1;
@@ -177,15 +176,15 @@ public class SubscreenManageClassify extends Subscreen {
 	}
 
 	public StorageWrapper getItems() {
-		StorageWrapper r = Util.search(Util.getItemList(), search);
-		maxPage = (r.getSize() - 1) / 63 + 1;
+		StorageWrapper s = Util.search(Util.getItemList(), box.text);
+		maxPage = (s.getSize() - 1) / 63 + 1;
 		if (page > maxPage) {
 			page = maxPage;
 		}
 		if (page < 1) {
 			page = 1;
 		}
-		return r;
+		return s;
 	}
 
 	@Override
@@ -272,7 +271,6 @@ public class SubscreenManageClassify extends Subscreen {
 				flag = c.onKeyTyped(typedChar, keyCode);
 			}
 			if (keyCode == Keyboard.KEY_RETURN && box.isFocus) {
-				search = box.text;
 				box.isFocus = false;
 			}
 		} else {

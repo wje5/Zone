@@ -22,9 +22,10 @@ public class SubscreenConnectToNetwork extends Subscreen {
 	}
 
 	public SubscreenConnectToNetwork(IParent parent, WorldPos pos, WorldPos network, String name, int x, int y) {
-		super(parent, x + 165 + parent.getXOffset() > displayWidth ? displayWidth - 165 - parent.getXOffset() : x,
-				y + 35 + parent.getYOffset() > displayHeight ? displayHeight - 35 - parent.getYOffset() : y, 165, 35,
-				false);
+		super(parent,
+				x + 165 + parent.getXOffset() > getDisplayWidth() ? getDisplayWidth() - 165 - parent.getXOffset() : x,
+				y + 35 + parent.getYOffset() > getDisplayHeight() ? getDisplayHeight() - 35 - parent.getYOffset() : y,
+				165, 35, false);
 		this.pos = pos;
 		this.network = network;
 		this.name = name;
