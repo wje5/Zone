@@ -6,6 +6,9 @@ import java.util.TreeSet;
 
 import org.lwjgl.input.Keyboard;
 
+import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.ConnectionHelper.Type;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,8 +21,6 @@ import net.minecraft.util.ResourceLocation;
 public class SubscreenViewStorage extends Subscreen {
 	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
-	public StorageWrapper data = new StorageWrapper();
-	public int usedStorage, maxStorage;
 	public String search = "";
 	public int page = 1, maxPage = 1;
 	private TextInputBox box;
@@ -70,6 +71,15 @@ public class SubscreenViewStorage extends Subscreen {
 	}
 
 	@Override
+	public Set<Type> getDataTypes() {
+		Set<Type> s = super.getDataTypes();
+		s.add(Type.ITEMS);
+		s.add(Type.USEDSTORAGE);
+		s.add(Type.MAXSTORAGE);
+		return s;
+	}
+
+	@Override
 	public void doRenderForeground(int mouseX, int mouseY) {
 		super.doRenderForeground(mouseX, mouseY);
 		if (!subscreens.empty()) {
@@ -113,15 +123,13 @@ public class SubscreenViewStorage extends Subscreen {
 		return -1;
 	}
 
-	public void setData(StorageWrapper data, int used, int max) {
-		this.data = data;
-		this.usedStorage = used;
-		this.maxStorage = max;
-		updateGlobalStorges();
-	}
-
 	public void updateGlobalStorges() {
+		ConnectHelperClient instance = ConnectHelperClient.getInstance();
+		if (!instance.hasData()) {
+			return;
+		}
 		int size = 0;
+		StorageWrapper data = instance.getItems();
 		Iterator<HugeItemStack> it = data.storges.iterator();
 		while (it.hasNext()) {
 			HugeItemStack hugestack = it.next();
@@ -148,6 +156,10 @@ public class SubscreenViewStorage extends Subscreen {
 	}
 
 	public StorageWrapper getItems() {
+		if (!ConnectHelperClient.getInstance().hasData()) {
+			return new StorageWrapper();
+		}
+		StorageWrapper data = ConnectHelperClient.getInstance().getItems();
 		Set<HugeItemStack> storges = data.storges;
 		if (!search.isEmpty()) {
 			storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);
@@ -185,7 +197,7 @@ public class SubscreenViewStorage extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-//		NetworkHandler.instance.sendToServer(new MessageRequestStorage(Minecraft.getMinecraft().player, network));TODO
+		updateGlobalStorges();
 		Util.drawTexture(TEXTURE, x, y, 0, 0, 80, 80, 0.5F);
 		Util.drawTexture(TEXTURE, x + 260, y, 80, 0, 80, 80, 0.5F);
 		Util.drawTexture(TEXTURE, x, y + 160, 0, 80, 80, 80, 0.5F);
@@ -216,6 +228,8 @@ public class SubscreenViewStorage extends Subscreen {
 		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
 		String text = page + "/" + maxPage;
 		fr.drawString(text, x + 150 - fr.getStringWidth(text) / 2, y + 181, 0xFF1ECCDE);
+		int usedStorage = ConnectHelperClient.getInstance().getUsedStorage();
+		int maxStorage = ConnectHelperClient.getInstance().getMaxStorage();
 		text = I18n.format("sphinx.storage_space") + ": " + usedStorage + "/" + maxStorage;
 		fr.drawString(text, x + 175, y + 30, 0xFF1ECCDE);
 		GlStateManager.enableLighting();

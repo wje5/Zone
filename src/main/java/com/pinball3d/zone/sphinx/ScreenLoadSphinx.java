@@ -2,8 +2,6 @@ package com.pinball3d.zone.sphinx;
 
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.network.MessageConnectionControllerRequest;
-import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 
 import net.minecraft.client.gui.Gui;
@@ -23,8 +21,9 @@ public class ScreenLoadSphinx extends GuiScreen {
 	public void initGui() {
 		super.initGui();
 		if (!inited) {
-			NetworkHandler.instance.sendToServer(new MessageConnectionControllerRequest(mc.player, center,
-					Type.NETWORKPOS, Type.WORKINGSTATE, Type.ON));
+			ConnectHelperClient.getInstance().requestController(center, Type.NETWORKPOS, Type.WORKINGSTATE, Type.ON
+//					,Type.INITED
+			);
 			inited = true;
 		}
 	}
@@ -43,10 +42,11 @@ public class ScreenLoadSphinx extends GuiScreen {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		WorkingState state = ConnectHelperClient.getInstance().getWorkingState();
-		if (state != null && state != WorkingState.STARTING) {
+		System.out.println(ConnectHelperClient.getInstance().hasData());
+		if (ConnectHelperClient.getInstance().hasData() && state != WorkingState.STARTING) {
 			if (ConnectHelperClient.getInstance().isOn()) {
 				if (ConnectHelperClient.getInstance().isInited()) {
-					mc.displayGuiScreen(new ScreenSphinxOpenPassword(center, false));
+					mc.displayGuiScreen(new ScreenSphinxOpenPassword(center));
 				} else {
 					mc.displayGuiScreen(new ScreenSphinxController(center, ""));
 				}

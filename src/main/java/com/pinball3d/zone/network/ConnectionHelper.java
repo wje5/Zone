@@ -70,7 +70,7 @@ public class ConnectionHelper {
 		public UUID network;
 		public WorldPos needNetwork;
 		public Set<Type> reqDataType;
-		public int mapRefreshColddown, packRefreshColddown;
+		public int mapRefreshColddown, packRefreshColddown, itemRefreshColddown;
 
 		public Connect(EntityPlayer player, UUID network, WorldPos needNetwork, Type... types) {
 			uuid = player.getUniqueID();
@@ -91,13 +91,14 @@ public class ConnectionHelper {
 			reqDataType.forEach(e -> {
 				e.writeToNBT(data, player, this);
 			});
-			NetworkHandler.instance.sendTo(new MessageConnectionUpdate(network, data), player);
+			NetworkHandler.instance
+					.sendTo(new MessageConnectionUpdate(network, data, reqDataType.toArray(new Type[] {})), player);
 		}
 	}
 
 	public static enum Type {
 		NETWORKUUID, ITEMS, NETWORKPOS, PASSWORD, ADMINPASSWORD, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
-		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, INITED;
+		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, INITED, USEDSTORAGE, MAXSTORAGE;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
 			WorldPos pos = WorldPos.ORIGIN;
@@ -122,23 +123,33 @@ public class ConnectionHelper {
 								: new UUID(0, 0));
 				break;
 			case ITEMS:
-				tag.setTag(name(), te.getNetworkUseableItems().writeToNBT(new NBTTagCompound()));
+				if (te != null) {
+					if (connect.itemRefreshColddown <= 0) {
+						tag.setTag(name(), te.getNetworkUseableItems().writeToNBT(new NBTTagCompound()));
+						connect.itemRefreshColddown += ConfigLoader.itemUpdateRate;
+					}
+					connect.itemRefreshColddown--;
+				}
 				break;
 			case NETWORKPOS:
 				tag.setTag(name(), pos.writeToNBT(new NBTTagCompound()));
 				break;
 			case PASSWORD:
-				tag.setString(name(), te.getPassword());
+				if (te != null) {
+					tag.setString(name(), te.getPassword());
+				}
 				break;
 			case ADMINPASSWORD:
-				tag.setString(name(), te.getAdminPassword());
+				if (te != null) {
+					tag.setString(name(), te.getAdminPassword());
+				}
 				break;
 			case PLAYERVALIDNETWORK:
 				tag.setTag(name(), SphinxUtil.getValidNetworkData(new WorldPos(player), player, true));
 				break;
 			case MAP:
 				if (te != null) {
-					if (connect.mapRefreshColddown < 0) {
+					if (connect.mapRefreshColddown <= 0) {
 						tag.setTag(name(), te.genMapData(player, new NBTTagCompound()));
 						connect.mapRefreshColddown += ConfigLoader.mapUpdateRate;
 					}
@@ -147,7 +158,7 @@ public class ConnectionHelper {
 				break;
 			case PACK:
 				if (te != null) {
-					if (connect.packRefreshColddown < 0) {
+					if (connect.packRefreshColddown <= 0) {
 						tag.setTag(name(), te.genPackData(player, new NBTTagCompound()));
 						connect.packRefreshColddown += ConfigLoader.packUpdateRate;
 					}
@@ -185,14 +196,27 @@ public class ConnectionHelper {
 				if (te != null) {
 					tag.setBoolean(name(), te.isOn());
 				}
+				break;
 			case WORKINGSTATE:
 				if (te != null) {
 					tag.setInteger(name(), te.getWorkingState().ordinal() + 1);
 				}
+				break;
 			case INITED:
 				if (te != null) {
 					tag.setBoolean(name(), !te.needInit());
 				}
+				break;
+			case USEDSTORAGE:
+				if (te != null) {
+					tag.setInteger(name(), te.getUsedStorage());
+				}
+				break;
+			case MAXSTORAGE:
+				if (te != null) {
+					tag.setInteger(name(), te.getMaxStorage());
+				}
+				break;
 			}
 		}
 	}

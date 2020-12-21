@@ -1,9 +1,12 @@
 package com.pinball3d.zone.network;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
+import com.google.common.collect.Sets;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.MapHandler;
 import com.pinball3d.zone.sphinx.StorageWrapper;
@@ -11,6 +14,7 @@ import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,6 +23,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ConnectHelperClient {
 	private static ConnectHelperClient instance = new ConnectHelperClient();
+	private Set<Type> types = new HashSet<Type>();
+	private boolean hasData;
 	private UUID network, networkFromController;
 	private StorageWrapper items = new StorageWrapper();
 	private String password = "";
@@ -27,7 +33,7 @@ public class ConnectHelperClient {
 	private Map<WorldPos, String> playerValidNetworks = new HashMap<WorldPos, String>();
 	private Map<WorldPos, String> needNetworkValidNetworks = new HashMap<WorldPos, String>();
 	private String name = "";
-	private int loadTick;
+	private int loadTick, usedStorage, maxStorage;
 	private boolean on, inited;
 	private WorkingState workingState;
 
@@ -35,7 +41,10 @@ public class ConnectHelperClient {
 
 	}
 
-	public void setData(UUID network, NBTTagCompound data) {
+	public void setData(UUID network, NBTTagCompound data, Set<Type> types) {
+		if (!this.types.equals(types)) {
+			return;
+		}
 		clear();
 		this.network = network;
 		for (Type e : Type.values()) {
@@ -48,8 +57,10 @@ public class ConnectHelperClient {
 					}
 					break;
 				case ITEMS:
-					NBTTagCompound tag = data.getCompoundTag(e.name());
-					items = new StorageWrapper(tag);
+					if (data.hasKey(e.name())) {
+						NBTTagCompound tag = data.getCompoundTag(e.name());
+						items = new StorageWrapper(tag);
+					}
 					break;
 				case NETWORKPOS:
 					networkPos = new WorldPos(data.getCompoundTag(e.name()));
@@ -68,7 +79,7 @@ public class ConnectHelperClient {
 					});
 					break;
 				case MAP:
-					tag = data.getCompoundTag(e.name());
+					NBTTagCompound tag = data.getCompoundTag(e.name());
 					MapHandler.setData(networkPos, tag.getCompoundTag("units"), tag.getIntArray("lines"));
 					break;
 				case PACK:
@@ -100,18 +111,24 @@ public class ConnectHelperClient {
 					break;
 				case WORKINGSTATE:
 					int ord = data.getInteger(e.name());
-					workingState = ord == 0 ? null : WorkingState.values()[ord];
+					workingState = ord == 0 ? null : WorkingState.values()[ord - 1];
 					break;
 				case INITED:
 					inited = data.getBoolean(e.name());
 					break;
+				case USEDSTORAGE:
+					usedStorage = data.getInteger(e.name());
+					break;
+				case MAXSTORAGE:
+					maxStorage = data.getInteger(e.name());
+					break;
 				}
 			}
 		}
+		hasData = true;
 	}
 
 	public void clear() {
-		items = null;
 		networkPos = WorldPos.ORIGIN;
 		password = "";
 		adminPassword = "";
@@ -122,12 +139,55 @@ public class ConnectHelperClient {
 		on = false;
 		workingState = null;
 		inited = false;
+		usedStorage = 0;
+		maxStorage = 0;
+	}
+
+	public void clearHuges() {
+		items = null;
+		MapHandler.clear();
 	}
 
 	public void disconnect() {
-		NetworkHandler.instance
-				.sendToServer(new MessageConnectionRequest(Minecraft.getMinecraft().player, new UUID(0, 0)));
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		if (player != null) {
+			NetworkHandler.instance.sendToServer(new MessageConnectionRequest(player, new UUID(0, 0)));
+		}
 		clear();
+		clearHuges();
+		this.types.clear();
+		hasData = false;
+	}
+
+	public void request(UUID network, Type... types) {
+		NetworkHandler.instance
+				.sendToServer(new MessageConnectionRequest(Minecraft.getMinecraft().player, network, types));
+		clear();
+		clearHuges();
+		this.types = Sets.newHashSet(types);
+		hasData = false;
+	}
+
+	public void requestController(WorldPos center, Type... types) {
+		NetworkHandler.instance
+				.sendToServer(new MessageConnectionControllerRequest(Minecraft.getMinecraft().player, center, types));
+		clear();
+		clearHuges();
+		this.types = Sets.newHashSet(types);
+		hasData = false;
+	}
+
+	public void requestNeedNetwork(WorldPos needNetwork, Type... types) {
+		NetworkHandler.instance.sendToServer(
+				new MessageConnectionNeedNetworkRequest(Minecraft.getMinecraft().player, needNetwork, types));
+		clear();
+		clearHuges();
+		this.types = Sets.newHashSet(types);
+		hasData = false;
+	}
+
+	public boolean hasData() {
+		return hasData;
 	}
 
 	public boolean isConnected() {
@@ -188,5 +248,13 @@ public class ConnectHelperClient {
 
 	public boolean isInited() {
 		return inited;
+	}
+
+	public int getUsedStorage() {
+		return usedStorage;
+	}
+
+	public int getMaxStorage() {
+		return maxStorage;
 	}
 }

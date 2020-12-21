@@ -101,6 +101,9 @@ public class WorldPos {
 	}
 
 	public void readFromNBT(NBTTagCompound tag) {
+		if (tag.hasKey("worldpos")) {
+			tag = tag.getCompoundTag("worldpos");
+		}
 		pos = new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z"));
 		dim = tag.getInteger("dim");
 	}

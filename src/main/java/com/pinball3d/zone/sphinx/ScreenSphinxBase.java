@@ -14,8 +14,6 @@ import org.lwjgl.input.Mouse;
 
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.network.MessageConnectionRequest;
-import com.pinball3d.zone.network.NetworkHandler;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -35,7 +33,6 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 	public static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");
 	protected Set<Component> components = new HashSet<Component>();
-	public WorldPos worldpos = WorldPos.ORIGIN;
 	public boolean flag;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	public boolean inited;
@@ -73,8 +70,11 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 	}
 
 	public void init() {
-		NetworkHandler.instance.sendToServer(
-				new MessageConnectionRequest(mc.player, getNetworkUUID(), getDataTypes().toArray(new Type[] {})));
+		sendReq();
+	}
+
+	public void sendReq() {
+		ConnectHelperClient.getInstance().request(getNetworkUUID(), getDataTypes().toArray(new Type[] {}));
 	}
 
 	public Set<Type> getDataTypes() {
@@ -82,6 +82,9 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 		set.add(Type.NETWORKPOS);
 		set.add(Type.MAP);
 		set.add(Type.PACK);
+		subscreens.forEach(e -> {
+			set.addAll(e.getDataTypes());
+		});
 		return set;
 	}
 
@@ -153,7 +156,7 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 			mc.displayGuiScreen(null);
 			return;
 		}
-		update(ConnectHelperClient.getInstance().isConnected(), mouseX, mouseY, partialTicks);
+		update(isConnected(), mouseX, mouseY, partialTicks);
 		int d = Mouse.getDWheel();
 		if (d != 0) {
 			if (subscreens.empty()) {
@@ -178,8 +181,8 @@ public abstract class ScreenSphinxBase extends GuiScreen implements IParent {
 				screen.onMouseScrollScreen(mouseX, mouseY, d < 0);
 			}
 		}
-		preDraw(ConnectHelperClient.getInstance().isConnected(), mouseX, mouseY, partialTicks);
-		if (ConnectHelperClient.getInstance().isConnected()) {
+		preDraw(isConnected(), mouseX, mouseY, partialTicks);
+		if (isConnected()) {
 			if (subscreens.isEmpty()) {
 				dragMap(mouseX, mouseY, partialTicks);
 			}

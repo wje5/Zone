@@ -11,7 +11,6 @@ import org.lwjgl.input.Mouse;
 
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.network.MessageConnectionControllerRequest;
 import com.pinball3d.zone.network.MessageOpenSphinx;
 import com.pinball3d.zone.network.NetworkHandler;
 
@@ -31,19 +30,18 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
 	private int lastMouseX, lastMouseY;
 	private int clickX, clickY;
-	private boolean flag, inited;
+	private boolean inited;
 	private WorldPos center;
 
-	public ScreenSphinxOpenPassword(WorldPos center, boolean flag) {
-		this.flag = flag;
+	public ScreenSphinxOpenPassword(WorldPos center) {
 		this.center = center;
 	}
 
 	@Override
 	public void initGui() {
 		if (!inited) {
-			NetworkHandler.instance.sendToServer(new MessageConnectionControllerRequest(mc.player, center,
-					Type.NETWORKPOS, Type.ADMINPASSWORD, Type.INITED));
+			ConnectHelperClient.getInstance().requestController(center, Type.NETWORKPOS, Type.ADMINPASSWORD,
+					Type.INITED, Type.ON);
 			inited = true;
 		}
 		applyComponents();
@@ -71,12 +69,15 @@ public class ScreenSphinxOpenPassword extends GuiScreen implements IParent {
 	}
 
 	private void onConfirm() {
+		if (!ConnectHelperClient.getInstance().hasData()) {
+			return;
+		}
 		boolean inited = ConnectHelperClient.getInstance().isInited();
 		String adminPassword = ConnectHelperClient.getInstance().getAdminPassword();
 		if (!adminPassword.isEmpty() || !inited) {
 			if ((input.length() == 8 || input.length() == 0)
 					&& input.equals(ConnectHelperClient.getInstance().getAdminPassword())) {
-				if (flag) {
+				if (!ConnectHelperClient.getInstance().isOn()) {
 					NetworkHandler.instance.sendToServer(new MessageOpenSphinx(input,
 							ConnectHelperClient.getInstance().getNetworkPos(), new NBTTagCompound()));
 					mc.displayGuiScreen(new ScreenLoadSphinx(center));

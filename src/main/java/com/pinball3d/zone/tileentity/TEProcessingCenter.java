@@ -777,10 +777,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		nodes.forEach(e -> {
 			if (e.getDim() == player.dimension) {
 				INeedNetwork te = (INeedNetwork) e.getTileEntity();
-				NBTTagCompound n = new NBTTagCompound();
-				list.appendTag(e.writeToNBT(n));
+				NBTTagCompound n = e.writeToNBT(new NBTTagCompound());
 				n.setInteger("state", te.getWorkingState().ordinal());
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
+				if (te instanceof TEBeaconCore) {
+					n.setInteger("type", 1);
+				}
+				list.appendTag(n);
 			}
 		});
 		units.setTag("nodes", list);
@@ -788,10 +791,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		storages.forEach(e -> {
 			if (e.getDim() == player.dimension) {
 				INeedNetwork te = (INeedNetwork) e.getTileEntity();
-				NBTTagCompound n = new NBTTagCompound();
-				list2.appendTag(e.writeToNBT(n));
+				NBTTagCompound n = e.writeToNBT(new NBTTagCompound());
 				n.setInteger("state", te.getWorkingState().ordinal());
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
+				list2.appendTag(n);
 			}
 		});
 		units.setTag("storages", list2);
@@ -799,10 +802,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		devices.forEach(e -> {
 			if (e.getDim() == player.dimension) {
 				INeedNetwork te = (INeedNetwork) e.getTileEntity();
-				NBTTagCompound n = new NBTTagCompound();
-				list3.appendTag(e.writeToNBT(n));
+				NBTTagCompound n = e.writeToNBT(new NBTTagCompound());
 				n.setInteger("state", te.getWorkingState().ordinal());
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
+				list3.appendTag(n);
 			}
 		});
 		units.setTag("devices", list3);
@@ -810,10 +813,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		productions.forEach(e -> {
 			if (e.getDim() == player.dimension) {
 				INeedNetwork te = (INeedNetwork) e.getTileEntity();
-				NBTTagCompound n = new NBTTagCompound();
-				list4.appendTag(e.writeToNBT(n));
+				NBTTagCompound n = e.writeToNBT(new NBTTagCompound());
 				n.setInteger("state", te.getWorkingState().ordinal());
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
+				list4.appendTag(n);
 			}
 		});
 		units.setTag("productions", list4);
@@ -951,10 +954,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			return;
 		}
 		if (uuid == null) {
-			if (!world.isRemote) {
-				setUUID(GlobalNetworkData.getData(world).getUUID(new WorldPos(getPos(), world)));
-				callUpdate();
-			}
+			setUUID(GlobalNetworkData.getData(world).getUUID(new WorldPos(getPos(), world)));
+			callUpdate();
 		}
 		if (loadTick > 0) {
 			if (consumeEnergy(1)) {
@@ -1000,6 +1001,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
 			nodes.add(new WorldPos((NBTTagCompound) e));
+			if (new WorldPos((NBTTagCompound) e).isOrigin()) {
+				throw new RuntimeException(compound.toString());
+			}
 		});
 		storages.clear();
 		list = compound.getTagList("storges", 10);

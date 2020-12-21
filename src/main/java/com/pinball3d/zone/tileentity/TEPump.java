@@ -1,5 +1,6 @@
 package com.pinball3d.zone.tileentity;
 
+import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.block.BlockPump;
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.network.MessagePlaySoundAtPos;
@@ -67,9 +68,13 @@ public class TEPump extends ZoneMachine {
 										if (!stack.isEmpty() && fluid.insertItem(0, stack, true).isEmpty()) {
 											expectFluid.insertItem(0, stack, false);
 											tick = 10;
-											NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 9),
-													new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F,
-															pos.getY() + 0.5F, pos.getZ() + 0.5F, 16));
+											if (!ConfigLoader.disableMachineSound) {
+												NetworkHandler.instance.sendToAllAround(
+														new MessagePlaySoundAtPos(pos, 9),
+														new TargetPoint(world.provider.getDimension(),
+																pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
+																16));
+											}
 											f.drain(world, p, true);
 											break label;
 										}

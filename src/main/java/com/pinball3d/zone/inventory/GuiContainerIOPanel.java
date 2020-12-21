@@ -171,10 +171,17 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 				screen.onMouseScrollScreen(mouseX, mouseY, d < 0);
 			}
 		}
-		NetworkHandler.instance.sendToServer(new MessageUpdateIOPanelGui(Minecraft.getMinecraft().player));
 		drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		renderHoveredToolTip(mouseX, mouseY);
+	}
+
+	@Override
+	public void updateScreen() {
+		if (Minecraft.getMinecraft().world.getTotalWorldTime() % 10 == 0) {
+			NetworkHandler.instance.sendToServer(new MessageUpdateIOPanelGui(Minecraft.getMinecraft().player));
+		}
+		super.updateScreen();
 	}
 
 	@Override
@@ -236,8 +243,7 @@ public class GuiContainerIOPanel extends GuiContainer implements IParent {
 		if (keyCode == Keyboard.KEY_ESCAPE) {
 			if (subscreens.empty()) {
 				WorldPos p = container.tileEntity.getNetworkPos();
-				System.out.println(p);
-				mc.displayGuiScreen(new ScreenIOPanel(container.tileEntity.getNetworkPos()));
+				mc.displayGuiScreen(new ScreenIOPanel(new WorldPos(container.tileEntity)));
 			} else if (subscreens.peek().onQuit()) {
 				subscreens.peek().close();
 				subscreens.pop();

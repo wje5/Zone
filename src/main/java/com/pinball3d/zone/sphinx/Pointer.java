@@ -10,11 +10,11 @@ public abstract class Pointer extends Gui {
 	public BoundingBox box;
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 
+	public abstract void doRender(int offsetX, int offsetZ);
+
 	public Pointer(BoundingBox box) {
 		this.box = box;
 	}
-
-	public abstract void doRender(int offsetX, int offsetZ);
 
 	public void renderThumb(int x, int z) {
 

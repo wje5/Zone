@@ -81,6 +81,13 @@ public class MapHandler {
 		instance.drawLines(width, height);
 	}
 
+	public static void clear() {
+		if (instance != null) {
+			instance.data = null;
+			instance.lines = new int[] {};
+		}
+	}
+
 	public static void setData(WorldPos network, NBTTagCompound data, int[] lines) {
 		if (instance != null && instance.network.equals(network)) {
 			instance.data = data;
@@ -216,7 +223,17 @@ public class MapHandler {
 			NBTTagCompound tag = (NBTTagCompound) e;
 			WorldPos pos = new WorldPos(tag);
 			if (pos.getDim() == mc.player.dimension) {
-				nodes.add(new PointerNode(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
+				int type = tag.getInteger("type");
+				switch (type) {
+				case 1:
+					nodes.add(new PointerBeacon(pos, tag.getInteger("id"),
+							WorkingState.values()[tag.getInteger("state")]));
+					break;
+				default:
+					nodes.add(
+							new PointerNode(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
+					break;
+				}
 			}
 		});
 		list = data.getTagList("storages", 10);

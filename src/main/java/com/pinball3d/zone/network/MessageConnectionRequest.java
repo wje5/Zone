@@ -1,6 +1,7 @@
 package com.pinball3d.zone.network;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,7 +14,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import scala.actors.threadpool.Arrays;
 
 public class MessageConnectionRequest implements IMessage {
 	UUID uuid, network;

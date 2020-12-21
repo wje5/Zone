@@ -5,8 +5,6 @@ import java.util.UUID;
 
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.network.MessageConnectionNeedNetworkRequest;
-import com.pinball3d.zone.network.NetworkHandler;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -19,9 +17,8 @@ public class ScreenNeedNetwork extends ScreenSphinxBase {
 	}
 
 	@Override
-	public void init() {
-		NetworkHandler.instance.sendToServer(
-				new MessageConnectionNeedNetworkRequest(mc.player, pos, getDataTypes().toArray(new Type[] {})));
+	public void sendReq() {
+		ConnectHelperClient.getInstance().requestNeedNetwork(pos, getDataTypes().toArray(new Type[] {}));
 	}
 
 	@Override

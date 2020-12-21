@@ -18,12 +18,8 @@ public class PointerDevice extends PointerNeedNetwork {
 	}
 
 	@Override
-	public void doRender(int offsetX, int offsetZ) {
+	public void render(int offsetX, int offsetZ) {
 		Util.drawTexture(TEXTURE, pos.getPos().getX() - offsetX - 3, pos.getPos().getZ() - offsetZ - 3, 169, 0, 13, 13,
 				0.5F);
-		if (state != WorkingState.WORKING) {
-			Util.drawTexture(TEXTURE, pos.getPos().getX() - offsetX, pos.getPos().getZ() - offsetZ, 116, 21, 9, 9,
-					0.5F);
-		}
 	}
 }

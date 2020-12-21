@@ -12,7 +12,7 @@ public class PointerProcessingCenter extends PointerNeedNetwork {
 	}
 
 	@Override
-	public void doRender(int offsetX, int offsetZ) {
+	public void render(int offsetX, int offsetZ) {
 		Util.drawTexture(TEXTURE, pos.getPos().getX() - offsetX - 5, pos.getPos().getZ() - offsetZ - 5, 116, 0, 20, 22,
 				0.5F);
 	}

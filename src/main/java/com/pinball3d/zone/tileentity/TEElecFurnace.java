@@ -1,5 +1,6 @@
 package com.pinball3d.zone.tileentity;
 
+import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.block.BlockElecFurnace;
 import com.pinball3d.zone.network.MessagePlaySoundAtPos;
 import com.pinball3d.zone.network.NetworkHandler;
@@ -42,9 +43,11 @@ public class TEElecFurnace extends ZoneMachine {
 						input.extractItem(0, 1, false);
 						expectOutput.setStackInSlot(0, stack);
 						tick = 100;
-						NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 3),
-								new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
-										pos.getZ() + 0.5F, 16));
+						if (!ConfigLoader.disableMachineSound) {
+							NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 3),
+									new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
+											pos.getZ() + 0.5F, 16));
+						}
 					}
 				}
 			}

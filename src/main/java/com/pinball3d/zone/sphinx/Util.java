@@ -1,5 +1,9 @@
 package com.pinball3d.zone.sphinx;
 
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.lwjgl.opengl.GL11;
 
 import com.pinball3d.zone.pdf.PDFHelper;
@@ -14,9 +18,12 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatAllowedCharacters;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -190,7 +197,7 @@ public class Util {
 
 	@SideOnly(Side.CLIENT)
 	public static void drawPDF(PDFImage image, int x, int y, int width, int yOffset, int maxHeight) {
-		if (image != null && !image.isLoaded()) {
+		if (!image.isLoaded()) {
 			PDFHelper.instance.loadPdfImage(image);
 		}
 		GlStateManager.bindTexture(image.getGlTextureId());
@@ -281,5 +288,60 @@ public class Util {
 			s += c;
 		}
 		return s;
+	}
+
+	public static StorageWrapper getItemList() {
+		StorageWrapper wrapper = new StorageWrapper();
+		ForgeRegistries.ITEMS.forEach(e -> {
+			for (CreativeTabs tab : e.getCreativeTabs()) {
+				if (tab != null) {
+					NonNullList<ItemStack> list = NonNullList.create();
+					e.getSubItems(tab, list);
+					list.forEach(i -> {
+						ItemStack s = i.copy();
+						s.setCount(1);
+						wrapper.merge(s);
+					});
+				} else {
+					wrapper.merge(new ItemStack(e));
+				}
+			}
+		});
+		return wrapper;
+	}
+
+	public static StorageWrapper search(StorageWrapper wrapper, String search) {
+		Set<HugeItemStack> storges = wrapper.storges;
+		if (!search.isEmpty()) {
+			storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);
+			Iterator<HugeItemStack> it = wrapper.storges.iterator();
+			while (it.hasNext()) {
+				HugeItemStack hugestack = it.next();
+				if (hugestack.stack.getItem().getRegistryName().getResourcePath().contains(search)
+						|| hugestack.stack.getDisplayName().contains(search)) {
+					storges.add(hugestack);
+				}
+			}
+		}
+		Set<ItemStack> other = wrapper.other;
+		if (!search.isEmpty()) {
+			other = new TreeSet<ItemStack>(StorageWrapper.stackComparator);
+			Iterator<ItemStack> it2 = wrapper.other.iterator();
+			while (it2.hasNext()) {
+				ItemStack stack = it2.next();
+				if (stack.getItem().getRegistryName().getResourcePath().contains(search)
+						|| stack.getDisplayName().contains(search)) {
+					other.add(stack);
+				}
+			}
+		}
+		StorageWrapper r = new StorageWrapper();
+		storges.forEach(e -> {
+			r.merge(e.copy());
+		});
+		other.forEach(e -> {
+			r.merge(e.copy());
+		});
+		return r;
 	}
 }

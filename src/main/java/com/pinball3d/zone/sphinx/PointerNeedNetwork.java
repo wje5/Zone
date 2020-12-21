@@ -30,7 +30,20 @@ public abstract class PointerNeedNetwork extends Pointer {
 	}
 
 	@Override
-	public abstract void doRender(int offsetX, int offsetZ);
+	public void doRender(int offsetX, int offsetZ) {
+		render(offsetX, offsetZ);
+		renderCover(offsetX, offsetZ);
+	}
+
+	public abstract void render(int offsetX, int offsetZ);
+
+	public void renderCover(int offsetX, int offsetZ) {
+		if (state != WorkingState.WORKING) {
+			int width = box.x2 - box.x;
+			int height = box.y2 - box.y;
+			Util.drawTexture(TEXTURE, box.x - offsetX + width - 4, box.y - offsetZ + height - 4, 116, 21, 9, 9, 0.5F);
+		}
+	}
 
 	@Override
 	public void renderThumb(int x, int z) {

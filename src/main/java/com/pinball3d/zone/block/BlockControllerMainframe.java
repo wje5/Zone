@@ -5,6 +5,7 @@ import com.pinball3d.zone.sphinx.ScreenLoadSphinx;
 import com.pinball3d.zone.sphinx.ScreenSphinxOpenPassword;
 import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.EnumPushReaction;
@@ -63,19 +64,17 @@ public class BlockControllerMainframe extends Block {
 
 	@SideOnly(Side.CLIENT)
 	public void openScreen(World worldIn, BlockPos pos) {
-		Block block = worldIn.getBlockState(pos).getBlock();
 		Minecraft mc = Minecraft.getMinecraft();
 		TEProcessingCenter te = (TEProcessingCenter) worldIn.getTileEntity(pos);
-		if (block == BlockLoader.processing_center) {
-			mc.displayGuiScreen(new ScreenSphinxOpenPassword(new WorldPos(pos, worldIn), true));
+		if (te.getWorkingState() == WorkingState.OFF) {
+			mc.displayGuiScreen(new ScreenSphinxOpenPassword(new WorldPos(pos, worldIn)));
 		} else {
 			if (te.isLoading()) {
 				mc.displayGuiScreen(new ScreenLoadSphinx(new WorldPos(pos, worldIn)));
 			} else {
-				mc.displayGuiScreen(new ScreenSphinxOpenPassword(new WorldPos(pos, worldIn), false));
+				mc.displayGuiScreen(new ScreenSphinxOpenPassword(new WorldPos(pos, worldIn)));
 			}
 		}
-
 	}
 
 	@Override

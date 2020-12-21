@@ -5,8 +5,7 @@ import java.util.UUID;
 
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.network.MessageConnectionControllerRequest;
-import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 
 public class ScreenSphinxController extends ScreenSphinxAdvenced {
 	private WorldPos center;
@@ -19,15 +18,15 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 	@Override
 	public void update(boolean online, int mouseX, int mouseY, float partialTicks) {
 		super.update(online, mouseX, mouseY, partialTicks);
-//		if (tileentity.needInit() && subscreens.empty()) {
-//			subscreens.add(new SubscreenSphinxInitWizard(this));
-//		}TODO
+		if (ConnectHelperClient.getInstance().hasData()
+				&& ConnectHelperClient.getInstance().getWorkingState() == WorkingState.UNINIT && subscreens.empty()) {
+			subscreens.add(new SubscreenSphinxInitWizard(this));
+		}
 	}
 
 	@Override
-	public void init() {
-		NetworkHandler.instance.sendToServer(
-				new MessageConnectionControllerRequest(mc.player, center, getDataTypes().toArray(new Type[] {})));
+	public void sendReq() {
+		ConnectHelperClient.getInstance().requestController(center, getDataTypes().toArray(new Type[] {}));
 	}
 
 	@Override
@@ -35,6 +34,7 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 		Set<Type> set = super.getDataTypes();
 		set.add(Type.PLAYERVALIDNETWORK);
 		set.add(Type.NETWORKPOS);
+		set.add(Type.WORKINGSTATE);
 		return set;
 	}
 
@@ -60,9 +60,11 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 
 	@Override
 	public boolean canOpen() {
-//		return tileentity != null && tileentity.getWorkingState() == WorkingState.WORKING
-//				|| tileentity.getWorkingState() == WorkingState.UNINIT;TODO
-		return true;
+		if (!ConnectHelperClient.getInstance().hasData()) {
+			return true;
+		}
+		WorkingState state = ConnectHelperClient.getInstance().getWorkingState();
+		return state == WorkingState.WORKING || state == WorkingState.UNINIT;
 	}
 
 	@Override
@@ -81,7 +83,7 @@ public class ScreenSphinxController extends ScreenSphinxAdvenced {
 	}
 
 	@Override
-	public String getPassword() {
+	public String getAdminPassword() {
 		return password;
 	}
 

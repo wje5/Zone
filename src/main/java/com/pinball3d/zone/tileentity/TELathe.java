@@ -2,6 +2,7 @@ package com.pinball3d.zone.tileentity;
 
 import java.util.Arrays;
 
+import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.block.BlockLathe;
 import com.pinball3d.zone.network.MessagePlaySoundAtPos;
 import com.pinball3d.zone.network.NetworkHandler;
@@ -48,15 +49,19 @@ public class TELathe extends ZoneMachine {
 						expectOutput.setStackInSlot(0, recipe.getOutput(0));
 						tick = recipe.getTime();
 						totalTick = recipe.getTime();
-						NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 7),
-								new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
-										pos.getZ() + 0.5F, 16));
+						if (!ConfigLoader.disableMachineSound) {
+							NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 7),
+									new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
+											pos.getZ() + 0.5F, 16));
+						}
 					}
 				}
 			}
 		} else if (tick % 50 == 0) {
-			NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 7), new TargetPoint(
-					world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 16));
+			if (!ConfigLoader.disableMachineSound) {
+				NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 7), new TargetPoint(
+						world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, 16));
+			}
 		}
 		energyTick = energyTick < 1 ? 0 : energyTick - 1;
 		if (energyTick <= 0 && tick > 0) {

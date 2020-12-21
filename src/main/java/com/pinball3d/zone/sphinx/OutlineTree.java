@@ -64,6 +64,9 @@ public class OutlineTree extends Component {
 	}
 
 	public void dimensionalityReduction() {
+		if (outline == null) {
+			return;
+		}
 		outlineList = new ArrayList<PDOutlineItem>();
 		indents = new ArrayList<Integer>();
 		outline.children().forEach(e -> {

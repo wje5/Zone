@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 
 public class DropDownList extends Component {
-	public String text = "";
+	public int index = 0;
 	public List<ListBar> list = new ArrayList<ListBar>();
+	public boolean isDrop;
 
 	public DropDownList(IParent parent, int x, int y, int width) {
-		super(parent, x, y, width, 13);
+		super(parent, x, y, width + 10, 15);
 		this.x = x;
 		this.y = y;
 	}
@@ -24,15 +26,39 @@ public class DropDownList extends Component {
 		if (super.onLeftClick(x, y)) {
 			return true;
 		}
+		if (isDrop && y >= 16) {
+			int i = (y - 16) / 14;
+			index = i;
+			list.get(i).event.run();
+		}
+		setState(!isDrop);
 		return true;
+	}
+
+	public void setState(boolean isDrop) {
+		this.isDrop = isDrop;
+		height = isDrop ? 15 + list.size() * 14 : 15;
 	}
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		Util.drawBorder(x, y, width, height, 1, 0xFF1ECCDE);
 		FontRenderer renderer = parent.getFontRenderer();
-		renderer.drawString(text, x + 3, y + 3, 0xFF1ECCDE);
+		Util.drawBorder(x, y, width, 15, 1, 0xFF1ECCDE);
+		if (!list.isEmpty()) {
+			renderer.drawString(list.get(index).title, x + 3, y + 3, 0xFF1ECCDE);
+		}
+		if (isDrop) {
+			for (int i = 0; i < list.size(); i++) {
+				Gui.drawRect(x, y + i * 14 + 15, x + 1, y + i * 14 + 29, 0xFF00479D);
+				Gui.drawRect(x + width - 1, y + i * 14 + 15, x + width, y + i * 14 + 29, 0xFF00479D);
+				Gui.drawRect(x + 1, y + i * 14 + 28, x + width - 1, y + i * 14 + 29, 0xFF00479D);
+				Gui.drawRect(x + 1, y + i * 14 + 15, x + width - 1, y + i * 14 + 28, 0xFFE0E0E0);
+				renderer.drawString(list.get(i).title, x + 3, y + 17 + i * 14, 0xFF000000);
+			}
+		}
+		Util.drawTexture(ICONS, x + width - 11, y, 196, 41, 11, 15, 1.0F);
+
 	}
 
 	public class ListBar {

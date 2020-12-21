@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
+import com.pinball3d.zone.network.ConnectionHelper.Type;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -22,7 +24,7 @@ public class Subscreen implements IParent {
 	protected Set<Component> components = new HashSet<Component>();
 	protected Component draggingComponent;
 	public Stack<Subscreen> subscreens = new Stack<Subscreen>();
-	public boolean dead;
+	public boolean dead, inited;
 
 	public Subscreen(IParent parent, int x, int y, int width, int height, boolean rendercover) {
 		this.parent = parent;
@@ -81,7 +83,27 @@ public class Subscreen implements IParent {
 	}
 
 	public void update() {
+		if (!inited) {
+			init();
+			inited = true;
+		}
+	}
 
+	public void init() {
+		IParent p = parent;
+		while (true) {
+			if (p instanceof Subscreen) {
+				p = ((Subscreen) p).parent;
+				continue;
+			} else if (p instanceof ScreenSphinxBase) {
+				((ScreenSphinxBase) p).sendReq();
+			}
+			return;
+		}
+	}
+
+	public Set<Type> getDataTypes() {
+		return new HashSet<Type>();
 	}
 
 	public boolean onClickScreen(int x, int y, boolean isLeft) {

@@ -17,7 +17,7 @@ public abstract class ScreenSphinxAdvenced extends ScreenSphinxBase {
 	protected String password;
 	private int dragBoxX, dragBoxY, dragBoxX2, dragBoxY2;
 
-	public String getPassword() {
+	public String getAdminPassword() {
 		return password;
 	}
 

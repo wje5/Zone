@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.pinball3d.zone.item.ItemLoader;
+import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 
 import net.minecraft.item.ItemStack;
@@ -44,7 +45,8 @@ public class ScreenTerminal extends ScreenSphinxAdvenced {
 
 	@Override
 	public boolean isConnected() {
-		return worldpos != null;
+		return ConnectHelperClient.getInstance().getPlayerValidNetworks()
+				.containsKey(ConnectHelperClient.getInstance().getNetworkPos());
 	}
 
 	@Override

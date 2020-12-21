@@ -177,6 +177,9 @@ public class StorageWrapper {
 		while (it.hasNext()) {
 			HugeItemStack i = it.next();
 			i.shrink(hugestack);
+			if (i.isEmpty()) {
+				it.remove();
+			}
 			if (hugestack.isEmpty()) {
 				break;
 			}
@@ -214,6 +217,10 @@ public class StorageWrapper {
 	public void clear() {
 		storges.clear();
 		other.clear();
+	}
+
+	public int getSize() {
+		return storges.size() + other.size();
 	}
 
 	public StorageWrapper copy() {
