@@ -1,9 +1,9 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
+import com.pinball3d.zone.Zone;
+import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.sphinx.ScreenIOPanel;
-import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEIOPanel;
 
 import net.minecraft.block.Block;
@@ -12,7 +12,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -23,8 +22,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -48,15 +45,11 @@ public class BlockIOPanel extends BlockContainer {
 				&& playerIn.getHeldItem(hand).getItemDamage() == 1) {
 			return false;
 		}
-		if (worldIn.isRemote) {
-			openScreen(worldIn, pos);
+		if (!worldIn.isRemote) {
+			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_IO_PANEL, worldIn, pos.getX(), pos.getY(),
+					pos.getZ());
 		}
 		return true;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void openScreen(World worldIn, BlockPos pos) {
-		Minecraft.getMinecraft().displayGuiScreen(new ScreenIOPanel(new WorldPos(pos, worldIn)));
 	}
 
 	@Override

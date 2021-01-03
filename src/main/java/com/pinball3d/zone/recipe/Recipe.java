@@ -3,7 +3,7 @@ package com.pinball3d.zone.recipe;
 import java.util.List;
 
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
-import com.pinball3d.zone.sphinx.Util;
+import com.pinball3d.zone.util.Util;
 
 import net.minecraft.item.ItemStack;
 

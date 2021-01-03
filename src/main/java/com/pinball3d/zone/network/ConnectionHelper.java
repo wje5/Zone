@@ -10,16 +10,20 @@ import java.util.UUID;
 
 import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.block.BlockControllerMainframe;
+import com.pinball3d.zone.block.BlockLoader;
+import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.SphinxUtil;
-import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEBeaconCore;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -50,15 +54,37 @@ public class ConnectionHelper {
 		}
 	}
 
-	public static void refreshRequest(UUID uuid, UUID network, WorldPos needNetwork, Type... types) {
+	public static void requestControllerConnect(UUID uuid, WorldPos controller, Type... types) {
 		if (types.length == 0) {
 			pool.remove(uuid);
 			return;
 		}
-		pool.put(uuid,
-				new Connect(
-						FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(uuid),
-						network, needNetwork, types));
+		EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+				.getPlayerByUUID(uuid);
+		if (controller.isAreaLoaded(5) && controller.getBlockState().getBlock() == BlockLoader.controller_mainframe) {
+			WorldPos center = BlockControllerMainframe.getProcessingCenterPos(controller);
+			TEProcessingCenter te = (TEProcessingCenter) center.getTileEntity();
+			Connect connect = new Connect(player, te.getUUID(), WorldPos.ORIGIN, ConnectType.CONTROLLER, types);
+			if (connect.isValid()) {
+				pool.put(uuid, connect);
+			}
+		}
+	}
+
+	public static void requestTerminalConnect(UUID uuid, Type... types) {
+		if (types.length == 0) {
+			pool.remove(uuid);
+			return;
+		}
+		EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+				.getPlayerByUUID(uuid);
+		ItemStack stack = player.getHeldItemMainhand();
+		if (stack.getItem() != ItemLoader.terminal) {
+			stack = player.getHeldItemOffhand();
+		}
+		if (stack.getItem() == ItemLoader.terminal && stack.getItemDamage() == 0) {
+			// TODO
+		}
 	}
 
 	public static Connect getConnect(UUID uuid) {
@@ -70,18 +96,33 @@ public class ConnectionHelper {
 		public UUID network;
 		public WorldPos needNetwork;
 		public Set<Type> reqDataType;
-		public int mapRefreshColddown, packRefreshColddown, itemRefreshColddown;
+		public ConnectType connectType;
+		public int mapRefreshColddown, packRefreshColddown, itemRefreshColddown, classifyRefreshColddown;
 
-		public Connect(EntityPlayer player, UUID network, WorldPos needNetwork, Type... types) {
+		private Connect(EntityPlayer player, UUID network, WorldPos needNetwork, ConnectType connectType,
+				Type... types) {
 			uuid = player.getUniqueID();
 			this.network = network;
 			this.needNetwork = needNetwork;
+			this.connectType = connectType;
 			reqDataType = new HashSet<Type>(Arrays.asList(types));
 		}
 
 		public boolean isValid() {
-			return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-					.getPlayerByUUID(uuid) != null;
+			if (FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+					.getPlayerByUUID(uuid) == null) {
+				return false;
+			}
+			switch (connectType) {
+			case CONTROLLER:
+
+				break;
+			case TERMINAL:
+				break;
+			case NEEDNETWORK:
+				break;
+			}
+			return true;
 		}
 
 		public void update() {
@@ -96,9 +137,13 @@ public class ConnectionHelper {
 		}
 	}
 
+	public static enum ConnectType {
+		CONTROLLER, TERMINAL, NEEDNETWORK;
+	}
+
 	public static enum Type {
 		NETWORKUUID, ITEMS, NETWORKPOS, PASSWORD, ADMINPASSWORD, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
-		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, INITED, USEDSTORAGE, MAXSTORAGE;
+		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, INITED, USEDSTORAGE, MAXSTORAGE, CLASSIFY;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
 			WorldPos pos = WorldPos.ORIGIN;
@@ -217,6 +262,18 @@ public class ConnectionHelper {
 					tag.setInteger(name(), te.getMaxStorage());
 				}
 				break;
+			case CLASSIFY:
+				if (te != null) {
+					if (connect.classifyRefreshColddown <= 0) {
+						NBTTagList list = new NBTTagList();
+						te.getClassifyGroups().forEach(e -> {
+							list.appendTag(e.writeToNBT(new NBTTagCompound()));
+						});
+						tag.setTag(name(), list);
+						connect.classifyRefreshColddown += ConfigLoader.classifyUpdateRate;
+					}
+					connect.classifyRefreshColddown--;
+				}
 			}
 		}
 	}

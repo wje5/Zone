@@ -1,8 +1,8 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.inventory.ContainerIOPanel;
-import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;

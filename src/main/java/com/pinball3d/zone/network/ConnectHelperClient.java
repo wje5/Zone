@@ -1,17 +1,20 @@
 package com.pinball3d.zone.network;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import com.google.common.collect.Sets;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.MapHandler;
-import com.pinball3d.zone.sphinx.StorageWrapper;
-import com.pinball3d.zone.sphinx.WorldPos;
+import com.pinball3d.zone.sphinx.ClassifyGroup;
+import com.pinball3d.zone.sphinx.map.MapHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
+import com.pinball3d.zone.util.StorageWrapper;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,10 +39,7 @@ public class ConnectHelperClient {
 	private int loadTick, usedStorage, maxStorage;
 	private boolean on, inited;
 	private WorkingState workingState;
-
-	public ConnectHelperClient() {
-
-	}
+	private List<ClassifyGroup> classify = new ArrayList<ClassifyGroup>();
 
 	public void setData(UUID network, NBTTagCompound data, Set<Type> types) {
 		if (!this.types.equals(types)) {
@@ -122,6 +122,13 @@ public class ConnectHelperClient {
 				case MAXSTORAGE:
 					maxStorage = data.getInteger(e.name());
 					break;
+				case CLASSIFY:
+					classify.clear();
+					NBTTagList list = data.getTagList(e.name(), 10);
+					list.forEach(i -> {
+						classify.add(new ClassifyGroup((NBTTagCompound) i));
+					});
+					break;
 				}
 			}
 		}
@@ -146,12 +153,13 @@ public class ConnectHelperClient {
 	public void clearHuges() {
 		items = null;
 		MapHandler.clear();
+		classify.clear();
 	}
 
 	public void disconnect() {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player != null) {
-			NetworkHandler.instance.sendToServer(new MessageConnectionRequest(player, new UUID(0, 0)));
+			NetworkHandler.instance.sendToServer(new MessageConnectionRequest(player));
 		}
 		clear();
 		clearHuges();
@@ -159,18 +167,17 @@ public class ConnectHelperClient {
 		hasData = false;
 	}
 
-	public void request(UUID network, Type... types) {
-		NetworkHandler.instance
-				.sendToServer(new MessageConnectionRequest(Minecraft.getMinecraft().player, network, types));
+	public void requestTerminal(Type... types) {
+		NetworkHandler.instance.sendToServer(new MessageConnectionRequest(Minecraft.getMinecraft().player, types));
 		clear();
 		clearHuges();
 		this.types = Sets.newHashSet(types);
 		hasData = false;
 	}
 
-	public void requestController(WorldPos center, Type... types) {
-		NetworkHandler.instance
-				.sendToServer(new MessageConnectionControllerRequest(Minecraft.getMinecraft().player, center, types));
+	public void requestController(WorldPos controller, Type... types) {
+		NetworkHandler.instance.sendToServer(
+				new MessageConnectionControllerRequest(Minecraft.getMinecraft().player, controller, types));
 		clear();
 		clearHuges();
 		this.types = Sets.newHashSet(types);
@@ -256,5 +263,9 @@ public class ConnectHelperClient {
 
 	public int getMaxStorage() {
 		return maxStorage;
+	}
+
+	public List<ClassifyGroup> getClassify() {
+		return classify;
 	}
 }

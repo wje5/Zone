@@ -1,9 +1,8 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.sphinx.ScreenSphinxBase;
-import com.pinball3d.zone.sphinx.Subscreen;
-import com.pinball3d.zone.sphinx.SubscreenConnectToNetwork;
-import com.pinball3d.zone.sphinx.SubscreenNetworkConfig;
+import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.sphinx.GuiContainerSphinxBase;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenConnectToNetwork;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -33,17 +32,12 @@ public class MessageConnectNetworkCallbackWrong implements IMessage {
 		public IMessage onMessage(MessageConnectNetworkCallbackWrong message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
 				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-				if (screen instanceof ScreenSphinxBase) {
-					ScreenSphinxBase base = (ScreenSphinxBase) screen;
-					if (!base.subscreens.empty()) {
-						Subscreen s = base.subscreens.get(0);
-						if (s instanceof SubscreenNetworkConfig) {
-							if (!s.subscreens.empty()) {
-								s = s.subscreens.get(0);
-								if (s instanceof SubscreenConnectToNetwork) {
-									((SubscreenConnectToNetwork) s).setData(false);
-								}
-							}
+				if (screen instanceof GuiContainerSphinxBase) {
+					GuiContainerSphinxBase base = (GuiContainerSphinxBase) screen;
+					if (base.getSubscreens().size() >= 2) {
+						Subscreen s = base.getSubscreens().get(1);
+						if (s instanceof SubscreenConnectToNetwork) {
+							((SubscreenConnectToNetwork) s).setData(false);
 						}
 					}
 				}

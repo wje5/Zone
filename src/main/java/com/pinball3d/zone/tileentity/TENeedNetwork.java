@@ -7,7 +7,7 @@ import java.util.UUID;
 import com.pinball3d.zone.ChunkHandler;
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
-import com.pinball3d.zone.sphinx.WorldPos;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;

@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.WorldPos;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,23 +17,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageConnectionControllerRequest implements IMessage {
 	UUID uuid;
-	WorldPos canter;
+	WorldPos controller;
 	List<Type> types;
 
 	public MessageConnectionControllerRequest() {
 
 	}
 
-	public MessageConnectionControllerRequest(EntityPlayer player, WorldPos canter, Type... types) {
+	public MessageConnectionControllerRequest(EntityPlayer player, WorldPos controller, Type... types) {
 		uuid = player.getUniqueID();
-		this.canter = canter;
+		this.controller = controller;
 		this.types = Arrays.asList(types);
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		uuid = new UUID(buf.readLong(), buf.readLong());
-		canter = WorldPos.readFromByte(buf);
+		controller = WorldPos.readFromByte(buf);
 		types = new ArrayList<Type>();
 		for (Type i : Type.values()) {
 			if (buf.readBoolean()) {
@@ -47,7 +46,7 @@ public class MessageConnectionControllerRequest implements IMessage {
 	public void toBytes(ByteBuf buf) {
 		buf.writeLong(uuid.getMostSignificantBits());
 		buf.writeLong(uuid.getLeastSignificantBits());
-		canter.writeToByte(buf);
+		controller.writeToByte(buf);
 		for (Type i : Type.values()) {
 			buf.writeBoolean(types.contains(i));
 		}
@@ -57,8 +56,7 @@ public class MessageConnectionControllerRequest implements IMessage {
 		@Override
 		public IMessage onMessage(MessageConnectionControllerRequest message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-				UUID uuid = ((TEProcessingCenter) message.canter.getTileEntity()).getUUID();
-				ConnectionHelper.refreshRequest(message.uuid, uuid, WorldPos.ORIGIN,
+				ConnectionHelper.requestControllerConnect(message.uuid, message.controller,
 						message.types.toArray(new Type[] {}));
 			});
 			return null;

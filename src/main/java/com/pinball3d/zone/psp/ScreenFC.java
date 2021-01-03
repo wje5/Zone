@@ -1,6 +1,6 @@
 package com.pinball3d.zone.psp;
 
-import com.pinball3d.zone.sphinx.Util;
+import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;

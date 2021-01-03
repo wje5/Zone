@@ -3,6 +3,8 @@ package com.pinball3d.zone.sphinx;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.pinball3d.zone.sphinx.map.ChunkRenderCache;
+
 public class ClientMapDataHandler {
 	private static Map<Integer, Map<Long, ChunkRenderCache>> mapCache = new HashMap<Integer, Map<Long, ChunkRenderCache>>();
 

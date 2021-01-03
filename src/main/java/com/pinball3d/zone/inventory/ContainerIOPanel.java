@@ -8,16 +8,16 @@ import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.network.MessageUpdateContainerIOPanel;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.HugeItemStack;
-import com.pinball3d.zone.sphinx.StorageWrapper;
-import com.pinball3d.zone.sphinx.SubscreenIOPanelRequest;
-import com.pinball3d.zone.sphinx.Util;
+import com.pinball3d.zone.sphinx.ContainerSphinxBase;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenIOPanelRequest;
 import com.pinball3d.zone.tileentity.TEIOPanel;
+import com.pinball3d.zone.util.HugeItemStack;
+import com.pinball3d.zone.util.StorageWrapper;
+import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -27,7 +27,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ContainerIOPanel extends Container {
+public class ContainerIOPanel extends ContainerSphinxBase {
 	public IItemHandler inv, global;
 	public TEIOPanel tileEntity;
 	protected StorageWrapper data = new StorageWrapper();
@@ -39,6 +39,7 @@ public class ContainerIOPanel extends Container {
 	public EntityPlayer player;
 
 	public ContainerIOPanel(EntityPlayer player, TileEntity tileEntity) {
+		super(player);
 		this.player = player;
 		for (int i = 0; i < 36; i++) {
 			list[i] = 1;

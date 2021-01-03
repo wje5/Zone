@@ -13,16 +13,17 @@ import com.pinball3d.zone.ChunkHandler;
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
+import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
-import com.pinball3d.zone.sphinx.HugeItemStack;
 import com.pinball3d.zone.sphinx.IDevice;
 import com.pinball3d.zone.sphinx.INode;
 import com.pinball3d.zone.sphinx.IProduction;
 import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.LogisticPack;
 import com.pinball3d.zone.sphinx.LogisticPack.Path;
-import com.pinball3d.zone.sphinx.StorageWrapper;
-import com.pinball3d.zone.sphinx.WorldPos;
+import com.pinball3d.zone.util.HugeItemStack;
+import com.pinball3d.zone.util.StorageWrapper;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,6 +72,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	private Set<LogisticPack> packs = new HashSet<LogisticPack>();
 	private UUID uuid;
 	private double[][] map;
+	private List<ClassifyGroup> classifyGroups = new ArrayList<ClassifyGroup>();
 
 	public TEProcessingCenter() {
 
@@ -84,7 +86,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return on;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void callUpdate() {
 		markDirty();
 //		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
@@ -882,6 +883,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return tag;
 	}
 
+	public void addClassifyGroup(ClassifyGroup group) {
+		classifyGroups.add(group);
+	}
+
+	public List<ClassifyGroup> getClassifyGroups() {
+		return classifyGroups;
+	}
+
 	public void updatePack() {
 		Iterator<LogisticPack> it = packs.iterator();
 		Set<LogisticPack> deads = new HashSet<LogisticPack>();
@@ -949,12 +958,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 			return;
 		}
-		if (!((BlockProcessingCenter) blockType).isFullStructure(world, pos)) {
+		WorldPos worldPos = new WorldPos(pos, world);
+		if (!((BlockProcessingCenter) blockType).isFullStructure(worldPos)) {
 			shutdown();
 			return;
 		}
 		if (uuid == null) {
-			setUUID(GlobalNetworkData.getData(world).getUUID(new WorldPos(getPos(), world)));
+			setUUID(GlobalNetworkData.getData(world).getUUID(worldPos));
 			callUpdate();
 		}
 		if (loadTick > 0) {
@@ -1028,6 +1038,11 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		list.forEach(e -> {
 			packs.add(new LogisticPack((NBTTagCompound) e));
 		});
+		classifyGroups.clear();
+		list = compound.getTagList("classifyGroups", 10);
+		list.forEach(e -> {
+			classifyGroups.add(new ClassifyGroup((NBTTagCompound) e));
+		});
 		super.readFromNBT(compound);
 	}
 
@@ -1068,6 +1083,11 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			packList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("packs", packList);
+		NBTTagList classifyList = new NBTTagList();
+		classifyGroups.forEach(e -> {
+			classifyList.appendTag(e.writeToNBT(new NBTTagCompound()));
+		});
+		compound.setTag("classifyGroups", classifyList);
 		return super.writeToNBT(compound);
 	}
 

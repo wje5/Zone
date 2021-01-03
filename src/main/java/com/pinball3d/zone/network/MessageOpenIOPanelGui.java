@@ -55,7 +55,7 @@ public class MessageOpenIOPanelGui implements IMessage {
 				World world = server.getWorld(message.world);
 				EntityPlayer player = world.getPlayerEntityByName(message.name);
 				if (player != null) {
-					player.openGui(Zone.instance, GuiElementLoader.IO_PANEL, world, message.x, message.y, message.z);
+					player.openGui(Zone.instance, GuiElementLoader.SPHINX_IO_PANEL, world, message.x, message.y, message.z);
 				}
 			});
 			return null;

@@ -1,19 +1,17 @@
 package com.pinball3d.zone.network;
 
+import java.util.Stack;
 import java.util.UUID;
 
-import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
-import com.pinball3d.zone.sphinx.ScreenTerminal;
-import com.pinball3d.zone.sphinx.Subscreen;
-import com.pinball3d.zone.sphinx.SubscreenConnectToNetwork;
-import com.pinball3d.zone.sphinx.SubscreenNetworkConfig;
-import com.pinball3d.zone.sphinx.WorldPos;
+import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.sphinx.GuiContainerSphinxBase;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenConnectToNetwork;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenNetworkConfig;
+import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -55,43 +53,15 @@ public class MessageConnectNetworkCallback implements IMessage {
 		public IMessage onMessage(MessageConnectNetworkCallback message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
 				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-				if (screen instanceof ScreenTerminal) {
-					ScreenTerminal terminal = (ScreenTerminal) screen;
-					terminal.flag = true;
-					if (terminal.stack != ItemStack.EMPTY) {
-						NBTTagCompound tag = terminal.stack.getTagCompound();
-						if (tag == null) {
-							tag = new NBTTagCompound();
-							terminal.stack.setTagCompound(tag);
+				if (screen instanceof GuiContainerSphinxBase) {
+					GuiContainerSphinxBase terminal = (GuiContainerSphinxBase) screen;
+					Stack<Subscreen> stack = terminal.getSubscreens();
+					if (stack.size() >= 2) {
+						Subscreen subscreen = stack.get(1);
+						if (subscreen instanceof SubscreenConnectToNetwork) {
+							((SubscreenConnectToNetwork) subscreen).setData(true);
 						}
-						tag.setUniqueId("network", message.uuid);
-						tag.setString("password", message.password);
-					}
-					if (!terminal.subscreens.isEmpty()) {
-						Subscreen subscreen = terminal.subscreens.get(0);
-						if (subscreen instanceof SubscreenNetworkConfig) {
-							if (!subscreen.subscreens.empty()) {
-								Subscreen s = subscreen.subscreens.get(0);
-								if (s instanceof SubscreenConnectToNetwork) {
-									((SubscreenConnectToNetwork) s).setData(true);
-								}
-							}
-							((SubscreenNetworkConfig) subscreen).refresh();
-						}
-					}
-				} else if (screen instanceof ScreenNeedNetwork) {
-					ScreenNeedNetwork s = (ScreenNeedNetwork) screen;
-					if (!s.subscreens.isEmpty()) {
-						Subscreen subscreen = s.subscreens.get(0);
-						if (subscreen instanceof SubscreenNetworkConfig) {
-							if (!subscreen.subscreens.empty()) {
-								Subscreen sub = subscreen.subscreens.get(0);
-								if (sub instanceof SubscreenConnectToNetwork) {
-									((SubscreenConnectToNetwork) sub).setData(true);
-								}
-							}
-							((SubscreenNetworkConfig) subscreen).refresh();
-						}
+						((SubscreenNetworkConfig) stack.get(0)).refresh();
 					}
 				}
 			});

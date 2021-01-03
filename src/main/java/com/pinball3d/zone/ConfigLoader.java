@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class ConfigLoader {
 	private static Configuration config;
 	private static Logger logger;
-	public static int mapUpdateRate, packUpdateRate, itemUpdateRate;
+	public static int chunkUpdateRate, mapUpdateRate, packUpdateRate, itemUpdateRate, classifyUpdateRate;
 	public static boolean disableMachineSound;
 
 	public ConfigLoader(FMLPreInitializationEvent event) {
@@ -26,9 +26,11 @@ public class ConfigLoader {
 
 	public static void load() {
 		logger.info("Started loading config.");
+		chunkUpdateRate = config.get(Configuration.CATEGORY_GENERAL, "chunkUpdateRate", 60, "").getInt();
 		mapUpdateRate = config.get(Configuration.CATEGORY_GENERAL, "mapUpdateRate", 10, "").getInt();
 		packUpdateRate = config.get(Configuration.CATEGORY_GENERAL, "packUpdateRate", 1, "").getInt();
 		itemUpdateRate = config.get(Configuration.CATEGORY_GENERAL, "itemUpdateRate", 10, "").getInt();
+		classifyUpdateRate = config.get(Configuration.CATEGORY_GENERAL, "classifyUpdateRate", 15, "").getInt();
 		disableMachineSound = config.get(Configuration.CATEGORY_GENERAL, "disableMachineSound", false).getBoolean();
 		config.save();
 		logger.info("Finished loading config.");

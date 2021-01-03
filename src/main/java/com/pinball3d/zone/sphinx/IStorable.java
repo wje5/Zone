@@ -2,6 +2,10 @@ package com.pinball3d.zone.sphinx;
 
 import java.util.Iterator;
 
+import com.pinball3d.zone.util.HugeItemStack;
+import com.pinball3d.zone.util.StorageWrapper;
+import com.pinball3d.zone.util.Util;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 

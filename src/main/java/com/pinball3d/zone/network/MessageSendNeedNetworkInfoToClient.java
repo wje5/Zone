@@ -1,9 +1,9 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.sphinx.ScreenSphinxAdvenced;
-import com.pinball3d.zone.sphinx.Subscreen;
-import com.pinball3d.zone.sphinx.SubscreenNeedNetworkInfo;
-import com.pinball3d.zone.sphinx.WorldPos;
+import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.sphinx.GuiContainerSphinxAdvanced;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenNeedNetworkInfo;
+import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -45,10 +45,10 @@ public class MessageSendNeedNetworkInfoToClient implements IMessage {
 		public IMessage onMessage(MessageSendNeedNetworkInfoToClient message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
 				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-				if (screen instanceof ScreenSphinxAdvenced) {
-					ScreenSphinxAdvenced adv = (ScreenSphinxAdvenced) screen;
-					if (!adv.subscreens.empty()) {
-						Subscreen s = adv.subscreens.get(0);
+				if (screen instanceof GuiContainerSphinxAdvanced) {
+					GuiContainerSphinxAdvanced adv = (GuiContainerSphinxAdvanced) screen;
+					if (!adv.getSubscreens().empty()) {
+						Subscreen s = adv.getSubscreens().get(0);
 						if (s instanceof SubscreenNeedNetworkInfo) {
 							((SubscreenNeedNetworkInfo) s).setData(message.pos, message.data);
 						}

@@ -1,9 +1,11 @@
 package com.pinball3d.zone.network;
 
+import java.util.Stack;
+
+import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.inventory.GuiContainerIOPanel;
-import com.pinball3d.zone.sphinx.StorageWrapper;
-import com.pinball3d.zone.sphinx.Subscreen;
-import com.pinball3d.zone.sphinx.SubscreenIOPanelRequest;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenIOPanelRequest;
+import com.pinball3d.zone.util.StorageWrapper;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -47,8 +49,9 @@ public class MessageSendLogisticTimeToClient implements IMessage {
 				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
 				if (screen instanceof GuiContainerIOPanel) {
 					GuiContainerIOPanel panel = (GuiContainerIOPanel) screen;
-					if (!panel.subscreens.empty()) {
-						Subscreen s = panel.subscreens.get(0);
+					Stack<Subscreen> stack = panel.getSubscreens();
+					if (!stack.empty()) {
+						Subscreen s = stack.get(0);
 						if (s instanceof SubscreenIOPanelRequest) {
 							((SubscreenIOPanelRequest) s).updateTime(message.time, message.wrapper);
 						}

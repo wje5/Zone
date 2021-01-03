@@ -1,9 +1,9 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.sphinx.StorageWrapper;
-import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEIOPanel;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.util.StorageWrapper;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

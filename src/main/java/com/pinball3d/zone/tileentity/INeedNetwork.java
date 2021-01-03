@@ -2,7 +2,7 @@ package com.pinball3d.zone.tileentity;
 
 import java.util.UUID;
 
-import com.pinball3d.zone.sphinx.WorldPos;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.resources.I18n;
 

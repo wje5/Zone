@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.pinball3d.zone.block.BlockProcessingCenter;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

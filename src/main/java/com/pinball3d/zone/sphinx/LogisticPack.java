@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import com.pinball3d.zone.block.BlockLoader;
+import com.pinball3d.zone.util.StorageWrapper;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;

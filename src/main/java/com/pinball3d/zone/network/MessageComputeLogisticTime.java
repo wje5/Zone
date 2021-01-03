@@ -1,10 +1,10 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
-import com.pinball3d.zone.sphinx.StorageWrapper;
-import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.util.StorageWrapper;
+import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;

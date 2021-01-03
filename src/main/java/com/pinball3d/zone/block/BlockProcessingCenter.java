@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -38,7 +39,9 @@ public class BlockProcessingCenter extends BlockContainer {
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 
-	public boolean isFullStructure(World world, BlockPos pos) {
+	public boolean isFullStructure(WorldPos worldPos) {
+		World world = worldPos.getWorld();
+		BlockPos pos = worldPos.getPos();
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				if (i == 0 && j == 0) {

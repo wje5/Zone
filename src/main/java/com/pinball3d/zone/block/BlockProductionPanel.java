@@ -1,9 +1,9 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
+import com.pinball3d.zone.Zone;
+import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
-import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEProductionPanel;
 
 import net.minecraft.block.BlockContainer;
@@ -12,7 +12,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -65,14 +64,10 @@ public class BlockProductionPanel extends BlockContainer {
 			return false;
 		}
 		if (worldIn.isRemote) {
-			openScreen(worldIn, pos);
+			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_NEED_NETWORK, worldIn, pos.getX(), pos.getY(),
+					pos.getZ());
 		}
 		return true;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void openScreen(World worldIn, BlockPos pos) {
-		Minecraft.getMinecraft().displayGuiScreen(new ScreenNeedNetwork(new WorldPos(pos, worldIn)));
 	}
 
 	@Override

@@ -2,13 +2,13 @@ package com.pinball3d.zone.item;
 
 import java.util.UUID;
 
+import com.pinball3d.zone.Zone;
+import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
-import com.pinball3d.zone.sphinx.ScreenTerminal;
-import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.util.WorldPos;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,8 +19,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.server.command.TextComponentHelper;
 
 public class ItemTerminal extends ZoneItem {
@@ -37,8 +35,10 @@ public class ItemTerminal extends ZoneItem {
 		ItemStack stack = playerIn.getHeldItem(handIn);
 		if (playerIn.isSneaking()) {
 			stack.setItemDamage(stack.getItemDamage() == 0 ? 1 : 0);
-		} else if (worldIn.isRemote && stack.getItemDamage() == 0) {
-			openScreen(playerIn.getHeldItem(handIn));
+		} else if (!worldIn.isRemote && stack.getItemDamage() == 0) {
+//			openScreen(playerIn.getHeldItem(handIn));
+			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_TERMINAL, worldIn, (int) playerIn.posX,
+					(int) playerIn.posY, (int) playerIn.posZ);
 		}
 		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 	}
@@ -107,8 +107,10 @@ public class ItemTerminal extends ZoneItem {
 
 	}
 
-	@SideOnly(Side.CLIENT)
-	public void openScreen(ItemStack stack) {
-		Minecraft.getMinecraft().displayGuiScreen(new ScreenTerminal(stack));
-	}
+//	@SideOnly(Side.CLIENT)
+//	public void openScreen(ItemStack stack) {
+//		Minecraft.getMinecraft().displayGuiScreen(new ScreenTerminal(stack));
+//		Minecraft.getMinecraft().displayGuiScreen(
+//				new GuiContainerSphinxController(new ContainerSphinxBase(Minecraft.getMinecraft().player)));
+//	}
 }

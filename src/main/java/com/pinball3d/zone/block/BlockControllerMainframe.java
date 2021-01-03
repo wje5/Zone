@@ -1,11 +1,9 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
-import com.pinball3d.zone.sphinx.ScreenLoadSphinx;
-import com.pinball3d.zone.sphinx.ScreenSphinxOpenPassword;
-import com.pinball3d.zone.sphinx.WorldPos;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
-import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
+import com.pinball3d.zone.Zone;
+import com.pinball3d.zone.inventory.GuiElementLoader;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.EnumPushReaction;
@@ -13,7 +11,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
@@ -21,8 +18,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockControllerMainframe extends Block {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
@@ -39,12 +34,15 @@ public class BlockControllerMainframe extends Block {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		pos = pos.offset(state.getValue(FACING).getOpposite(), 3);
-		pos = pos.add(0, 2, 0);
-		Block block = worldIn.getBlockState(pos).getBlock();
-		if (block instanceof BlockProcessingCenter && ((BlockProcessingCenter) block).isFullStructure(worldIn, pos)) {
-			if (worldIn.isRemote) {
-				openScreen(worldIn, pos);
+		WorldPos center = getProcessingCenterPos(new WorldPos(pos, worldIn));
+		if (center.isOrigin()) {
+			return false;
+		}
+		Block block = center.getBlockState().getBlock();
+		if (block instanceof BlockProcessingCenter && ((BlockProcessingCenter) block).isFullStructure(center)) {
+			if (!worldIn.isRemote) {
+				playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_CONTROLLER, worldIn, pos.getX(), pos.getY(),
+						pos.getZ());
 			}
 			return true;
 		}
@@ -54,27 +52,12 @@ public class BlockControllerMainframe extends Block {
 	public static WorldPos getProcessingCenterPos(WorldPos pos) {
 		IBlockState state = pos.getBlockState();
 		if (state != null && state.getBlock() == BlockLoader.controller_mainframe) {
-			pos = new WorldPos(pos.getPos().offset(state.getValue(FACING).getOpposite(), 3), pos.getDim());
+			pos = new WorldPos(pos.getPos().offset(state.getValue(FACING).getOpposite(), 3).add(0, 2, 0), pos.getDim());
 			if (pos.getBlockState().getBlock() instanceof BlockProcessingCenter) {
 				return pos;
 			}
 		}
 		return WorldPos.ORIGIN;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void openScreen(World worldIn, BlockPos pos) {
-		Minecraft mc = Minecraft.getMinecraft();
-		TEProcessingCenter te = (TEProcessingCenter) worldIn.getTileEntity(pos);
-		if (te.getWorkingState() == WorkingState.OFF) {
-			mc.displayGuiScreen(new ScreenSphinxOpenPassword(new WorldPos(pos, worldIn)));
-		} else {
-			if (te.isLoading()) {
-				mc.displayGuiScreen(new ScreenLoadSphinx(new WorldPos(pos, worldIn)));
-			} else {
-				mc.displayGuiScreen(new ScreenSphinxOpenPassword(new WorldPos(pos, worldIn)));
-			}
-		}
 	}
 
 	@Override

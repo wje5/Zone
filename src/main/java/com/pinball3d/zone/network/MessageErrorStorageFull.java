@@ -1,7 +1,7 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.sphinx.IParent;
-import com.pinball3d.zone.sphinx.SubscreenMessageBox;
+import com.pinball3d.zone.inventory.GuiContainerIOPanel;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenMessageBox;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -32,8 +32,8 @@ public class MessageErrorStorageFull implements IMessage {
 		public IMessage onMessage(MessageErrorStorageFull message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
 				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-				if (screen instanceof IParent) {
-					IParent s = (IParent) screen;
+				if (screen instanceof GuiContainerIOPanel) {
+					GuiContainerIOPanel s = (GuiContainerIOPanel) screen;
 					s.putScreen(new SubscreenMessageBox(s, I18n.format("sphinx.warning"),
 							I18n.format("sphinx.storage_full")));
 				}

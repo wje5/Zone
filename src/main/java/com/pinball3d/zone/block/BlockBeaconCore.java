@@ -1,15 +1,14 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
+import com.pinball3d.zone.Zone;
+import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.sphinx.ScreenNeedNetwork;
-import com.pinball3d.zone.sphinx.WorldPos;
 import com.pinball3d.zone.tileentity.TEBeaconCore;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -19,8 +18,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockBeaconCore extends BlockContainer {
 	public BlockBeaconCore() {
@@ -40,15 +37,11 @@ public class BlockBeaconCore extends BlockContainer {
 				&& playerIn.getHeldItem(hand).getItemDamage() == 1) {
 			return false;
 		}
-		if (worldIn.isRemote) {
-			openScreen(worldIn, pos);
+		if (!worldIn.isRemote) {
+			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_NEED_NETWORK, worldIn, pos.getX(), pos.getY(),
+					pos.getZ());
 		}
 		return true;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void openScreen(World worldIn, BlockPos pos) {
-		Minecraft.getMinecraft().displayGuiScreen(new ScreenNeedNetwork(new WorldPos(pos, worldIn)));
 	}
 
 	@Override

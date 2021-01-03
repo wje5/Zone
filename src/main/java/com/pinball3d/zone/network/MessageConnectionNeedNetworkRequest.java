@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.WorldPos;
-import com.pinball3d.zone.tileentity.INeedNetwork;
+import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -57,9 +56,9 @@ public class MessageConnectionNeedNetworkRequest implements IMessage {
 		@Override
 		public IMessage onMessage(MessageConnectionNeedNetworkRequest message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-				UUID network = ((INeedNetwork) message.needNetwork.getTileEntity()).getNetwork();
-				ConnectionHelper.refreshRequest(message.uuid, network, message.needNetwork,
-						message.types.toArray(new Type[] {}));
+//				UUID network = ((INeedNetwork) message.needNetwork.getTileEntity()).getNetwork();
+//				ConnectionHelper.refreshRequest(message.uuid, network, message.needNetwork,
+//						message.types.toArray(new Type[] {}));TODO
 			});
 			return null;
 		}

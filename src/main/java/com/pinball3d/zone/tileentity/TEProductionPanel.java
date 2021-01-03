@@ -2,8 +2,8 @@ package com.pinball3d.zone.tileentity;
 
 import com.pinball3d.zone.block.BlockStoragePanel;
 import com.pinball3d.zone.sphinx.IProduction;
-import com.pinball3d.zone.sphinx.StorageWrapper;
-import com.pinball3d.zone.sphinx.WorldPos;
+import com.pinball3d.zone.util.StorageWrapper;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

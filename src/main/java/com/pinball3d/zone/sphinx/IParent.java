@@ -1,5 +1,7 @@
 package com.pinball3d.zone.sphinx;
 
+import com.pinball3d.zone.gui.Subscreen;
+
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 
