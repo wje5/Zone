@@ -128,10 +128,10 @@ public class SubscreenViewStorage extends Subscreen {
 
 	public StorageWrapper getItems() {
 		StorageWrapper s;
-		if (!ConnectHelperClient.getInstance().hasData()) {
-			s = new StorageWrapper();
-		} else {
+		if (ConnectHelperClient.getInstance().hasData()) {
 			s = Util.search(ConnectHelperClient.getInstance().getItems(), box.text);
+		} else {
+			s = new StorageWrapper();
 		}
 		maxPage = (s.getSize() - 1) / 63 + 1;
 		if (page > maxPage) {

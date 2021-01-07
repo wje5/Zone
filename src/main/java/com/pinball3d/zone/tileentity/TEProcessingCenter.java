@@ -2,9 +2,11 @@ package com.pinball3d.zone.tileentity;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -73,6 +75,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	private UUID uuid;
 	private double[][] map;
 	private List<ClassifyGroup> classifyGroups = new ArrayList<ClassifyGroup>();
+	private boolean mapDirty;
+	private Map<WorldPos, List<Path>> dijkstraCache = new HashMap<WorldPos, List<Path>>();
 
 	public TEProcessingCenter() {
 
@@ -439,8 +443,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 						Iterator<WorldPos> it2 = temp.iterator();
 						while (it2.hasNext()) {
 							WorldPos nodepos = it2.next();
-							if (((INode) nodepos.getTileEntity()).isPointInRange(i.getDim(), i.getPos().getX(),
-									i.getPos().getY(), i.getPos().getZ())) {
+							TileEntity nodete = nodepos.getTileEntity();
+							if (((INeedNetwork) nodete).getWorkingState() == INeedNetwork.WorkingState.WORKING
+									&& ((INode) nodete).isPointInRange(i.getDim(), i.getPos().getX(), i.getPos().getY(),
+											i.getPos().getZ())) {
 								flag = true;
 								temp.add(i);
 								te.setConnected(true);
@@ -652,7 +658,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		for (int i = 0; i < list.size(); i++) {
 			WorldPos pos = list.get(i);
-			if (pos.getTileEntity() instanceof TEBeaconCore) {
+			TileEntity te = pos.getTileEntity();
+			if (te instanceof TEBeaconCore
+					&& ((TEBeaconCore) te).getWorkingState() == INeedNetwork.WorkingState.WORKING) {
 				map[0][i + 1] = 0;
 				map[i + 1][0] = 0;
 			}
@@ -669,7 +677,11 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				for (int j = 0; j < list.size(); j++) {
 					WorldPos pos2 = list.get(j);
 					if (pos.getBlockState().getBlock() == BlockLoader.beacon_core
-							&& pos2.getBlockState().getBlock() == BlockLoader.beacon_core) {
+							&& pos2.getBlockState().getBlock() == BlockLoader.beacon_core
+							&& ((TEBeaconCore) pos.getTileEntity())
+									.getWorkingState() == INeedNetwork.WorkingState.WORKING
+							&& ((TEBeaconCore) pos2.getTileEntity())
+									.getWorkingState() == INeedNetwork.WorkingState.WORKING) {
 						map[i + 1][j + 1] = 0;
 						map[j + 1][i + 1] = 0;
 					} else if (tileentity.getWorld().provider.getDimension() == pos.getDim()) {
@@ -686,6 +698,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		for (int i = 0; i < map.length; i++) {
 			map[i][i] = 0;
 		}
+		dijkstraCache.clear();
+		mapDirty = false;
 	}
 
 	public void printMap() {
@@ -700,6 +714,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public List<Path> dijkstra(WorldPos pos) {
 		if (map == null) {
 			refreshMap();
+		}
+		if (dijkstraCache.containsKey(pos)) {
+			List<Path> l = dijkstraCache.get(pos);
+			List<Path> r = new ArrayList<Path>();
+			l.forEach(e -> r.add(e.copy()));
+			return r;
 		}
 		List<WorldPos> list = new ArrayList<WorldPos>();
 		nodes.forEach(e -> {
@@ -727,9 +747,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 		});
 		int index = pos.getPos().equals(this.pos) ? 0 : list.indexOf(pos) + 1;
-		if (index == -1) {
-			throw new RuntimeException("wrong pos:" + pos);
-		}
 		double[] dist = map[index].clone();
 		int[][] path = new int[map.length][0];
 		boolean[] t = new boolean[dist.length];
@@ -754,7 +771,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 					l.add(j > 0 ? list.get(j - 1) : new WorldPos(this));
 					r.add(new Path(l, dist[j]));
 				}
-				return r;
+				dijkstraCache.put(pos, r);
+				List<Path> s = new ArrayList<Path>();
+				r.forEach(e -> s.add(e.copy()));
+				return s;
 			}
 			t[minIndex] = true;
 			for (int i = 0; i < map.length; i++) {
@@ -769,6 +789,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 		} while (true);
+
 	}
 
 	public NBTTagCompound genMapData(EntityPlayer player, NBTTagCompound tag) {
@@ -891,7 +912,19 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return classifyGroups;
 	}
 
-	public void updatePack() {
+	public Map<WorldPos, Double> getNodesInRange(int dim, double x, double y, double z) {
+		Map<WorldPos, Double> map = new HashMap<WorldPos, Double>();
+		nodes.forEach(e -> {
+			TileEntity te = e.getTileEntity();
+			if (((INeedNetwork) te).getWorkingState() == INeedNetwork.WorkingState.WORKING
+					&& ((INode) te).isPointInRange(dim, x, y, z)) {
+				map.put(e, Math.sqrt(e.getPos().distanceSq(x, y, z)));
+			}
+		});
+		return map;
+	}
+
+	public void updatePack(boolean refreshPath) {
 		Iterator<LogisticPack> it = packs.iterator();
 		Set<LogisticPack> deads = new HashSet<LogisticPack>();
 		while (it.hasNext()) {
@@ -899,6 +932,28 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			if (!isPointInRange(i.dim, i.x, i.y, i.z)) {
 				it.remove();
 				callUpdate();
+				continue;
+			}
+			if (refreshPath) {
+				WorldPos target = i.getTarget();
+				Map<WorldPos, Double> m = getNodesInRange(i.dim, i.x, i.y, i.z);
+				List<Path> l = dijkstra(target);
+				double shortest = Double.MAX_VALUE;
+				Path path = null;
+				Iterator<Path> it2 = l.iterator();
+				while (it2.hasNext()) {
+					Path p = it2.next();
+					if (m.containsKey(p.getTarget())) {
+						double dist = p.distance + m.get(p.getTarget());
+						if (dist < shortest) {
+							shortest = dist;
+							path = p;
+						}
+					}
+				}
+				if (path != null) {
+					i.routes = path.flip().routes;
+				}
 			}
 			if (i.forward(1D)) {
 				TileEntity te = i.getTarget().getTileEntity();
@@ -931,6 +986,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			dispenceItems(e.items, new WorldPos((int) e.x, (int) e.y, (int) e.z, e.dim));
 		});
 		callUpdate();
+	}
+
+	public void markMapDirty() {
+		mapDirty = true;
 	}
 
 	public void load() {
@@ -992,10 +1051,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 		}
 		energyTick--;
-		if (updateDevice() || map == null) {
+		if (updateDevice() || map == null || mapDirty) {
 			refreshMap();
+			updatePack(true);
+		} else {
+			updatePack(false);
 		}
-		updatePack();
 	}
 
 	@Override

@@ -57,8 +57,8 @@ public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
 	}
 
 	@Override
-	public void sendReq(Set<Type> types) {
+	public void sendReq() {
 		ConnectHelperClient.getInstance().requestController(
-				((ContainerSphinxController) inventorySlots).getControllerPos(), types.toArray(new Type[] {}));
+				((ContainerSphinxController) inventorySlots).getControllerPos(), getDataTypes().toArray(new Type[] {}));
 	}
 }

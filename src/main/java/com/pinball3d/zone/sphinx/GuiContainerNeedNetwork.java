@@ -20,9 +20,8 @@ public class GuiContainerNeedNetwork extends GuiContainerSphinxBase {
 	}
 
 	@Override
-	public void sendReq(Set<Type> types) {
-		ConnectHelperClient.getInstance().requestNeedNetwork(pos, types.toArray(new Type[] {}));
-
+	public void sendReq() {
+		ConnectHelperClient.getInstance().requestNeedNetwork(pos, getDataTypes().toArray(new Type[] {}));
 	}
 
 	@Override
@@ -38,6 +37,6 @@ public class GuiContainerNeedNetwork extends GuiContainerSphinxBase {
 		super.addComponents();
 		addComponent(new ButtonNetworkConfig(this, width - 10, 2, () -> {
 			subscreens.push(new SubscreenNetworkConfig(GuiContainerNeedNetwork.this, pos));
-		}, ()->ConnectHelperClient.getInstance().isConnected()));
+		}, () -> ConnectHelperClient.getInstance().isConnected()));
 	}
 }

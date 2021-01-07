@@ -18,9 +18,9 @@ public class GuiContainerSphinxLoad extends GuiContainerNetworkBase {
 	}
 
 	@Override
-	public void sendReq(Set<Type> types) {
+	public void sendReq() {
 		ConnectHelperClient.getInstance().requestController(((ContainerSphinxLoad) inventorySlots).getControllerPos(),
-				types.toArray(new Type[] {}));
+				getDataTypes().toArray(new Type[] {}));
 	}
 
 	@Override

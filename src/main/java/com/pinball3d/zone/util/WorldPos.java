@@ -129,6 +129,10 @@ public class WorldPos {
 		to.writeInt(dim);
 	}
 
+	public WorldPos copy() {
+		return new WorldPos(pos.getX(), pos.getY(), pos.getZ(), dim);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof WorldPos)) {

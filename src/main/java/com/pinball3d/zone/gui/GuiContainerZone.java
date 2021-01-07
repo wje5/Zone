@@ -18,7 +18,7 @@ import net.minecraft.item.ItemStack;
 
 public abstract class GuiContainerZone extends GuiContainer implements IHasComponents, IHasSubscreen {
 	private boolean inited;
-	private int lastMouseX, lastMouseY,clickX, clickY;
+	private int lastMouseX, lastMouseY, clickX, clickY;
 	protected float partialMoveX, partialMoveY;
 	protected Set<Component> components = new HashSet<Component>();
 	protected Stack<Subscreen> subscreens = new Stack<Subscreen>();
@@ -55,10 +55,18 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 
 	}
 
-	@Override
-	public void initGui() {
+	protected void onMousePressScreen(int mouseX, int mouseY, int button) {
+
+	}
+
+	protected void setSize() {
 		xSize = width;
 		ySize = height;
+	}
+
+	@Override
+	public void initGui() {
+		setSize();
 		super.initGui();
 		if (!inited) {
 			init();
@@ -115,20 +123,28 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 	public void onGuiClosed() {
 		Iterator<Subscreen> it = subscreens.iterator();
 		while (it.hasNext()) {
-			it.next().close();
+			Subscreen s = it.next();
 			it.remove();
+			s.close();
+
 		}
 		super.onGuiClosed();
+	}
+
+	public boolean onQuit() {
+		return true;
 	}
 
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (keyCode == Keyboard.KEY_ESCAPE) {
 			if (subscreens.empty()) {
-				super.keyTyped(typedChar, keyCode);
+				if (onQuit()) {
+					super.keyTyped(typedChar, keyCode);
+				}
+				onKetInput(typedChar, keyCode);
 			} else if (subscreens.peek().onQuit()) {
-				subscreens.peek().close();
-				subscreens.pop();
+				subscreens.pop().close();
 			}
 		} else {
 			if (subscreens.empty()) {
@@ -138,6 +154,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 					Component c = it.next();
 					flag = c.onKeyTyped(typedChar, keyCode);
 				}
+				onKetInput(typedChar, keyCode);
 			} else {
 				subscreens.peek().keyTyped(typedChar, keyCode);
 			}
@@ -192,6 +209,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		clickX = mouseX;
 		clickY = mouseY;
+		onMousePressScreen(mouseX, mouseY, mouseButton);
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 

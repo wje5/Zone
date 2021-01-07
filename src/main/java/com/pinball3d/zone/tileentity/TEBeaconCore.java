@@ -13,7 +13,11 @@ public class TEBeaconCore extends TENeedNetwork implements IChunkLoader, INode {
 
 	@Override
 	public void work() {
+		boolean old = full;
 		full = ((BlockBeaconCore) blockType).isFullStructure(world, pos);
+		if (old != full) {
+			((TEProcessingCenter) getNetworkPos().getTileEntity()).markMapDirty();
+		}
 	}
 
 	@Override

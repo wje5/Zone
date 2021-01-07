@@ -56,9 +56,8 @@ public class MessageConnectionNeedNetworkRequest implements IMessage {
 		@Override
 		public IMessage onMessage(MessageConnectionNeedNetworkRequest message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-//				UUID network = ((INeedNetwork) message.needNetwork.getTileEntity()).getNetwork();
-//				ConnectionHelper.refreshRequest(message.uuid, network, message.needNetwork,
-//						message.types.toArray(new Type[] {}));TODO
+				ConnectionHelper.requestNeedNetworkConnect(message.uuid, message.needNetwork,
+						message.types.toArray(new Type[] {}));
 			});
 			return null;
 		}

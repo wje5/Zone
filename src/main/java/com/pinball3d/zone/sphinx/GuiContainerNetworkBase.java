@@ -15,10 +15,10 @@ public abstract class GuiContainerNetworkBase extends GuiContainerZone {
 	@Override
 	protected void init() {
 		super.init();
-		sendReq(getDataTypes());
+		sendReq();
 	}
 
-	public abstract void sendReq(Set<Type> types);
+	public abstract void sendReq();
 
 	public Set<Type> getDataTypes() {
 		Set<Type> set = new HashSet<Type>();

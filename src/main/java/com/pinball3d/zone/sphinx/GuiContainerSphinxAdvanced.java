@@ -41,14 +41,14 @@ public abstract class GuiContainerSphinxAdvanced extends GuiContainerSphinxBase 
 		super.onKetInput(typedChar, keyCode);
 	}
 
-//	@Override
-//	protected void onDragScreen(int mouseX, int mouseY, int moveX, int moveY, int clickedMouseButton) {
-//		super.onDragScreen(mouseX, mouseY, moveX, moveY, clickedMouseButton);
-//		if (clickedMouseButton == 0) {
-//			dragBoxX2 = mouseX;
-//			dragBoxY2 = mouseY;
-//		}
-//	}TODO
+	@Override
+	protected void onDragScreen(int mouseX, int mouseY, int moveX, int moveY, int clickedMouseButton) {
+		super.onDragScreen(mouseX, mouseY, moveX, moveY, clickedMouseButton);
+		if (clickedMouseButton == 0) {
+			dragBoxX2 = mouseX;
+			dragBoxY2 = mouseY;
+		}
+	}
 
 	@Override
 	public void onDragMap(int mouseX, int mouseY, int moveX, int moveY) {

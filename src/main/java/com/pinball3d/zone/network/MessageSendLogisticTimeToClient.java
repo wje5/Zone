@@ -3,7 +3,7 @@ package com.pinball3d.zone.network;
 import java.util.Stack;
 
 import com.pinball3d.zone.gui.Subscreen;
-import com.pinball3d.zone.inventory.GuiContainerIOPanel;
+import com.pinball3d.zone.sphinx.GuiContainerIOPanel;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenIOPanelRequest;
 import com.pinball3d.zone.util.StorageWrapper;
 

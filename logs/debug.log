@@ -1,11 +1,11 @@
-[11:42:11] [main/DEBUG] [FML]: Creating vanilla freeze snapshot
-[11:42:11] [main/DEBUG] [FML]: Vanilla freeze snapshot created
-[11:42:12] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Starting minecraft server version 1.12.2
-[11:42:12] [Server thread/INFO] [FML]: MinecraftForge v14.23.5.2854 Initialized
-[11:42:12] [Server thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
-[11:42:12] [Server thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
-[11:42:12] [Server thread/INFO] [FML]: Replaced 1227 ore ingredients
-[11:42:12] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: Encountered an unexpected exception
+[16:54:13] [main/DEBUG] [FML]: Creating vanilla freeze snapshot
+[16:54:13] [main/DEBUG] [FML]: Vanilla freeze snapshot created
+[16:54:14] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Starting minecraft server version 1.12.2
+[16:54:14] [Server thread/INFO] [FML]: MinecraftForge v14.23.5.2854 Initialized
+[16:54:14] [Server thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
+[16:54:15] [Server thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
+[16:54:15] [Server thread/INFO] [FML]: Replaced 1227 ore ingredients
+[16:54:15] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: Encountered an unexpected exception
 java.lang.ExceptionInInitializerError: null
 	at net.minecraftforge.fml.common.FMLCommonHandler.onServerStart(FMLCommonHandler.java:332) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
 	at net.minecraft.server.dedicated.DedicatedServer.init(DedicatedServer.java:125) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
@@ -41,6 +41,6 @@ Caused by: java.lang.NoSuchFieldException: field_150915_c
 	at net.minecraftforge.fml.server.FMLServerHandler.<init>(FMLServerHandler.java:86) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
 	at net.minecraftforge.fml.server.FMLServerHandler.<clinit>(FMLServerHandler.java:77) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
 	... 4 more
-[11:42:12] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: This crash report has been saved to: D:\work\Zone\.\crash-reports\crash-2020-12-28_11.42.12-server.txt
-[11:42:12] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server
-[11:42:12] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving worlds
+[16:54:15] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: This crash report has been saved to: D:\work\Zone\.\crash-reports\crash-2021-01-07_16.54.15-server.txt
+[16:54:15] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server
+[16:54:15] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving worlds

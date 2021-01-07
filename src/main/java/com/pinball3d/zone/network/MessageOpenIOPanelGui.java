@@ -16,17 +16,19 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class MessageOpenIOPanelGui implements IMessage {
 	String name;
 	int world, x, y, z;
+	boolean flag;
 
 	public MessageOpenIOPanelGui() {
 
 	}
 
-	public MessageOpenIOPanelGui(EntityPlayer player, int x, int y, int z) {
+	public MessageOpenIOPanelGui(EntityPlayer player, int x, int y, int z, boolean flag) {
 		name = player.getName();
 		world = player.world.provider.getDimension();
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.flag = flag;
 	}
 
 	@Override
@@ -36,6 +38,7 @@ public class MessageOpenIOPanelGui implements IMessage {
 		x = buf.readInt();
 		y = buf.readInt();
 		z = buf.readInt();
+		flag = buf.readBoolean();
 	}
 
 	@Override
@@ -45,6 +48,7 @@ public class MessageOpenIOPanelGui implements IMessage {
 		buf.writeInt(x);
 		buf.writeInt(y);
 		buf.writeInt(z);
+		buf.writeBoolean(flag);
 	}
 
 	public static class Handler implements IMessageHandler<MessageOpenIOPanelGui, IMessage> {
@@ -55,7 +59,10 @@ public class MessageOpenIOPanelGui implements IMessage {
 				World world = server.getWorld(message.world);
 				EntityPlayer player = world.getPlayerEntityByName(message.name);
 				if (player != null) {
-					player.openGui(Zone.instance, GuiElementLoader.SPHINX_IO_PANEL, world, message.x, message.y, message.z);
+					player.openGui(Zone.instance,
+							message.flag ? GuiElementLoader.SPHINX_IO_PANEL
+									: GuiElementLoader.SPHINX_NEED_NETWORK_IO_PANEL,
+							world, message.x, message.y, message.z);
 				}
 			});
 			return null;

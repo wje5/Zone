@@ -1,4 +1,4 @@
-package com.pinball3d.zone.inventory;
+package com.pinball3d.zone.sphinx;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -8,7 +8,6 @@ import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.network.MessageUpdateContainerIOPanel;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.ContainerSphinxBase;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenIOPanelRequest;
 import com.pinball3d.zone.tileentity.TEIOPanel;
 import com.pinball3d.zone.util.HugeItemStack;
@@ -35,7 +34,7 @@ public class ContainerIOPanel extends ContainerSphinxBase {
 	public int maxPage = 1;
 	public int[] list = new int[36];
 	public String search = "";
-	public int x, y;
+	public int x, y, offsetedX, offsetedY;
 	public EntityPlayer player;
 
 	public ContainerIOPanel(EntityPlayer player, TileEntity tileEntity) {
@@ -65,19 +64,19 @@ public class ContainerIOPanel extends ContainerSphinxBase {
 						if (tileEntity.getWorld().isRemote) {
 							Minecraft mc = Minecraft.getMinecraft();
 							if (mc.currentScreen instanceof GuiContainerIOPanel) {
-								GuiContainerIOPanel container = (GuiContainerIOPanel) mc.currentScreen;
-								int offsetX = container.width / 2 - 184, offsetY = (container.height - 213) / 2;
+								GuiContainerIOPanel panel = (GuiContainerIOPanel) mc.currentScreen;
+								int offsetX = panel.width / 2 - 184, offsetY = (panel.height - 213) / 2;
 								int slotX = (slotNumber - 54) % 4 * 19 + 7;
 								int slotY = (slotNumber - 54) / 4 * 19 + 29;
 								if (x - offsetX >= slotX && x - offsetX <= slotX + 16 && y - offsetY >= slotY
 										&& y - offsetY <= slotY + 16) {
-									SubscreenIOPanelRequest s = new SubscreenIOPanelRequest(container, x - offsetX,
-											y - offsetY, getStack(), list[slotNumber - 54]);
+									SubscreenIOPanelRequest s = new SubscreenIOPanelRequest(panel, offsetedX - offsetX,
+											offsetedY - offsetY, getStack(), list[slotNumber - 54]);
 									if (Keyboard.isKeyDown(
 											Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
 										s.max();
 									}
-									container.putScreen(s);
+									panel.putScreen(s);
 								}
 							}
 						}

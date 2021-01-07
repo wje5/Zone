@@ -18,7 +18,7 @@ public class GuiContainerNeedNetworkIOPanel extends GuiContainerNeedNetwork {
 		addComponent(new TexturedButton(this, width - 20, 2, TEXTURE, 32, 68, 32, 32, 0.25F, () -> {
 			BlockPos pos = this.pos.getPos();
 			NetworkHandler.instance
-					.sendToServer(new MessageOpenIOPanelGui(mc.player, pos.getX(), pos.getY(), pos.getZ()));
+					.sendToServer(new MessageOpenIOPanelGui(mc.player, pos.getX(), pos.getY(), pos.getZ(), true));
 		}));
 	}
 }

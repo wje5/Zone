@@ -1,6 +1,6 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.inventory.ContainerIOPanel;
+import com.pinball3d.zone.sphinx.ContainerIOPanel;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;

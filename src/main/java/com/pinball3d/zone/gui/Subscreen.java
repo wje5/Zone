@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.sphinx.GuiContainerNetworkBase;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.Component;
@@ -33,11 +34,17 @@ public class Subscreen implements IHasComponents {
 	}
 
 	public static int getDisplayWidth() {
-		return Minecraft.getMinecraft().displayWidth / 2;
+		if (Minecraft.getMinecraft().currentScreen != null) {
+			return Minecraft.getMinecraft().currentScreen.width;
+		}
+		return 0;
 	}
 
 	public static int getDisplayHeight() {
-		return Minecraft.getMinecraft().displayHeight / 2;
+		if (Minecraft.getMinecraft().currentScreen != null) {
+			return Minecraft.getMinecraft().currentScreen.height;
+		}
+		return 0;
 	}
 
 	public void doRender(int mouseX, int mouseY) {
@@ -81,7 +88,9 @@ public class Subscreen implements IHasComponents {
 	}
 
 	public void init() {
-
+		if (!getDataTypes().isEmpty() && parent instanceof GuiContainerNetworkBase) {
+			((GuiContainerNetworkBase) parent).sendReq();
+		}
 	}
 
 	public Set<Type> getDataTypes() {
@@ -91,6 +100,17 @@ public class Subscreen implements IHasComponents {
 	public boolean onClickScreen(int x, int y, boolean isLeft) {
 		draggingComponent = null;
 		if (x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height) {
+			Iterator<Component> it = components.iterator();
+			while (it.hasNext()) {
+				Component c = it.next();
+				int cX = x - c.x;
+				int cY = y - c.y;
+				if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
+					if (c.onClickScreen(cX, cY, isLeft)) {
+						return true;
+					}
+				}
+			}
 			onClick(x - this.x, y - this.y, isLeft);
 			return true;
 		}
@@ -162,7 +182,9 @@ public class Subscreen implements IHasComponents {
 	}
 
 	public void close() {
-
+		if (parent instanceof GuiContainerNetworkBase) {
+			((GuiContainerNetworkBase) parent).sendReq();
+		}
 	}
 
 	public void keyTyped(char typedChar, int keyCode) {

@@ -5,12 +5,15 @@ import java.util.Collections;
 import java.util.List;
 
 import com.pinball3d.zone.block.BlockLoader;
+import com.pinball3d.zone.tileentity.INeedNetwork;
+import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 
 public class LogisticPack {
 	public List<WorldPos> routes;
@@ -50,10 +53,14 @@ public class LogisticPack {
 				routes.remove(0);
 				while (!routes.isEmpty()) {
 					Block block = next.getBlockState().getBlock();
+					TileEntity te = next.getTileEntity();
 					next = routes.get(0);
 					Block block2 = next.getBlockState().getBlock();
-					if ((block == BlockLoader.processing_center_light || block == BlockLoader.beacon_core)
-							&& (block2 == BlockLoader.processing_center_light || block2 == BlockLoader.beacon_core)) {
+					TileEntity te2 = next.getTileEntity();
+					if ((block == BlockLoader.processing_center_light || (block == BlockLoader.beacon_core
+							&& ((INeedNetwork) te).getWorkingState() == WorkingState.WORKING))
+							&& (block2 == BlockLoader.processing_center_light || (block2 == BlockLoader.beacon_core
+									&& ((INeedNetwork) te2).getWorkingState() == WorkingState.WORKING))) {
 						x = next.getPos().getX();
 						y = next.getPos().getY();
 						z = next.getPos().getZ();
@@ -125,6 +132,17 @@ public class LogisticPack {
 		public Path flip() {
 			Collections.reverse(routes);
 			return this;
+		}
+
+		public Path copy() {
+			List<WorldPos> l = new ArrayList<WorldPos>();
+			routes.forEach(e -> l.add(e.copy()));
+			return new Path(l, distance);
+		}
+
+		@Override
+		public String toString() {
+			return routes + "|" + distance;
 		}
 	}
 }

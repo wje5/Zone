@@ -36,7 +36,6 @@ public class ItemTerminal extends ZoneItem {
 		if (playerIn.isSneaking()) {
 			stack.setItemDamage(stack.getItemDamage() == 0 ? 1 : 0);
 		} else if (!worldIn.isRemote && stack.getItemDamage() == 0) {
-//			openScreen(playerIn.getHeldItem(handIn));
 			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_TERMINAL, worldIn, (int) playerIn.posX,
 					(int) playerIn.posY, (int) playerIn.posZ);
 		}
@@ -104,13 +103,5 @@ public class ItemTerminal extends ZoneItem {
 			}
 		}
 		return EnumActionResult.PASS;
-
 	}
-
-//	@SideOnly(Side.CLIENT)
-//	public void openScreen(ItemStack stack) {
-//		Minecraft.getMinecraft().displayGuiScreen(new ScreenTerminal(stack));
-//		Minecraft.getMinecraft().displayGuiScreen(
-//				new GuiContainerSphinxController(new ContainerSphinxBase(Minecraft.getMinecraft().player)));
-//	}
 }

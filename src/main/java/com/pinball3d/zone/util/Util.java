@@ -235,8 +235,7 @@ public class Util {
 
 	@SideOnly(Side.CLIENT)
 	public static IHasSubscreen getRoot() {
-		System.out.println(Minecraft.getMinecraft().player.openContainer);
-		return null;
+		return (IHasSubscreen) Minecraft.getMinecraft().currentScreen;
 	}
 
 	/**

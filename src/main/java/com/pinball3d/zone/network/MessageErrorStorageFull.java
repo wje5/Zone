@@ -1,6 +1,6 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.inventory.GuiContainerIOPanel;
+import com.pinball3d.zone.sphinx.GuiContainerIOPanel;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenMessageBox;
 
 import io.netty.buffer.ByteBuf;

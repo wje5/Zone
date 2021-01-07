@@ -1,9 +1,6 @@
-package com.pinball3d.zone.inventory;
+package com.pinball3d.zone.sphinx;
 
-import java.io.IOException;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -16,9 +13,9 @@ import com.pinball3d.zone.network.MessageIOPanelPageChange;
 import com.pinball3d.zone.network.MessageIOPanelSearchChange;
 import com.pinball3d.zone.network.MessageIOPanelSendItemToStorage;
 import com.pinball3d.zone.network.MessageIOPanelTransferPlayerInventory;
+import com.pinball3d.zone.network.MessageOpenIOPanelGui;
 import com.pinball3d.zone.network.MessageUpdateIOPanelGui;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.GuiContainerSphinxBase;
 import com.pinball3d.zone.sphinx.component.Component;
 import com.pinball3d.zone.sphinx.component.TextInputBox;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
@@ -29,60 +26,80 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiContainerIOPanel extends GuiContainerSphinxBase {
+public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 	public static final ResourceLocation IO_PANEL = new ResourceLocation("zone:textures/gui/sphinx/io_panel.png");
 	public static final ResourceLocation IO_PANEL2 = new ResourceLocation("zone:textures/gui/sphinx/io_panel_2.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private TextInputBox box;
 	private int panelX, panelY;
+	private WorldPos pos;
 
-	public GuiContainerIOPanel(ContainerIOPanel container) {
+	public GuiContainerIOPanel(ContainerIOPanel container, WorldPos pos) {
 		super(container);
-//		xSize = 306;
-//		ySize = 213;
+		this.pos = pos;
+	}
+
+	@Override
+	protected void setSize() {
+		super.setSize();
+		panelX = width / 2 - 184;
+		panelY = height / 2 - 106;
+		xSize = 306;
+		ySize = 213;
 	}
 
 	@Override
 	public void initGui() {
 		super.initGui();
-		panelX = xSize / 2 - 184;
-		panelY = ySize / 2 - 106;
-//		guiLeft -= 31;
-		applyComponents();
+		guiLeft -= 31;
 	}
 
-	protected void applyComponents() {
-		components = new HashSet<Component>();
-		components.add(box = new TextInputBox(this, panelX + 7, panelX + 7, 61, 15, 55, () -> {
+	@Override
+	protected void onMousePressScreen(int mouseX, int mouseY, int button) {
+		if (subscreens.empty()) {
+			ContainerIOPanel container = (ContainerIOPanel) inventorySlots;
+			container.x = mouseX;
+			container.y = mouseY;
+			container.offsetedX = mouseX + panelX;
+			container.offsetedY = mouseY + panelY;
+		}
+		super.onMousePressScreen(mouseX, mouseY, button);
+	}
+
+	@Override
+	public void addComponents() {
+		super.addComponents();
+		components.add(box = new TextInputBox(this, panelX + 7, panelY + 7, 61, 15, 55, () -> {
 			box.isFocus = true;
 		}).setIsPixel(true));
-		int offsetX = width / 2 - 184, offsetY = (height - 213) / 2;
-		components.add(new TexturedButton(this, offsetX + 15, offsetY + 201, ICONS, 92, 32, 5, 9, 1.0F, () -> {
+		components.add(new TexturedButton(this, panelX + 15, panelY + 201, TEXTURE, 92, 32, 5, 9, 1.0F, () -> {
 			NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, true));
 		}));
-		components.add(new TexturedButton(this, offsetX + 70, offsetY + 201, ICONS, 97, 32, 5, 9, 1.0F, () -> {
+		components.add(new TexturedButton(this, panelX + 70, panelY + 201, TEXTURE, 97, 32, 5, 9, 1.0F, () -> {
 			NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, false));
 		}));
-		components.add(new TexturedButton(this, offsetX + 67, offsetY + 7, ICONS, 92, 41, 15, 15, 1.0F, () -> {
+		components.add(new TexturedButton(this, panelX + 67, panelY + 7, TEXTURE, 92, 41, 15, 15, 1.0F, () -> {
 			NetworkHandler.instance
 					.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));
 		}));
-		components.add(new TexturedButton(this, offsetX + 285, offsetY + 5, ICONS, 64, 68, 30, 28, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 5, TEXTURE, 64, 68, 30, 28, 0.5F, () -> {
 			ContainerIOPanel container = (ContainerIOPanel) inventorySlots;
 			NetworkHandler.instance
 					.sendToServer(MessageIOPanelSendItemToStorage.newMessage(container.tileEntity.getPassword(),
 							container.tileEntity.getNetworkPos(), new WorldPos(container.tileEntity), mc.player));
 		}));
-		components.add(new TexturedButton(this, offsetX + 285, offsetY + 24, ICONS, 0, 68, 32, 32, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 24, TEXTURE, 0, 68, 32, 32, 0.5F, () -> {
 			System.out.println("config");
 		}));
-		components.add(new TexturedButton(this, offsetX + 285, offsetY + 43, ICONS, 180, 68, 31, 32, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 43, TEXTURE, 180, 68, 31, 32, 0.5F, () -> {
 			NetworkHandler.instance.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, true));
 		}));
-		components.add(new TexturedButton(this, offsetX + 285, offsetY + 62, ICONS, 211, 68, 31, 32, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 62, TEXTURE, 211, 68, 31, 32, 0.5F, () -> {
 			NetworkHandler.instance.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, false));
 		}));
 	}
@@ -92,15 +109,16 @@ public class GuiContainerIOPanel extends GuiContainerSphinxBase {
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+	protected void draw(int mouseX, int mouseY, float partialTicks) {
+		super.draw(mouseX, mouseY, partialTicks);
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
 		mc.getTextureManager().bindTexture(IO_PANEL);
-		drawTexturedModalRect(guiLeft + 92, guiTop, 0, 0, 214, 213);
+		drawTexturedModalRect(panelX + 92, panelY, 0, 0, 214, 213);
 		mc.getTextureManager().bindTexture(IO_PANEL2);
-		drawTexturedModalRect(guiLeft, guiTop, 0, 0, 89, 213);
+		drawTexturedModalRect(panelX, panelY, 0, 0, 89, 213);
 		ContainerIOPanel container = (ContainerIOPanel) inventorySlots;
 		String text = container.page + "/" + container.maxPage;
-		fontRenderer.drawString(text, guiLeft + 45 - fontRenderer.getStringWidth(text) / 2, guiTop + 202, 0xFF1ECCDE);
+		fontRenderer.drawString(text, panelX + 45 - fontRenderer.getStringWidth(text) / 2, panelY + 202, 0xFF1ECCDE);
 	}
 
 	@Override
@@ -183,44 +201,26 @@ public class GuiContainerIOPanel extends GuiContainerSphinxBase {
 	}
 
 	@Override
-	protected void keyTyped(char typedChar, int keyCode) throws IOException {
-		if (keyCode == Keyboard.KEY_ESCAPE) {
-			if (subscreens.empty()) {
-				ContainerIOPanel container = (ContainerIOPanel) inventorySlots;
-				WorldPos p = container.tileEntity.getNetworkPos();
-				// mc.displayGuiScreen(new GuiContainerNeedNetworkIOPanel(new
-				// WorldPos(container.tileEntity))); TODO
-			} else if (subscreens.peek().onQuit()) {
-				subscreens.peek().close();
-				subscreens.pop();
-			}
-			return;
-		} else {
-			if (subscreens.empty()) {
-				Iterator<Component> it = components.iterator();
-				boolean flag = false;
-				while (!flag && it.hasNext()) {
-					Component c = it.next();
-					flag = c.onKeyTyped(typedChar, keyCode);
-				}
-				if (keyCode == Keyboard.KEY_RETURN && box.isFocus) {
-					NetworkHandler.instance
-							.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));
-					box.isFocus = false;
-				}
-			} else {
-				subscreens.peek().keyTyped(typedChar, keyCode);
-				return;
-			}
+	protected void onKetInput(char typedChar, int keyCode) {
+		if (keyCode == Keyboard.KEY_RETURN && box.isFocus) {
+			NetworkHandler.instance
+					.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));
+			box.isFocus = false;
 		}
-		if (!box.isFocus) {
-			super.keyTyped(typedChar, keyCode);
-		}
+		super.onKetInput(typedChar, keyCode);
 	}
 
 	@Override
-	public void sendReq(Set<Type> types) {
+	public boolean onQuit() {
+		BlockPos pos = this.pos.getPos();
+		NetworkHandler.instance
+				.sendToServer(new MessageOpenIOPanelGui(mc.player, pos.getX(), pos.getY(), pos.getZ(), false));
+		return false;
+	}
+
+	@Override
+	public void sendReq() {
 		ConnectHelperClient.getInstance().requestNeedNetwork(
-				new WorldPos(((ContainerIOPanel) inventorySlots).tileEntity), types.toArray(new Type[] {}));
+				new WorldPos(((ContainerIOPanel) inventorySlots).tileEntity), getDataTypes().toArray(new Type[] {}));
 	}
 }

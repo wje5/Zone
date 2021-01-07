@@ -16,9 +16,11 @@ import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem3;
 import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem4;
 import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem5;
 import com.pinball3d.zone.manual.GuiContainerManualToolAndMaterial;
+import com.pinball3d.zone.sphinx.ContainerIOPanel;
 import com.pinball3d.zone.sphinx.ContainerSphinxController;
 import com.pinball3d.zone.sphinx.ContainerSphinxNeedNetwork;
 import com.pinball3d.zone.sphinx.ContainerSphinxTerminal;
+import com.pinball3d.zone.sphinx.GuiContainerIOPanel;
 import com.pinball3d.zone.sphinx.GuiContainerNeedNetwork;
 import com.pinball3d.zone.sphinx.GuiContainerNeedNetworkIOPanel;
 import com.pinball3d.zone.sphinx.GuiContainerSphinxController;
@@ -48,7 +50,8 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int SPHINX_TERMINAL = 14;
 	public static final int SPHINX_CONTROLLER = 15;
 	public static final int SPHINX_NEED_NETWORK = 16;
-	public static final int SPHINX_IO_PANEL = 17;
+	public static final int SPHINX_NEED_NETWORK_IO_PANEL = 17;
+	public static final int SPHINX_IO_PANEL = 18;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -89,8 +92,10 @@ public class GuiElementLoader implements IGuiHandler {
 			return new ContainerSphinxController(player, new WorldPos(x, y, z, world));
 		case SPHINX_NEED_NETWORK:
 			return new ContainerSphinxNeedNetwork(player);
-		case SPHINX_IO_PANEL:
+		case SPHINX_NEED_NETWORK_IO_PANEL:
 			return new ContainerSphinxNeedNetwork(player);
+		case SPHINX_IO_PANEL:
+			return new ContainerIOPanel(player, world.getTileEntity(new BlockPos(x, y, z)));
 		}
 		return null;
 	}
@@ -117,7 +122,6 @@ public class GuiElementLoader implements IGuiHandler {
 		case TRANSMISSION_MODULE:
 			return new GuiContainerTransmissionModule(
 					new ContainerTransmissionModule(player, world.getTileEntity(new BlockPos(x, y, z))));
-
 		case BURNING_BOX:
 			return new GuiContainerBurningBox(
 					new ContainerBurningBox(player, world.getTileEntity(new BlockPos(x, y, z))));
@@ -168,8 +172,11 @@ public class GuiElementLoader implements IGuiHandler {
 					new ContainerSphinxController(player, new WorldPos(x, y, z, world)));
 		case SPHINX_NEED_NETWORK:
 			return new GuiContainerNeedNetwork(new ContainerSphinxNeedNetwork(player), new WorldPos(x, y, z, world));
-		case SPHINX_IO_PANEL:
+		case SPHINX_NEED_NETWORK_IO_PANEL:
 			return new GuiContainerNeedNetworkIOPanel(new ContainerSphinxNeedNetwork(player),
+					new WorldPos(x, y, z, world));
+		case SPHINX_IO_PANEL:
+			return new GuiContainerIOPanel(new ContainerIOPanel(player, world.getTileEntity(new BlockPos(x, y, z))),
 					new WorldPos(x, y, z, world));
 		}
 		return null;

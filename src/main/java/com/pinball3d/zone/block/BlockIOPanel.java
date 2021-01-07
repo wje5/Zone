@@ -46,8 +46,8 @@ public class BlockIOPanel extends BlockContainer {
 			return false;
 		}
 		if (!worldIn.isRemote) {
-			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_IO_PANEL, worldIn, pos.getX(), pos.getY(),
-					pos.getZ());
+			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_NEED_NETWORK_IO_PANEL, worldIn, pos.getX(),
+					pos.getY(), pos.getZ());
 		}
 		return true;
 	}
