@@ -21,7 +21,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageTryConnectToNetwork implements IMessage {
-	String name, password;
+	// TODO change name to uuid,extend MessageSphinx
+	String name;
 	boolean isPlayer;
 	WorldPos pos, network;
 
@@ -29,13 +30,11 @@ public class MessageTryConnectToNetwork implements IMessage {
 
 	}
 
-	public MessageTryConnectToNetwork(EntityPlayer player, boolean isPlayer, WorldPos pos, WorldPos network,
-			String password) {
+	public MessageTryConnectToNetwork(EntityPlayer player, boolean isPlayer, WorldPos pos, WorldPos network) {
 		name = player.getName();
 		this.isPlayer = isPlayer;
 		this.pos = pos;
 		this.network = network;
-		this.password = password;
 	}
 
 	@Override
@@ -44,7 +43,6 @@ public class MessageTryConnectToNetwork implements IMessage {
 		isPlayer = buf.readBoolean();
 		pos = WorldPos.readFromByte(buf);
 		network = WorldPos.readFromByte(buf);
-		password = ByteBufUtils.readUTF8String(buf);
 	}
 
 	@Override
@@ -53,7 +51,6 @@ public class MessageTryConnectToNetwork implements IMessage {
 		buf.writeBoolean(isPlayer);
 		pos.writeToByte(buf);
 		network.writeToByte(buf);
-		ByteBufUtils.writeUTF8String(buf, password);
 	}
 
 	public static class Handler implements IMessageHandler<MessageTryConnectToNetwork, IMessage> {
@@ -65,40 +62,33 @@ public class MessageTryConnectToNetwork implements IMessage {
 				TileEntity tileentity = message.network.getTileEntity();
 				if (tileentity instanceof TEProcessingCenter) {
 					TEProcessingCenter te = (TEProcessingCenter) tileentity;
-					if (te.isDeviceInRange(message.pos) && te.isCorrectLoginPassword(message.password)) {
-						NetworkHandler.instance.sendTo(
-								new MessageConnectNetworkCallback(te.getUUID(), message.network, message.password),
-								player);
-						if (message.isPlayer) {
-							ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+					NetworkHandler.instance.sendTo(new MessageConnectNetworkCallback(true), player);
+					if (message.isPlayer) {
+						ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+						if (stack.getItem() != ItemLoader.terminal) {
+							stack = player.getHeldItem(EnumHand.OFF_HAND);
 							if (stack.getItem() != ItemLoader.terminal) {
-								stack = player.getHeldItem(EnumHand.OFF_HAND);
-								if (stack.getItem() != ItemLoader.terminal) {
-									return;
-								}
-							}
-							NBTTagCompound tag = stack.getTagCompound();
-							if (tag == null) {
-								tag = new NBTTagCompound();
-							}
-							tag.setUniqueId("network", te.getUUID());
-							tag.setString("password", message.password);
-							stack.setTagCompound(tag);
-						} else {
-							TileEntity t = message.pos.getTileEntity();
-							if (t instanceof INeedNetwork) {
-								((INeedNetwork) t).connect(te.getUUID(), message.password);
-								((INeedNetwork) t).setWorldPos(message.network, te.getUUID());
-								te.addNeedNetwork(message.pos);
+								return;
 							}
 						}
-						Connect c = ConnectionHelper.getConnect(player.getUniqueID());
-						if (c != null) {
-							c.network = te.getUUID();
+						NBTTagCompound tag = stack.getTagCompound();
+						if (tag == null) {
+							tag = new NBTTagCompound();
 						}
+						tag.setUniqueId("network", te.getUUID());
+						stack.setTagCompound(tag);
 					} else {
-						NetworkHandler.instance.sendTo(new MessageConnectNetworkCallbackWrong(), player);
+						TileEntity t = message.pos.getTileEntity();
+						if (t instanceof INeedNetwork) {
+							te.addNeedNetwork(message.pos, player);
+						}
 					}
+					Connect c = ConnectionHelper.getConnect(player.getUniqueID());
+					if (c != null) {
+						c.network = te.getUUID();
+					}
+				} else {
+					NetworkHandler.instance.sendTo(new MessageConnectNetworkCallback(false), player);
 				}
 			});
 			return null;

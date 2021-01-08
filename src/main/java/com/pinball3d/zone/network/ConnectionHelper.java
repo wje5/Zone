@@ -102,9 +102,15 @@ public class ConnectionHelper {
 						}
 						if (connect.isValid()) {
 							pool.put(uuid, connect);
+							return;
 						}
 					}
 				}
+			}
+			Connect connect = new Connect(player, null, WorldPos.ORIGIN, ConnectType.TERMINAL, types);
+			if (connect.isValid()) {
+				pool.put(uuid, connect);
+				return;
 			}
 		}
 	}
@@ -212,8 +218,8 @@ public class ConnectionHelper {
 	}
 
 	public static enum Type {
-		NETWORKUUID, ITEMS, NETWORKPOS, PASSWORD, ADMINPASSWORD, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
-		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, INITED, USEDSTORAGE, MAXSTORAGE, CLASSIFY;
+		NETWORKUUID, ITEMS, NETWORKPOS, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
+		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
 			WorldPos pos = WorldPos.ORIGIN;
@@ -248,16 +254,6 @@ public class ConnectionHelper {
 				break;
 			case NETWORKPOS:
 				tag.setTag(name(), pos.writeToNBT(new NBTTagCompound()));
-				break;
-			case PASSWORD:
-				if (te != null) {
-					tag.setString(name(), te.getPassword());
-				}
-				break;
-			case ADMINPASSWORD:
-				if (te != null) {
-					tag.setString(name(), te.getAdminPassword());
-				}
 				break;
 			case PLAYERVALIDNETWORK:
 				tag.setTag(name(), SphinxUtil.getValidNetworkData(new WorldPos(player), player, true));
@@ -315,11 +311,6 @@ public class ConnectionHelper {
 			case WORKINGSTATE:
 				if (te != null) {
 					tag.setInteger(name(), te.getWorkingState().ordinal() + 1);
-				}
-				break;
-			case INITED:
-				if (te != null) {
-					tag.setBoolean(name(), !te.needInit());
 				}
 				break;
 			case USEDSTORAGE:

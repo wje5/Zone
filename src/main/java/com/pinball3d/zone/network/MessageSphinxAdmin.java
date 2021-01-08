@@ -67,9 +67,8 @@ public abstract class MessageSphinxAdmin implements IMessage {
 		TileEntity tileentity = message.pos.getTileEntity();
 		if (tileentity instanceof TEProcessingCenter) {
 			TEProcessingCenter te = (TEProcessingCenter) tileentity;
-			if (te.isCorrectAdminPassword(message.password)) {
-				return true;
-			}
+//			if (te.isCorrectAdminPassword(message.password)) { //TODO check admin user
+			return true;
 		}
 		return false;
 	}

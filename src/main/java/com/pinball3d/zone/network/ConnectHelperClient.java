@@ -65,12 +65,6 @@ public class ConnectHelperClient {
 				case NETWORKPOS:
 					networkPos = new WorldPos(data.getCompoundTag(e.name()));
 					break;
-				case PASSWORD:
-					password = data.getString(e.name());
-					break;
-				case ADMINPASSWORD:
-					adminPassword = data.getString(e.name());
-					break;
 				case PLAYERVALIDNETWORK:
 					NBTTagList taglist = data.getTagList(e.name(), 10);
 					taglist.forEach(i -> {
@@ -112,9 +106,6 @@ public class ConnectHelperClient {
 				case WORKINGSTATE:
 					int ord = data.getInteger(e.name());
 					workingState = ord == 0 ? null : WorkingState.values()[ord - 1];
-					break;
-				case INITED:
-					inited = data.getBoolean(e.name());
 					break;
 				case USEDSTORAGE:
 					usedStorage = data.getInteger(e.name());

@@ -3,6 +3,7 @@ package com.pinball3d.zone.network;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.WorldPos;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -13,16 +14,16 @@ public class MessageIOPanelRequest extends MessageSphinx {
 
 	}
 
-	public MessageIOPanelRequest(String password, WorldPos pos, NBTTagCompound tag) {
-		super(password, pos, tag);
+	public MessageIOPanelRequest(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
+		super(player, pos, tag);
 	}
 
-	public static MessageIOPanelRequest newMessage(String password, WorldPos network, StorageWrapper req,
+	public static MessageIOPanelRequest newMessage(EntityPlayer player, WorldPos network, StorageWrapper req,
 			WorldPos target) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setTag("req", req.writeToNBT(new NBTTagCompound()));
 		tag.setTag("target", target.writeToNBT(new NBTTagCompound()));
-		return new MessageIOPanelRequest(password, network, tag);
+		return new MessageIOPanelRequest(player, network, tag);
 	}
 
 	@Override

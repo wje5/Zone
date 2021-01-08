@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +25,7 @@ public class SphinxUtil {
 		List<WorldPos> list = new ArrayList<WorldPos>();
 		map.forEach((uuid, pos) -> {
 			TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-			if (te.isOn() && !te.needInit() && (te.isPointInRange(dim, x, y, z))) {
+			if (te.getWorkingState() == WorkingState.WORKING && (te.isPointInRange(dim, x, y, z))) {
 				list.add(pos);
 			}
 		});
@@ -44,7 +45,7 @@ public class SphinxUtil {
 		List<WorldPos> list = new ArrayList<WorldPos>();
 		map.forEach((uuid, pos) -> {
 			TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-			if (te.isOn() && !te.needInit()) {
+			if (te.getWorkingState() == WorkingState.WORKING) {
 				list.add(pos);
 			}
 		});

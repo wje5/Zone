@@ -8,10 +8,8 @@ import com.pinball3d.zone.sphinx.component.TexturedButton;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageClassify;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenShutdownSphinx;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenSphinxConfig;
-import com.pinball3d.zone.sphinx.subscreen.SubscreenSphinxInitWizard;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenSynodLibrary;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenViewStorage;
-import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 
 public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
 	public GuiContainerSphinxController(ContainerSphinxController container) {
@@ -41,10 +39,6 @@ public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
-		if (ConnectHelperClient.getInstance().hasData()
-				&& ConnectHelperClient.getInstance().getWorkingState() == WorkingState.UNINIT && subscreens.empty()) {
-			subscreens.add(new SubscreenSphinxInitWizard(this));
-		}
 	}
 
 	@Override

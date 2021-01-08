@@ -12,11 +12,8 @@ public class NetworkHandler {
 	private static int nextID = 0;
 
 	public NetworkHandler() {
-		registerMessage(MessageWizardData.Handler.class, MessageWizardData.class, Side.SERVER);
 		registerMessage(MessageOpenSphinx.Handler.class, MessageOpenSphinx.class, Side.SERVER);
 		registerMessage(MessageShutdownSphinx.Handler.class, MessageShutdownSphinx.class, Side.SERVER);
-		registerMessage(MessageChangePassword.Handler.class, MessageChangePassword.class, Side.SERVER);
-		registerMessage(MessageChangeAdminPassword.Handler.class, MessageChangeAdminPassword.class, Side.SERVER);
 		registerMessage(MessageChangeName.Handler.class, MessageChangeName.class, Side.SERVER);
 		registerMessage(MessageOpenIOPanelGui.Handler.class, MessageOpenIOPanelGui.class, Side.SERVER);
 		registerMessage(MessageIOPanelPageChange.Handler.class, MessageIOPanelPageChange.class, Side.SERVER);
@@ -30,8 +27,6 @@ public class NetworkHandler {
 		registerMessage(MessagePlaySoundAtPos.Handler.class, MessagePlaySoundAtPos.class, Side.CLIENT);
 		registerMessage(MessageTryConnectToNetwork.Handler.class, MessageTryConnectToNetwork.class, Side.SERVER);
 		registerMessage(MessageConnectNetworkCallback.Handler.class, MessageConnectNetworkCallback.class, Side.CLIENT);
-		registerMessage(MessageConnectNetworkCallbackWrong.Handler.class, MessageConnectNetworkCallbackWrong.class,
-				Side.CLIENT);
 		registerMessage(MessageRequestNetworkInfo.Handler.class, MessageRequestNetworkInfo.class, Side.SERVER);
 		registerMessage(MessageSendNetworkInfoToClient.Handler.class, MessageSendNetworkInfoToClient.class,
 				Side.CLIENT);

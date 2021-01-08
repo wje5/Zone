@@ -20,17 +20,16 @@ public class MessageIOPanelSendItemToStorage extends MessageSphinx {
 
 	}
 
-	public MessageIOPanelSendItemToStorage(String password, WorldPos pos, NBTTagCompound tag) {
-		super(password, pos, tag);
+	public MessageIOPanelSendItemToStorage(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
+		super(player, pos, tag);
 	}
 
-	public static MessageIOPanelSendItemToStorage newMessage(String password, WorldPos network, WorldPos panelpos,
-			EntityPlayer player) {
+	public static MessageIOPanelSendItemToStorage newMessage(EntityPlayer player, WorldPos network, WorldPos panelpos) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setTag("panelpos", panelpos.writeToNBT(new NBTTagCompound()));
 		tag.setInteger("dim", player.dimension);
 		tag.setString("name", player.getName());
-		return new MessageIOPanelSendItemToStorage(password, network, tag);
+		return new MessageIOPanelSendItemToStorage(player, network, tag);
 	}
 
 	@Override

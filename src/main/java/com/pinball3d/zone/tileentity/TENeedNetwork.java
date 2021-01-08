@@ -78,10 +78,9 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 	}
 
 	@Override
-	public void connect(UUID uuid, String password) {
+	public void connect(UUID uuid) {
 		network = uuid;
 		worldpos = WorldPos.ORIGIN;
-		this.password = password;
 		connected = true;
 		callUpdate();
 	}
@@ -124,17 +123,6 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 		worldpos = WorldPos.ORIGIN;
 		password = "";
 		connected = false;
-		callUpdate();
-	}
-
-	@Override
-	public String getPassword() {
-		return password;
-	}
-
-	@Override
-	public void setPassword(String password) {
-		this.password = password;
 		callUpdate();
 	}
 

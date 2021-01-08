@@ -58,48 +58,27 @@ public class ItemTerminal extends ZoneItem {
 				if (tileentity instanceof INeedNetwork) {
 					if (tag.hasUniqueId("network")) {
 						UUID uuid = tag.getUniqueId("network");
-						String password = tag.getString("password");
-						if (!password.isEmpty()) {
-							INeedNetwork te = (INeedNetwork) tileentity;
-							GlobalNetworkData data = GlobalNetworkData.getData(worldIn);
-							WorldPos network = data.getNetwork(uuid);
-							if (network != null) {
-								TileEntity t = network.getTileEntity();
-								if (t instanceof TEProcessingCenter) {
-									TEProcessingCenter pc = (TEProcessingCenter) t;
-									if (pc.isDeviceInRange(p)) {
-										if (pc.isCorrectLoginPassword(password)) {
-											te.connect(uuid, password);
-											te.setWorldPos(network, uuid);
-											pc.addNeedNetwork(p);
-											player.sendMessage(TextComponentHelper.createComponentTranslation(player,
-													"sphinx.connect_to_network", pc.getName()));
-											return EnumActionResult.SUCCESS;
-										} else {
-											player.sendMessage(TextComponentHelper.createComponentTranslation(player,
-													"sphinx.password_incorrect"));
-										}
-									} else {
-										player.sendMessage(TextComponentHelper.createComponentTranslation(player,
-												"sphinx.no_network"));
-									}
-								} else {
+						GlobalNetworkData data = GlobalNetworkData.getData(worldIn);
+						WorldPos network = data.getNetwork(uuid);
+						if (network != null) {
+							TileEntity t = network.getTileEntity();
+							if (t instanceof TEProcessingCenter) {
+								TEProcessingCenter pc = (TEProcessingCenter) t;
+								if (pc.isDeviceInRange(p)) {
+									pc.addNeedNetwork(p, player);
 									player.sendMessage(TextComponentHelper.createComponentTranslation(player,
-											"sphinx.no_network"));
+											"sphinx.connect_to_network", pc.getName()));
+									return EnumActionResult.SUCCESS;
 								}
-							} else {
-								player.sendMessage(
-										TextComponentHelper.createComponentTranslation(player, "sphinx.no_network"));
+								player.sendMessage(TextComponentHelper.createComponentTranslation(player,
+										"sphinx.network_not_coverage"));
+								return EnumActionResult.FAIL;
 							}
-						} else {
-							player.sendMessage(
-									TextComponentHelper.createComponentTranslation(player, "sphinx.no_network"));
 						}
-					} else {
-						player.sendMessage(TextComponentHelper.createComponentTranslation(player, "sphinx.no_network"));
 					}
-					return EnumActionResult.FAIL;
 				}
+				player.sendMessage(TextComponentHelper.createComponentTranslation(player, "sphinx.no_network"));
+				return EnumActionResult.FAIL;
 			}
 		}
 		return EnumActionResult.PASS;

@@ -7,7 +7,7 @@ import com.pinball3d.zone.util.WorldPos;
 import net.minecraft.client.resources.I18n;
 
 public interface INeedNetwork {
-	public void connect(UUID uuid, String password);
+	public void connect(UUID uuid);
 
 	public UUID getNetwork();
 
@@ -20,10 +20,6 @@ public interface INeedNetwork {
 	public void setConnected(boolean connected);
 
 	public void deleteNetwork();
-
-	public String getPassword();
-
-	public void setPassword(String password);
 
 	public WorkingState getWorkingState();
 

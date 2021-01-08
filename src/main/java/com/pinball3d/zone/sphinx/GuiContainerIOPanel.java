@@ -89,9 +89,8 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 		}));
 		components.add(new TexturedButton(this, panelX + 285, panelY + 5, TEXTURE, 64, 68, 30, 28, 0.5F, () -> {
 			ContainerIOPanel container = (ContainerIOPanel) inventorySlots;
-			NetworkHandler.instance
-					.sendToServer(MessageIOPanelSendItemToStorage.newMessage(container.tileEntity.getPassword(),
-							container.tileEntity.getNetworkPos(), new WorldPos(container.tileEntity), mc.player));
+			NetworkHandler.instance.sendToServer(MessageIOPanelSendItemToStorage.newMessage(mc.player,
+					container.tileEntity.getNetworkPos(), new WorldPos(container.tileEntity)));
 		}));
 		components.add(new TexturedButton(this, panelX + 285, panelY + 24, TEXTURE, 0, 68, 32, 32, 0.5F, () -> {
 			System.out.println("config");

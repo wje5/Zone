@@ -93,7 +93,7 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		StorageWrapper wrapper = stack.getMaxStackSize() <= 1 ? new StorageWrapper(stack)
 				: new StorageWrapper(new HugeItemStack(stack, amount));
 		NetworkHandler.instance.sendToServer(
-				MessageIOPanelRequest.newMessage(te.getPassword(), te.getNetworkPos(), wrapper, new WorldPos(te)));
+				MessageIOPanelRequest.newMessage(mc.player, te.getNetworkPos(), wrapper, new WorldPos(te)));
 		parent.removeScreen(this);
 	}
 

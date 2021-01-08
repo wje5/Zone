@@ -46,10 +46,7 @@ import net.minecraftforge.items.IItemHandler;
 
 public class TEProcessingCenter extends TileEntity implements ITickable, IChunkLoader {
 	private boolean on;
-	private boolean init;
 	private String name = "";
-	private String adminPassword = "";
-	private String loginPassword = "";
 	private int loadTick;
 	private int energyTick;
 	private int energy;
@@ -82,10 +79,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	}
 
-	public boolean needInit() {
-		return !init;
-	}
-
 	public boolean isOn() {
 		return on;
 	}
@@ -109,22 +102,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return name;
 	}
 
-	public boolean isCorrectAdminPassword(String password) {
-		return password.equals(adminPassword);
-	}
-
-	public boolean isCorrectLoginPassword(String password) {
-		return password.equals(loginPassword);
-	}
-
-	public String getPassword() {
-		return loginPassword;
-	}
-
-	public String getAdminPassword() {
-		return adminPassword;
-	}
-
 	public boolean isLoading() {
 		return loadTick > 0;
 	}
@@ -142,57 +119,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 	}
 
-	public void saveWizardData(String adminPassword, String name, String loginPassword) {
-		if (adminPassword.length() == 8 && name.length() >= 4 && name.length() <= 8 && loginPassword.length() == 8) {
-			this.adminPassword = adminPassword;
-			this.name = name;
-			this.loginPassword = loginPassword;
-			init = true;
-			callUpdate();
-			markDirty();
-		}
-	}
-
-	public void setAdminPassword(String password) {
-		if (password.length() == 8) {
-			adminPassword = password;
-			callUpdate();
-			markDirty();
-		}
-	}
-
-	public void setPassword(String password) {
-		if (password.length() == 8) {
-			loginPassword = password;
-			nodes.forEach(e -> {
-				TileEntity te = e.getTileEntity();
-				if (te instanceof INeedNetwork) {
-					((INeedNetwork) te).setPassword(password);
-				}
-			});
-			storages.forEach(e -> {
-				TileEntity te = e.getTileEntity();
-				if (te instanceof INeedNetwork) {
-					((INeedNetwork) te).setPassword(password);
-				}
-			});
-			devices.forEach(e -> {
-				TileEntity te = e.getTileEntity();
-				if (te instanceof INeedNetwork) {
-					((INeedNetwork) te).setPassword(password);
-				}
-			});
-			productions.forEach(e -> {
-				TileEntity te = e.getTileEntity();
-				if (te instanceof INeedNetwork) {
-					((INeedNetwork) te).setPassword(password);
-				}
-			});
-			callUpdate();
-			markDirty();
-		}
-	}
-
 	public void setName(String name) {
 		if (name.length() >= 4) {
 			this.name = name;
@@ -201,7 +127,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 	}
 
-	public void addNeedNetwork(WorldPos pos) {
+	public void addNeedNetwork(WorldPos pos, EntityPlayer player) {
+		// TODO check player permission
 		nodes.forEach(e -> {
 			if (e.equals(pos)) {
 				return;
@@ -225,12 +152,20 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		TileEntity te = pos.getTileEntity();
 		if (te instanceof INode) {
 			nodes.add(pos);
+			((INeedNetwork) te).connect(getUUID());
+			((INeedNetwork) te).setWorldPos(new WorldPos(this), getUUID());
 		} else if (te instanceof IStorable) {
 			storages.add(pos);
+			((INeedNetwork) te).connect(getUUID());
+			((INeedNetwork) te).setWorldPos(new WorldPos(this), getUUID());
 		} else if (te instanceof IDevice) {
 			devices.add(pos);
+			((INeedNetwork) te).connect(getUUID());
+			((INeedNetwork) te).setWorldPos(new WorldPos(this), getUUID());
 		} else if (te instanceof IProduction) {
 			productions.add(pos);
+			((INeedNetwork) te).connect(getUUID());
+			((INeedNetwork) te).setWorldPos(new WorldPos(this), getUUID());
 		}
 		if (!world.isRemote) {
 			refreshMap();
@@ -312,8 +247,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			TileEntity tileentity = p.getTileEntity();
 			if (tileentity instanceof INode) {
 				INeedNetwork te = (INeedNetwork) tileentity;
-				if (!p.equals(pos) && te.isConnected() && ((INode) te).isPointInRange(pos.getDim(), pos.getPos().getX(),
-						pos.getPos().getY(), pos.getPos().getZ())) {
+				if (!p.equals(pos) && te.isConnected() && te.getWorkingState() == INeedNetwork.WorkingState.WORKING
+						&& ((INode) te).isPointInRange(pos.getDim(), pos.getPos().getX(), pos.getPos().getY(),
+								pos.getPos().getZ())) {
 					return true;
 				}
 			}
@@ -578,9 +514,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		if (!on) {
 			return WorkingState.OFF;
-		}
-		if (needInit()) {
-			return WorkingState.UNINIT;
 		}
 		return WorkingState.WORKING;
 	}
@@ -1061,10 +994,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		init = compound.getBoolean("init");
 		name = compound.getString("name");
-		adminPassword = compound.getString("adminPassword");
-		loginPassword = compound.getString("loginPassword");
 		loadTick = compound.getInteger("loadTick");
 		energyTick = compound.getInteger("energyTick");
 		on = compound.getBoolean("on");
@@ -1109,10 +1039,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setBoolean("init", init);
 		compound.setString("name", name);
-		compound.setString("adminPassword", adminPassword);
-		compound.setString("loginPassword", loginPassword);
 		compound.setInteger("loadTick", loadTick);
 		compound.setInteger("energyTick", energyTick);
 		compound.setBoolean("on", on);
@@ -1198,7 +1125,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public static enum WorkingState {
-		WORKING("sphinx.working"), OFF("sphinx.off"), STARTING("sphinx.starting"), UNINIT("sphinx.uninit");
+		WORKING("sphinx.working"), OFF("sphinx.off"), STARTING("sphinx.starting");
 
 		String key;
 

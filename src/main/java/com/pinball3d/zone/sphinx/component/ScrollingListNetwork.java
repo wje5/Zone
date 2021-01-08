@@ -9,10 +9,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.MessageTryConnectToNetwork;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenCheckConnectedNetwork;
-import com.pinball3d.zone.sphinx.subscreen.SubscreenConnectToNetwork;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenConnectToNetworkBox;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -106,7 +108,11 @@ public class ScrollingListNetwork extends Component {
 				if (bar.selected) {
 					root.putScreen(new SubscreenCheckConnectedNetwork(root, bar.pos, bar.name, x + this.x, y + this.y));
 				} else {
-					root.putScreen(new SubscreenConnectToNetwork(root, pos, bar.pos, bar.name, x + this.x, y + this.y));
+					NetworkHandler.instance.sendToServer(new MessageTryConnectToNetwork(mc.player, pos.isOrigin(),
+							pos.isOrigin() ? new WorldPos(mc.player.getPosition(), mc.world.provider.getDimension())
+									: pos,
+							bar.pos));
+					root.putScreen(new SubscreenConnectToNetworkBox(root, bar.name, this.x + x, this.y + y));
 				}
 				return true;
 			}
