@@ -43,11 +43,15 @@ public class TEStorageChest extends TENeedNetwork implements IStorable {
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setTag("inv", inv.serializeNBT());
 		return super.writeToNBT(compound);
-
 	}
 
 	@Override
 	public ItemStackHandler getStorage() {
 		return inv;
+	}
+
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		return null;
 	}
 }

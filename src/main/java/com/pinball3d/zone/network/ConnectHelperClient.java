@@ -159,7 +159,10 @@ public class ConnectHelperClient {
 	}
 
 	public void requestTerminal(Type... types) {
-		NetworkHandler.instance.sendToServer(new MessageConnectionRequest(Minecraft.getMinecraft().player, types));
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		if (player != null) {
+			NetworkHandler.instance.sendToServer(new MessageConnectionRequest(player, types));
+		}
 		clear();
 		clearHuges();
 		this.types = Sets.newHashSet(types);
@@ -167,8 +170,10 @@ public class ConnectHelperClient {
 	}
 
 	public void requestController(WorldPos controller, Type... types) {
-		NetworkHandler.instance.sendToServer(
-				new MessageConnectionControllerRequest(Minecraft.getMinecraft().player, controller, types));
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		if (player != null) {
+			NetworkHandler.instance.sendToServer(new MessageConnectionControllerRequest(player, controller, types));
+		}
 		clear();
 		clearHuges();
 		this.types = Sets.newHashSet(types);
@@ -176,8 +181,10 @@ public class ConnectHelperClient {
 	}
 
 	public void requestNeedNetwork(WorldPos needNetwork, Type... types) {
-		NetworkHandler.instance.sendToServer(
-				new MessageConnectionNeedNetworkRequest(Minecraft.getMinecraft().player, needNetwork, types));
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		if (player != null) {
+			NetworkHandler.instance.sendToServer(new MessageConnectionNeedNetworkRequest(player, needNetwork, types));
+		}
 		clear();
 		clearHuges();
 		this.types = Sets.newHashSet(types);
