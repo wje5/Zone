@@ -12,8 +12,10 @@ import org.lwjgl.input.Mouse;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.Component;
+import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
 public abstract class GuiContainerZone extends GuiContainer implements IHasComponents, IHasSubscreen {
@@ -28,6 +30,10 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 	}
 
 	protected void draw(int mouseX, int mouseY, float partialTicks) {
+
+	}
+
+	protected void drawForeground(int mouseX, int mouseY) {
 
 	}
 
@@ -103,20 +109,46 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 				screen.onMouseScrollScreen(mouseX, mouseY, d < 0);
 			}
 		}
+		GlStateManager.pushMatrix();
 		draw(mouseX, mouseY, partialTicks);
+		GlStateManager.popMatrix();
+	}
+
+	@Override
+	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+		Util.resetOpenGl();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(-guiLeft, -guiTop, 0);
 		components.forEach(e -> {
 			e.doRender(mouseX, mouseY);
 		});
+		GlStateManager.popMatrix();
+		Util.resetOpenGl();
+		GlStateManager.pushMatrix();
+		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+		GlStateManager.popMatrix();
+		Util.resetOpenGl();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(-guiLeft, -guiTop, 0);
 		Iterator<Subscreen> it = subscreens.iterator();
 		while (it.hasNext()) {
 			Subscreen screen = it.next();
 			if (screen.dead) {
 				it.remove();
 			} else {
+				GlStateManager.pushMatrix();
 				screen.doRender(mouseX, mouseY);
+				GlStateManager.popMatrix();
+				Util.resetOpenGl();
 			}
 		}
-		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+		GlStateManager.popMatrix();
+		Util.resetOpenGl();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(-guiLeft, -guiTop, 0);
+		drawForeground(mouseX, mouseY);
+		GlStateManager.popMatrix();
+		Util.resetOpenGl();
 	}
 
 	@Override

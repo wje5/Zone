@@ -49,9 +49,4 @@ public class TEStorageChest extends TENeedNetwork implements IStorable {
 	public ItemStackHandler getStorage() {
 		return inv;
 	}
-
-	@Override
-	public NBTTagCompound getUpdateTag() {
-		return null;
-	}
 }

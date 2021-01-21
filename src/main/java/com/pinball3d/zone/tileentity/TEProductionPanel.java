@@ -27,7 +27,7 @@ public class TEProductionPanel extends TENeedNetwork implements IProduction {
 			if (handler != null) {
 				StorageWrapper wrapper = new StorageWrapper(handler, false);
 				if (!wrapper.isEmpty()) {
-					TEProcessingCenter pc = (TEProcessingCenter) worldpos.getTileEntity();
+					TEProcessingCenter pc = (TEProcessingCenter) getPosFromUUID(network).getTileEntity();
 					pc.insertToItemHandler(pc.dispenceItems(wrapper, new WorldPos(this)), handler);
 					markDirty();
 				}

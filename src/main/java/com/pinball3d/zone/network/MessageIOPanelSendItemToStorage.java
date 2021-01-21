@@ -9,13 +9,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageIOPanelSendItemToStorage extends MessageSphinx {
+public class MessageIOPanelSendItemToStorage extends MessageSphinxNeedNetwork {
 	public MessageIOPanelSendItemToStorage() {
 
 	}
@@ -24,32 +22,23 @@ public class MessageIOPanelSendItemToStorage extends MessageSphinx {
 		super(player, pos, tag);
 	}
 
-	public static MessageIOPanelSendItemToStorage newMessage(EntityPlayer player, WorldPos network, WorldPos panelpos) {
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setTag("panelpos", panelpos.writeToNBT(new NBTTagCompound()));
-		tag.setInteger("dim", player.dimension);
-		tag.setString("name", player.getName());
-		return new MessageIOPanelSendItemToStorage(player, network, tag);
+	public static MessageIOPanelSendItemToStorage newMessage(EntityPlayer player, WorldPos needNetwork) {
+		return new MessageIOPanelSendItemToStorage(player, needNetwork, new NBTTagCompound());
 	}
 
 	@Override
 	public void run(MessageContext ctx) {
-		TileEntity tileentity = new WorldPos(tag.getCompoundTag("panelpos")).getTileEntity();
+		TileEntity tileentity = pos.getTileEntity();
 		if (tileentity instanceof TEIOPanel) {
 			TEIOPanel te = (TEIOPanel) tileentity;
-			TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
+			TEProcessingCenter pc = getProcessingCenter();
 			StorageWrapper wrapper = new StorageWrapper(te.inv, false);
 			if (!wrapper.isEmpty()) {
 				StorageWrapper wrapper2 = pc.dispenceItems(wrapper, new WorldPos(te.getPos(), te.getWorld()));
 				if (!wrapper2.isEmpty()) {
-					int dim = tag.getInteger("dim");
-					String name = tag.getString("name");
-					if (!name.isEmpty()) {
-						World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim);
-						EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(name);
-						if (player != null) {
-							NetworkHandler.instance.sendTo(new MessageErrorStorageFull(), player);
-						}
+					EntityPlayer player = getPlayer();
+					if (player != null) {
+						NetworkHandler.instance.sendTo(new MessageErrorStorageFull(), (EntityPlayerMP) player);
 					}
 				}
 				pc.insertToItemHandler(wrapper2, te.inv);

@@ -1,5 +1,7 @@
 package com.pinball3d.zone.network;
 
+import java.util.UUID;
+
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.network.ConnectionHelper.Connect;
 import com.pinball3d.zone.tileentity.INeedNetwork;
@@ -15,14 +17,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageTryConnectToNetwork implements IMessage {
-	// TODO change name to uuid,extend MessageSphinx
-	String name;
+	UUID uuid;
 	boolean isPlayer;
 	WorldPos pos, network;
 
@@ -31,7 +31,7 @@ public class MessageTryConnectToNetwork implements IMessage {
 	}
 
 	public MessageTryConnectToNetwork(EntityPlayer player, boolean isPlayer, WorldPos pos, WorldPos network) {
-		name = player.getName();
+		uuid = player.getUniqueID();
 		this.isPlayer = isPlayer;
 		this.pos = pos;
 		this.network = network;
@@ -39,7 +39,7 @@ public class MessageTryConnectToNetwork implements IMessage {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		name = ByteBufUtils.readUTF8String(buf);
+		uuid = new UUID(buf.readLong(), buf.readLong());
 		isPlayer = buf.readBoolean();
 		pos = WorldPos.readFromByte(buf);
 		network = WorldPos.readFromByte(buf);
@@ -47,7 +47,8 @@ public class MessageTryConnectToNetwork implements IMessage {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeUTF8String(buf, name);
+		buf.writeLong(uuid.getMostSignificantBits());
+		buf.writeLong(uuid.getLeastSignificantBits());
 		buf.writeBoolean(isPlayer);
 		pos.writeToByte(buf);
 		network.writeToByte(buf);
@@ -58,7 +59,7 @@ public class MessageTryConnectToNetwork implements IMessage {
 		public IMessage onMessage(MessageTryConnectToNetwork message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
 				World world = message.pos.getWorld();
-				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
+				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByUUID(message.uuid);
 				TileEntity tileentity = message.network.getTileEntity();
 				if (tileentity instanceof TEProcessingCenter) {
 					TEProcessingCenter te = (TEProcessingCenter) tileentity;

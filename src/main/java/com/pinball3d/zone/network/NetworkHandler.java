@@ -16,9 +16,6 @@ public class NetworkHandler {
 		registerMessage(MessageShutdownSphinx.Handler.class, MessageShutdownSphinx.class, Side.SERVER);
 		registerMessage(MessageChangeName.Handler.class, MessageChangeName.class, Side.SERVER);
 		registerMessage(MessageOpenIOPanelGui.Handler.class, MessageOpenIOPanelGui.class, Side.SERVER);
-		registerMessage(MessageIOPanelPageChange.Handler.class, MessageIOPanelPageChange.class, Side.SERVER);
-		registerMessage(MessageUpdateIOPanelGui.Handler.class, MessageUpdateIOPanelGui.class, Side.SERVER);
-		registerMessage(MessageIOPanelSearchChange.Handler.class, MessageIOPanelSearchChange.class, Side.SERVER);
 		registerMessage(MessageIOPanelRequest.Handler.class, MessageIOPanelRequest.class, Side.SERVER);
 		registerMessage(MessageIOPanelSendItemToStorage.Handler.class, MessageIOPanelSendItemToStorage.class,
 				Side.SERVER);
@@ -39,7 +36,6 @@ public class NetworkHandler {
 				Side.CLIENT);
 		registerMessage(MessageIOPanelTransferPlayerInventory.Handler.class,
 				MessageIOPanelTransferPlayerInventory.class, Side.SERVER);
-		registerMessage(MessageUpdateContainerIOPanel.Handler.class, MessageUpdateContainerIOPanel.class, Side.CLIENT);
 		registerMessage(MessageErrorStorageFull.Handler.class, MessageErrorStorageFull.class, Side.CLIENT);
 		registerMessage(MessageConnectionUpdate.Handler.class, MessageConnectionUpdate.class, Side.CLIENT);
 		registerMessage(MessageConnectionRequest.Handler.class, MessageConnectionRequest.class, Side.SERVER);

@@ -23,12 +23,20 @@ public class ScrollingEdgeList extends Component {
 		list.add(new ListBar(title, onClick));
 	}
 
+	public void addBar(ListBar bar) {
+		list.add(bar);
+	}
+
 	public void clear() {
 		list.clear();
 	}
 
 	public boolean isEmpty() {
 		return list.isEmpty();
+	}
+
+	public ListBar get() {
+		return list.isEmpty() ? null : list.get(index);
 	}
 
 	@Override
@@ -109,13 +117,22 @@ public class ScrollingEdgeList extends Component {
 		return true;
 	}
 
-	public class ListBar {
+	public static class ListBar {
 		public String title;
-		public Runnable event;
+		private Runnable event;
+		private Object data;
 
 		public ListBar(String name, Runnable onClick) {
 			title = name;
 			event = onClick;
+		}
+
+		public void setData(Object data) {
+			this.data = data;
+		}
+
+		public Object getData() {
+			return data;
 		}
 	}
 }

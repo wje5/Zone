@@ -2,18 +2,12 @@ package com.pinball3d.zone.tileentity;
 
 import java.util.UUID;
 
-import com.pinball3d.zone.util.WorldPos;
-
 import net.minecraft.client.resources.I18n;
 
 public interface INeedNetwork {
 	public void connect(UUID uuid);
 
 	public UUID getNetwork();
-
-	public void setWorldPos(WorldPos pos, UUID uuid);
-
-	public WorldPos getNetworkPos();
 
 	public boolean isConnected();
 

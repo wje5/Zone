@@ -28,9 +28,7 @@ public class BlockShowWithTip extends Component {
 		if (mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height) {
 			GlStateManager.disableLighting();
 			GlStateManager.disableDepth();
-			GlStateManager.colorMask(true, true, true, false);
 			Gui.drawRect(x, y, x + width, y + height, 0x80FFFFFF);
-			GlStateManager.colorMask(true, true, true, true);
 			((GuiContainerManualBase) parent).renderToolTip(stack, mouseX, mouseY);
 		}
 	}

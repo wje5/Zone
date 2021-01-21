@@ -27,12 +27,6 @@ public abstract class GuiContainerSphinxAdvanced extends GuiContainerSphinxBase 
 	}
 
 	@Override
-	public void initGui() {
-		super.initGui();
-		updateChosenUnitButton();
-	}
-
-	@Override
 	protected void onKetInput(char typedChar, int keyCode) {
 		if (subscreens.empty() && keyCode == Keyboard.KEY_TAB) {
 			setChosenIndex(chosenIndex + 1);

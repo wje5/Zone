@@ -48,12 +48,13 @@ public class MessageIOPanelTransferPlayerInventory implements IMessage {
 				EntityPlayer player = world.getPlayerEntityByName(message.name);
 				if (player != null && player.openContainer != null) {
 					if (message.flag) {
-						for (int i = 90; i < 126; i++) {
+						for (int i = 54; i < 90; i++) {
 							player.openContainer.transferStackInSlot(player, i);
 						}
 					} else {
 						for (int i = 0; i < 54; i++) {
 							player.openContainer.transferStackInSlot(player, i);
+
 						}
 					}
 				}

@@ -1,49 +1,56 @@
 package com.pinball3d.zone.network;
 
+import java.util.UUID;
+
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public abstract class MessageSphinxAdmin implements IMessage {
-	String password;
 	WorldPos pos;
 	NBTTagCompound tag;
+	UUID uuid;
+	int playerDim;
 
 	public MessageSphinxAdmin() {
 
 	}
 
-	public MessageSphinxAdmin(String password, WorldPos pos, NBTTagCompound tag) {
-		this.password = password;
+	public MessageSphinxAdmin(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
 		this.pos = pos;
 		this.tag = tag;
+		uuid = player.getUniqueID();
+		playerDim = player.dimension;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		password = ByteBufUtils.readUTF8String(buf);
 		pos = WorldPos.readFromByte(buf);
 		tag = ByteBufUtils.readTag(buf);
+		uuid = new UUID(buf.readLong(), buf.readLong());
+		playerDim = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeUTF8String(buf, password);
 		pos.writeToByte(buf);
 		ByteBufUtils.writeTag(buf, tag);
+		buf.writeLong(uuid.getMostSignificantBits());
+		buf.writeLong(uuid.getLeastSignificantBits());
+		buf.writeInt(playerDim);
 	}
 
 	public abstract void run(MessageContext ctx);
 
-	public TEProcessingCenter getTileEntity() {
+	public TEProcessingCenter getProcessingCenter() {
 		TileEntity te = pos.getTileEntity();
 		if (te instanceof TEProcessingCenter) {
 			return (TEProcessingCenter) te;
@@ -51,25 +58,20 @@ public abstract class MessageSphinxAdmin implements IMessage {
 		return null;
 	}
 
+	public EntityPlayer getPlayer() {
+		return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(playerDim).getPlayerEntityByUUID(uuid);
+	}
+
 	public void doHandler(MessageContext ctx) {
 		FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-			if (doCheck(MessageSphinxAdmin.this)) {
+			if (doCheck()) {
 				MessageSphinxAdmin.this.run(ctx);
 			}
 		});
 	}
 
-	public boolean doCheck(MessageSphinxAdmin message) {
-		World world = message.pos.getWorld();
-		if (!world.isAreaLoaded(message.pos.getPos(), 5)) {
-			return false;
-		}
-		TileEntity tileentity = message.pos.getTileEntity();
-		if (tileentity instanceof TEProcessingCenter) {
-			TEProcessingCenter te = (TEProcessingCenter) tileentity;
-//			if (te.isCorrectAdminPassword(message.password)) { //TODO check admin user
-			return true;
-		}
-		return false;
+	public boolean doCheck() {
+		TEProcessingCenter te = getProcessingCenter();
+		return te != null && te.isAdmin(getPlayer());
 	}
 }

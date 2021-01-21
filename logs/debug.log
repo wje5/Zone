@@ -1,46 +1,46 @@
-[16:54:13] [main/DEBUG] [FML]: Creating vanilla freeze snapshot
-[16:54:13] [main/DEBUG] [FML]: Vanilla freeze snapshot created
-[16:54:14] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Starting minecraft server version 1.12.2
-[16:54:14] [Server thread/INFO] [FML]: MinecraftForge v14.23.5.2854 Initialized
-[16:54:14] [Server thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
-[16:54:15] [Server thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
-[16:54:15] [Server thread/INFO] [FML]: Replaced 1227 ore ingredients
-[16:54:15] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: Encountered an unexpected exception
+[15:57:08] [main/DEBUG] [FML]: Creating vanilla freeze snapshot
+[15:57:08] [main/DEBUG] [FML]: Vanilla freeze snapshot created
+[15:57:09] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Starting minecraft server version 1.12.2
+[15:57:09] [Server thread/INFO] [FML]: MinecraftForge v14.23.5.2847 Initialized
+[15:57:09] [Server thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
+[15:57:09] [Server thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
+[15:57:09] [Server thread/INFO] [FML]: Replaced 1227 ore ingredients
+[15:57:09] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: Encountered an unexpected exception
 java.lang.ExceptionInInitializerError: null
-	at net.minecraftforge.fml.common.FMLCommonHandler.onServerStart(FMLCommonHandler.java:332) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraft.server.dedicated.DedicatedServer.init(DedicatedServer.java:125) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:486) [forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
+	at net.minecraftforge.fml.common.FMLCommonHandler.onServerStart(FMLCommonHandler.java:332) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraft.server.dedicated.DedicatedServer.init(DedicatedServer.java:128) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:552) [forgeSrc-1.12.2-14.23.5.2847.jar:?]
 	at java.lang.Thread.run(Thread.java:748) [?:1.8.0_231]
 Caused by: net.minecraftforge.fml.relauncher.ReflectionHelper$UnableToAccessFieldException: net.minecraftforge.fml.relauncher.ReflectionHelper$UnableToFindFieldException: java.lang.NoSuchFieldException: field_150915_c
-	at net.minecraftforge.fml.relauncher.ReflectionHelper.getPrivateValue(ReflectionHelper.java:210) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue(ObfuscationReflectionHelper.java:106) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.common.ForgeHooks.initTools(ForgeHooks.java:288) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:14.23.5.2854]
-	at net.minecraftforge.common.MinecraftForge.initialize(MinecraftForge.java:93) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:14.23.5.2854]
-	at net.minecraftforge.fml.common.FMLCommonHandler.beginLoading(FMLCommonHandler.java:160) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.server.FMLServerHandler.<init>(FMLServerHandler.java:86) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.server.FMLServerHandler.<clinit>(FMLServerHandler.java:77) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
+	at net.minecraftforge.fml.relauncher.ReflectionHelper.getPrivateValue(ReflectionHelper.java:210) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue(ObfuscationReflectionHelper.java:106) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.common.ForgeHooks.initTools(ForgeHooks.java:288) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.common.MinecraftForge.initialize(MinecraftForge.java:93) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.common.FMLCommonHandler.beginLoading(FMLCommonHandler.java:160) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.server.FMLServerHandler.<init>(FMLServerHandler.java:86) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.server.FMLServerHandler.<clinit>(FMLServerHandler.java:77) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
 	... 4 more
 Caused by: net.minecraftforge.fml.relauncher.ReflectionHelper$UnableToFindFieldException: java.lang.NoSuchFieldException: field_150915_c
-	at net.minecraftforge.fml.relauncher.ReflectionHelper.findField(ReflectionHelper.java:166) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.relauncher.ReflectionHelper.getPrivateValue(ReflectionHelper.java:206) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue(ObfuscationReflectionHelper.java:106) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.common.ForgeHooks.initTools(ForgeHooks.java:288) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:14.23.5.2854]
-	at net.minecraftforge.common.MinecraftForge.initialize(MinecraftForge.java:93) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:14.23.5.2854]
-	at net.minecraftforge.fml.common.FMLCommonHandler.beginLoading(FMLCommonHandler.java:160) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.server.FMLServerHandler.<init>(FMLServerHandler.java:86) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.server.FMLServerHandler.<clinit>(FMLServerHandler.java:77) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
+	at net.minecraftforge.fml.relauncher.ReflectionHelper.findField(ReflectionHelper.java:166) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.relauncher.ReflectionHelper.getPrivateValue(ReflectionHelper.java:206) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue(ObfuscationReflectionHelper.java:106) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.common.ForgeHooks.initTools(ForgeHooks.java:288) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.common.MinecraftForge.initialize(MinecraftForge.java:93) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.common.FMLCommonHandler.beginLoading(FMLCommonHandler.java:160) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.server.FMLServerHandler.<init>(FMLServerHandler.java:86) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.server.FMLServerHandler.<clinit>(FMLServerHandler.java:77) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
 	... 4 more
 Caused by: java.lang.NoSuchFieldException: field_150915_c
 	at java.lang.Class.getDeclaredField(Class.java:2070) ~[?:1.8.0_231]
-	at net.minecraftforge.fml.relauncher.ReflectionHelper.findField(ReflectionHelper.java:160) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.relauncher.ReflectionHelper.getPrivateValue(ReflectionHelper.java:206) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue(ObfuscationReflectionHelper.java:106) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.common.ForgeHooks.initTools(ForgeHooks.java:288) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:14.23.5.2854]
-	at net.minecraftforge.common.MinecraftForge.initialize(MinecraftForge.java:93) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:14.23.5.2854]
-	at net.minecraftforge.fml.common.FMLCommonHandler.beginLoading(FMLCommonHandler.java:160) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.server.FMLServerHandler.<init>(FMLServerHandler.java:86) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
-	at net.minecraftforge.fml.server.FMLServerHandler.<clinit>(FMLServerHandler.java:77) ~[forge-1.12.2-14.23.5.2854_mapped_snapshot_20171003-1.12-recomp.jar:?]
+	at net.minecraftforge.fml.relauncher.ReflectionHelper.findField(ReflectionHelper.java:160) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.relauncher.ReflectionHelper.getPrivateValue(ReflectionHelper.java:206) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue(ObfuscationReflectionHelper.java:106) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.common.ForgeHooks.initTools(ForgeHooks.java:288) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.common.MinecraftForge.initialize(MinecraftForge.java:93) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.common.FMLCommonHandler.beginLoading(FMLCommonHandler.java:160) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.server.FMLServerHandler.<init>(FMLServerHandler.java:86) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
+	at net.minecraftforge.fml.server.FMLServerHandler.<clinit>(FMLServerHandler.java:77) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
 	... 4 more
-[16:54:15] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: This crash report has been saved to: D:\work\Zone\.\crash-reports\crash-2021-01-07_16.54.15-server.txt
-[16:54:15] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server
-[16:54:15] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving worlds
+[15:57:09] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: This crash report has been saved to: D:\work\Zone\.\crash-reports\crash-2021-01-21_15.57.09-server.txt
+[15:57:09] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server
+[15:57:09] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving worlds

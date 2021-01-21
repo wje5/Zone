@@ -18,6 +18,6 @@ public class TabZone extends CreativeTabs {
 
 	@Override
 	public ItemStack getTabIconItem() {
-		return new ItemStack(BlockLoader.controller_mainframe);
+		return new ItemStack(BlockLoader.io_panel);
 	}
 }

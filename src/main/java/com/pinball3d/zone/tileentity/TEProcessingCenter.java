@@ -74,6 +74,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	private List<ClassifyGroup> classifyGroups = new ArrayList<ClassifyGroup>();
 	private boolean mapDirty;
 	private Map<WorldPos, List<Path>> dijkstraCache = new HashMap<WorldPos, List<Path>>();
+	private Map<UUID, UserData> users = new HashMap<UUID, UserData>();
 
 	public TEProcessingCenter() {
 
@@ -128,7 +129,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public void addNeedNetwork(WorldPos pos, EntityPlayer player) {
-		// TODO check player permission
+		if (!isUser(player)) {
+			return;
+		}
 		nodes.forEach(e -> {
 			if (e.equals(pos)) {
 				return;
@@ -153,19 +156,15 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		if (te instanceof INode) {
 			nodes.add(pos);
 			((INeedNetwork) te).connect(getUUID());
-			((INeedNetwork) te).setWorldPos(new WorldPos(this), getUUID());
 		} else if (te instanceof IStorable) {
 			storages.add(pos);
 			((INeedNetwork) te).connect(getUUID());
-			((INeedNetwork) te).setWorldPos(new WorldPos(this), getUUID());
 		} else if (te instanceof IDevice) {
 			devices.add(pos);
 			((INeedNetwork) te).connect(getUUID());
-			((INeedNetwork) te).setWorldPos(new WorldPos(this), getUUID());
 		} else if (te instanceof IProduction) {
 			productions.add(pos);
 			((INeedNetwork) te).connect(getUUID());
-			((INeedNetwork) te).setWorldPos(new WorldPos(this), getUUID());
 		}
 		if (!world.isRemote) {
 			refreshMap();
@@ -617,10 +616,11 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 									.getWorkingState() == INeedNetwork.WorkingState.WORKING) {
 						map[i + 1][j + 1] = 0;
 						map[j + 1][i + 1] = 0;
-					} else if (tileentity.getWorld().provider.getDimension() == pos.getDim()) {
+					} else if (tileentity.getWorld().provider.getDimension() == pos2.getDim()) {
 						double dist = Math.sqrt(pos.getPos().distanceSq(pos2.getPos().getX(), pos2.getPos().getY(),
 								pos2.getPos().getZ()));
-						if (dist < 25) {
+						if (((INode) tileentity).isPointInRange(pos2.getDim(), pos2.getPos().getX(),
+								pos2.getPos().getY(), pos2.getPos().getZ())) {
 							map[i + 1][j + 1] = dist;
 							map[j + 1][i + 1] = dist;
 						}
@@ -845,6 +845,23 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return classifyGroups;
 	}
 
+	public Map<UUID, UserData> getUsers() {
+		return users;
+	}
+
+	public void addUser(UserData user) {
+		users.put(user.uuid, user);
+	}
+
+	public boolean isUser(EntityPlayer player) {
+		return users.containsKey(player.getUniqueID());
+	}
+
+	public boolean isAdmin(EntityPlayer player) {
+		UserData data = users.get(player.getUniqueID());
+		return data != null && data.isAdmin;
+	}
+
 	public Map<WorldPos, Double> getNodesInRange(int dim, double x, double y, double z) {
 		Map<WorldPos, Double> map = new HashMap<WorldPos, Double>();
 		nodes.forEach(e -> {
@@ -1034,6 +1051,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		list.forEach(e -> {
 			classifyGroups.add(new ClassifyGroup((NBTTagCompound) e));
 		});
+		users.clear();
+		list = compound.getTagList("users", 10);
+		list.forEach(e -> {
+			UserData user = new UserData((NBTTagCompound) e);
+			users.put(user.uuid, user);
+		});
 		super.readFromNBT(compound);
 	}
 
@@ -1076,6 +1099,11 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			classifyList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("classifyGroups", classifyList);
+		NBTTagList usersList = new NBTTagList();
+		users.values().forEach(e -> {
+			usersList.appendTag(e.writeToNBT(new NBTTagCompound()));
+		});
+		compound.setTag("users", usersList);
 		return super.writeToNBT(compound);
 	}
 
@@ -1146,6 +1174,35 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		public LogisticTaskComputeResult(StorageWrapper wrapper, int tick) {
 			this.remain = wrapper;
 			this.tick = tick;
+		}
+	}
+
+	public static class UserData {
+		public UUID uuid;
+		public String name;
+		public boolean isAdmin;
+
+		public UserData(UUID uuid, String name, boolean isAdmin) {
+			this.uuid = uuid;
+			this.name = name;
+			this.isAdmin = isAdmin;
+		}
+
+		public UserData(EntityPlayer player, boolean flag) {
+			this(player.getUniqueID(), player.getName(), flag);
+		}
+
+		public UserData(NBTTagCompound tag) {
+			readFromNBT(tag);
+		}
+
+		public void readFromNBT(NBTTagCompound tag) {
+			uuid = tag.getUniqueId("uuid");
+		}
+
+		public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+			tag.setUniqueId("uuid", uuid);
+			return tag;
 		}
 	}
 }

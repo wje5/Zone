@@ -33,7 +33,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Util {
-	public static String PASSWORD = "aaaaaaaa";
 	public static Comparator<ItemStack> itemStackComparator = new Comparator<ItemStack>() {
 		@Override
 		public int compare(ItemStack o1, ItemStack o2) {
@@ -236,6 +235,13 @@ public class Util {
 	@SideOnly(Side.CLIENT)
 	public static IHasSubscreen getRoot() {
 		return (IHasSubscreen) Minecraft.getMinecraft().currentScreen;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void resetOpenGl() {
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.colorMask(true, true, true, false);
+		GlStateManager.disableLighting();
 	}
 
 	/**

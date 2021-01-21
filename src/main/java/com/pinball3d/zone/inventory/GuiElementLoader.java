@@ -25,6 +25,7 @@ import com.pinball3d.zone.sphinx.GuiContainerNeedNetwork;
 import com.pinball3d.zone.sphinx.GuiContainerNeedNetworkIOPanel;
 import com.pinball3d.zone.sphinx.GuiContainerSphinxController;
 import com.pinball3d.zone.sphinx.GuiContainerTerminal;
+import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -91,9 +92,9 @@ public class GuiElementLoader implements IGuiHandler {
 		case SPHINX_CONTROLLER:
 			return new ContainerSphinxController(player, new WorldPos(x, y, z, world));
 		case SPHINX_NEED_NETWORK:
-			return new ContainerSphinxNeedNetwork(player);
+			return new ContainerSphinxNeedNetwork(player, (INeedNetwork) world.getTileEntity(new BlockPos(x, y, z)));
 		case SPHINX_NEED_NETWORK_IO_PANEL:
-			return new ContainerSphinxNeedNetwork(player);
+			return new ContainerSphinxNeedNetwork(player, (INeedNetwork) world.getTileEntity(new BlockPos(x, y, z)));
 		case SPHINX_IO_PANEL:
 			return new ContainerIOPanel(player, world.getTileEntity(new BlockPos(x, y, z)));
 		}
@@ -171,9 +172,12 @@ public class GuiElementLoader implements IGuiHandler {
 			return new GuiContainerSphinxController(
 					new ContainerSphinxController(player, new WorldPos(x, y, z, world)));
 		case SPHINX_NEED_NETWORK:
-			return new GuiContainerNeedNetwork(new ContainerSphinxNeedNetwork(player), new WorldPos(x, y, z, world));
+			return new GuiContainerNeedNetwork(
+					new ContainerSphinxNeedNetwork(player, (INeedNetwork) world.getTileEntity(new BlockPos(x, y, z))),
+					new WorldPos(x, y, z, world));
 		case SPHINX_NEED_NETWORK_IO_PANEL:
-			return new GuiContainerNeedNetworkIOPanel(new ContainerSphinxNeedNetwork(player),
+			return new GuiContainerNeedNetworkIOPanel(
+					new ContainerSphinxNeedNetwork(player, (INeedNetwork) world.getTileEntity(new BlockPos(x, y, z))),
 					new WorldPos(x, y, z, world));
 		case SPHINX_IO_PANEL:
 			return new GuiContainerIOPanel(new ContainerIOPanel(player, world.getTileEntity(new BlockPos(x, y, z))),

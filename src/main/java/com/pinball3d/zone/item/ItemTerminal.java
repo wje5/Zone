@@ -76,9 +76,9 @@ public class ItemTerminal extends ZoneItem {
 							}
 						}
 					}
+					player.sendMessage(TextComponentHelper.createComponentTranslation(player, "sphinx.no_network"));
+					return EnumActionResult.FAIL;
 				}
-				player.sendMessage(TextComponentHelper.createComponentTranslation(player, "sphinx.no_network"));
-				return EnumActionResult.FAIL;
 			}
 		}
 		return EnumActionResult.PASS;

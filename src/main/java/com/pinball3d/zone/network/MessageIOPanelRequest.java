@@ -9,27 +9,24 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageIOPanelRequest extends MessageSphinx {
+public class MessageIOPanelRequest extends MessageSphinxNeedNetwork {
 	public MessageIOPanelRequest() {
 
 	}
 
-	public MessageIOPanelRequest(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
+	private MessageIOPanelRequest(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
 		super(player, pos, tag);
 	}
 
-	public static MessageIOPanelRequest newMessage(EntityPlayer player, WorldPos network, StorageWrapper req,
-			WorldPos target) {
+	public static MessageIOPanelRequest newMessage(EntityPlayer player, WorldPos needNetwork, StorageWrapper req) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setTag("req", req.writeToNBT(new NBTTagCompound()));
-		tag.setTag("target", target.writeToNBT(new NBTTagCompound()));
-		return new MessageIOPanelRequest(player, network, tag);
+		return new MessageIOPanelRequest(player, needNetwork, tag);
 	}
 
 	@Override
 	public void run(MessageContext ctx) {
-		getTileEntity().requestItems(new StorageWrapper(tag.getCompoundTag("req")),
-				new WorldPos(tag.getCompoundTag("target")), false);
+		getProcessingCenter().requestItems(new StorageWrapper(tag.getCompoundTag("req")), pos, false);
 	}
 
 	public static class Handler implements IMessageHandler<MessageIOPanelRequest, IMessage> {

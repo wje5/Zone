@@ -50,7 +50,7 @@ public class BlockBeaconCore extends BlockContainer {
 		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 
-	public boolean isFullStructure(World world, BlockPos pos) {
+	public static boolean isFullStructure(World world, BlockPos pos) {
 		if (world.getBlockState(pos.add(-1, -1, -1)).getBlock() != BlockLoader.etherium_hull
 				|| world.getBlockState(pos.add(1, -1, -1)).getBlock() != BlockLoader.etherium_hull
 				|| world.getBlockState(pos.add(0, -1, 0)).getBlock() != BlockLoader.etherium_hull

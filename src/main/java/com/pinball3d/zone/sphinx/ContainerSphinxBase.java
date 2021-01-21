@@ -6,4 +6,9 @@ public abstract class ContainerSphinxBase extends ContainerNetworkBase {
 	public ContainerSphinxBase(EntityPlayer player) {
 		super(player);
 	}
+
+	@Override
+	public boolean canInteractWith(EntityPlayer playerIn) {
+		return super.canInteractWith(playerIn);
+	}
 }

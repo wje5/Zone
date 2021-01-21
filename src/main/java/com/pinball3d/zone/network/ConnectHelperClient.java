@@ -12,6 +12,7 @@ import com.google.common.collect.Sets;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.map.MapHandler;
+import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.WorldPos;
@@ -40,6 +41,7 @@ public class ConnectHelperClient {
 	private boolean on, inited;
 	private WorkingState workingState;
 	private List<ClassifyGroup> classify = new ArrayList<ClassifyGroup>();
+	private List<UserData> users = new ArrayList<UserData>();
 
 	public void setData(UUID network, NBTTagCompound data, Set<Type> types) {
 		if (!this.types.equals(types)) {
@@ -120,6 +122,12 @@ public class ConnectHelperClient {
 						classify.add(new ClassifyGroup((NBTTagCompound) i));
 					});
 					break;
+				case USERS:
+					NBTTagList usersList = data.getTagList(e.name(), 10);
+					usersList.forEach(j -> {
+						users.add(new UserData((NBTTagCompound) j));
+					});
+					break;
 				}
 			}
 		}
@@ -139,10 +147,11 @@ public class ConnectHelperClient {
 		inited = false;
 		usedStorage = 0;
 		maxStorage = 0;
+		users.clear();
 	}
 
 	public void clearHuges() {
-		items = null;
+		items = new StorageWrapper();
 		MapHandler.clear();
 		classify.clear();
 	}
@@ -265,5 +274,9 @@ public class ConnectHelperClient {
 
 	public List<ClassifyGroup> getClassify() {
 		return classify;
+	}
+
+	public List<UserData> getUsers() {
+		return users;
 	}
 }

@@ -29,7 +29,7 @@ public class SubscreenChangeName extends Subscreen {
 		}));
 		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.confirm"), () -> {
 			if (hasData && box.text.length() >= 4) {
-				NetworkHandler.instance.sendToServer(MessageChangeName.newMessage(Util.PASSWORD,
+				NetworkHandler.instance.sendToServer(MessageChangeName.newMessage(mc.player,
 						ConnectHelperClient.getInstance().getNetworkPos(), box.text));
 				parent.removeScreen(SubscreenChangeName.this);
 				parent.putScreen(new SubscreenSphinxConfig(parent));

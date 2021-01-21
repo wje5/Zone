@@ -9,7 +9,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -28,23 +27,30 @@ public abstract class MessageSphinx implements IMessage {
 	public MessageSphinx(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
 		this.pos = pos;
 		this.tag = tag;
+		uuid = player.getUniqueID();
+		playerDim = player.dimension;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		pos = WorldPos.readFromByte(buf);
 		tag = ByteBufUtils.readTag(buf);
+		uuid = new UUID(buf.readLong(), buf.readLong());
+		playerDim = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		pos.writeToByte(buf);
 		ByteBufUtils.writeTag(buf, tag);
+		buf.writeLong(uuid.getMostSignificantBits());
+		buf.writeLong(uuid.getLeastSignificantBits());
+		buf.writeInt(playerDim);
 	}
 
-	public abstract void run(MessageContext ctx);
+	public abstract void run(MessageSphinx message, MessageContext ctx);
 
-	public TEProcessingCenter getTileEntity() {
+	public TEProcessingCenter getProcessingCenter() {
 		TileEntity te = pos.getTileEntity();
 		if (te instanceof TEProcessingCenter) {
 			return (TEProcessingCenter) te;
@@ -52,27 +58,20 @@ public abstract class MessageSphinx implements IMessage {
 		return null;
 	}
 
-	public void doHandler(MessageContext ctx) {
+	public EntityPlayer getPlayer() {
+		return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(playerDim).getPlayerEntityByUUID(uuid);
+	}
+
+	public void doHandler(MessageSphinx message, MessageContext ctx) {
 		FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-			if (doCheck(MessageSphinx.this)) {
-				MessageSphinx.this.run(ctx);
+			if (doCheck()) {
+				MessageSphinx.this.run(message, ctx);
 			}
 		});
 	}
 
-	public boolean doCheck(MessageSphinx message) {
-		World world = message.pos.getWorld();
-		if (!world.isAreaLoaded(message.pos.getPos(), 5)) {
-			return false;
-		}
-		TileEntity tileentity = message.pos.getTileEntity();
-		if (tileentity instanceof TEProcessingCenter) {
-			TEProcessingCenter te = (TEProcessingCenter) tileentity;
-			EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.playerDim)
-					.getPlayerEntityByUUID(uuid);
-//			if (te.isCorrectLoginPassword(message.password)) {TODO
-			return true;
-		}
-		return false;
+	public boolean doCheck() {
+		TEProcessingCenter te = getProcessingCenter();
+		return te != null && te.isUser(getPlayer());
 	}
 }

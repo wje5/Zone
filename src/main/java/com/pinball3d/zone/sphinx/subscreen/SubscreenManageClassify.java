@@ -50,7 +50,7 @@ public class SubscreenManageClassify extends Subscreen {
 			refreshData();
 		}));
 		components.add(new TexturedButton(this, this.x + 142, this.y + 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
-			box.isFocus = false;// TODO
+			box.isFocus = false;
 		}));
 		components.add(new TexturedButton(this, this.x + 175, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, () -> {
 			page = page - 1 < 1 ? maxPage : page - 1;
@@ -117,16 +117,14 @@ public class SubscreenManageClassify extends Subscreen {
 		}
 	}
 
-	public void renderCoverAndToolTip(ItemStack stack, int slot, int mouseX, int mouseY) {
+	public void renderCover(int slot) {
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
 		int slotX = slot % 9;
 		int slotY = slot / 9;
 		int j1 = slotX * 19 + 1 + x + 163;
 		int k1 = slotY * 19 + 1 + y + 45;
-		GlStateManager.colorMask(true, true, true, false);
 		Gui.drawRect(j1, k1, j1 + 16, k1 + 16, 0x80FFFFFF);
-		GlStateManager.colorMask(true, true, true, true);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
 	}
@@ -247,8 +245,6 @@ public class SubscreenManageClassify extends Subscreen {
 			return;
 		}
 		ClassifyGroup group = list.isEmpty() ? null : ConnectHelperClient.getInstance().getClassify().get(list.index);
-		ItemStack temp = ItemStack.EMPTY;
-		int slot = -1;
 		for (int j = 0; j < 7; j++) {
 			for (int i = 0; i < 9; i++) {
 				int amount = 0;
@@ -256,23 +252,17 @@ public class SubscreenManageClassify extends Subscreen {
 					ItemType type = it.next();
 					ItemStack stack = type.createStack();
 					ir.renderItemAndEffectIntoGUI(stack, x + 164 + i * 19, y + 46 + j * 19);
-					GlStateManager.pushMatrix();
-					GlStateManager.translate(0, 0, 300F);
 					text = amount <= 1 ? null : Util.transferString(amount);
-					GlStateManager.popMatrix();
 					ir.renderItemOverlayIntoGUI(fr, stack, x + 164 + i * 19, y + 46 + j * 19, text);
-					if (getHoveredSlot(mouseX, mouseY) == j * 9 + i) {
-						temp = stack;
-						slot = j * 9 + i;
-					}
 					if (group != null && group.contains(type)) {
 						Util.drawTexture(x + 174 + i * 19, y + 56 + j * 19, 92, 56, 7, 7, 1.0F);
 					}
 				}
 			}
 		}
-		if (!temp.isEmpty()) {
-			renderCoverAndToolTip(temp, slot, mouseX, mouseY);
+		int slot = getHoveredSlot(mouseX, mouseY);
+		if (slot != -1) {
+			renderCover(slot);
 		}
 	}
 

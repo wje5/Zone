@@ -41,9 +41,7 @@ public class ItemFrame extends Component {
 		if (mouseX >= x && mouseX <= x + 18 && mouseY >= y && mouseY <= y + 18) {
 			GlStateManager.disableLighting();
 			GlStateManager.disableDepth();
-			GlStateManager.colorMask(true, true, true, false);
 			Gui.drawRect(x + 1, y + 1, x + 17, y + 17, 0x80FFFFFF);
-			GlStateManager.colorMask(true, true, true, true);
 			((GuiContainerManualBase) parent).renderToolTip(stack, mouseX, mouseY);
 		}
 	}

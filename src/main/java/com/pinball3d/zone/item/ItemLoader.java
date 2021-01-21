@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -190,9 +191,12 @@ public class ItemLoader {
 		Block.REGISTRY.forEach(e -> {
 			if (e instanceof IFluidBlock) {
 				Item item = new ItemFluid((IFluidBlock) e);
-				register(registry, item, false);
-				if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-					registerRender(item, new ModelResourceLocation(e.getRegistryName(), null));
+				ResourceLocation name = item.getRegistryName();
+				if (!registry.containsKey(name)) {
+					register(registry, item, false);
+					if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+						registerRender(item, new ModelResourceLocation(e.getRegistryName(), null));
+					}
 				}
 			}
 		});

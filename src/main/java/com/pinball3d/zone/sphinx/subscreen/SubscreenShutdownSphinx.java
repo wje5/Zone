@@ -22,7 +22,7 @@ public class SubscreenShutdownSphinx extends Subscreen {
 		super(parent, x, y, 160, 90, false);
 		components.add(new MultilineText(this, this.x + 5, this.y + 5, 150, I18n.format("sphinx.shutdown_sphinx")));
 		components.add(new TextButton(this, this.x + 25, this.y + 75, I18n.format("sphinx.yes"), () -> {
-			NetworkHandler.instance.sendToServer(new MessageShutdownSphinx(Util.PASSWORD,
+			NetworkHandler.instance.sendToServer(new MessageShutdownSphinx(mc.player,
 					ConnectHelperClient.getInstance().getNetworkPos(), new NBTTagCompound()));
 			mc.displayGuiScreen(null);
 		}));

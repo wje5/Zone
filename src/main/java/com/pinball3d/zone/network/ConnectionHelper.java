@@ -179,7 +179,18 @@ public class ConnectionHelper {
 			}
 			switch (connectType) {
 			case CONTROLLER:
-				break;
+				if (network != null) {
+					WorldPos pos = GlobalNetworkData
+							.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
+							.getNetwork(network);
+					if (!pos.isOrigin()) {
+						TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
+						if (te.isAdmin(player)) {
+							break;
+						}
+					}
+				}
+				return false;
 			case TERMINAL:
 				if (network != null) {
 					WorldPos pos = GlobalNetworkData
@@ -192,10 +203,30 @@ public class ConnectionHelper {
 						if (!te.isPointInRange(player.dimension, player.posX, player.posY, player.posZ)) {
 							network = null;
 						}
+						if (!te.isUser(player)) {
+							network = null;
+						}
 					}
 				}
 				break;
 			case NEEDNETWORK:
+				if (network != null) {
+					WorldPos pos = GlobalNetworkData
+							.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
+							.getNetwork(network);
+					if (pos.isOrigin()) {
+						network = null;
+					} else {
+						TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
+						if (!te.isPointInRange(player.dimension, needNetwork.getPos().getX(),
+								needNetwork.getPos().getY(), needNetwork.getPos().getZ())) {
+							network = null;
+						}
+						if (!te.isUser(player)) {
+							network = null;
+						}
+					}
+				}
 				break;
 			}
 			return true;
@@ -219,7 +250,7 @@ public class ConnectionHelper {
 
 	public static enum Type {
 		NETWORKUUID, ITEMS, NETWORKPOS, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
-		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY;
+		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY, USERS;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
 			WorldPos pos = WorldPos.ORIGIN;
@@ -335,6 +366,16 @@ public class ConnectionHelper {
 					}
 					connect.classifyRefreshColddown--;
 				}
+				break;
+			case USERS:
+				if (te != null) {
+					NBTTagList list = new NBTTagList();
+					te.getUsers().values().forEach(e -> {
+						list.appendTag(e.writeToNBT(new NBTTagCompound()));
+					});
+					tag.setTag(name(), list);
+				}
+				break;
 			}
 		}
 	}

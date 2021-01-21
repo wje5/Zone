@@ -2,6 +2,7 @@ package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.util.WorldPos;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -12,19 +13,19 @@ public class MessageChangeName extends MessageSphinxAdmin {
 
 	}
 
-	public MessageChangeName(String password, WorldPos pos, NBTTagCompound tag) {
-		super(password, pos, tag);
+	public MessageChangeName(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
+		super(player, pos, tag);
 	}
 
-	public static MessageChangeName newMessage(String password, WorldPos pos, String name) {
+	public static MessageChangeName newMessage(EntityPlayer player, WorldPos pos, String name) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setString("name", name);
-		return new MessageChangeName(password, pos, tag);
+		return new MessageChangeName(player, pos, tag);
 	}
 
 	@Override
 	public void run(MessageContext ctx) {
-		getTileEntity().setName(tag.getString("name"));
+		getProcessingCenter().setName(tag.getString("name"));
 	}
 
 	public static class Handler implements IMessageHandler<MessageChangeName, IMessage> {

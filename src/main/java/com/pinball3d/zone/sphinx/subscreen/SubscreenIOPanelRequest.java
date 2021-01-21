@@ -92,8 +92,7 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		TEIOPanel te = ((ContainerIOPanel) ((GuiContainerIOPanel) parent).inventorySlots).tileEntity;
 		StorageWrapper wrapper = stack.getMaxStackSize() <= 1 ? new StorageWrapper(stack)
 				: new StorageWrapper(new HugeItemStack(stack, amount));
-		NetworkHandler.instance.sendToServer(
-				MessageIOPanelRequest.newMessage(mc.player, te.getNetworkPos(), wrapper, new WorldPos(te)));
+		NetworkHandler.instance.sendToServer(MessageIOPanelRequest.newMessage(mc.player, new WorldPos(te), wrapper));
 		parent.removeScreen(this);
 	}
 
@@ -139,7 +138,7 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		GlStateManager.enableColorMaterial();
 		GlStateManager.enableLighting();
 		ir.renderItemAndEffectIntoGUI(stack, x + 9, y + 9);
-		ir.renderItemOverlays(Util.getFontRenderer(), stack, x + 9, y + 9);
+		ir.renderItemOverlayIntoGUI(Util.getFontRenderer(), stack, x + 9, y + 9, "");
 	}
 
 	@Override

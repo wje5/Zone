@@ -1,30 +1,30 @@
 package com.pinball3d.zone.sphinx;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
-import com.pinball3d.zone.ConfigLoader;
-import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.network.MessageIOPanelPageChange;
-import com.pinball3d.zone.network.MessageIOPanelSearchChange;
 import com.pinball3d.zone.network.MessageIOPanelSendItemToStorage;
 import com.pinball3d.zone.network.MessageIOPanelTransferPlayerInventory;
 import com.pinball3d.zone.network.MessageOpenIOPanelGui;
-import com.pinball3d.zone.network.MessageUpdateIOPanelGui;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.component.Component;
 import com.pinball3d.zone.sphinx.component.TextInputBox;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenIOPanelRequest;
+import com.pinball3d.zone.util.HugeItemStack;
+import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
@@ -36,7 +36,7 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 	public static final ResourceLocation IO_PANEL2 = new ResourceLocation("zone:textures/gui/sphinx/io_panel_2.png");
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private TextInputBox box;
-	private int panelX, panelY;
+	private int panelX, panelY, page = 1, maxPage = 1;
 	private WorldPos pos;
 
 	public GuiContainerIOPanel(ContainerIOPanel container, WorldPos pos) {
@@ -48,9 +48,9 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 	protected void setSize() {
 		super.setSize();
 		panelX = width / 2 - 184;
-		panelY = height / 2 - 106;
+		panelY = height / 2 - 107;
 		xSize = 306;
-		ySize = 213;
+		ySize = 214;
 	}
 
 	@Override
@@ -60,15 +60,10 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 	}
 
 	@Override
-	protected void onMousePressScreen(int mouseX, int mouseY, int button) {
-		if (subscreens.empty()) {
-			ContainerIOPanel container = (ContainerIOPanel) inventorySlots;
-			container.x = mouseX;
-			container.y = mouseY;
-			container.offsetedX = mouseX + panelX;
-			container.offsetedY = mouseY + panelY;
-		}
-		super.onMousePressScreen(mouseX, mouseY, button);
+	public Set<Type> getDataTypes() {
+		Set<Type> set = super.getDataTypes();
+		set.add(Type.ITEMS);
+		return set;
 	}
 
 	@Override
@@ -78,19 +73,18 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 			box.isFocus = true;
 		}).setIsPixel(true));
 		components.add(new TexturedButton(this, panelX + 15, panelY + 201, TEXTURE, 92, 32, 5, 9, 1.0F, () -> {
-			NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, true));
+			page = page - 1 < 1 ? maxPage : page - 1;
 		}));
 		components.add(new TexturedButton(this, panelX + 70, panelY + 201, TEXTURE, 97, 32, 5, 9, 1.0F, () -> {
-			NetworkHandler.instance.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, false));
+			page = page + 1 > maxPage ? 1 : page + 1;
 		}));
 		components.add(new TexturedButton(this, panelX + 67, panelY + 7, TEXTURE, 92, 41, 15, 15, 1.0F, () -> {
-			NetworkHandler.instance
-					.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));
+			box.isFocus = false;
 		}));
 		components.add(new TexturedButton(this, panelX + 285, panelY + 5, TEXTURE, 64, 68, 30, 28, 0.5F, () -> {
 			ContainerIOPanel container = (ContainerIOPanel) inventorySlots;
-			NetworkHandler.instance.sendToServer(MessageIOPanelSendItemToStorage.newMessage(mc.player,
-					container.tileEntity.getNetworkPos(), new WorldPos(container.tileEntity)));
+			NetworkHandler.instance.sendToServer(
+					MessageIOPanelSendItemToStorage.newMessage(mc.player, new WorldPos(container.tileEntity)));
 		}));
 		components.add(new TexturedButton(this, panelX + 285, panelY + 24, TEXTURE, 0, 68, 32, 32, 0.5F, () -> {
 			System.out.println("config");
@@ -107,6 +101,34 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 		return itemRender;
 	}
 
+	public StorageWrapper getItems() {
+		StorageWrapper s;
+		if (ConnectHelperClient.getInstance().hasData()) {
+			s = Util.search(ConnectHelperClient.getInstance().getItems(), box.text);
+		} else {
+			s = new StorageWrapper();
+		}
+		maxPage = (s.getSize() - 1) / 36 + 1;
+		if (page > maxPage) {
+			page = maxPage;
+		}
+		if (page < 1) {
+			page = 1;
+		}
+		return s;
+	}
+
+	public int getHoveredSlot(int mouseX, int mouseY) {
+		int mX = mouseX - panelX - 8;
+		int mY = mouseY - panelY - 29;
+		if (mX >= 0 && mX <= 75 && mY >= 0 && mY <= 170 && mX % 19 < 18 && mY % 19 < 18) {
+			int slotX = mX / 19;
+			int slotY = mY / 19;
+			return slotY * 4 + slotX;
+		}
+		return -1;
+	}
+
 	@Override
 	protected void draw(int mouseX, int mouseY, float partialTicks) {
 		super.draw(mouseX, mouseY, partialTicks);
@@ -115,98 +137,160 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 		drawTexturedModalRect(panelX + 92, panelY, 0, 0, 214, 213);
 		mc.getTextureManager().bindTexture(IO_PANEL2);
 		drawTexturedModalRect(panelX, panelY, 0, 0, 89, 213);
-		ContainerIOPanel container = (ContainerIOPanel) inventorySlots;
-		String text = container.page + "/" + container.maxPage;
+		String text = page + "/" + maxPage;
 		fontRenderer.drawString(text, panelX + 45 - fontRenderer.getStringWidth(text) / 2, panelY + 202, 0xFF1ECCDE);
-	}
-
-	@Override
-	protected void renderHoveredToolTip(int mouseX, int mouseY) {
-		GlStateManager.pushMatrix();
-		GlStateManager.disableLighting();
-		GlStateManager.disableDepth();
-		GlStateManager.disableBlend();
-		ContainerIOPanel container = (ContainerIOPanel) inventorySlots;
-		for (int i = 0; i < 36; i++) {
-			if (container.list[i] > 1) {
-				String text = Util.transferString(container.list[i]);
-				int x = (i % 4) * 19 + 8 + guiLeft;
-				int y = (i / 4) * 19 + 29 + guiTop;
-				fontRenderer.drawStringWithShadow(text, x + 17 - fontRenderer.getStringWidth(text), y + 9, 0xFFFFFFFF);
-			}
-		}
-		components.forEach(e -> {
-			e.doRender(mouseX, mouseY);
-		});
-		Iterator<Subscreen> it = subscreens.iterator();
-		while (it.hasNext()) {
-			Subscreen screen = it.next();
-			if (screen.dead) {
-				it.remove();
-			} else {
-				screen.doRender(mouseX, mouseY);
-			}
-		}
-
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
-		GlStateManager.popMatrix();
-		if (subscreens.empty()) {
-			super.renderHoveredToolTip(mouseX, mouseY);
-		}
-	}
-
-	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		int d = Mouse.getDWheel();
-		if (d != 0) {
-			if (subscreens.empty()) {
-				Iterator<Component> it = components.iterator();
-				boolean flag = true;
-				while (it.hasNext()) {
-					Component c = it.next();
-					int x = mouseX - c.x;
-					int y = mouseY - c.y;
-					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
-						if (c.onMouseScroll(x, y, d < 0)) {
-							flag = false;
-							break;
-						}
-					}
-				}
-				int x = mouseX - guiLeft;
-				int y = mouseY - guiTop;
-				if (flag && x >= 0 && y >= 0 && x <= 89 && y <= 213) {
-					NetworkHandler.instance
-							.sendToServer(new MessageIOPanelPageChange(Minecraft.getMinecraft().player, d > 0));
-				}
-			} else {
-				Subscreen screen = subscreens.peek();
-				screen.onMouseScrollScreen(mouseX, mouseY, d < 0);
+		RenderHelper.enableGUIStandardItemLighting();
+		GlStateManager.disableLighting();
+		GlStateManager.enableRescaleNormal();
+		GlStateManager.enableColorMaterial();
+		GlStateManager.enableLighting();
+		RenderItem ir = mc.getRenderItem();
+		StorageWrapper w = getItems();
+		Iterator<HugeItemStack> it = w.storges.iterator();
+		Iterator<ItemStack> it2 = w.other.iterator();
+		for (int offset = (page - 1) * 36; offset > 0; offset--) {
+			if (it.hasNext()) {
+				it.next();
+			} else if (it2.hasNext()) {
+				it2.next();
 			}
 		}
-		drawDefaultBackground();
-		super.drawScreen(mouseX, mouseY, partialTicks);
-		renderHoveredToolTip(mouseX, mouseY);
+		for (int j = 0; j < 9; j++) {
+			for (int i = 0; i < 4; i++) {
+				ItemStack stack = ItemStack.EMPTY;
+				int amount = 0;
+				if (it.hasNext()) {
+					HugeItemStack hugestack = it.next();
+					stack = hugestack.stack;
+					amount = hugestack.count;
+				} else if (it2.hasNext()) {
+					stack = it2.next();
+					amount = stack.getCount();
+				}
+				stack = stack.copy();
+				stack.setCount(1);
+				ir.renderItemAndEffectIntoGUI(stack, panelX + 8 + i * 19, panelY + 29 + j * 19);
+				text = amount <= 1 ? null : Util.transferString(amount);
+				ir.renderItemOverlayIntoGUI(fontRenderer, stack, panelX + 8 + i * 19, panelY + 29 + j * 19, text);
+			}
+		}
+		int slot = getHoveredSlot(mouseX, mouseY);
+		if (slot != -1 && subscreens.empty()) {
+			renderCover(slot);
+		}
 	}
 
 	@Override
-	public void updateScreen() {
-		if (Minecraft.getMinecraft().world.getTotalWorldTime() % ConfigLoader.itemUpdateRate == 0) {
-			NetworkHandler.instance.sendToServer(new MessageUpdateIOPanelGui(Minecraft.getMinecraft().player));
+	protected void drawForeground(int mouseX, int mouseY) {
+		super.drawForeground(mouseX, mouseY);
+		if (!subscreens.isEmpty()) {
+			return;
 		}
-		super.updateScreen();
+		int slot = getHoveredSlot(mouseX, mouseY);
+		if (slot != -1) {
+			slot += (page - 1) * 36;
+			StorageWrapper w = getItems();
+			Iterator<HugeItemStack> i = w.storges.iterator();
+			while (i.hasNext()) {
+				HugeItemStack s = i.next();
+				if (slot == 0) {
+					renderToolTip(s.stack, mouseX, mouseY);
+					return;
+				}
+				slot--;
+			}
+			Iterator<ItemStack> j = w.other.iterator();
+			while (j.hasNext()) {
+				ItemStack s = j.next();
+				if (slot == 0) {
+					renderToolTip(s, mouseX, mouseY);
+					return;
+				}
+				slot--;
+			}
+		}
+	}
+
+	public void renderCover(int slot) {
+		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
+		int slotX = slot % 4;
+		int slotY = slot / 4;
+		int j1 = slotX * 19 + panelX + 8;
+		int k1 = slotY * 19 + panelY + 29;
+		Gui.drawRect(j1, k1, j1 + 16, k1 + 16, 0x80FFFFFF);
+		GlStateManager.enableLighting();
+		GlStateManager.enableDepth();
+	}
+
+	@Override
+	public void onMouseScrolling(int mouseX, int mouseY, boolean isUp, boolean flag) {
+		super.onMouseScrolling(mouseX, mouseY, isUp, flag);
+		if (!flag) {
+			int x = mouseX - guiLeft;
+			int y = mouseY - guiTop;
+			if (x >= 0 && y >= 0 && x <= 89 && y <= 213) {
+				if (isUp) {
+					page = page - 1 < 1 ? maxPage : page - 1;
+				} else {
+					page = page + 1 > maxPage ? 1 : page + 1;
+				}
+			}
+		}
 	}
 
 	@Override
 	protected void onKetInput(char typedChar, int keyCode) {
 		if (keyCode == Keyboard.KEY_RETURN && box.isFocus) {
-			NetworkHandler.instance
-					.sendToServer(new MessageIOPanelSearchChange(Minecraft.getMinecraft().player, box.text));
 			box.isFocus = false;
 		}
 		super.onKetInput(typedChar, keyCode);
+	}
+
+	@Override
+	protected void onMouseReleaseScreen(int mouseX, int mouseY, int button, boolean flag) {
+		super.onMouseReleaseScreen(mouseX, mouseY, button, flag);
+		if (!flag && subscreens.isEmpty()) {
+			int slot = getHoveredSlot(mouseX, mouseY);
+			if (slot >= 0) {
+				ItemStack stack = ItemStack.EMPTY;
+				int amount = 1;
+				slot += (page - 1) * 36;
+				StorageWrapper w = getItems();
+				Iterator<HugeItemStack> i = w.storges.iterator();
+				while (i.hasNext()) {
+					HugeItemStack s = i.next();
+					if (slot == 0) {
+						stack = s.stack;
+						amount = s.count;
+						break;
+					}
+					slot--;
+				}
+				if (stack.isEmpty()) {
+					Iterator<ItemStack> j = w.other.iterator();
+					while (j.hasNext()) {
+						ItemStack s = j.next();
+						if (slot == 0) {
+							stack = s;
+							break;
+						}
+						slot--;
+					}
+				}
+				if (!stack.isEmpty()) {
+					SubscreenIOPanelRequest s = new SubscreenIOPanelRequest(this, mouseX, mouseY, stack, amount);
+					if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+						s.max();
+					}
+					putScreen(s);
+				}
+
+			}
+		}
 	}
 
 	@Override

@@ -35,7 +35,7 @@ public class BlockTruss extends BlockRotatedPillar {
 		switch (rot) {
 		case COUNTERCLOCKWISE_90:
 		case CLOCKWISE_90:
-			switch (state.getValue(LOG_AXIS)) {
+			switch (state.getValue(AXIS)) {
 			case X:
 				return state.withProperty(LOG_AXIS, BlockLog.EnumAxis.Z);
 			case Z:

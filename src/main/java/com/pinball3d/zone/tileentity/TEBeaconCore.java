@@ -12,12 +12,15 @@ public class TEBeaconCore extends TENeedNetwork implements IChunkLoader, INode {
 	}
 
 	@Override
-	public void work() {
-		boolean old = full;
-		full = ((BlockBeaconCore) blockType).isFullStructure(world, pos);
-		if (old != full) {
-			((TEProcessingCenter) getNetworkPos().getTileEntity()).markMapDirty();
+	public void update() {
+		if (!world.isRemote) {
+			boolean old = full;
+			full = BlockBeaconCore.isFullStructure(world, pos);
+			if (old != full) {
+				((TEProcessingCenter) getPosFromUUID(network).getTileEntity()).markMapDirty();
+			}
 		}
+		super.update();
 	}
 
 	@Override
@@ -31,7 +34,8 @@ public class TEBeaconCore extends TENeedNetwork implements IChunkLoader, INode {
 	@Override
 	public WorkingState getWorkingState() {
 		WorkingState state = super.getWorkingState();
-		state = state == WorkingState.WORKING && !full ? WorkingState.BREAK : state;
+		state = state == WorkingState.WORKING && !BlockBeaconCore.isFullStructure(world, pos) ? WorkingState.BREAK
+				: state;
 		return state;
 	}
 }
