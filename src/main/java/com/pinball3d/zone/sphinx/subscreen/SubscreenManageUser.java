@@ -12,15 +12,20 @@ import com.pinball3d.zone.sphinx.component.ScrollingEdgeList.ListBar;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.Util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.ImageBufferDownload;
+import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 
 public class SubscreenManageUser extends Subscreen {
 	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	private ScrollingEdgeList list;
+	private ThreadDownloadImageData image;
 
 	public SubscreenManageUser(IHasSubscreen parent) {
 		this(parent, getDisplayWidth() / 2 - 210, getDisplayHeight() / 2 - 100);
@@ -48,7 +53,7 @@ public class SubscreenManageUser extends Subscreen {
 		if (ConnectHelperClient.getInstance().hasData()) {
 			List<UserData> l = ConnectHelperClient.getInstance().getUsers();
 			l.forEach(e -> {
-				ListBar bar = new ListBar(e.uuid.toString(), () -> {
+				ListBar bar = new ListBar(e.name, () -> {
 				});
 				bar.setData(e);
 				list.addBar(bar);
@@ -81,9 +86,21 @@ public class SubscreenManageUser extends Subscreen {
 			Util.drawBorder(x + 117, y + 73, 15, 15, 1, 0xFF1ECCDE);
 			Util.drawBorder(x + 134, y + 73, 15, 15, 1, 0xFF1ECCDE);
 			Util.drawBorder(x + 151, y + 73, 15, 15, 1, 0xFF1ECCDE);
-			fr.drawString(user.uuid.toString(), x + 128, y + 30, 0xFF1ECCDE);
+			fr.drawString(user.name, x + 128, y + 30, 0xFF1ECCDE);
 			fr.drawString("Admininstrator", x + 128, y + 37, 0xFF1ECCDE);
 			fr.drawString("Offline", x + 128, y + 44, 0xFFBFBFBF);
+			drawGravatar(user.email, x + 84, y + 29);
 		}
+	}
+
+	private void drawGravatar(String mail, int x, int y) {
+		if (image == null) {
+			image = new ThreadDownloadImageData(null, Util.genGravatarUrl(mail), null, new ImageBufferDownload());
+			Minecraft.getMinecraft().getTextureManager()
+					.loadTexture(new ResourceLocation("zone:gravatars/" + StringUtils.stripControlCodes(mail)), image);
+		}
+		Minecraft.getMinecraft().getTextureManager()
+				.bindTexture(new ResourceLocation("zone:gravatars/" + StringUtils.stripControlCodes(mail)));
+		Gui.drawScaledCustomSizeModalRect(x, y, 0, 0, 256, 256, 38, 38, 256, 256);
 	}
 }

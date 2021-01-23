@@ -4,12 +4,11 @@ import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.manual.component.BlockShow;
-import com.pinball3d.zone.manual.component.ItemFrame;
 
 import net.minecraft.item.ItemStack;
 
 public class GuiContainerManualCastingTableAndCrucibleSpoon extends GuiContainerManualBase {
-	public GuiContainerManualCastingTableAndCrucibleSpoon(ContainerManual container) {
+	public GuiContainerManualCastingTableAndCrucibleSpoon(ContainerManualCastingTableAndCrucibleSpoon container) {
 		super(container);
 	}
 
@@ -19,8 +18,6 @@ public class GuiContainerManualCastingTableAndCrucibleSpoon extends GuiContainer
 		int x = width / 2 - 146;
 		int y = height / 2 - 90;
 		components.add(new BlockShow(this, x + 40, y + 30, 4F, new ItemStack(ItemLoader.casting_table)));
-		components.add(new ItemFrame(this, x + 164, y + 29, new ItemStack(ItemLoader.crucible_spoon)));
-		components.add(new ItemFrame(this, x + 182, y + 29, new ItemStack(ItemLoader.crucible_spoon_filled)));
 	}
 
 	@Override
@@ -35,5 +32,7 @@ public class GuiContainerManualCastingTableAndCrucibleSpoon extends GuiContainer
 		int y = height / 2 - 90;
 		drawTextBlock("manual.casting_table", x + 18, y + 16);
 		drawTextBlock("manual.crucible_spoon", x2 + 18, y + 16);
+		drawFrame(x + 164, y + 29);
+		drawFrame(x + 182, y + 29);
 	}
 }

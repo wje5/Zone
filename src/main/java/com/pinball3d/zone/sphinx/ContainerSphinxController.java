@@ -2,6 +2,7 @@ package com.pinball3d.zone.sphinx;
 
 import com.pinball3d.zone.block.BlockControllerMainframe;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +29,9 @@ public class ContainerSphinxController extends ContainerSphinxAdvanced {
 			return false;
 		}
 		TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
+		if (te.getUsers().isEmpty()) {
+			te.addUser(new UserData(playerIn, true));
+		}
 		return te.isUser(playerIn);
 	}
 }

@@ -2,6 +2,12 @@ package com.pinball3d.zone.inventory;
 
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.manual.ContainerManual;
+import com.pinball3d.zone.manual.ContainerManualBoilerAndDrill;
+import com.pinball3d.zone.manual.ContainerManualCastingTableAndCrucibleSpoon;
+import com.pinball3d.zone.manual.ContainerManualSphinxSystem2;
+import com.pinball3d.zone.manual.ContainerManualSphinxSystem3;
+import com.pinball3d.zone.manual.ContainerManualSphinxSystem4;
+import com.pinball3d.zone.manual.ContainerManualToolAndMaterial;
 import com.pinball3d.zone.manual.GuiContainerManualBoilerAndDrill;
 import com.pinball3d.zone.manual.GuiContainerManualCastingTableAndCrucibleSpoon;
 import com.pinball3d.zone.manual.GuiContainerManualCentrifugeAndCrystallizer;
@@ -86,7 +92,23 @@ public class GuiElementLoader implements IGuiHandler {
 		case PUMP:
 			return new ContainerPump(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case MANUAL:
-			return new ContainerManual(player);
+			switch (z) {
+			case 1:
+				return new ContainerManualToolAndMaterial(player);
+			case 3:
+				return new ContainerManualCastingTableAndCrucibleSpoon(player);
+			case 6:
+				return new ContainerManualBoilerAndDrill(player);
+			case 10:
+				return new ContainerManualSphinxSystem2(player);
+			case 11:
+				return new ContainerManualSphinxSystem3(player);
+			case 12:
+				return new ContainerManualSphinxSystem4(player);
+			default:
+				return new ContainerManual(player);
+			}
+
 		case SPHINX_TERMINAL:
 			return new ContainerSphinxTerminal(player);
 		case SPHINX_CONTROLLER:
@@ -140,17 +162,18 @@ public class GuiElementLoader implements IGuiHandler {
 			case 0:
 				return new GuiContainerManualPrefaceAndMenu(new ContainerManual(player));
 			case 1:
-				return new GuiContainerManualToolAndMaterial(new ContainerManual(player));
+				return new GuiContainerManualToolAndMaterial(new ContainerManualToolAndMaterial(player));
 			case 2:
 				return new GuiContainerManualCrucibleAndBurningBox(new ContainerManual(player));
 			case 3:
-				return new GuiContainerManualCastingTableAndCrucibleSpoon(new ContainerManual(player));
+				return new GuiContainerManualCastingTableAndCrucibleSpoon(
+						new ContainerManualCastingTableAndCrucibleSpoon(player));
 			case 4:
 				return new GuiContainerManualDrainerAndGrinder(new ContainerManual(player));
 			case 5:
 				return new GuiContainerManualElecFurnaceAndAlloySmelter(new ContainerManual(player));
 			case 6:
-				return new GuiContainerManualBoilerAndDrill(new ContainerManual(player));
+				return new GuiContainerManualBoilerAndDrill(new ContainerManualBoilerAndDrill(player));
 			case 7:
 				return new GuiContainerManualCentrifugeAndCrystallizer(new ContainerManual(player));
 			case 8:
@@ -158,11 +181,11 @@ public class GuiElementLoader implements IGuiHandler {
 			case 9:
 				return new GuiContainerManualSphinxSystem(new ContainerManual(player));
 			case 10:
-				return new GuiContainerManualSphinxSystem2(new ContainerManual(player));
+				return new GuiContainerManualSphinxSystem2(new ContainerManualSphinxSystem2(player));
 			case 11:
-				return new GuiContainerManualSphinxSystem3(new ContainerManual(player));
+				return new GuiContainerManualSphinxSystem3(new ContainerManualSphinxSystem3(player));
 			case 12:
-				return new GuiContainerManualSphinxSystem4(new ContainerManual(player));
+				return new GuiContainerManualSphinxSystem4(new ContainerManualSphinxSystem4(player));
 			case 13:
 				return new GuiContainerManualSphinxSystem5(new ContainerManual(player));
 			}

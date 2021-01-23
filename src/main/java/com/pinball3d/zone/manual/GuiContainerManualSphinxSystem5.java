@@ -9,6 +9,12 @@ public class GuiContainerManualSphinxSystem5 extends GuiContainerManualBase {
 	}
 
 	@Override
+	public void addComponents() {
+		super.addComponents();
+		button2.setEnable(() -> false);
+	}
+
+	@Override
 	public void onFlip(boolean flag) {
 		if (flag) {
 			mc.player.openGui(Zone.instance, GuiElementLoader.MANUAL, mc.world, 0, 0, 12);

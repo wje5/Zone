@@ -9,6 +9,12 @@ public class GuiContainerManualPrefaceAndMenu extends GuiContainerManualBase {
 	}
 
 	@Override
+	public void addComponents() {
+		super.addComponents();
+		button.setEnable(() -> false);
+	}
+
+	@Override
 	public void onFlip(boolean flag) {
 		if (!flag) {
 			mc.player.openGui(Zone.instance, GuiElementLoader.MANUAL, mc.world, 0, 0, 1);

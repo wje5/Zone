@@ -1179,7 +1179,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public static class UserData {
 		public UUID uuid;
-		public String name;
+		public String name, email = "";
 		public boolean isAdmin;
 
 		public UserData(UUID uuid, String name, boolean isAdmin) {
@@ -1188,8 +1188,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			this.isAdmin = isAdmin;
 		}
 
-		public UserData(EntityPlayer player, boolean flag) {
-			this(player.getUniqueID(), player.getName(), flag);
+		public UserData(EntityPlayer player, boolean isAdmin) {
+			this(player.getUniqueID(), player.getName(), isAdmin);
 		}
 
 		public UserData(NBTTagCompound tag) {
@@ -1198,10 +1198,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 		public void readFromNBT(NBTTagCompound tag) {
 			uuid = tag.getUniqueId("uuid");
+			name = tag.getString("name");
+			email = tag.getString("email");
+			isAdmin = tag.getBoolean("isAdmin");
 		}
 
 		public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 			tag.setUniqueId("uuid", uuid);
+			tag.setString("name", name);
+			tag.setString("email", email);
+			tag.setBoolean("isAdmin", isAdmin);
 			return tag;
 		}
 	}

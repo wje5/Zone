@@ -8,6 +8,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiContainerManualBase extends GuiContainerZone {
+	protected ButtonPage button, button2;
+
 	public GuiContainerManualBase(ContainerManual container) {
 		super(container);
 	}
@@ -20,12 +22,19 @@ public abstract class GuiContainerManualBase extends GuiContainerZone {
 		super.addComponents();
 		int x = width / 2 - 146;
 		int y = height / 2 - 90;
-		addComponent(new ButtonPage(this, x + 12, y + 158, true, () -> {
+		addComponent(button = new ButtonPage(this, x + 12, y + 158, true, () -> {
 			onFlip(true);
 		}));
-		addComponent(new ButtonPage(this, x + 270, y + 158, false, () -> {
+		addComponent(button2 = new ButtonPage(this, x + 270, y + 158, false, () -> {
 			onFlip(false);
 		}));
+	}
+
+	@Override
+	protected void setSize() {
+		super.setSize();
+		xSize = 292;
+		ySize = 180;
 	}
 
 	public abstract void onFlip(boolean flag);
@@ -51,13 +60,7 @@ public abstract class GuiContainerManualBase extends GuiContainerZone {
 		}
 	}
 
-//	@Override
-//	public int getWidth() {
-//		return 292;
-//	}
-//
-//	@Override
-//	public int getHeight() {
-//		return 180;
-//	}
+	public void drawFrame(int x, int y) {
+		Util.drawTexture(TEXTURE, x, y, 146, 13, 18, 18, 1.0F);
+	}
 }

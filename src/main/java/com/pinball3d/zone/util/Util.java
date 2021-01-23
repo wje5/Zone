@@ -1,5 +1,8 @@
 package com.pinball3d.zone.util;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -415,5 +418,22 @@ public class Util {
 			set.add(new ItemType(e.getItem(), e.getItemDamage()));
 		});
 		return new ArrayList<ItemType>(set);
+	}
+
+	public static String genGravatarUrl(String email) {
+		if (email != null && !email.isEmpty()) {
+			try {
+				MessageDigest md = MessageDigest.getInstance("MD5");
+				byte[] array = md.digest(email.getBytes("CP1252"));
+				StringBuffer sb = new StringBuffer();
+				for (int i = 0; i < array.length; ++i) {
+					sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+				}
+				return "https://secure.gravatar.com/avatar/" + sb.toString() + "?s=64";
+			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+		}
+		return "https://secure.gravatar.com/avatar?s=64";
 	}
 }
