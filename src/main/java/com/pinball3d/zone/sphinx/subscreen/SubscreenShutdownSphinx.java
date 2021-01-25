@@ -11,7 +11,6 @@ import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class SubscreenShutdownSphinx extends Subscreen {
 	public SubscreenShutdownSphinx(IHasSubscreen parent) {
@@ -22,8 +21,8 @@ public class SubscreenShutdownSphinx extends Subscreen {
 		super(parent, x, y, 160, 90, false);
 		components.add(new MultilineText(this, this.x + 5, this.y + 5, 150, I18n.format("sphinx.shutdown_sphinx")));
 		components.add(new TextButton(this, this.x + 25, this.y + 75, I18n.format("sphinx.yes"), () -> {
-			NetworkHandler.instance.sendToServer(new MessageShutdownSphinx(mc.player,
-					ConnectHelperClient.getInstance().getNetworkPos(), new NBTTagCompound()));
+			NetworkHandler.instance.sendToServer(
+					MessageShutdownSphinx.newMessage(mc.player, ConnectHelperClient.getInstance().getNetworkPos()));
 			mc.displayGuiScreen(null);
 		}));
 		components.add(new TextButton(this, this.x + 120, this.y + 75, I18n.format("sphinx.no"), () -> {

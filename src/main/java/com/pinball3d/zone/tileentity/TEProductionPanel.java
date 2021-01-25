@@ -3,6 +3,7 @@ package com.pinball3d.zone.tileentity;
 import com.pinball3d.zone.block.BlockStoragePanel;
 import com.pinball3d.zone.sphinx.IProduction;
 import com.pinball3d.zone.util.StorageWrapper;
+import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.tileentity.TileEntity;
@@ -27,9 +28,12 @@ public class TEProductionPanel extends TENeedNetwork implements IProduction {
 			if (handler != null) {
 				StorageWrapper wrapper = new StorageWrapper(handler, false);
 				if (!wrapper.isEmpty()) {
-					TEProcessingCenter pc = (TEProcessingCenter) getPosFromUUID(network).getTileEntity();
-					pc.insertToItemHandler(pc.dispenceItems(wrapper, new WorldPos(this)), handler);
-					markDirty();
+					WorldPos pos = Util.getPosFromUUID(network);
+					if (!pos.isOrigin()) {
+						TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
+						pc.insertToItemHandler(pc.dispenceItems(wrapper, new WorldPos(this)), handler);
+						markDirty();
+					}
 				}
 			}
 		}

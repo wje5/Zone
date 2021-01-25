@@ -12,10 +12,11 @@ import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
+import com.pinball3d.zone.sphinx.component.ClassifyGroupEdgeList;
 import com.pinball3d.zone.sphinx.component.DropDownList;
-import com.pinball3d.zone.sphinx.component.ScrollingEdgeList;
 import com.pinball3d.zone.sphinx.component.TextInputBox;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
+import com.pinball3d.zone.util.ItemSample;
 import com.pinball3d.zone.util.ItemType;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;
@@ -35,8 +36,9 @@ public class SubscreenManageClassify extends Subscreen {
 	public StorageWrapper data;
 	public int page = 1, maxPage = 1;
 	private TextInputBox box;
-	private ScrollingEdgeList list;
+	private ClassifyGroupEdgeList list;
 	private DropDownList list2, list3;
+	private ClassifyGroup local;
 
 	public SubscreenManageClassify(IHasSubscreen parent) {
 		this(parent, getDisplayWidth() / 2 - 210, getDisplayHeight() / 2 - 100);
@@ -67,10 +69,10 @@ public class SubscreenManageClassify extends Subscreen {
 		components.add(new TexturedButton(this, this.x + 122, this.y + 49, ICONS, 167, 41, 15, 13, 1.0F, () -> {
 			System.out.println("button3");
 		}));
-		components.add(new TexturedButton(this, this.x + 142, this.y + 51, ICONS, 182, 41, 14, 12, 1.0F, () -> {
+		components.add(new TexturedButton(this, this.x + 142, this.y + 48, ICONS, 207, 41, 15, 15, 1.0F, () -> {
 			System.out.println("button4");
 		}));
-		components.add(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195));
+		components.add(list = new ClassifyGroupEdgeList(this, this.x, this.y + 9, 195));
 		components.add(list2 = new DropDownList(this, this.x + 180, this.y + 27, 61).setOnChange(i -> {
 			refreshData();
 		}));
@@ -97,6 +99,29 @@ public class SubscreenManageClassify extends Subscreen {
 	@Override
 	public void onClick(int x, int y, boolean isLeft) {
 		super.onClick(x, y, isLeft);
+		int slot = getHoveredSlot(x, y);
+		if (slot != -1) {
+			Set<ItemType> l = getItems();
+			Iterator<ItemType> it = l.iterator();
+			for (int offset = (page - 1) * 63 + slot; offset > 0; offset--) {
+				if (it.hasNext()) {
+					it.next();
+				} else {
+					return;
+				}
+			}
+			if (it.hasNext()) {
+				ItemType type = it.next();
+				ClassifyGroup g = getGroup();
+				if (g != null) {
+					if (g.contains(type)) {
+						g.removeItem(type);
+					} else {
+						g.addItem(type);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -135,7 +160,7 @@ public class SubscreenManageClassify extends Subscreen {
 		int slot = getHoveredSlot(mouseX, mouseY);
 		if (slot != -1) {
 			slot += (page - 1) * 63;
-			List<ItemType> l = getItems();
+			Set<ItemType> l = getItems();
 			Iterator<ItemType> it = l.iterator();
 			while (it.hasNext()) {
 				ItemType s = it.next();
@@ -171,23 +196,48 @@ public class SubscreenManageClassify extends Subscreen {
 		return data;
 	}
 
+	public ClassifyGroup getGroup() {
+		if (list.isEmpty()) {
+			local = null;
+		} else if (local == null && ConnectHelperClient.getInstance().hasData()) {
+			local = ConnectHelperClient.getInstance().getClassify().get(list.index);
+		}
+		return local;
+	}
+
 	public void refreshData() {
 		if (ConnectHelperClient.getInstance().hasData()) {
 			data = ConnectHelperClient.getInstance().getItems();
 		}
 	}
 
-	public List<ItemType> getItems() {
-		StorageWrapper s = Util.search(list3.index == 0 ? getData() : Util.getItemList(), box.text);
-		List<ItemType> l = Util.getSampleFromWrapper(s);
-		maxPage = (l.size() - 1) / 63 + 1;
+	public Set<ItemType> getItems() {
+		ItemSample sample = new ItemSample(Util.search(list3.index == 0 ? getData() : Util.getItemList(), box.text));
+		if (list2.index == 0) {
+			ClassifyGroup group = list.isEmpty() ? null
+					: ConnectHelperClient.getInstance().getClassify().get(list.index);
+			if (group != null) {
+				sample.remove(group.getItems());
+			}
+		} else if (list2.index == 1) {
+			ClassifyGroup group = list.isEmpty() ? null
+					: ConnectHelperClient.getInstance().getClassify().get(list.index);
+			if (group != null) {
+				sample.and(group.getItems());
+			} else {
+				sample.clear();
+			}
+
+		}
+		Set<ItemType> s = sample.get();
+		maxPage = (s.size() - 1) / 63 + 1;
 		if (page > maxPage) {
 			page = maxPage;
 		}
 		if (page < 1) {
 			page = 1;
 		}
-		return l;
+		return s;
 	}
 
 	public void updateList() {
@@ -216,7 +266,7 @@ public class SubscreenManageClassify extends Subscreen {
 		Gui.drawRect(x + 70, y + 20, x + 350, y + 22, 0xFF20E6EF);
 		Gui.drawRect(x + 76, y + 24, x + 344, y + 194, 0x651CC3B5);
 		RenderItem ir = mc.getRenderItem();
-		List<ItemType> l = getItems();
+		Set<ItemType> l = getItems();
 		Iterator<ItemType> it = l.iterator();
 		for (int offset = (page - 1) * 63; offset > 0; offset--) {
 			if (it.hasNext()) {
@@ -244,7 +294,7 @@ public class SubscreenManageClassify extends Subscreen {
 		if (!ConnectHelperClient.getInstance().hasData()) {
 			return;
 		}
-		ClassifyGroup group = list.isEmpty() ? null : ConnectHelperClient.getInstance().getClassify().get(list.index);
+		ClassifyGroup group = getGroup();
 		for (int j = 0; j < 7; j++) {
 			for (int i = 0; i < 9; i++) {
 				int amount = 0;

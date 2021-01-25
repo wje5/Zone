@@ -13,8 +13,13 @@ public class MessageShutdownSphinx extends MessageSphinxAdmin {
 
 	}
 
-	public MessageShutdownSphinx(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
+	private MessageShutdownSphinx(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
 		super(player, pos, tag);
+	}
+
+	public static MessageShutdownSphinx newMessage(EntityPlayer player, WorldPos pos) {
+		NBTTagCompound tag = new NBTTagCompound();
+		return new MessageShutdownSphinx(player, pos, tag);
 	}
 
 	@Override

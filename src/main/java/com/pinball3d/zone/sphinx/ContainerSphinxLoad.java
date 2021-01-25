@@ -11,6 +11,7 @@ public class ContainerSphinxLoad extends ContainerNetworkBase {
 
 	public ContainerSphinxLoad(EntityPlayer player, WorldPos controller) {
 		super(player);
+		this.controller = controller;
 	}
 
 	public WorldPos getControllerPos() {
@@ -27,6 +28,6 @@ public class ContainerSphinxLoad extends ContainerNetworkBase {
 			return false;
 		}
 		TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-		return te.isUser(playerIn);
+		return te.isAdmin(playerIn);
 	}
 }

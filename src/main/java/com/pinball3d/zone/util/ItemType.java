@@ -47,4 +47,9 @@ public class ItemType {
 		tag.setInteger("meta", meta);
 		return tag;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof ItemType && item.equals(((ItemType) obj).item) && meta == ((ItemType) obj).meta;
+	}
 }

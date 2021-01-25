@@ -24,12 +24,14 @@ import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem5;
 import com.pinball3d.zone.manual.GuiContainerManualToolAndMaterial;
 import com.pinball3d.zone.sphinx.ContainerIOPanel;
 import com.pinball3d.zone.sphinx.ContainerSphinxController;
+import com.pinball3d.zone.sphinx.ContainerSphinxLoad;
 import com.pinball3d.zone.sphinx.ContainerSphinxNeedNetwork;
 import com.pinball3d.zone.sphinx.ContainerSphinxTerminal;
 import com.pinball3d.zone.sphinx.GuiContainerIOPanel;
 import com.pinball3d.zone.sphinx.GuiContainerNeedNetwork;
 import com.pinball3d.zone.sphinx.GuiContainerNeedNetworkIOPanel;
 import com.pinball3d.zone.sphinx.GuiContainerSphinxController;
+import com.pinball3d.zone.sphinx.GuiContainerSphinxLoad;
 import com.pinball3d.zone.sphinx.GuiContainerTerminal;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.util.WorldPos;
@@ -59,6 +61,7 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int SPHINX_NEED_NETWORK = 16;
 	public static final int SPHINX_NEED_NETWORK_IO_PANEL = 17;
 	public static final int SPHINX_IO_PANEL = 18;
+	public static final int SPHINX_LOAD = 19;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -108,7 +111,6 @@ public class GuiElementLoader implements IGuiHandler {
 			default:
 				return new ContainerManual(player);
 			}
-
 		case SPHINX_TERMINAL:
 			return new ContainerSphinxTerminal(player);
 		case SPHINX_CONTROLLER:
@@ -119,6 +121,8 @@ public class GuiElementLoader implements IGuiHandler {
 			return new ContainerSphinxNeedNetwork(player, (INeedNetwork) world.getTileEntity(new BlockPos(x, y, z)));
 		case SPHINX_IO_PANEL:
 			return new ContainerIOPanel(player, world.getTileEntity(new BlockPos(x, y, z)));
+		case SPHINX_LOAD:
+			return new ContainerSphinxLoad(player, new WorldPos(x, y, z, world));
 		}
 		return null;
 	}
@@ -205,6 +209,8 @@ public class GuiElementLoader implements IGuiHandler {
 		case SPHINX_IO_PANEL:
 			return new GuiContainerIOPanel(new ContainerIOPanel(player, world.getTileEntity(new BlockPos(x, y, z))),
 					new WorldPos(x, y, z, world));
+		case SPHINX_LOAD:
+			return new GuiContainerSphinxLoad(new ContainerSphinxLoad(player, new WorldPos(x, y, z, world)));
 		}
 		return null;
 	}

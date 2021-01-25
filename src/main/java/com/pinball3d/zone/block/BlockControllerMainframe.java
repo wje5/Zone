@@ -3,6 +3,8 @@ package com.pinball3d.zone.block;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.block.Block;
@@ -41,8 +43,20 @@ public class BlockControllerMainframe extends Block {
 		Block block = center.getBlockState().getBlock();
 		if (block instanceof BlockProcessingCenter && ((BlockProcessingCenter) block).isFullStructure(center)) {
 			if (!worldIn.isRemote) {
-				playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_CONTROLLER, worldIn, pos.getX(), pos.getY(),
-						pos.getZ());
+				TEProcessingCenter te = (TEProcessingCenter) center.getTileEntity();
+				if (block == BlockLoader.processing_center_light && te.isAdmin(playerIn)) {
+					playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_CONTROLLER, worldIn, pos.getX(), pos.getY(),
+							pos.getZ());
+				} else {
+					if (te.getUsers().isEmpty()) {
+						te.addUser(new UserData(playerIn, true));
+					}
+					if (te.isAdmin(playerIn)) {
+						te.open();
+						playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_LOAD, worldIn, pos.getX(), pos.getY(),
+								pos.getZ());
+					}
+				}
 			}
 			return true;
 		}

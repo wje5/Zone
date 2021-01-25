@@ -46,7 +46,7 @@ import net.minecraftforge.items.IItemHandler;
 
 public class TEProcessingCenter extends TileEntity implements ITickable, IChunkLoader {
 	private boolean on;
-	private String name = "";
+	private String name = "Name Undone";
 	private int loadTick;
 	private int energyTick;
 	private int energy;

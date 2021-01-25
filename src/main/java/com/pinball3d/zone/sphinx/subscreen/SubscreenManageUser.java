@@ -37,11 +37,6 @@ public class SubscreenManageUser extends Subscreen {
 	}
 
 	@Override
-	public void onClick(int x, int y, boolean isLeft) {
-		super.onClick(x, y, isLeft);
-	}
-
-	@Override
 	public Set<Type> getDataTypes() {
 		Set<Type> s = super.getDataTypes();
 		s.add(Type.USERS);

@@ -48,7 +48,7 @@ public abstract class MessageSphinx implements IMessage {
 		buf.writeInt(playerDim);
 	}
 
-	public abstract void run(MessageSphinx message, MessageContext ctx);
+	public abstract void run(MessageContext ctx);
 
 	public TEProcessingCenter getProcessingCenter() {
 		TileEntity te = pos.getTileEntity();
@@ -62,10 +62,10 @@ public abstract class MessageSphinx implements IMessage {
 		return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(playerDim).getPlayerEntityByUUID(uuid);
 	}
 
-	public void doHandler(MessageSphinx message, MessageContext ctx) {
+	public void doHandler(MessageContext ctx) {
 		FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
 			if (doCheck()) {
-				MessageSphinx.this.run(message, ctx);
+				MessageSphinx.this.run(ctx);
 			}
 		});
 	}

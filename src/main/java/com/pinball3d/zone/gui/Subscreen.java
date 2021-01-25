@@ -111,7 +111,7 @@ public class Subscreen implements IHasComponents {
 					}
 				}
 			}
-			onClick(x - this.x, y - this.y, isLeft);
+			onClick(x, y, isLeft);
 			return true;
 		}
 		return false;

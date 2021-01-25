@@ -9,11 +9,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import org.lwjgl.opengl.GL11;
 
 import com.pinball3d.zone.pdf.PDFHelper;
 import com.pinball3d.zone.pdf.PDFImage;
+import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 
 import net.minecraft.client.Minecraft;
@@ -31,6 +33,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -409,17 +412,6 @@ public class Util {
 		return r;
 	}
 
-	public static List<ItemType> getSampleFromWrapper(StorageWrapper wrapper) {
-		Set<ItemType> set = new TreeSet<ItemType>(ItemType.comparator);
-		wrapper.storges.forEach(e -> {
-			set.add(new ItemType(e.stack.getItem(), e.stack.getItemDamage()));
-		});
-		wrapper.other.forEach(e -> {
-			set.add(new ItemType(e.getItem(), e.getItemDamage()));
-		});
-		return new ArrayList<ItemType>(set);
-	}
-
 	public static String genGravatarUrl(String email) {
 		if (email != null && !email.isEmpty()) {
 			try {
@@ -435,5 +427,10 @@ public class Util {
 			}
 		}
 		return "https://secure.gravatar.com/avatar?s=64";
+	}
+
+	public static WorldPos getPosFromUUID(UUID uuid) {
+		return GlobalNetworkData.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
+				.getNetwork(uuid);
 	}
 }

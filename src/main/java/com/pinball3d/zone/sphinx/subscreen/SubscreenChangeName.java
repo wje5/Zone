@@ -1,7 +1,10 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
+import java.util.Set;
+
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.network.MessageChangeName;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
@@ -42,14 +45,18 @@ public class SubscreenChangeName extends Subscreen {
 	}
 
 	@Override
+	public Set<Type> getDataTypes() {
+		Set<Type> s = super.getDataTypes();
+		s.add(Type.NAME);
+		return s;
+	}
+
+	@Override
 	public void update() {
 		super.update();
-		if (!hasData) {
-			String name = ConnectHelperClient.getInstance().getName();
-			if (!name.isEmpty()) {
-				box.text = name;
-				hasData = true;
-			}
+		if (!hasData && ConnectHelperClient.getInstance().hasData()) {
+			box.text = ConnectHelperClient.getInstance().getName();
+			hasData = true;
 		}
 	}
 

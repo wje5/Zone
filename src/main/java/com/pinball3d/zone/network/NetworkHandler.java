@@ -12,7 +12,6 @@ public class NetworkHandler {
 	private static int nextID = 0;
 
 	public NetworkHandler() {
-		registerMessage(MessageOpenSphinx.Handler.class, MessageOpenSphinx.class, Side.SERVER);
 		registerMessage(MessageShutdownSphinx.Handler.class, MessageShutdownSphinx.class, Side.SERVER);
 		registerMessage(MessageChangeName.Handler.class, MessageChangeName.class, Side.SERVER);
 		registerMessage(MessageOpenIOPanelGui.Handler.class, MessageOpenIOPanelGui.class, Side.SERVER);
@@ -43,6 +42,7 @@ public class NetworkHandler {
 				Side.SERVER);
 		registerMessage(MessageConnectionControllerRequest.Handler.class, MessageConnectionControllerRequest.class,
 				Side.SERVER);
+		registerMessage(MessageNewClass.Handler.class, MessageNewClass.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

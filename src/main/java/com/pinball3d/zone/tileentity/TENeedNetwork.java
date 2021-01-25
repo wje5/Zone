@@ -6,14 +6,13 @@ import java.util.UUID;
 
 import com.pinball3d.zone.ChunkHandler;
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
-import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable, IChunkLoader {
 	protected UUID network;
@@ -41,7 +40,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 			return;
 		}
 		if (network != null) {
-			WorldPos pcpos = getPosFromUUID(network);
+			WorldPos pcpos = Util.getPosFromUUID(network);
 			if (!pcpos.isOrigin() && pcpos.getTileEntity() instanceof TEProcessingCenter) {
 				if (((TEProcessingCenter) pcpos.getTileEntity()).isOn()) {
 					if (connected) {
@@ -58,11 +57,6 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 
 	public void work() {
 
-	}
-
-	public static WorldPos getPosFromUUID(UUID uuid) {
-		return GlobalNetworkData.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
-				.getNetwork(uuid);
 	}
 
 	@Override

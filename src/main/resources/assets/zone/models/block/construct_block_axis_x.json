@@ -4,9 +4,9 @@
     	"particle": "zone:blocks/construct_block",
         "down": "zone:blocks/construct_block",
         "up": "zone:blocks/construct_block",
-        "north": "zone:blocks/construct_block",
+        "north": "zone:blocks/construct_block_all",
         "east": "zone:blocks/construct_block_axis_rot",
-        "south": "zone:blocks/construct_block",
+        "south": "zone:blocks/construct_block_all",
         "west": "zone:blocks/construct_block_axis_rot"
     }
 }

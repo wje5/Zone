@@ -5,8 +5,8 @@
         "down": "zone:blocks/construct_block_axis_rot",
         "up": "zone:blocks/construct_block_axis_rot",
         "north": "zone:blocks/construct_block_axis_rot",
-        "east": "zone:blocks/construct_block",
+        "east": "zone:blocks/construct_block_all",
         "south": "zone:blocks/construct_block_axis_rot",
-        "west": "zone:blocks/construct_block"
+        "west": "zone:blocks/construct_block_all"
     }
 }

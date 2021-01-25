@@ -1,5 +1,7 @@
 package com.pinball3d.zone.network;
 
+import java.util.UUID;
+
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
 
@@ -8,13 +10,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageOpenIOPanelGui implements IMessage {
-	String name;
+	UUID uuid;
 	int world, x, y, z;
 	boolean flag;
 
@@ -23,7 +24,7 @@ public class MessageOpenIOPanelGui implements IMessage {
 	}
 
 	public MessageOpenIOPanelGui(EntityPlayer player, int x, int y, int z, boolean flag) {
-		name = player.getName();
+		uuid = player.getUniqueID();
 		world = player.world.provider.getDimension();
 		this.x = x;
 		this.y = y;
@@ -33,7 +34,7 @@ public class MessageOpenIOPanelGui implements IMessage {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		name = ByteBufUtils.readUTF8String(buf);
+		uuid = new UUID(buf.readLong(), buf.readLong());
 		world = buf.readInt();
 		x = buf.readInt();
 		y = buf.readInt();
@@ -43,7 +44,8 @@ public class MessageOpenIOPanelGui implements IMessage {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeUTF8String(buf, name);
+		buf.writeLong(uuid.getMostSignificantBits());
+		buf.writeLong(uuid.getLeastSignificantBits());
 		buf.writeInt(world);
 		buf.writeInt(x);
 		buf.writeInt(y);
@@ -57,7 +59,7 @@ public class MessageOpenIOPanelGui implements IMessage {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
 				MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 				World world = server.getWorld(message.world);
-				EntityPlayer player = world.getPlayerEntityByName(message.name);
+				EntityPlayer player = world.getPlayerEntityByUUID(message.uuid);
 				if (player != null) {
 					player.openGui(Zone.instance,
 							message.flag ? GuiElementLoader.SPHINX_IO_PANEL

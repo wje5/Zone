@@ -1,7 +1,7 @@
 {
     "parent": "block/cube_column",
     "textures": {
-        "end": "zone:blocks/construct_block",
+        "end": "zone:blocks/construct_block_all",
         "side": "zone:blocks/construct_block"
     }
 }
