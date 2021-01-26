@@ -52,4 +52,9 @@ public class ItemType {
 	public boolean equals(Object obj) {
 		return obj instanceof ItemType && item.equals(((ItemType) obj).item) && meta == ((ItemType) obj).meta;
 	}
+
+	@Override
+	public int hashCode() {
+		return item.hashCode() * 31 + meta;
+	}
 }

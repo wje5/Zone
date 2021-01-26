@@ -3,6 +3,7 @@ package com.pinball3d.zone.sphinx.component;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageNewClass;
@@ -18,6 +19,7 @@ public class ClassifyGroupEdgeList extends Component {
 	public List<ListBar> list = new ArrayList<ListBar>();
 	private int stretch;
 	public int index;
+	private Predicate<Integer> onChange;
 
 	public ClassifyGroupEdgeList(IHasComponents parent, int x, int y, int height) {
 		super(parent, x, y, 56, height);
@@ -41,6 +43,10 @@ public class ClassifyGroupEdgeList extends Component {
 
 	public ListBar get() {
 		return list.isEmpty() ? null : list.get(index);
+	}
+
+	public void setOnChange(Predicate<Integer> onChange) {
+		this.onChange = onChange;
 	}
 
 	@Override
@@ -68,6 +74,11 @@ public class ClassifyGroupEdgeList extends Component {
 					String text = flag ? Util.formatString(e.title) : I18n.format("sphinx.new_class");
 					text = Util.formatStringToWidth(fr, text, this.index == index ? 36 : stretch - 7);
 					fr.drawString(text, this.index == index ? x + 20 : x + 63 - stretch, y + 3 + posY, 0xFF1ECCDE);
+				}
+				if (!flag) {
+					int xOffset = this.index == index ? 10 : 53 - stretch;
+					Util.drawTexture(ICONS, x + xOffset, y + posY + cutUp + 3, 157, 155 + cutUp * 4, 32,
+							32 - cutUp * 4 - cutDown * 4, 0.25F);
 				}
 			}
 			index++;
@@ -97,8 +108,12 @@ public class ClassifyGroupEdgeList extends Component {
 			}
 			if (y >= index * 15 && y <= index * 15 + 13) {
 				if (flag) {
-					e.event.run();
-					this.index = index;
+					if (index != this.index) {
+						if (onChange == null || onChange.test(index)) {
+							e.event.run();
+							this.index = index;
+						}
+					}
 				} else {
 					NetworkHandler.instance.sendToServer(
 							MessageNewClass.newMessage(mc.player, ConnectHelperClient.getInstance().getNetworkPos()));
@@ -113,7 +128,7 @@ public class ClassifyGroupEdgeList extends Component {
 	@Override
 	public boolean onMouseScroll(int mouseX, int mouseY, boolean isUp) {
 		super.onMouseScroll(mouseX, mouseY, isUp);
-		int maxScrollingDistance = list.size() * 15 - height;
+		int maxScrollingDistance = list.size() * 15 + 15 - height;
 		if (maxScrollingDistance < 0) {
 			scrollingDistance = 0;
 			return true;
@@ -127,7 +142,7 @@ public class ClassifyGroupEdgeList extends Component {
 	@Override
 	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
 		super.onDrag(mouseX, mouseY, moveX, moveY);
-		int maxScrollingDistance = list.size() * 15 - height;
+		int maxScrollingDistance = list.size() * 15 + 15 - height;
 		if (maxScrollingDistance < 0) {
 			scrollingDistance = 0;
 			return true;

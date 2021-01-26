@@ -76,4 +76,14 @@ public class ItemSample {
 		tag.setTag("items", list);
 		return tag;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof ItemSample && set.equals(((ItemSample) obj).set);
+	}
+
+	@Override
+	public int hashCode() {
+		return set.hashCode();
+	}
 }

@@ -9,6 +9,8 @@ import org.lwjgl.input.Keyboard;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.network.MessageManageClassify;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
@@ -39,6 +41,7 @@ public class SubscreenManageClassify extends Subscreen {
 	private ClassifyGroupEdgeList list;
 	private DropDownList list2, list3;
 	private ClassifyGroup local;
+	private boolean dirty;
 
 	public SubscreenManageClassify(IHasSubscreen parent) {
 		this(parent, getDisplayWidth() / 2 - 210, getDisplayHeight() / 2 - 100);
@@ -70,9 +73,33 @@ public class SubscreenManageClassify extends Subscreen {
 			System.out.println("button3");
 		}));
 		components.add(new TexturedButton(this, this.x + 142, this.y + 48, ICONS, 207, 41, 15, 15, 1.0F, () -> {
-			System.out.println("button4");
+			if (ConnectHelperClient.getInstance().hasData()) {
+				NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(mc.player,
+						ConnectHelperClient.getInstance().getNetworkPos(), local));
+				dirty = false;
+			}
 		}));
 		components.add(list = new ClassifyGroupEdgeList(this, this.x, this.y + 9, 195));
+		list.setOnChange((index) -> {
+			if (dirty) {
+				parent.putScreen(new SubscreenYNCBox(parent, I18n.format("sphinx.save"),
+						I18n.format("sphinx.save_change", local.getName()), () -> {
+							NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(mc.player,
+									ConnectHelperClient.getInstance().getNetworkPos(), local));
+							list.index = index;
+							local = ConnectHelperClient.getInstance().getClassify().get(index);
+							dirty = false;
+						}, () -> {
+							list.index = index;
+							local = ConnectHelperClient.getInstance().getClassify().get(index);
+							dirty = false;
+						}));
+				return false;
+			} else {
+				local = ConnectHelperClient.getInstance().getClassify().get(index);
+				return true;
+			}
+		});
 		components.add(list2 = new DropDownList(this, this.x + 180, this.y + 27, 61).setOnChange(i -> {
 			refreshData();
 		}));
@@ -119,6 +146,7 @@ public class SubscreenManageClassify extends Subscreen {
 					} else {
 						g.addItem(type);
 					}
+					dirty = !g.equals(ConnectHelperClient.getInstance().getClassify().get(list.index));
 				}
 			}
 		}
@@ -227,7 +255,6 @@ public class SubscreenManageClassify extends Subscreen {
 			} else {
 				sample.clear();
 			}
-
 		}
 		Set<ItemType> s = sample.get();
 		maxPage = (s.size() - 1) / 63 + 1;
@@ -279,7 +306,7 @@ public class SubscreenManageClassify extends Subscreen {
 			}
 		}
 		FontRenderer fr = Util.getFontRenderer();
-		fr.drawString(I18n.format("sphinx.manage_classify"), x + 75, y + 8, 0xFF1ECCDE);
+		fr.drawString(I18n.format("sphinx.manage_classify") + (dirty ? "*" : ""), x + 75, y + 8, 0xFF1ECCDE);
 		Util.drawBorder(x + 75, y + 23, 270, 172, 1, 0xFF1ECCDE);
 		String text = page + "/" + maxPage;
 		fr.drawString(text, x + 205 - fr.getStringWidth(text) / 2, y + 181, 0xFF1ECCDE);
@@ -305,7 +332,10 @@ public class SubscreenManageClassify extends Subscreen {
 					text = amount <= 1 ? null : Util.transferString(amount);
 					ir.renderItemOverlayIntoGUI(fr, stack, x + 164 + i * 19, y + 46 + j * 19, text);
 					if (group != null && group.contains(type)) {
-						Util.drawTexture(x + 174 + i * 19, y + 56 + j * 19, 92, 56, 7, 7, 1.0F);
+						GlStateManager.pushMatrix();
+						GlStateManager.translate(0, 0, 400F);
+						Util.drawTexture(ICONS, x + 174 + i * 19, y + 56 + j * 19, 92, 56, 7, 7, 1.0F);
+						GlStateManager.popMatrix();
 					}
 				}
 			}

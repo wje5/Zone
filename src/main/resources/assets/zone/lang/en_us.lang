@@ -226,6 +226,8 @@ sphinx.network_not_coverage=Network not coverage
 sphinx.permission_denied=Permission Denied
 sphinx.manage_user=Manage Users
 sphinx.new_class=New class
+sphinx.save_change=Apply changes to %1$s?
+sphinx.save=Save
 
 manual.preface=   Welcome to Zone!!\n\nCurrently it introduced\n*An ore multiplying Cricible\n*A kind of Drill with replaceable\nhead\n*The Grinder crushing ores to\n32 pieces\n*Even more ore-multiplying ways\n(up to 7x!)\n*The Nail Gun making holes all\nover your enemies\n*An adorable submarine\n*All-Mighty Sphinx© System\n*and more...
 manual.menu=            Menu\n          -Tier 1-\n-Tools and Materials-\n-Crucible and Miscellaneous-\n-Drainer-\n-Grinder-\n-Electric Furnace-\n-Alloy Smelter-\n          -Tier 2-\n-Boiler-\n-Drill-\n-Centrifuge-\n-Crystallizer-\n-Sphinx© System-

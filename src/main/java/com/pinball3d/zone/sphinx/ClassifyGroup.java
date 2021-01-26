@@ -40,6 +40,10 @@ public class ClassifyGroup {
 		items.remove(s);
 	}
 
+	public void clear() {
+		items.clear();
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -61,5 +65,16 @@ public class ClassifyGroup {
 		tag.setString("name", name);
 		tag.setTag("items", items.writeToNBT(new NBTTagCompound()));
 		return tag;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof ClassifyGroup && ((ClassifyGroup) obj).name.equals(name)
+				&& ((ClassifyGroup) obj).items.equals(items);
+	}
+
+	@Override
+	public int hashCode() {
+		return items.hashCode() * 31 + name.hashCode();
 	}
 }

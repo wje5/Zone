@@ -43,6 +43,7 @@ public class NetworkHandler {
 		registerMessage(MessageConnectionControllerRequest.Handler.class, MessageConnectionControllerRequest.class,
 				Side.SERVER);
 		registerMessage(MessageNewClass.Handler.class, MessageNewClass.class, Side.SERVER);
+		registerMessage(MessageManageClassify.Handler.class, MessageManageClassify.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

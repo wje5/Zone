@@ -3,6 +3,7 @@ package com.pinball3d.zone.sphinx.component;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.util.Util;
@@ -14,6 +15,7 @@ public class ScrollingEdgeList extends Component {
 	public List<ListBar> list = new ArrayList<ListBar>();
 	private int stretch;
 	public int index;
+	private Predicate<Integer> onChange;
 
 	public ScrollingEdgeList(IHasComponents parent, int x, int y, int height) {
 		super(parent, x, y, 56, height);
@@ -37,6 +39,10 @@ public class ScrollingEdgeList extends Component {
 
 	public ListBar get() {
 		return list.isEmpty() ? null : list.get(index);
+	}
+
+	public void setOnChange(Predicate<Integer> onChange) {
+		this.onChange = onChange;
 	}
 
 	@Override
@@ -80,8 +86,12 @@ public class ScrollingEdgeList extends Component {
 		while (it.hasNext()) {
 			ListBar e = it.next();
 			if (y >= index * 15 && y <= index * 15 + 13) {
-				e.event.run();
-				this.index = index;
+				if (index != this.index) {
+					if (onChange == null || onChange.test(index)) {
+						e.event.run();
+						this.index = index;
+					}
+				}
 				return true;
 			}
 			index++;

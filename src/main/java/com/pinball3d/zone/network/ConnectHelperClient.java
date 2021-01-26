@@ -119,7 +119,8 @@ public class ConnectHelperClient {
 					classify.clear();
 					NBTTagList list = data.getTagList(e.name(), 10);
 					list.forEach(i -> {
-						classify.add(new ClassifyGroup((NBTTagCompound) i));
+						ClassifyGroup c = new ClassifyGroup((NBTTagCompound) i);
+						classify.add(c);
 					});
 					break;
 				case USERS:
