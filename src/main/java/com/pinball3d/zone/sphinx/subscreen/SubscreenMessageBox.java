@@ -29,14 +29,14 @@ public class SubscreenMessageBox extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		Util.drawTexture(TEXTURE, x, y, 0, 0, 80, 80, 0.25F);
-		Util.drawTexture(TEXTURE, x + 130, y, 80, 0, 80, 80, 0.25F);
-		Util.drawTexture(TEXTURE, x, y + 80, 0, 80, 80, 80, 0.25F);
-		Util.drawTexture(TEXTURE, x + 130, y + 80, 80, 80, 80, 80, 0.25F);
-		Gui.drawRect(x + 20, y, x + 130, y + 20, 0x2F000000);
-		Gui.drawRect(x, y + 20, x + 150, y + 80, 0x2F000000);
-		Gui.drawRect(x + 20, y + 80, x + 130, y + 100, 0x2F000000);
-		Gui.drawRect(x + 5, y + 10, x + 145, y + 11, 0xFF20E6EF);
+		Util.drawTexture(TEXTURE, x - 2, y - 2, 0, 0, 99, 99, 0.25F);
+		Util.drawTexture(TEXTURE, x + 128, y - 2, 99, 0, 99, 99, 0.25F);
+		Util.drawTexture(TEXTURE, x - 2, y + 79, 0, 99, 99, 99, 0.25F);
+		Util.drawTexture(TEXTURE, x + 128, y + 79, 99, 99, 99, 99, 0.25F);
+		Gui.drawRect(x + 22, y, x + 128, y + 22, 0x2F000000);
+		Gui.drawRect(x, y + 22, x + 150, y + 79, 0x2F000000);
+		Gui.drawRect(x + 22, y + 79, x + 128, y + 101, 0x2F000000);
+		Util.renderGlowHorizonLineThin(x + 5, y + 10, 140);
 		Gui.drawRect(x + 8, y + 12, x + 142, y + 97, 0x651CC3B5);
 		Util.getFontRenderer().drawString(title, x + 7, y + 2, 0xFF1ECCDE);
 		Util.getFontRenderer().drawSplitString(text, x + 15, y + 15, 120, 0xFF1ECCDE);

@@ -147,14 +147,14 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
 		GlStateManager.disableBlend();
-		Util.drawBorder(x, y, 140, 56, 1, 0xFF1ECCDE);
+		Util.renderGlowBorder(x, y, width, height);
 		Util.drawBorder(x + 8, y + 8, 18, 18, 1, 0xFF1ECCDE);
 		FontRenderer fr = Util.getFontRenderer();
-		fr.drawString(I18n.format("sphinx.output") + ":", x + 30, y + 6, 0xFF1ECCDE);
+		Util.renderGlowString(I18n.format("sphinx.output") + ":", x + 30, y + 6);
 		if (time != -1) {
-			fr.drawString(I18n.format("sphinx.time") + ":", x + 30, y + 30, 0xFF1ECCDE);
+			Util.renderGlowString(I18n.format("sphinx.time") + ":", x + 30, y + 30);
 			String text = (time / 20) + "s" + (time % 20) + "tick";
-			fr.drawString(text, x + 128 - fr.getStringWidth(text), y + 30, 0xFF1ECCDE);
+			Util.renderGlowString(text, x + 128 - fr.getStringWidth(text), y + 30);
 		}
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();

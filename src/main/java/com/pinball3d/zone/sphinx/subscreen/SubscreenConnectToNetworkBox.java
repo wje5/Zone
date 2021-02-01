@@ -4,7 +4,6 @@ import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.util.Util;
 
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -46,12 +45,11 @@ public class SubscreenConnectToNetworkBox extends Subscreen {
 		super.doRenderBackground(mouseX, mouseY);
 		Gui.drawRect(x, y, x + width, y + height, 0xAF282828);
 		Util.drawTexture(TEXTURE, x + 8, y + 8, 48, 0, 36, 36, 0.5F);
-		FontRenderer fr = Util.getFontRenderer();
-		fr.drawString(I18n.format("sphinx.connect_to_network", name), x + 35, y + 4, 0xFF1ECCDE);
+		Util.renderGlowString(I18n.format("sphinx.connect_to_network", name), x + 35, y + 4);
 		if (!fail) {
-			fr.drawString(I18n.format("sphinx.waiting_for_server"), x + 35, y + 20, 0xFF1ECCDE);
+			Util.renderGlowString(I18n.format("sphinx.waiting_for_server"), x + 35, y + 20);
 		} else if (fail && quit > 0) {
-			fr.drawString(I18n.format("sphinx.password_incorrect"), x + 35, y + 20, 0xFF1ECCDE);
+			Util.renderGlowString(I18n.format("sphinx.password_incorrect"), x + 35, y + 20);
 		}
 		if (fail && quit == 0) {
 			dead = true;

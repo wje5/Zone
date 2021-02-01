@@ -67,13 +67,13 @@ public class ClassifyGroupEdgeList extends Component {
 			int cutUp = posY < 0 ? -posY : 0;
 			int cutDown = posY + 13 - height > 0 ? posY + 13 - height : 0;
 			if (cutUp < 13 && cutDown < 13) {
-				Util.drawTexture(ICONS, this.index == index ? x : x + 43 - stretch, y + posY + cutUp, 0,
-						187 + cutUp * 4, stretch >= 43 || this.index == index ? 225 : stretch * 4 + 52,
-						50 - cutUp * 4 - cutDown * 4, 0.25F);
+				Util.drawTexture(ICONS, (this.index == index ? x : x + 43 - stretch) - 3, y + posY + cutUp - 3, 0,
+						187 + cutUp * 4, (stretch >= 43 || this.index == index ? 225 : stretch * 4 + 52) + 19,
+						(50 - cutUp * 4 - cutDown * 4) + 19, 0.25F);
 				if (cutUp <= 3 && cutDown <= 3 && (this.index == index || stretch > 7)) {
 					String text = flag ? Util.formatString(e.title) : I18n.format("sphinx.new_class");
 					text = Util.formatStringToWidth(fr, text, this.index == index ? 36 : stretch - 7);
-					fr.drawString(text, this.index == index ? x + 20 : x + 63 - stretch, y + 3 + posY, 0xFF1ECCDE);
+					Util.renderGlowString(text, this.index == index ? x + 20 : x + 63 - stretch, y + 3 + posY);
 				}
 				if (!flag) {
 					int xOffset = this.index == index ? 10 : 53 - stretch;

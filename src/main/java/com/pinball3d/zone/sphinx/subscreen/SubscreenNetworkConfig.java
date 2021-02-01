@@ -38,14 +38,14 @@ public class SubscreenNetworkConfig extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		Util.drawTexture(TEXTURE, x, y, 0, 0, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 260, y, 80, 0, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x, y + 160, 0, 80, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 260, y + 160, 80, 80, 80, 80, 0.5F);
-		Gui.drawRect(x + 40, y, x + 260, y + 40, 0x2F000000);
-		Gui.drawRect(x, y + 40, x + 300, y + 160, 0x2F000000);
-		Gui.drawRect(x + 40, y + 160, x + 260, y + 200, 0x2F000000);
-		Gui.drawRect(x + 10, y + 20, x + 290, y + 22, 0xFF20E6EF);
+		Util.drawTexture(TEXTURE, x - 5, y - 5, 0, 0, 99, 99, 0.5F);
+		Util.drawTexture(TEXTURE, x + 255, y - 5, 99, 0, 99, 99, 0.5F);
+		Util.drawTexture(TEXTURE, x - 5, y + 155, 0, 99, 99, 99, 0.5F);
+		Util.drawTexture(TEXTURE, x + 255, y + 155, 99, 99, 99, 99, 0.5F);
+		Gui.drawRect(x + 44, y, x + 255, y + 44, 0x2F000000);
+		Gui.drawRect(x, y + 44, x + 300, y + 155, 0x2F000000);
+		Gui.drawRect(x + 44, y + 155, x + 255, y + 200, 0x2F000000);
+		Util.renderGlowHorizonLine(x + 10, y + 20, 280);
 		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
 		Util.getFontRenderer().drawString(I18n.format("sphinx.network_config"), x + 15, y + 8, 0xFF1ECCDE);
 		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);

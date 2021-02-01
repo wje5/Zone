@@ -27,6 +27,7 @@ public class HyperTextButton extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		Util.getFontRenderer().drawString(text, x, y, 0xFF1ECCDE);
+//		Util.getFontRenderer().drawString(text, x, y, 0xFF1ECCDE);
+		Util.renderGlowString(text, x, y);
 	}
 }

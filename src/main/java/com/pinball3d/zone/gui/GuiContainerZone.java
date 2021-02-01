@@ -117,7 +117,9 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		renderHoveredToolTip(mouseX, mouseY);
+		if (subscreens.isEmpty()) {
+			renderHoveredToolTip(mouseX, mouseY);
+		}
 	}
 
 	@Override

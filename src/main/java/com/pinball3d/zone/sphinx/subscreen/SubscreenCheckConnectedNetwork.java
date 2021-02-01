@@ -58,6 +58,6 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 		super.doRenderBackground(mouseX, mouseY);
 		Gui.drawRect(x, y, x + width, y + height, 0xAF282828);
 		Util.drawTexture(TEXTURE, x + 8, y + 8, 0, 16, 32, 25, 0.5F);
-		Util.getFontRenderer().drawString(name, x + 35, y + 4, 0xFF1ECCDE);
+		Util.renderGlowString(name, x + 35, y + 4);
 	}
 }

@@ -29,11 +29,12 @@ public class TextButton extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		Util.drawTexture(ICONS, x, y, 117, 155, 20, 30, 0.375F);
-		Util.drawTexture(ICONS, x + width - 4, y, 137, 155, 20, 30, 0.375F);
+		Util.drawTexture(ICONS, x - 4, y - 4, 117, 138, 38, 49, 0.375F);
+		Util.drawTexture(ICONS, x + width - 7, y - 4, 155, 138, 38, 49, 0.375F);
 		if (width > 15) {
-			Gui.drawRect(x + 7, y, x + width - 4, y + 11, 0x32000000);
+			Gui.drawRect(x + 10, y, x + width - 7, y + 11, 0x32000000);
 		}
-		Util.getFontRenderer().drawString(text, x + 6, y + 1, 0xFF1ECCDE);
+//		Util.getFontRenderer().drawString(text, x + 6, y + 1, 0xFF1ECCDE);
+		Util.renderGlowString(text, x + 6, y + 1);
 	}
 }

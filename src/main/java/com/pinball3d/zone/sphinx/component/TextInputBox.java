@@ -99,6 +99,6 @@ public class TextInputBox extends Component {
 			Gui.drawRect(x + 3 + renderer.getStringWidth(text), y + 2, x + 4 + renderer.getStringWidth(text),
 					y + height - 2, 0xFF1ECCDE);
 		}
-		renderer.drawString(text, x + 3, y + 3, 0xFF1ECCDE);
+		Util.renderGlowString(text, x + 3, y + 3);
 	}
 }

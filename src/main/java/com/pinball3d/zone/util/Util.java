@@ -13,6 +13,9 @@ import java.util.UUID;
 
 import org.lwjgl.opengl.GL11;
 
+import com.ibm.icu.text.ArabicShaping;
+import com.ibm.icu.text.ArabicShapingException;
+import com.ibm.icu.text.Bidi;
 import com.pinball3d.zone.pdf.PDFHelper;
 import com.pinball3d.zone.pdf.PDFImage;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
@@ -39,6 +42,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Util {
+	@SideOnly(Side.CLIENT)
+	private static final ResourceLocation BORDER_2 = new ResourceLocation("zone:textures/gui/sphinx/ui_border_2.png");
+
 	public static Comparator<ItemStack> itemStackComparator = new Comparator<ItemStack>() {
 		@Override
 		public int compare(ItemStack o1, ItemStack o2) {
@@ -248,6 +254,110 @@ public class Util {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.colorMask(true, true, true, false);
 		GlStateManager.disableLighting();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void renderGlowString(String text, float x, float y) {
+		Util.renderGlowString(text, x, y, 0xFF3AFAFD, 0xFF138E93);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void renderGlowString(String text, float x, float y, int color, int glowColor) {
+		FontRenderer fr = Util.getFontRenderer();
+		fr.drawString(text, x - 0.2F, y, glowColor, false);
+		fr.drawString(text, x, y - 0.2F, glowColor, false);
+		fr.drawString(text, x, y, color, false);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void renderSplitGlowString(String text, float x, float y, int wrapWidth) {
+		Util.renderSplitGlowString(text, x, y, wrapWidth, 0xFF3AFAFD, 0xFF138E93);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void renderSplitGlowString(String text, float x, float y, int wrapWidth, int color, int glowColor) {
+		FontRenderer fr = Util.getFontRenderer();
+		fr.drawString(" ", 0, 0, color);
+		text = trimStringNewline(text);
+		for (String s : fr.listFormattedStringToWidth(text, wrapWidth)) {
+			if (fr.getBidiFlag()) {
+				String bidiString = null;
+				try {
+					Bidi bidi = new Bidi((new ArabicShaping(8)).shape(text), 127);
+					bidi.setReorderingMode(0);
+					bidiString = bidi.writeReordered(2);
+				} catch (ArabicShapingException var3) {
+					bidiString = text;
+				}
+				int i = fr.getStringWidth(bidiString);
+				x = x + wrapWidth - i;
+			}
+			renderGlowString(s, x, y, color, glowColor);
+			y += fr.FONT_HEIGHT;
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void renderGlowHorizonLine(int x, int y, int length) {
+		length *= 2;
+		Util.drawTexture(BORDER_2, x - 3, y - 3, 0, 0, 14, 17, 0.5F);
+		x += 4;
+		length -= 7;
+		while (length > 243) {
+			Util.drawTexture(BORDER_2, x, y - 3, 14, 0, 228, 17, 0.5F);
+			x += 114;
+			length -= 228;
+		}
+		Util.drawTexture(BORDER_2, x, y - 3, 250 - length, 0, length + 6, 17, 0.5F);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void renderGlowHorizonLineThin(int x, int y, int length) {
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y, 0.0F);
+		GlStateManager.scale(0.5F, 0.5F, 1.0F);
+		Util.renderGlowHorizonLine(0, 0, length * 2);
+		GlStateManager.popMatrix();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void renderGlowBorder(int x, int y, int width, int height) {
+		int originX = x;
+		int originY = y;
+		int x2 = x + width - 1;
+		int y2 = y + height - 1;
+		width *= 2;
+		height *= 2;
+		Util.drawTexture(BORDER_2, x - 1, y - 1, 0, 17, 6, 6, 0.5F);
+		x += 2;
+		y += 2;
+		width -= 4;
+		height -= 4;
+		while (width > 250) {
+			Util.drawTexture(BORDER_2, x, originY - 1, 6, 17, 244, 6, 0.5F);
+			Util.drawTexture(BORDER_2, x, y2 - 1, 6, 251, 244, 6, 0.5F);
+			x += 122;
+			width -= 244;
+		}
+		int u = 256 - width - 1;
+		Util.drawTexture(BORDER_2, x, originY - 1, u, 17, width, 6, 0.5F);
+		Util.drawTexture(BORDER_2, x, y2 - 1, u, 251, width, 6, 0.5F);
+		while (height > 233) {
+			Util.drawTexture(BORDER_2, originX - 1, y, 0, 23, 6, 228, 0.5F);
+			Util.drawTexture(BORDER_2, x2 - 1, y, 251, 23, 6, 228, 0.5F);
+			y += 114;
+			height -= 228;
+		}
+		int v = 256 - height - 1;
+		Util.drawTexture(BORDER_2, originX - 1, y, 0, v, 6, height, 0.5F);
+		Util.drawTexture(BORDER_2, x2 - 1, y, 251, v, 6, height - 3, 0.5F);
+	}
+
+	public static String trimStringNewline(String text) {
+		while (text != null && text.endsWith("\n")) {
+			text = text.substring(0, text.length() - 1);
+		}
+		return text;
 	}
 
 	/**

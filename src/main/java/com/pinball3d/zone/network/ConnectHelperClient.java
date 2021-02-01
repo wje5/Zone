@@ -280,4 +280,8 @@ public class ConnectHelperClient {
 	public List<UserData> getUsers() {
 		return users;
 	}
+
+	public Set<Type> getTypes() {
+		return types;
+	}
 }

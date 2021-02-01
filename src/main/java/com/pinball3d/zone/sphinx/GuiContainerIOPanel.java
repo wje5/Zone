@@ -178,7 +178,7 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 			}
 		}
 		int slot = getHoveredSlot(mouseX, mouseY);
-		if (slot != -1 && subscreens.empty()) {
+		if (slot != -1) {
 			renderCover(slot);
 		}
 	}

@@ -60,18 +60,18 @@ public class SubscreenManageUser extends Subscreen {
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
 		updateList();
-		Util.drawTexture(TEXTURE, x + 60, y, 0, 0, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 320, y, 80, 0, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 60, y + 160, 0, 80, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 320, y + 160, 80, 80, 80, 80, 0.5F);
-		Gui.drawRect(x + 100, y, x + 320, y + 40, 0x2F000000);
-		Gui.drawRect(x + 60, y + 40, x + 360, y + 160, 0x2F000000);
-		Gui.drawRect(x + 100, y + 160, x + 320, y + 200, 0x2F000000);
-		Gui.drawRect(x + 70, y + 20, x + 350, y + 22, 0xFF20E6EF);
+		Util.drawTexture(TEXTURE, x + 55, y - 5, 0, 0, 99, 99, 0.5F);
+		Util.drawTexture(TEXTURE, x + 315, y - 5, 99, 0, 99, 99, 0.5F);
+		Util.drawTexture(TEXTURE, x + 55, y + 155, 0, 99, 99, 99, 0.5F);
+		Util.drawTexture(TEXTURE, x + 315, y + 155, 99, 99, 99, 99, 0.5F);
+		Gui.drawRect(x + 104, y, x + 315, y + 44, 0x2F000000);
+		Gui.drawRect(x + 60, y + 44, x + 360, y + 155, 0x2F000000);
+		Gui.drawRect(x + 104, y + 155, x + 315, y + 200, 0x2F000000);
+		Util.renderGlowHorizonLine(x + 70, y + 20, 280);
 		Gui.drawRect(x + 76, y + 24, x + 344, y + 194, 0x651CC3B5);
-		FontRenderer fr = Util.getFontRenderer();
-		fr.drawString(I18n.format("sphinx.manage_user"), x + 75, y + 8, 0xFF1ECCDE);
+		Util.renderGlowString(I18n.format("sphinx.manage_user"), x + 75, y + 8);
 		Util.drawBorder(x + 75, y + 23, 270, 172, 1, 0xFF1ECCDE);
+		FontRenderer fr = Util.getFontRenderer();
 		ListBar bar = list.get();
 		if (bar != null) {
 			UserData user = (UserData) bar.getData();
@@ -81,8 +81,8 @@ public class SubscreenManageUser extends Subscreen {
 			Util.drawBorder(x + 117, y + 73, 15, 15, 1, 0xFF1ECCDE);
 			Util.drawBorder(x + 134, y + 73, 15, 15, 1, 0xFF1ECCDE);
 			Util.drawBorder(x + 151, y + 73, 15, 15, 1, 0xFF1ECCDE);
-			fr.drawString(user.name, x + 128, y + 30, 0xFF1ECCDE);
-			fr.drawString("Admininstrator", x + 128, y + 37, 0xFF1ECCDE);
+			Util.renderGlowString(user.name, x + 128, y + 30);
+			Util.renderGlowString("Admininstrator", x + 128, y + 37);
 			fr.drawString("Offline", x + 128, y + 44, 0xFFBFBFBF);
 			drawGravatar(user.email, x + 84, y + 29);
 		}

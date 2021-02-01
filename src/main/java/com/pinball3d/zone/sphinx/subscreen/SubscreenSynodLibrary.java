@@ -82,14 +82,14 @@ public class SubscreenSynodLibrary extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		Util.drawTexture(TEXTURE, x + 60, y, 0, 0, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 276, y, 80, 0, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 60, y + 160, 0, 80, 80, 80, 0.5F);
-		Util.drawTexture(TEXTURE, x + 276, y + 160, 80, 80, 80, 80, 0.5F);
-		Gui.drawRect(x + 100, y, x + 276, y + 40, 0x2F000000);
-		Gui.drawRect(x + 60, y + 40, x + 316, y + 160, 0x2F000000);
-		Gui.drawRect(x + 100, y + 160, x + 276, y + 200, 0x2F000000);
-		Gui.drawRect(x + 70, y + 20, x + 306, y + 22, 0xFF20E6EF);
+		Util.drawTexture(TEXTURE, x + 55, y - 5, 0, 0, 99, 99, 0.5F);
+		Util.drawTexture(TEXTURE, x + 271, y - 5, 99, 0, 99, 99, 0.5F);
+		Util.drawTexture(TEXTURE, x + 55, y + 155, 0, 99, 99, 99, 0.5F);
+		Util.drawTexture(TEXTURE, x + 271, y + 155, 99, 99, 99, 99, 0.5F);
+		Gui.drawRect(x + 104, y, x + 271, y + 44, 0x2F000000);
+		Gui.drawRect(x + 60, y + 44, x + 316, y + 155, 0x2F000000);
+		Gui.drawRect(x + 104, y + 155, x + 271, y + 200, 0x2F000000);
+		Util.renderGlowHorizonLine(x + 70, y + 20, 236);
 		Gui.drawRect(x + 76, y + 24, x + 300, y + 194, 0x651CC3B5);
 		Util.getFontRenderer().drawString(I18n.format("sphinx.synod_library"), x + 75, y + 8, 0xFF1ECCDE);
 		Util.drawBorder(x + 75, y + 23, 226, 172, 1, 0xFF1ECCDE);

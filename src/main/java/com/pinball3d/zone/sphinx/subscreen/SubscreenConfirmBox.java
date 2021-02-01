@@ -9,30 +9,24 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
-public class SubscreenYNCBox extends Subscreen {
+public class SubscreenConfirmBox extends Subscreen {
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	public String title, text;
 
-	public SubscreenYNCBox(IHasSubscreen parent, String title, String text, Runnable yes, Runnable no) {
-		this(parent, getDisplayWidth() / 2 - 75, getDisplayHeight() / 2 - 50, title, text, yes, no);
+	public SubscreenConfirmBox(IHasSubscreen parent, String title, String text, Runnable confirm) {
+		this(parent, getDisplayWidth() / 2 - 75, getDisplayHeight() / 2 - 50, title, text, confirm);
 	}
 
-	public SubscreenYNCBox(IHasSubscreen parent, int x, int y, String title, String text, Runnable yes, Runnable no) {
+	public SubscreenConfirmBox(IHasSubscreen parent, int x, int y, String title, String text, Runnable confirm) {
 		super(parent, x, y, 150, 100, true);
-		components.add(new TextButton(this, this.x + 15, this.y + 80, I18n.format("sphinx.yes"), () -> {
-			parent.removeScreen(SubscreenYNCBox.this);
-			if (yes != null) {
-				yes.run();
+		components.add(new TextButton(this, this.x + 20, this.y + 80, I18n.format("sphinx.confirm"), () -> {
+			parent.removeScreen(SubscreenConfirmBox.this);
+			if (confirm != null) {
+				confirm.run();
 			}
 		}));
-		components.add(new TextButton(this, this.x + 55, this.y + 80, I18n.format("sphinx.no"), () -> {
-			parent.removeScreen(SubscreenYNCBox.this);
-			if (no != null) {
-				no.run();
-			}
-		}));
-		components.add(new TextButton(this, this.x + 95, this.y + 80, I18n.format("sphinx.cancel"), () -> {
-			parent.removeScreen(SubscreenYNCBox.this);
+		components.add(new TextButton(this, this.x + 90, this.y + 80, I18n.format("sphinx.cancel"), () -> {
+			parent.removeScreen(SubscreenConfirmBox.this);
 		}));
 		this.title = title;
 		this.text = text;
@@ -50,8 +44,8 @@ public class SubscreenYNCBox extends Subscreen {
 		Gui.drawRect(x + 22, y + 79, x + 128, y + 101, 0x2F000000);
 		Util.renderGlowHorizonLineThin(x + 5, y + 10, 140);
 		Gui.drawRect(x + 8, y + 12, x + 142, y + 97, 0x651CC3B5);
-		Util.getFontRenderer().drawString(title, x + 7, y + 2, 0xFF1ECCDE);
-		Util.getFontRenderer().drawSplitString(text, x + 15, y + 15, 120, 0xFF1ECCDE);
-		Util.drawBorder(x + 7, y + 12, 135, 86, 1, 0xFF1ECCDE);
+		Util.renderGlowString(title, x + 7, y + 2);
+		Util.renderSplitGlowString(text, x + 15, y + 15, 120);
+		Util.renderGlowBorder(x + 7, y + 12, 135, 86);
 	}
 }
