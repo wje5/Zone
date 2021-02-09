@@ -20,12 +20,14 @@ public class LogisticPack {
 	public StorageWrapper items;
 	public double x, y, z;
 	public int dim;
+	private int id;
 
-	public LogisticPack(List<WorldPos> path, StorageWrapper wrapper, WorldPos pos) {
-		this(path, wrapper, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDim());
+	public LogisticPack(int id, List<WorldPos> path, StorageWrapper wrapper, WorldPos pos) {
+		this(id, path, wrapper, pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ(), pos.getDim());
 	}
 
-	public LogisticPack(List<WorldPos> path, StorageWrapper wrapper, double x, double y, double z, int dim) {
+	public LogisticPack(int id, List<WorldPos> path, StorageWrapper wrapper, double x, double y, double z, int dim) {
+		this.id = id;
 		this.routes = path;
 		items = wrapper;
 		this.x = x;
@@ -85,6 +87,10 @@ public class LogisticPack {
 		return routes.isEmpty() ? new WorldPos((int) x, (int) y, (int) z, dim) : routes.get(routes.size() - 1);
 	}
 
+	public int getId() {
+		return id;
+	}
+
 	public void readFromNBT(NBTTagCompound tag) {
 		routes = new ArrayList<WorldPos>();
 		NBTTagList list = tag.getTagList("routes", 10);
@@ -96,6 +102,7 @@ public class LogisticPack {
 		y = tag.getDouble("y");
 		z = tag.getDouble("z");
 		dim = tag.getInteger("dim");
+		id = tag.getInteger("id");
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
@@ -108,6 +115,7 @@ public class LogisticPack {
 		tag.setDouble("y", y);
 		tag.setDouble("z", z);
 		tag.setInteger("dim", dim);
+		tag.setInteger("id", id);
 		return tag;
 	}
 

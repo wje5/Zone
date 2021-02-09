@@ -77,7 +77,7 @@ public class ClassifyGroupEdgeList extends Component {
 				}
 				if (!flag) {
 					int xOffset = this.index == index ? 10 : 53 - stretch;
-					Util.drawTexture(ICONS, x + xOffset, y + posY + cutUp + 3, 157, 155 + cutUp * 4, 32,
+					Util.drawTexture(ICONS, x + xOffset, y + posY + cutUp + 3, 193, 155 + cutUp * 4, 32,
 							32 - cutUp * 4 - cutDown * 4, 0.25F);
 				}
 			}

@@ -10,8 +10,9 @@ import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
 import com.pinball3d.zone.sphinx.ClientMapDataHandler;
-import com.pinball3d.zone.sphinx.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.sphinx.LogisticPack;
+import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.sphinx.map.Pointer.BoundingBox;
 import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 import com.pinball3d.zone.util.Util;
@@ -169,14 +170,18 @@ public class MapHandler {
 		}
 	}
 
+	public static void focus(int x, int y) {
+		instance.xOffset = x;
+		instance.yOffset = y;
+	}
+
 	private void updatePlayer() {
 		BlockPos pos = mc.player.getPosition();
 		pointerPlayer.moveTo(pos.getX(), pos.getZ());
 		pointerPlayer.angle = mc.player.rotationYaw;
 		int temp = mc.player.world.provider.getDimension();
 		if (temp != dim) {
-			xOffset = pos.getX();
-			yOffset = pos.getZ();
+			focus(pos.getX(), pos.getZ());
 		}
 		dim = temp;
 	}
@@ -226,17 +231,18 @@ public class MapHandler {
 		nodes.clear();
 		list.forEach(e -> {
 			NBTTagCompound tag = (NBTTagCompound) e;
-			WorldPos pos = new WorldPos(tag);
+			WorldPos pos = new WorldPos((NBTTagCompound) tag.getTag("pos"));
+			SerialNumber serial = new SerialNumber((NBTTagCompound) tag.getTag("serial"));
 			if (pos.getDim() == mc.player.dimension) {
 				int type = tag.getInteger("type");
 				switch (type) {
 				case 1:
-					nodes.add(new PointerBeacon(pos, tag.getInteger("id"),
+					nodes.add(new PointerBeacon(pos, serial, tag.getInteger("id"),
 							WorkingState.values()[tag.getInteger("state")]));
 					break;
 				default:
-					nodes.add(
-							new PointerNode(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
+					nodes.add(new PointerNode(pos, serial, tag.getInteger("id"),
+							WorkingState.values()[tag.getInteger("state")]));
 					break;
 				}
 			}
@@ -245,29 +251,32 @@ public class MapHandler {
 		storages.clear();
 		list.forEach(e -> {
 			NBTTagCompound tag = (NBTTagCompound) e;
-			WorldPos pos = new WorldPos(tag);
+			WorldPos pos = new WorldPos((NBTTagCompound) tag.getTag("pos"));
+			SerialNumber serial = new SerialNumber((NBTTagCompound) tag.getTag("serial"));
 			if (pos.getDim() == mc.player.dimension) {
-				storages.add(
-						new PointerStorage(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
+				storages.add(new PointerStorage(pos, serial, tag.getInteger("id"),
+						WorkingState.values()[tag.getInteger("state")]));
 			}
 		});
 		list = data.getTagList("devices", 10);
 		devices.clear();
 		list.forEach(e -> {
 			NBTTagCompound tag = (NBTTagCompound) e;
-			WorldPos pos = new WorldPos(tag);
+			WorldPos pos = new WorldPos((NBTTagCompound) tag.getTag("pos"));
+			SerialNumber serial = new SerialNumber((NBTTagCompound) tag.getTag("serial"));
 			if (pos.getDim() == mc.player.dimension) {
-				devices.add(
-						new PointerDevice(pos, tag.getInteger("id"), WorkingState.values()[tag.getInteger("state")]));
+				devices.add(new PointerDevice(pos, serial, tag.getInteger("id"),
+						WorkingState.values()[tag.getInteger("state")]));
 			}
 		});
 		list = data.getTagList("productions", 10);
 		productions.clear();
 		list.forEach(e -> {
 			NBTTagCompound tag = (NBTTagCompound) e;
-			WorldPos pos = new WorldPos(tag);
+			WorldPos pos = new WorldPos((NBTTagCompound) tag.getTag("pos"));
+			SerialNumber serial = new SerialNumber((NBTTagCompound) tag.getTag("serial"));
 			if (pos.getDim() == mc.player.dimension) {
-				productions.add(new PointerProduction(pos, tag.getInteger("id"),
+				productions.add(new PointerProduction(pos, serial, tag.getInteger("id"),
 						WorkingState.values()[tag.getInteger("state")]));
 			}
 		});
@@ -398,9 +407,9 @@ public class MapHandler {
 		for (int i = 0; i < lines.length; i += 2) {
 			PointerNeedNetwork e = list.get(lines[i]);
 			PointerNeedNetwork e2 = list.get(lines[i + 1]);
-			Util.drawLine(e.pos.getPos().getX() - getRenderOffsetX(width),
-					e.pos.getPos().getZ() - getRenderOffsetY(height), e2.pos.getPos().getX() - getRenderOffsetX(width),
-					e2.pos.getPos().getZ() - getRenderOffsetY(height), color);
+			Util.drawLine(e.box.getXCenter() - getRenderOffsetX(width), e.box.getYCenter() - getRenderOffsetY(height),
+					e2.box.getXCenter() - getRenderOffsetX(width), e2.box.getYCenter() - getRenderOffsetY(height),
+					color);// XXX
 		}
 	}
 }

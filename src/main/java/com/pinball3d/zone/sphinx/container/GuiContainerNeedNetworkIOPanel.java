@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx;
+package com.pinball3d.zone.sphinx.container;
 
 import com.pinball3d.zone.network.MessageOpenIOPanelGui;
 import com.pinball3d.zone.network.NetworkHandler;

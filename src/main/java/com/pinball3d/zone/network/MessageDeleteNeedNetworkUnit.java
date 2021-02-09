@@ -49,7 +49,7 @@ public class MessageDeleteNeedNetworkUnit implements IMessage {
 					((INeedNetwork) te).deleteNetwork();
 					if (pos != null) {
 						TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
-						pc.removeNeedNetwork(message.needNetwork);
+//						pc.removeNeedNetwork(message.needNetwork); FIXME or delete class...?
 					}
 				}
 			});

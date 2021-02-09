@@ -24,7 +24,7 @@ public class SubscreenSphinxConfig extends Subscreen {
 			parent.removeScreen(SubscreenSphinxConfig.this);
 			parent.putScreen(new SubscreenChangeName(parent));
 		}, 0, 172, 16, 15, 1.0F);
-		components.add(list);
+		addComponent(list);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class SubscreenSphinxConfig extends Subscreen {
 		Gui.drawRect(x + 44, y + 155, x + 255, y + 200, 0x2F000000);
 		Util.renderGlowHorizonLine(x + 10, y + 20, 280);
 		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
-		Util.getFontRenderer().drawString(I18n.format("sphinx.sphinx_config"), x + 15, y + 8, 0xFF1ECCDE);
-		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
+		Util.renderGlowString(I18n.format("sphinx.sphinx_config"), x + 15, y + 8);
+		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 	}
 }

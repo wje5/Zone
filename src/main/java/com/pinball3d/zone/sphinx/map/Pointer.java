@@ -46,6 +46,14 @@ public abstract class Pointer extends Gui {
 			return x >= this.x && x <= this.x2 && y >= this.y && y <= this.y2;
 		}
 
+		public float getXCenter() {
+			return (x + x2) / 2F;
+		}
+
+		public float getYCenter() {
+			return (y + y2) / 2F;
+		}
+
 		public boolean isCollision(BoundingBox box) {
 			int width = x2 - x;
 			int height = y2 - y;

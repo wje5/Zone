@@ -3,6 +3,7 @@ package com.pinball3d.zone.sphinx.map;
 import java.util.List;
 
 import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.component.ButtonUnitDelete;
 import com.pinball3d.zone.sphinx.component.Component;
 import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
@@ -10,9 +11,9 @@ import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
 public class PointerDevice extends PointerNeedNetwork {
-	public PointerDevice(WorldPos pos, int id, WorkingState state) {
-		super(pos, id, state, new BoundingBox(pos.getPos().getX() - 3, pos.getPos().getZ() - 3, pos.getPos().getX() + 4,
-				pos.getPos().getZ() + 4));
+	public PointerDevice(WorldPos pos, SerialNumber serial, int id, WorkingState state) {
+		super(pos, serial, id, state, new BoundingBox(pos.getPos().getX() - 3, pos.getPos().getZ() - 3,
+				pos.getPos().getX() + 4, pos.getPos().getZ() + 4));
 	}
 
 	@Override

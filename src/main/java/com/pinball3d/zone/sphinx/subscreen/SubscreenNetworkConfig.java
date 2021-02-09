@@ -28,7 +28,7 @@ public class SubscreenNetworkConfig extends Subscreen {
 
 	public SubscreenNetworkConfig(IHasSubscreen parent, int x, int y, WorldPos pos) {
 		super(parent, x, y, 300, 200, true);
-		components.add(list = new ScrollingListNetwork(this, this.x + 16, this.y + 24, 268, 170, pos));
+		addComponent(list = new ScrollingListNetwork(this, this.x + 16, this.y + 24, 268, 170, pos));
 	}
 
 	public void refresh() {
@@ -47,7 +47,7 @@ public class SubscreenNetworkConfig extends Subscreen {
 		Gui.drawRect(x + 44, y + 155, x + 255, y + 200, 0x2F000000);
 		Util.renderGlowHorizonLine(x + 10, y + 20, 280);
 		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
-		Util.getFontRenderer().drawString(I18n.format("sphinx.network_config"), x + 15, y + 8, 0xFF1ECCDE);
-		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
+		Util.renderGlowString(I18n.format("sphinx.network_config"), x + 15, y + 8);
+		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 	}
 }

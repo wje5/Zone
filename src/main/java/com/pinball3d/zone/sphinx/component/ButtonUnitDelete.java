@@ -1,11 +1,11 @@
 package com.pinball3d.zone.sphinx.component;
 
-import com.pinball3d.zone.network.MessageDeleteNeedNetworkUnit;
+import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.MessageDisconnect;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.map.Pointer;
 import com.pinball3d.zone.sphinx.map.PointerNeedNetwork;
-import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -15,8 +15,8 @@ public class ButtonUnitDelete extends TexturedButton implements IUnitButton {
 
 	public ButtonUnitDelete(IHasComponents parent, Pointer unit, int x, int y) {
 		super(parent, x, y, TEXTURE, 148, 68, 32, 32, 0.25F, () -> {
-			WorldPos pos = ((PointerNeedNetwork) unit).pos;
-			NetworkHandler.instance.sendToServer(new MessageDeleteNeedNetworkUnit(pos));
+			NetworkHandler.instance.sendToServer(MessageDisconnect.newMessage(mc.player,
+					ConnectHelperClient.getInstance().getNetworkPos(), (((PointerNeedNetwork) unit).serial)));
 		});
 		this.unit = unit;
 	}

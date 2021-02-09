@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx;
+package com.pinball3d.zone.sphinx.container;
 
 import java.util.Set;
 
@@ -11,7 +11,7 @@ import com.pinball3d.zone.util.WorldPos;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class GuiContainerNeedNetwork extends GuiContainerSphinxBase {
-	public final WorldPos pos;
+	public WorldPos pos;
 	public NBTTagCompound data;
 
 	public GuiContainerNeedNetwork(ContainerSphinxNeedNetwork container, WorldPos pos) {

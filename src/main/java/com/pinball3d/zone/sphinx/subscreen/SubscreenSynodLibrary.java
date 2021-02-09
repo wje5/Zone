@@ -40,8 +40,8 @@ public class SubscreenSynodLibrary extends Subscreen {
 				}
 			};
 		}.start();
-		components.add(pdfbox = new PDFRenderer(this, x + 76, y + 24, 224, 170));
-		components.add(tree = new OutlineTree(this, x, y + 9, 195));
+		addComponent(pdfbox = new PDFRenderer(this, x + 76, y + 24, 224, 170));
+		addComponent(tree = new OutlineTree(this, x, y + 9, 195));
 	}
 
 	public void setPage(int page) {
@@ -92,6 +92,6 @@ public class SubscreenSynodLibrary extends Subscreen {
 		Util.renderGlowHorizonLine(x + 70, y + 20, 236);
 		Gui.drawRect(x + 76, y + 24, x + 300, y + 194, 0x651CC3B5);
 		Util.getFontRenderer().drawString(I18n.format("sphinx.synod_library"), x + 75, y + 8, 0xFF1ECCDE);
-		Util.drawBorder(x + 75, y + 23, 226, 172, 1, 0xFF1ECCDE);
+		Util.renderGlowBorder(x + 75, y + 23, 226, 172);
 	}
 }

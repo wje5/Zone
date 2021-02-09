@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx;
+package com.pinball3d.zone.sphinx.container;
 
 import java.util.Set;
 
@@ -10,6 +10,7 @@ import com.pinball3d.zone.sphinx.subscreen.SubscreenManageUser;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenShutdownSphinx;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenSphinxConfig;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenSynodLibrary;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenViewLog;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenViewStorage;
 
 public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
@@ -34,9 +35,13 @@ public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
 		}));
 		addComponent(new TexturedButton(this, width - 49, 2, TEXTURE, 47, 100, 28, 25, 0.25F, () -> {
 			subscreens.push(new SubscreenManageClassify(GuiContainerSphinxController.this));
+
 		}));
 		addComponent(new TexturedButton(this, width - 58, 2, TEXTURE, 75, 100, 22, 27, 0.25F, () -> {
 			subscreens.push(new SubscreenManageUser(GuiContainerSphinxController.this));
+		}));
+		addComponent(new TexturedButton(this, width - 68, 2, TEXTURE, 217, 100, 30, 25, 0.25F, () -> {
+			subscreens.push(new SubscreenViewLog(GuiContainerSphinxController.this));
 		}));
 	}
 

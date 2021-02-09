@@ -106,7 +106,7 @@ public class ScrollingListNetwork extends Component {
 			if (y + scrollingDistance >= yOffset && y + scrollingDistance < yOffset + bar.height) {
 				IHasSubscreen root = Util.getRoot();
 				if (bar.selected) {
-					root.putScreen(new SubscreenCheckConnectedNetwork(root, bar.pos, bar.name, x + this.x, y + this.y));
+					root.putScreen(new SubscreenCheckConnectedNetwork(root, bar.name, x + this.x, y + this.y));
 				} else {
 					NetworkHandler.instance.sendToServer(new MessageTryConnectToNetwork(mc.player, pos.isOrigin(),
 							pos.isOrigin() ? new WorldPos(mc.player.getPosition(), mc.world.provider.getDimension())
@@ -150,7 +150,7 @@ public class ScrollingListNetwork extends Component {
 			Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/icons.png"), x + 7, y + upCut, 0,
 					16 + upCut * 2, 32, 26 - (upCut + downCut) * 2, 0.5F);
 			if (upCut < 4 && downCut < 4) {
-				Util.getFontRenderer().drawString(name, x + 30, y + 3, 0xFF1ECCDE);
+				Util.renderGlowString(name, x + 30, y + 3);
 			}
 			if (selected) {
 				y += 2;

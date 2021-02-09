@@ -100,7 +100,7 @@ public class ScrollingList extends Component {
 				}
 			}
 			if (upCut < 10 && downCut < 10) {
-				Util.getFontRenderer().drawString(name, x + 30, y + 9, 0xFF1ECCDE);
+				Util.renderGlowString(name, x + 30, y + 9);
 			}
 			int d = (int) ((height - (vHeight * scale)) / 2);
 			y += d;

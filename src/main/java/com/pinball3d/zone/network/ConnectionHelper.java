@@ -17,6 +17,7 @@ import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEBeaconCore;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -95,7 +96,8 @@ public class ConnectionHelper {
 					if (tileentity instanceof TEProcessingCenter) {
 						TEProcessingCenter te = ((TEProcessingCenter) tileentity);
 						Connect connect;
-						if (te.isPointInRange(player.dimension, player.posX, player.posY, player.posZ)) {
+						if (te.isPointInRange(player.dimension, player.posX, player.posY, player.posZ)
+								&& te.getWorkingState() == WorkingState.WORKING) {
 							connect = new Connect(player, te.getUUID(), WorldPos.ORIGIN, ConnectType.TERMINAL, types);
 						} else {
 							connect = new Connect(player, null, WorldPos.ORIGIN, ConnectType.TERMINAL, types);
@@ -160,7 +162,7 @@ public class ConnectionHelper {
 		public WorldPos needNetwork;
 		public Set<Type> reqDataType;
 		public ConnectType connectType;
-		public int mapRefreshColddown, packRefreshColddown, itemRefreshColddown, classifyRefreshColddown;
+		public int mapRefreshColddown, packRefreshColddown, itemRefreshColddown, classifyRefreshColddown, logUpdateRate;
 
 		private Connect(EntityPlayer player, UUID network, WorldPos needNetwork, ConnectType connectType,
 				Type... types) {
@@ -183,11 +185,12 @@ public class ConnectionHelper {
 					WorldPos pos = GlobalNetworkData
 							.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
 							.getNetwork(network);
-					if (!pos.isOrigin()) {
-						TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-						if (te.isAdmin(player)) {
-							break;
-						}
+					if (pos.isOrigin()) {
+						return false;
+					}
+					TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
+					if (te.isAdmin(player)) {
+						break;
 					}
 				}
 				return false;
@@ -200,7 +203,8 @@ public class ConnectionHelper {
 						network = null;
 					} else {
 						TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-						if (!te.isPointInRange(player.dimension, player.posX, player.posY, player.posZ)) {
+						if (!te.isPointInRange(player.dimension, player.posX, player.posY, player.posZ)
+								|| te.getWorkingState() != WorkingState.WORKING) {
 							network = null;
 						}
 						if (!te.isUser(player)) {
@@ -219,7 +223,8 @@ public class ConnectionHelper {
 					} else {
 						TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
 						if (!te.isPointInRange(player.dimension, needNetwork.getPos().getX(),
-								needNetwork.getPos().getY(), needNetwork.getPos().getZ())) {
+								needNetwork.getPos().getY(), needNetwork.getPos().getZ())
+								|| te.getWorkingState() != WorkingState.WORKING) {
 							network = null;
 						}
 						if (!te.isUser(player)) {
@@ -250,7 +255,8 @@ public class ConnectionHelper {
 
 	public static enum Type {
 		NETWORKUUID, ITEMS, NETWORKPOS, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
-		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY, USERS;
+		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY, USERS, LOGS,
+		NEEDNETWORKSERIAL;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
 			WorldPos pos = WorldPos.ORIGIN;
@@ -371,9 +377,26 @@ public class ConnectionHelper {
 				if (te != null) {
 					NBTTagList list = new NBTTagList();
 					te.getUsers().values().forEach(e -> {
+						e.checkOnline();
 						list.appendTag(e.writeToNBT(new NBTTagCompound()));
 					});
 					tag.setTag(name(), list);
+				}
+				break;
+			case LOGS:
+				if (te != null) {
+					if (connect.logUpdateRate <= 0) {
+						NBTTagList list = new NBTTagList();
+						te.getLogCache().forEach(e -> list.appendTag(e.writeToNBT(new NBTTagCompound())));
+						tag.setTag(name(), list);
+						connect.logUpdateRate += ConfigLoader.logUpdateRate;
+					}
+					connect.logUpdateRate--;
+				}
+				break;
+			case NEEDNETWORKSERIAL:
+				if (te != null && needNetwork != null) {
+					tag.setTag(name(), te.getSerialNumberFromPos(connect.needNetwork).writeToNBT(new NBTTagCompound()));
 				}
 				break;
 			}

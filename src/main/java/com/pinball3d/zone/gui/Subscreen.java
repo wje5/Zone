@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.GuiContainerNetworkBase;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.Component;
+import com.pinball3d.zone.sphinx.container.GuiContainerNetworkBase;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -182,7 +182,7 @@ public class Subscreen implements IHasComponents {
 	}
 
 	public void close() {
-		if (parent instanceof GuiContainerNetworkBase) {
+		if (!getDataTypes().isEmpty() && parent instanceof GuiContainerNetworkBase) {
 			((GuiContainerNetworkBase) parent).sendReq();
 		}
 	}

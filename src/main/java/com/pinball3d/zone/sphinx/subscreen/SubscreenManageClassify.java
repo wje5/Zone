@@ -12,12 +12,12 @@ import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.network.MessageManageClassify;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
-import com.pinball3d.zone.sphinx.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.ClassifyGroupEdgeList;
 import com.pinball3d.zone.sphinx.component.DropDownList;
 import com.pinball3d.zone.sphinx.component.TextInputBox;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
+import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.util.ItemSample;
 import com.pinball3d.zone.util.ItemType;
 import com.pinball3d.zone.util.StorageWrapper;
@@ -49,37 +49,37 @@ public class SubscreenManageClassify extends Subscreen {
 
 	public SubscreenManageClassify(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 360, 200, true);
-		components.add(box = new TextInputBox(this, this.x + 82, this.y + 27, 61, 15, 55, () -> {
+		addComponent(box = new TextInputBox(this, this.x + 82, this.y + 27, 61, 15, 55, () -> {
 			box.isFocus = true;
 		}).setIsPixel(true).setOnInput(() -> {
 			refreshData();
 		}));
-		components.add(new TexturedButton(this, this.x + 142, this.y + 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
+		addComponent(new TexturedButton(this, this.x + 142, this.y + 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
 			box.isFocus = false;
 		}));
-		components.add(new TexturedButton(this, this.x + 175, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, () -> {
+		addComponent(new TexturedButton(this, this.x + 175, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, () -> {
 			page = page - 1 < 1 ? maxPage : page - 1;
 		}));
-		components.add(new TexturedButton(this, this.x + 230, this.y + 180, ICONS, 97, 32, 5, 9, 1.0F, () -> {
+		addComponent(new TexturedButton(this, this.x + 230, this.y + 180, ICONS, 97, 32, 5, 9, 1.0F, () -> {
 			page = page + 1 > maxPage ? 1 : page + 1;
 		}));
-		components.add(new TexturedButton(this, this.x + 82, this.y + 48, ICONS, 137, 41, 15, 15, 1.0F, () -> {
+		addComponent(new TexturedButton(this, this.x + 82, this.y + 48, ICONS, 137, 41, 15, 15, 1.0F, () -> {
 			System.out.println("button1");
 		}));
-		components.add(new TexturedButton(this, this.x + 102, this.y + 48, ICONS, 152, 41, 15, 15, 1.0F, () -> {
+		addComponent(new TexturedButton(this, this.x + 102, this.y + 48, ICONS, 152, 41, 15, 15, 1.0F, () -> {
 			System.out.println("button2");
 		}));
-		components.add(new TexturedButton(this, this.x + 122, this.y + 49, ICONS, 167, 41, 15, 13, 1.0F, () -> {
+		addComponent(new TexturedButton(this, this.x + 122, this.y + 49, ICONS, 167, 41, 15, 13, 1.0F, () -> {
 			System.out.println("button3");
 		}));
-		components.add(new TexturedButton(this, this.x + 142, this.y + 48, ICONS, 207, 41, 15, 15, 1.0F, () -> {
+		addComponent(new TexturedButton(this, this.x + 142, this.y + 48, ICONS, 207, 41, 15, 15, 1.0F, () -> {
 			if (ConnectHelperClient.getInstance().hasData()) {
 				NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(mc.player,
 						ConnectHelperClient.getInstance().getNetworkPos(), local));
 				dirty = false;
 			}
 		}));
-		components.add(list = new ClassifyGroupEdgeList(this, this.x, this.y + 9, 195));
+		addComponent(list = new ClassifyGroupEdgeList(this, this.x, this.y + 9, 195));
 		list.setOnChange((index) -> {
 			if (dirty) {
 				parent.putScreen(new SubscreenYNCBox(parent, I18n.format("sphinx.save"),
@@ -100,7 +100,7 @@ public class SubscreenManageClassify extends Subscreen {
 				return true;
 			}
 		});
-		components.add(list2 = new DropDownList(this, this.x + 180, this.y + 27, 61).setOnChange(i -> {
+		addComponent(list2 = new DropDownList(this, this.x + 180, this.y + 27, 61).setOnChange(i -> {
 			refreshData();
 		}));
 		list2.addBar(I18n.format("sphinx.only_show_unchosen"), () -> {
@@ -112,7 +112,7 @@ public class SubscreenManageClassify extends Subscreen {
 		list2.addBar(I18n.format("sphinx.show_all"), () -> {
 
 		});
-		components.add(list3 = new DropDownList(this, this.x + 262, this.y + 27, 61).setOnChange(i -> {
+		addComponent(list3 = new DropDownList(this, this.x + 262, this.y + 27, 61).setOnChange(i -> {
 			refreshData();
 		}));
 		list3.addBar(I18n.format("sphinx.network_only"), () -> {
@@ -219,7 +219,7 @@ public class SubscreenManageClassify extends Subscreen {
 	}
 
 	public StorageWrapper getData() {
-		if (data == null) {
+		if (data == null || data.isEmpty()) {
 			if (ConnectHelperClient.getInstance().hasData()) {
 				data = ConnectHelperClient.getInstance().getItems();
 				return data == null ? new StorageWrapper() : data;

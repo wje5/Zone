@@ -3,6 +3,7 @@ package com.pinball3d.zone.sphinx.map;
 import java.util.List;
 
 import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.component.ButtonUnitInfo;
 import com.pinball3d.zone.sphinx.component.Component;
 import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
@@ -17,12 +18,14 @@ import net.minecraft.util.ResourceLocation;
 public abstract class PointerNeedNetwork extends Pointer {
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	public WorldPos pos;
+	public SerialNumber serial;
 	public int id;
 	public WorkingState state;
 
-	public PointerNeedNetwork(WorldPos pos, int id, WorkingState state, BoundingBox box) {
+	public PointerNeedNetwork(WorldPos pos, SerialNumber serial, int id, WorkingState state, BoundingBox box) {
 		super(box);
 		this.pos = pos;
+		this.serial = serial;
 		this.id = id;
 		this.state = state;
 	}

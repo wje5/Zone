@@ -3,7 +3,7 @@ package com.pinball3d.zone.network;
 import java.util.Stack;
 
 import com.pinball3d.zone.gui.Subscreen;
-import com.pinball3d.zone.sphinx.GuiContainerSphinxBase;
+import com.pinball3d.zone.sphinx.container.GuiContainerSphinxBase;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenConnectToNetworkBox;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenNetworkConfig;
 

@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx;
+package com.pinball3d.zone.sphinx.container;
 
 import com.pinball3d.zone.block.BlockControllerMainframe;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;

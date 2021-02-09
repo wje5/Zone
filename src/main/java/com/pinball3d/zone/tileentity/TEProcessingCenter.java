@@ -7,12 +7,19 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.pinball3d.zone.ChunkHandler;
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
+import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
@@ -23,7 +30,12 @@ import com.pinball3d.zone.sphinx.IProduction;
 import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.LogisticPack;
 import com.pinball3d.zone.sphinx.LogisticPack.Path;
+import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.SerialNumber.Type;
+import com.pinball3d.zone.sphinx.log.Log;
+import com.pinball3d.zone.sphinx.log.LogSendPack;
 import com.pinball3d.zone.util.HugeItemStack;
+import com.pinball3d.zone.util.LimitedQueue;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -41,6 +53,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -64,17 +77,22 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 																	: o1.getPos().getZ() > o2.getPos().getZ() ? 1 : 0;
 		}
 	};
-	private Set<WorldPos> nodes = new TreeSet<WorldPos>(worldPosComparator);
-	private Set<WorldPos> storages = new TreeSet<WorldPos>(worldPosComparator);
-	private Set<WorldPos> devices = new TreeSet<WorldPos>(worldPosComparator);
-	private Set<WorldPos> productions = new TreeSet<WorldPos>(worldPosComparator);
+	private static Logger LOGGER = LogManager.getLogger();
+	private Set<SerialNumber> nodes = new TreeSet<SerialNumber>(SerialNumber.serialNumberComparator);
+	private Set<SerialNumber> storages = new TreeSet<SerialNumber>(SerialNumber.serialNumberComparator);
+	private Set<SerialNumber> devices = new TreeSet<SerialNumber>(SerialNumber.serialNumberComparator);
+	private Set<SerialNumber> productions = new TreeSet<SerialNumber>(SerialNumber.serialNumberComparator);
 	private Set<LogisticPack> packs = new HashSet<LogisticPack>();
+	private Map<SerialNumber, WorldPos> serialNumberToPos = new TreeMap<SerialNumber, WorldPos>(
+			SerialNumber.serialNumberComparator);
 	private UUID uuid;
 	private double[][] map;
 	private List<ClassifyGroup> classifyGroups = new ArrayList<ClassifyGroup>();
 	private boolean mapDirty;
 	private Map<WorldPos, List<Path>> dijkstraCache = new HashMap<WorldPos, List<Path>>();
 	private Map<UUID, UserData> users = new HashMap<UUID, UserData>();
+	private Queue<Log> logCache = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);
+	private int logId, nodeId, storageId, deviceId, productionId, packId;
 
 	public TEProcessingCenter() {
 
@@ -128,76 +146,95 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 	}
 
+	public SerialNumber genSerialNumber(WorldPos pos, Type type) {
+		int id = -1;
+		switch (type) {
+		case NODE:
+			id = nodeId++;
+			break;
+		case STORAGE:
+			id = storageId++;
+			break;
+		case DEVICE:
+			id = deviceId++;
+			break;
+		case PRODUCTION:
+			id = productionId++;
+			break;
+		case PACK:
+			id = packId++;
+			break;
+		}
+		SerialNumber s = new SerialNumber(type, id);
+		serialNumberToPos.put(s, pos);
+		return s;
+	}
+
+	public WorldPos getPosFromSerialNumber(SerialNumber s) {
+		WorldPos pos = serialNumberToPos.get(s);
+		return pos == null ? WorldPos.ORIGIN : pos;
+	}
+
+	public SerialNumber getSerialNumberFromPos(WorldPos s) {
+		Iterator<Entry<SerialNumber, WorldPos>> it = serialNumberToPos.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<SerialNumber, WorldPos> e = it.next();
+			if (s.equals(e.getValue())) {
+				return e.getKey();
+			}
+		}
+		return null;
+	}
+
 	public void addNeedNetwork(WorldPos pos, EntityPlayer player) {
-		if (!isUser(player)) {
+		if (!isUser(player) || serialNumberToPos.containsValue(pos)) {
 			return;
 		}
-		nodes.forEach(e -> {
-			if (e.equals(pos)) {
-				return;
-			}
-		});
-		storages.forEach(e -> {
-			if (e.equals(pos)) {
-				return;
-			}
-		});
-		devices.forEach(e -> {
-			if (e.equals(pos)) {
-				return;
-			}
-		});
-		productions.forEach(e -> {
-			if (e.equals(pos)) {
-				return;
-			}
-		});
 		TileEntity te = pos.getTileEntity();
 		if (te instanceof INode) {
-			nodes.add(pos);
+			nodes.add(genSerialNumber(pos, Type.NODE));
 			((INeedNetwork) te).connect(getUUID());
 		} else if (te instanceof IStorable) {
-			storages.add(pos);
+			storages.add(genSerialNumber(pos, Type.STORAGE));
 			((INeedNetwork) te).connect(getUUID());
 		} else if (te instanceof IDevice) {
-			devices.add(pos);
+			devices.add(genSerialNumber(pos, Type.DEVICE));
 			((INeedNetwork) te).connect(getUUID());
 		} else if (te instanceof IProduction) {
-			productions.add(pos);
+			productions.add(genSerialNumber(pos, Type.PRODUCTION));
 			((INeedNetwork) te).connect(getUUID());
 		}
-		if (!world.isRemote) {
-			refreshMap();
-		}
-		callUpdate();
+		refreshMap();
 		markDirty();
 	}
 
-	public void removeNeedNetwork(WorldPos pos) {
-		nodes.remove(pos);
-		storages.remove(pos);
-		devices.remove(pos);
-		productions.remove(pos);
-		if (!world.isRemote) {
-			refreshMap();
+	public void removeNeedNetwork(SerialNumber number) {
+		TileEntity te = serialNumberToPos.get(number).getTileEntity();
+		if (te instanceof INeedNetwork) {
+			((INeedNetwork) te).deleteNetwork();
 		}
-		callUpdate();
+		nodes.remove(number);
+		storages.remove(number);
+		devices.remove(number);
+		productions.remove(number);
+		serialNumberToPos.remove(number);
+		refreshMap();
 		markDirty();
 	}
 
-	public Set<WorldPos> getNodes() {
+	public Set<SerialNumber> getNodes() {
 		return nodes;
 	}
 
-	public Set<WorldPos> getStorages() {
+	public Set<SerialNumber> getStorages() {
 		return storages;
 	}
 
-	public Set<WorldPos> getDevices() {
+	public Set<SerialNumber> getDevices() {
 		return devices;
 	}
 
-	public Set<WorldPos> getProductions() {
+	public Set<SerialNumber> getProductions() {
 		return productions;
 	}
 
@@ -207,6 +244,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public UUID getUUID() {
 		return uuid;
+	}
+
+	public Queue<Log> getLogCache() {
+		return logCache;
 	}
 
 	public void setUUID(UUID uuid) {
@@ -219,9 +260,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		if (Math.sqrt(pos.distanceSq(x, y, z)) < 25) {
 			return true;
 		}
-		Iterator<WorldPos> it = nodes.iterator();
+		Iterator<SerialNumber> it = nodes.iterator();
 		while (it.hasNext()) {
-			TileEntity te = it.next().getTileEntity();
+			TileEntity te = getPosFromSerialNumber(it.next()).getTileEntity();
 			if (te instanceof INode) {
 				if (((INeedNetwork) te).isConnected() && ((INode) te).isPointInRange(dim, x, y, z)) {
 					return true;
@@ -240,9 +281,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		if (Math.sqrt(this.pos.distanceSq(pos.getPos().getX(), pos.getPos().getY(), pos.getPos().getZ())) < 25) {
 			return true;
 		}
-		Iterator<WorldPos> it = nodes.iterator();
+		Iterator<SerialNumber> it = nodes.iterator();
 		while (it.hasNext()) {
-			WorldPos p = it.next();
+			WorldPos p = getPosFromSerialNumber(it.next());
 			TileEntity tileentity = p.getTileEntity();
 			if (tileentity instanceof INode) {
 				INeedNetwork te = (INeedNetwork) tileentity;
@@ -274,7 +315,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public StorageWrapper getNetworkUseableItems() {
 		StorageWrapper wrapper = new StorageWrapper();
 		storages.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			TileEntity te = getPosFromSerialNumber(e).getTileEntity();
 			if (te instanceof INeedNetwork && ((INeedNetwork) te).isConnected() && te instanceof IStorable) {
 				StorageWrapper w = ((IStorable) te).getStorages();
 				wrapper.merge(w);
@@ -284,29 +325,30 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public int requestItems(StorageWrapper wrapper, WorldPos target, boolean isSimulate) {
-		TreeSet<WorldPos> sortset = new TreeSet<WorldPos>(new Comparator<WorldPos>() {
-			@Override
-			public int compare(WorldPos o1, WorldPos o2) {
-				double dist1 = o1.getPos().distanceSq(target.getPos());
-				double dist2 = o2.getPos().distanceSq(target.getPos());
-				return dist1 > dist2 ? 1 : dist1 < dist2 ? -1 : o1.hashCode() > o2.hashCode() ? 1 : -1;
-			}
+		TreeSet<SerialNumber> sortset = new TreeSet<SerialNumber>((o1, o2) -> {
+			double dist1 = getPosFromSerialNumber(o1).getPos().distanceSq(target.getPos());
+			double dist2 = getPosFromSerialNumber(o2).getPos().distanceSq(target.getPos());
+			return dist1 > dist2 ? 1 : dist1 < dist2 ? -1 : o1.hashCode() > o2.hashCode() ? 1 : -1;
+			// TODO need best solution
 		});
 		sortset.addAll(storages);
 		int time = 0;
-		Iterator<WorldPos> it = sortset.iterator();
+		Iterator<SerialNumber> it = sortset.iterator();
 		while (it.hasNext()) {
-			WorldPos e = it.next();
-			TileEntity te = e.getTileEntity();
+			SerialNumber e = it.next();
+			WorldPos pos = getPosFromSerialNumber(e);
+			TileEntity te = pos.getTileEntity();
 			if (te instanceof INeedNetwork && ((INeedNetwork) te).isConnected() && te instanceof IStorable) {
 				StorageWrapper w = ((IStorable) te).extract(wrapper, isSimulate);
 				if (!w.isEmpty()) {
 					List<Path> l = dijkstra(target);
 					for (Path i : l) {
-						if (i.getTarget().equals(e)) {
+						if (i.getTarget().equals(pos)) {
 							if (!isSimulate) {
-								LogisticPack pack = new LogisticPack(i.flip().routes, w, new WorldPos(te));
+								LogisticPack pack = new LogisticPack(packId++, i.flip().routes, w, new WorldPos(te));
 								packs.add(pack);
+								List<SerialNumber> p = new ArrayList<SerialNumber>();
+								fireLog(new LogSendPack(logId++, pack.getId(), w, p));
 							}
 							time = (int) (time < i.distance ? i.distance : time);
 						}
@@ -319,24 +361,23 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public StorageWrapper dispenceItems(StorageWrapper wrapper, WorldPos pos) {
-		TreeSet<WorldPos> sortset = new TreeSet<WorldPos>(new Comparator<WorldPos>() {
-			@Override
-			public int compare(WorldPos o1, WorldPos o2) {
-				double dist1 = o1.getPos().distanceSq(pos.getPos());
-				double dist2 = o2.getPos().distanceSq(pos.getPos());
-				return dist1 > dist2 ? 1 : dist1 < dist2 ? -1 : o1.hashCode() > o2.hashCode() ? 1 : -1;
-			}
+		TreeSet<SerialNumber> sortset = new TreeSet<SerialNumber>((o1, o2) -> {
+			double dist1 = getPosFromSerialNumber(o1).getPos().distanceSq(pos.getPos());
+			double dist2 = getPosFromSerialNumber(o2).getPos().distanceSq(pos.getPos());
+			return dist1 > dist2 ? 1 : dist1 < dist2 ? -1 : o1.hashCode() > o2.hashCode() ? 1 : -1;
+			// TODO need best solution
 		});
 		sortset.addAll(storages);
 		sortset.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			WorldPos p = getPosFromSerialNumber(e);
+			TileEntity te = p.getTileEntity();
 			if (te instanceof INeedNetwork && ((INeedNetwork) te).isConnected() && te instanceof IStorable) {
 				StorageWrapper w = ((IStorable) te).insert(wrapper, true);
 				if (!w.isEmpty()) {
 					List<Path> l = dijkstra(pos);
 					for (Path i : l) {
-						if (i.getTarget().equals(e)) {
-							LogisticPack pack = new LogisticPack(i.routes, w, pos);
+						if (i.getTarget().equals(p)) {
+							LogisticPack pack = new LogisticPack(packId++, i.routes, w, pos);
 							packs.add(pack);
 						}
 					}
@@ -349,39 +390,40 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public boolean updateNode() {
 		boolean flag = false;
-		Set<WorldPos> temp = new HashSet<WorldPos>();
+		Set<SerialNumber> temp = new HashSet<SerialNumber>();
 		do {
 			flag = false;
-			Iterator<WorldPos> it = nodes.iterator();
+			Iterator<SerialNumber> it = nodes.iterator();
 			while (it.hasNext()) {
-				WorldPos i = it.next();
+				SerialNumber i = it.next();
 				if (temp.contains(i)) {
 					continue;
 				}
-				TileEntity tileentity = i.getTileEntity();
-				if (i.getBlockState().getBlock() == BlockLoader.beacon_core) {
+				WorldPos p = getPosFromSerialNumber(i);
+				TileEntity tileentity = p.getTileEntity();
+				if (p.getBlockState().getBlock() == BlockLoader.beacon_core) {
 					flag = true;
 					temp.add(i);
 					((INeedNetwork) tileentity).setConnected(true);
 					continue;
 				}
-				if (i == null || !(tileentity instanceof INode)) {
+				if (p == null || !(tileentity instanceof INode)) {
 					continue;
 				}
 				INeedNetwork te = (INeedNetwork) tileentity;
-				if (i.getDim() == world.provider.getDimension()) {
-					if (Math.sqrt(pos.distanceSq(i.getPos().getX(), i.getPos().getY(), i.getPos().getZ())) < 25) {
+				if (p.getDim() == world.provider.getDimension()) {
+					if (Math.sqrt(pos.distanceSq(p.getPos().getX(), p.getPos().getY(), p.getPos().getZ())) < 25) {
 						flag = true;
 						temp.add(i);
 						te.setConnected(true);
 					} else {
-						Iterator<WorldPos> it2 = temp.iterator();
+						Iterator<SerialNumber> it2 = temp.iterator();
 						while (it2.hasNext()) {
-							WorldPos nodepos = it2.next();
+							WorldPos nodepos = getPosFromSerialNumber(it2.next());
 							TileEntity nodete = nodepos.getTileEntity();
 							if (((INeedNetwork) nodete).getWorkingState() == INeedNetwork.WorkingState.WORKING
-									&& ((INode) nodete).isPointInRange(i.getDim(), i.getPos().getX(), i.getPos().getY(),
-											i.getPos().getZ())) {
+									&& ((INode) nodete).isPointInRange(p.getDim(), p.getPos().getX(), p.getPos().getY(),
+											p.getPos().getZ())) {
 								flag = true;
 								temp.add(i);
 								te.setConnected(true);
@@ -392,13 +434,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 		} while (flag);
-		Set<WorldPos> l = new HashSet<WorldPos>();
+		Set<SerialNumber> l = new HashSet<SerialNumber>();
 		nodes.forEach(e -> {
 			l.add(e);
 		});
-		Set<WorldPos> s = new HashSet<WorldPos>();
+		Set<SerialNumber> s = new HashSet<SerialNumber>();
 		l.forEach(e -> {
-			TileEntity tileentity = e.getTileEntity();
+			TileEntity tileentity = getPosFromSerialNumber(e).getTileEntity();
 			if (tileentity instanceof INode && getUUID().equals(((INeedNetwork) tileentity).getNetwork())) {
 				s.add(e);
 				((INeedNetwork) tileentity).setConnected(temp.contains(e));
@@ -416,9 +458,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public boolean updateDevice() {
 		boolean flag = updateNode();
-		Iterator<WorldPos> it = storages.iterator();
+		Iterator<SerialNumber> it = storages.iterator();
 		while (it.hasNext()) {
-			WorldPos pos = it.next();
+			WorldPos pos = getPosFromSerialNumber(it.next());
 			if (!(pos.getTileEntity() instanceof IStorable)) {
 				it.remove();
 				flag = true;
@@ -434,7 +476,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		it = devices.iterator();
 		while (it.hasNext()) {
-			WorldPos pos = it.next();
+			WorldPos pos = getPosFromSerialNumber(it.next());
 			if (!(pos.getTileEntity() instanceof IDevice)) {
 				it.remove();
 				flag = true;
@@ -450,7 +492,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		it = productions.iterator();
 		while (it.hasNext()) {
-			WorldPos pos = it.next();
+			WorldPos pos = getPosFromSerialNumber(it.next());
 			if (!(pos.getTileEntity() instanceof IProduction)) {
 				it.remove();
 				flag = true;
@@ -523,9 +565,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public int getMaxStorage() {
 		int count = 0;
-		Iterator<WorldPos> it = storages.iterator();
+		Iterator<SerialNumber> it = storages.iterator();
 		while (it.hasNext()) {
-			WorldPos pos = it.next();
+			WorldPos pos = getPosFromSerialNumber(it.next());
 			TileEntity tileentity = pos.getTileEntity();
 			if (tileentity instanceof IStorable
 					&& ((INeedNetwork) tileentity).getWorkingState() == INeedNetwork.WorkingState.WORKING) {
@@ -538,9 +580,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public int getUsedStorage() {
 		int count = 0;
-		Iterator<WorldPos> it = storages.iterator();
+		Iterator<SerialNumber> it = storages.iterator();
 		while (it.hasNext()) {
-			WorldPos pos = it.next();
+			WorldPos pos = getPosFromSerialNumber(it.next());
 			TileEntity tileentity = pos.getTileEntity();
 			if (tileentity instanceof IStorable
 					&& ((INeedNetwork) tileentity).getWorkingState() == INeedNetwork.WorkingState.WORKING) {
@@ -559,27 +601,31 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public void refreshMap() {
 		List<WorldPos> list = new ArrayList<WorldPos>();
 		nodes.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			WorldPos p = getPosFromSerialNumber(e);
+			TileEntity te = p.getTileEntity();
 			if (te instanceof INode && ((INeedNetwork) te).isConnected()) {
-				list.add(e);
+				list.add(p);
 			}
 		});
 		storages.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			WorldPos p = getPosFromSerialNumber(e);
+			TileEntity te = p.getTileEntity();
 			if (te instanceof IStorable && ((INeedNetwork) te).isConnected()) {
-				list.add(e);
+				list.add(p);
 			}
 		});
 		devices.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			WorldPos p = getPosFromSerialNumber(e);
+			TileEntity te = p.getTileEntity();
 			if (te instanceof IDevice && ((INeedNetwork) te).isConnected()) {
-				list.add(e);
+				list.add(p);
 			}
 		});
 		productions.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			WorldPos p = getPosFromSerialNumber(e);
+			TileEntity te = p.getTileEntity();
 			if (te instanceof IProduction && ((INeedNetwork) te).isConnected()) {
-				list.add(e);
+				list.add(p);
 			}
 		});
 		map = new double[list.size() + 1][list.size() + 1];
@@ -656,27 +702,31 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		List<WorldPos> list = new ArrayList<WorldPos>();
 		nodes.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			WorldPos p = getPosFromSerialNumber(e);
+			TileEntity te = p.getTileEntity();
 			if (te instanceof INode && ((INeedNetwork) te).isConnected()) {
-				list.add(e);
+				list.add(p);
 			}
 		});
 		storages.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			WorldPos p = getPosFromSerialNumber(e);
+			TileEntity te = p.getTileEntity();
 			if (te instanceof IStorable && ((INeedNetwork) te).isConnected()) {
-				list.add(e);
+				list.add(p);
 			}
 		});
 		devices.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			WorldPos p = getPosFromSerialNumber(e);
+			TileEntity te = p.getTileEntity();
 			if (te instanceof IDevice && ((INeedNetwork) te).isConnected()) {
-				list.add(e);
+				list.add(p);
 			}
 		});
 		productions.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			WorldPos p = getPosFromSerialNumber(e);
+			TileEntity te = p.getTileEntity();
 			if (te instanceof IProduction && ((INeedNetwork) te).isConnected()) {
-				list.add(e);
+				list.add(p);
 			}
 		});
 		int index = pos.getPos().equals(this.pos) ? 0 : list.indexOf(pos) + 1;
@@ -730,11 +780,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		NBTTagCompound units = new NBTTagCompound();
 		NBTTagList list = new NBTTagList();
 		nodes.forEach(e -> {
-			if (e.getDim() == player.dimension) {
-				INeedNetwork te = (INeedNetwork) e.getTileEntity();
-				NBTTagCompound n = e.writeToNBT(new NBTTagCompound());
+			WorldPos p = getPosFromSerialNumber(e);
+			if (p.getDim() == player.dimension) {
+				INeedNetwork te = (INeedNetwork) p.getTileEntity();
+				NBTTagCompound n = new NBTTagCompound();
+				n.setTag("pos", p.writeToNBT(new NBTTagCompound()));
+				n.setTag("serial", e.writeToNBT(new NBTTagCompound()));
 				n.setInteger("state", te.getWorkingState().ordinal());
-				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
+				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(p.getBlockState().getBlock())));
 				if (te instanceof TEBeaconCore) {
 					n.setInteger("type", 1);
 				}
@@ -744,33 +797,42 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		units.setTag("nodes", list);
 		NBTTagList list2 = new NBTTagList();
 		storages.forEach(e -> {
-			if (e.getDim() == player.dimension) {
-				INeedNetwork te = (INeedNetwork) e.getTileEntity();
-				NBTTagCompound n = e.writeToNBT(new NBTTagCompound());
+			WorldPos p = getPosFromSerialNumber(e);
+			if (p.getDim() == player.dimension) {
+				INeedNetwork te = (INeedNetwork) p.getTileEntity();
+				NBTTagCompound n = new NBTTagCompound();
+				n.setTag("pos", p.writeToNBT(new NBTTagCompound()));
+				n.setTag("serial", e.writeToNBT(new NBTTagCompound()));
 				n.setInteger("state", te.getWorkingState().ordinal());
-				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
+				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(p.getBlockState().getBlock())));
 				list2.appendTag(n);
 			}
 		});
 		units.setTag("storages", list2);
 		NBTTagList list3 = new NBTTagList();
 		devices.forEach(e -> {
-			if (e.getDim() == player.dimension) {
-				INeedNetwork te = (INeedNetwork) e.getTileEntity();
-				NBTTagCompound n = e.writeToNBT(new NBTTagCompound());
+			WorldPos p = getPosFromSerialNumber(e);
+			if (p.getDim() == player.dimension) {
+				INeedNetwork te = (INeedNetwork) p.getTileEntity();
+				NBTTagCompound n = new NBTTagCompound();
+				n.setTag("pos", p.writeToNBT(new NBTTagCompound()));
+				n.setTag("serial", e.writeToNBT(new NBTTagCompound()));
 				n.setInteger("state", te.getWorkingState().ordinal());
-				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
+				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(p.getBlockState().getBlock())));
 				list3.appendTag(n);
 			}
 		});
 		units.setTag("devices", list3);
 		NBTTagList list4 = new NBTTagList();
 		productions.forEach(e -> {
-			if (e.getDim() == player.dimension) {
-				INeedNetwork te = (INeedNetwork) e.getTileEntity();
-				NBTTagCompound n = e.writeToNBT(new NBTTagCompound());
+			WorldPos p = getPosFromSerialNumber(e);
+			if (p.getDim() == player.dimension) {
+				INeedNetwork te = (INeedNetwork) p.getTileEntity();
+				NBTTagCompound n = new NBTTagCompound();
+				n.setTag("pos", p.writeToNBT(new NBTTagCompound()));
+				n.setTag("serial", e.writeToNBT(new NBTTagCompound()));
 				n.setInteger("state", te.getWorkingState().ordinal());
-				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(e.getBlockState().getBlock())));
+				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(p.getBlockState().getBlock())));
 				list4.appendTag(n);
 			}
 		});
@@ -782,23 +844,27 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			l.add(w);
 		}
 		nodes.forEach(e -> {
-			if (e.getDim() == player.dimension) {
-				l.add(e);
+			WorldPos p = getPosFromSerialNumber(e);
+			if (p.getDim() == player.dimension) {
+				l.add(p);
 			}
 		});
 		storages.forEach(e -> {
-			if (e.getDim() == player.dimension) {
-				l.add(e);
+			WorldPos p = getPosFromSerialNumber(e);
+			if (p.getDim() == player.dimension) {
+				l.add(p);
 			}
 		});
 		devices.forEach(e -> {
-			if (e.getDim() == player.dimension) {
-				l.add(e);
+			WorldPos p = getPosFromSerialNumber(e);
+			if (p.getDim() == player.dimension) {
+				l.add(p);
 			}
 		});
 		productions.forEach(e -> {
-			if (e.getDim() == player.dimension) {
-				l.add(e);
+			WorldPos p = getPosFromSerialNumber(e);
+			if (p.getDim() == player.dimension) {
+				l.add(p);
 			}
 		});
 		for (int i = 0; i < l.size(); i++) {
@@ -859,16 +925,17 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public boolean isAdmin(EntityPlayer player) {
 		UserData data = users.get(player.getUniqueID());
-		return data != null && data.isAdmin;
+		return data != null && data.admin;
 	}
 
 	public Map<WorldPos, Double> getNodesInRange(int dim, double x, double y, double z) {
 		Map<WorldPos, Double> map = new HashMap<WorldPos, Double>();
 		nodes.forEach(e -> {
-			TileEntity te = e.getTileEntity();
+			WorldPos p = getPosFromSerialNumber(e);
+			TileEntity te = p.getTileEntity();
 			if (((INeedNetwork) te).getWorkingState() == INeedNetwork.WorkingState.WORKING
 					&& ((INode) te).isPointInRange(dim, x, y, z)) {
-				map.put(e, Math.sqrt(e.getPos().distanceSq(x, y, z)));
+				map.put(p, Math.sqrt(p.getPos().distanceSq(x, y, z)));
 			}
 		});
 		return map;
@@ -910,7 +977,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				if (te instanceof IStorable) {
 					StorageWrapper wrapper = insertToItemHandler(i.items, ((IStorable) te).getStorage());
 					if (!wrapper.isEmpty()) {
-						deads.add(new LogisticPack(new ArrayList<WorldPos>(), wrapper, i.x, i.y, i.z, i.dim));
+						deads.add(new LogisticPack(-1, new ArrayList<WorldPos>(), wrapper, i.x, i.y, i.z, i.dim));
 					}
 				} else if (te != null) {
 					StorageWrapper wrapper = insertToItemHandler(i.items,
@@ -926,7 +993,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 					wrapper = insertToItemHandler(wrapper,
 							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN));
 					if (!wrapper.isEmpty()) {
-						deads.add(new LogisticPack(i.routes, wrapper, i.x, i.y, i.z, i.dim));
+						deads.add(new LogisticPack(-1, i.routes, wrapper, i.x, i.y, i.z, i.dim));
 					}
 				}
 				it.remove();
@@ -940,6 +1007,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public void markMapDirty() {
 		mapDirty = true;
+	}
+
+	public void fireLog(Log log) {
+		logCache.add(log);
+		logCache.forEach(e -> {
+			System.out.println(e);
+		});
+		System.out.println("#######################");
 	}
 
 	public void load() {
@@ -1015,28 +1090,37 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		loadTick = compound.getInteger("loadTick");
 		energyTick = compound.getInteger("energyTick");
 		on = compound.getBoolean("on");
+		logId = compound.getInteger("logId");
+		packId = compound.getInteger("nodeId");
+		packId = compound.getInteger("storageId");
+		packId = compound.getInteger("deviceId");
+		packId = compound.getInteger("productionId");
+		packId = compound.getInteger("packId");
 		nodes.clear();
 		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
-			nodes.add(new WorldPos((NBTTagCompound) e));
-			if (new WorldPos((NBTTagCompound) e).isOrigin()) {
-				throw new RuntimeException(compound.toString());
-			}
+			nodes.add(new SerialNumber((NBTTagCompound) e));
 		});
 		storages.clear();
 		list = compound.getTagList("storges", 10);
 		list.forEach(e -> {
-			storages.add(new WorldPos((NBTTagCompound) e));
+			storages.add(new SerialNumber((NBTTagCompound) e));
 		});
 		devices.clear();
 		list = compound.getTagList("devices", 10);
 		list.forEach(e -> {
-			devices.add(new WorldPos((NBTTagCompound) e));
+			devices.add(new SerialNumber((NBTTagCompound) e));
 		});
 		productions.clear();
 		list = compound.getTagList("productions", 10);
 		list.forEach(e -> {
-			productions.add(new WorldPos((NBTTagCompound) e));
+			productions.add(new SerialNumber((NBTTagCompound) e));
+		});
+		serialNumberToPos.clear();
+		list = compound.getTagList("serialNumbers", 10);
+		list.forEach(e -> {
+			serialNumberToPos.put(new SerialNumber((NBTTagCompound) ((NBTTagCompound) e).getTag("number")),
+					new WorldPos((NBTTagCompound) ((NBTTagCompound) e).getTag("pos")));
 		});
 		if (compound.hasKey("uuidMost")) {
 			uuid = compound.getUniqueId("uuid");
@@ -1057,6 +1141,11 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			UserData user = new UserData((NBTTagCompound) e);
 			users.put(user.uuid, user);
 		});
+		logCache.clear();
+		list = compound.getTagList("logs", 10);
+		list.forEach(e -> {
+			logCache.add(Log.readLogFromNBT((NBTTagCompound) e));
+		});
 		super.readFromNBT(compound);
 	}
 
@@ -1066,9 +1155,35 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		compound.setInteger("loadTick", loadTick);
 		compound.setInteger("energyTick", energyTick);
 		compound.setBoolean("on", on);
+		compound.setInteger("logId", logId);
+		compound.setInteger("nodeId", packId);
+		compound.setInteger("storageId", packId);
+		compound.setInteger("deviceId", packId);
+		compound.setInteger("productionId", packId);
+		compound.setInteger("packId", packId);
 		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {
+//			try {
 			nodeList.appendTag(e.writeToNBT(new NBTTagCompound()));
+//			} catch (Exception ex) {
+//				String name = "[Data Corruption]";
+//				try {
+//					name = e.getBlockState().getBlock().getLocalizedName();
+//				} catch (Exception exc) {
+//					LOGGER.error(exc);
+//				}
+//				String serialNumber = "[Data Corruption]";
+//				try {
+//					TileEntity tileentity = e.getTileEntity();
+//					if(tileentity instanceof INeedNetwork) {
+//						
+//					}
+//				} catch (Exception exc) {
+//					LOGGER.error(exc);
+//				}
+//				LOGGER.error("{} {} has throw an exception trying to write state. It's network data will be removed.",
+//						name, e);
+//			}
 		});
 		compound.setTag("nodes", nodeList);
 		NBTTagList storgeList = new NBTTagList();
@@ -1094,6 +1209,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			packList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("packs", packList);
+		NBTTagList serialNumberList = new NBTTagList();
+		serialNumberToPos.forEach((k, v) -> {
+			NBTTagCompound t = new NBTTagCompound();
+			t.setTag("number", k.writeToNBT(new NBTTagCompound()));
+			t.setTag("pos", v.writeToNBT(new NBTTagCompound()));
+			serialNumberList.appendTag(t);
+		});
+		compound.setTag("serialNumbers", serialNumberList);
 		NBTTagList classifyList = new NBTTagList();
 		classifyGroups.forEach(e -> {
 			classifyList.appendTag(e.writeToNBT(new NBTTagCompound()));
@@ -1104,6 +1227,11 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			usersList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("users", usersList);
+		NBTTagList logsList = new NBTTagList();
+		logCache.forEach(e -> {
+			logsList.appendTag(e.writeToNBT(new NBTTagCompound()));
+		});
+		compound.setTag("logs", logsList);
 		return super.writeToNBT(compound);
 	}
 
@@ -1180,34 +1308,42 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public static class UserData {
 		public UUID uuid;
 		public String name, email = "";
-		public boolean isAdmin;
+		public boolean admin, online;
 
-		public UserData(UUID uuid, String name, boolean isAdmin) {
+		public UserData(UUID uuid, String name, boolean admin, boolean online) {
 			this.uuid = uuid;
 			this.name = name;
-			this.isAdmin = isAdmin;
+			this.admin = admin;
+			this.online = online;
 		}
 
-		public UserData(EntityPlayer player, boolean isAdmin) {
-			this(player.getUniqueID(), player.getName(), isAdmin);
+		public UserData(EntityPlayer player, boolean admin, boolean online) {
+			this(player.getUniqueID(), player.getName(), admin, online);
 		}
 
 		public UserData(NBTTagCompound tag) {
 			readFromNBT(tag);
 		}
 
+		public void checkOnline() {
+			online = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+					.getPlayerByUUID(uuid) != null;
+		}
+
 		public void readFromNBT(NBTTagCompound tag) {
 			uuid = tag.getUniqueId("uuid");
 			name = tag.getString("name");
 			email = tag.getString("email");
-			isAdmin = tag.getBoolean("isAdmin");
+			admin = tag.getBoolean("admin");
+			online = tag.getBoolean("online");
 		}
 
 		public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 			tag.setUniqueId("uuid", uuid);
 			tag.setString("name", name);
 			tag.setString("email", email);
-			tag.setBoolean("isAdmin", isAdmin);
+			tag.setBoolean("admin", admin);
+			tag.setBoolean("online", online);
 			return tag;
 		}
 	}

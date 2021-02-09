@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx;
+package com.pinball3d.zone.sphinx.container;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -83,8 +83,7 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 		}));
 		components.add(new TexturedButton(this, panelX + 285, panelY + 5, TEXTURE, 64, 68, 30, 28, 0.5F, () -> {
 			ContainerIOPanel container = (ContainerIOPanel) inventorySlots;
-			NetworkHandler.instance.sendToServer(
-					MessageIOPanelSendItemToStorage.newMessage(mc.player, new WorldPos(container.tileEntity)));
+			NetworkHandler.instance.sendToServer(MessageIOPanelSendItemToStorage.newMessage(mc.player, pos));
 		}));
 		components.add(new TexturedButton(this, panelX + 285, panelY + 24, TEXTURE, 0, 68, 32, 32, 0.5F, () -> {
 			System.out.println("config");

@@ -30,6 +30,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -358,6 +359,10 @@ public class Util {
 			text = text.substring(0, text.length() - 1);
 		}
 		return text;
+	}
+
+	public static String formatAndAntiEscape(String text, Object... parms) {
+		return I18n.format(text, parms).replaceAll("\\\\n", "\n");
 	}
 
 	/**

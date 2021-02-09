@@ -1,12 +1,13 @@
 package com.pinball3d.zone.sphinx.map;
 
+import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
 public class PointerBeacon extends PointerNode {
-	public PointerBeacon(WorldPos pos, int id, WorkingState state) {
-		super(pos, id, state);
+	public PointerBeacon(WorldPos pos, SerialNumber serial, int id, WorkingState state) {
+		super(pos, serial, id, state);
 		box = new BoundingBox(pos.getPos().getX() - 3, pos.getPos().getZ() - 3, pos.getPos().getX() + 6,
 				pos.getPos().getZ() + 7);
 	}

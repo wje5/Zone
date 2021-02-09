@@ -3,17 +3,23 @@ package com.pinball3d.zone.network;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 
 import com.google.common.collect.Sets;
+import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
+import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.sphinx.map.MapHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
+import com.pinball3d.zone.util.LimitedQueue;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -42,6 +48,8 @@ public class ConnectHelperClient {
 	private WorkingState workingState;
 	private List<ClassifyGroup> classify = new ArrayList<ClassifyGroup>();
 	private List<UserData> users = new ArrayList<UserData>();
+	private Queue<Log> logs = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);
+	private SerialNumber needNetworkSerial;
 
 	public void setData(UUID network, NBTTagCompound data, Set<Type> types) {
 		if (!this.types.equals(types)) {
@@ -116,18 +124,32 @@ public class ConnectHelperClient {
 					maxStorage = data.getInteger(e.name());
 					break;
 				case CLASSIFY:
-					classify.clear();
-					NBTTagList list = data.getTagList(e.name(), 10);
-					list.forEach(i -> {
-						ClassifyGroup c = new ClassifyGroup((NBTTagCompound) i);
-						classify.add(c);
-					});
+					if (data.hasKey(e.name())) {
+						classify.clear();
+						NBTTagList list = data.getTagList(e.name(), 10);
+						list.forEach(i -> {
+							ClassifyGroup c = new ClassifyGroup((NBTTagCompound) i);
+							classify.add(c);
+						});
+					}
 					break;
 				case USERS:
 					NBTTagList usersList = data.getTagList(e.name(), 10);
 					usersList.forEach(j -> {
 						users.add(new UserData((NBTTagCompound) j));
 					});
+					break;
+				case LOGS:
+					if (data.hasKey(e.name())) {
+						logs.clear();
+						NBTTagList logsList = data.getTagList(e.name(), 10);
+						logsList.forEach(k -> {
+							logs.add(Log.readLogFromNBT((NBTTagCompound) k));
+						});
+					}
+					break;
+				case NEEDNETWORKSERIAL:
+					needNetworkSerial = new SerialNumber(data.getCompoundTag(e.name()));
 					break;
 				}
 			}
@@ -149,12 +171,14 @@ public class ConnectHelperClient {
 		usedStorage = 0;
 		maxStorage = 0;
 		users.clear();
+		needNetworkSerial = null;
 	}
 
 	public void clearHuges() {
 		items = new StorageWrapper();
 		MapHandler.clear();
 		classify.clear();
+		logs.clear();
 	}
 
 	public void disconnect() {
@@ -206,7 +230,22 @@ public class ConnectHelperClient {
 	}
 
 	public boolean isConnected() {
-		return !networkPos.isOrigin();
+		return hasData && !networkPos.isOrigin();
+	}
+
+	public boolean isAdmin() {
+		if (!hasData || users.isEmpty()) {
+			return false;
+		}
+		UUID uuid = Minecraft.getMinecraft().player.getUniqueID();
+		Iterator<UserData> it = users.iterator();
+		while (it.hasNext()) {
+			UserData data = it.next();
+			if (data.admin && data.uuid.equals(uuid)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public StorageWrapper getItems() {
@@ -283,5 +322,13 @@ public class ConnectHelperClient {
 
 	public Set<Type> getTypes() {
 		return types;
+	}
+
+	public Queue<Log> getLogs() {
+		return logs;
+	}
+
+	public SerialNumber getNeedNetworkSerial() {
+		return needNetworkSerial;
 	}
 }

@@ -27,10 +27,10 @@ public class SubscreenChangeName extends Subscreen {
 
 	public SubscreenChangeName(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		components.add(box = new TextInputBox(this, x + 30, y + 50, 100, 12, () -> {
+		addComponent(box = new TextInputBox(this, x + 30, y + 50, 100, 12, () -> {
 			box.isFocus = true;
 		}));
-		components.add(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.confirm"), () -> {
+		addComponent(new TextButton(this, this.x + 190, this.y + 175, I18n.format("sphinx.confirm"), () -> {
 			if (hasData && box.text.length() >= 4) {
 				NetworkHandler.instance.sendToServer(MessageChangeName.newMessage(mc.player,
 						ConnectHelperClient.getInstance().getNetworkPos(), box.text));
@@ -38,7 +38,7 @@ public class SubscreenChangeName extends Subscreen {
 				parent.putScreen(new SubscreenSphinxConfig(parent));
 			}
 		}));
-		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), () -> {
+		addComponent(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.cancel"), () -> {
 			parent.removeScreen(SubscreenChangeName.this);
 			parent.putScreen(new SubscreenSphinxConfig(parent));
 		}));
@@ -79,7 +79,6 @@ public class SubscreenChangeName extends Subscreen {
 		Gui.drawRect(x + 44, y + 155, x + 255, y + 200, 0x2F000000);
 		Util.renderGlowHorizonLine(x + 10, y + 20, 280);
 		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
-//		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
 		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 		Util.renderGlowString(I18n.format("sphinx.change_sphinx_name"), x + 15, y + 8);
 		Util.renderGlowString(I18n.format("sphinx.set_sphinx_name"), x + 30, y + 35);

@@ -19,13 +19,13 @@ public class SubscreenConfirmBox extends Subscreen {
 
 	public SubscreenConfirmBox(IHasSubscreen parent, int x, int y, String title, String text, Runnable confirm) {
 		super(parent, x, y, 150, 100, true);
-		components.add(new TextButton(this, this.x + 20, this.y + 80, I18n.format("sphinx.confirm"), () -> {
+		addComponent(new TextButton(this, this.x + 20, this.y + 80, I18n.format("sphinx.confirm"), () -> {
 			parent.removeScreen(SubscreenConfirmBox.this);
 			if (confirm != null) {
 				confirm.run();
 			}
 		}));
-		components.add(new TextButton(this, this.x + 90, this.y + 80, I18n.format("sphinx.cancel"), () -> {
+		addComponent(new TextButton(this, this.x + 90, this.y + 80, I18n.format("sphinx.cancel"), () -> {
 			parent.removeScreen(SubscreenConfirmBox.this);
 		}));
 		this.title = title;

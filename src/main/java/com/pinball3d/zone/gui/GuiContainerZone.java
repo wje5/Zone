@@ -286,6 +286,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 
 	@Override
 	public void removeScreen(Subscreen screen) {
+		screen.close();
 		subscreens.remove(screen);
 	}
 

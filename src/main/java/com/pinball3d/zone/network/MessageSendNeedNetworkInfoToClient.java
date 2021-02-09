@@ -1,7 +1,7 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.gui.Subscreen;
-import com.pinball3d.zone.sphinx.GuiContainerSphinxAdvanced;
+import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenNeedNetworkInfo;
 import com.pinball3d.zone.util.WorldPos;
 

@@ -8,13 +8,13 @@ import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.MessageComputeLogisticTime;
 import com.pinball3d.zone.network.MessageIOPanelRequest;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.ContainerIOPanel;
-import com.pinball3d.zone.sphinx.GuiContainerIOPanel;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.Component;
 import com.pinball3d.zone.sphinx.component.Slider;
 import com.pinball3d.zone.sphinx.component.TextButton;
 import com.pinball3d.zone.sphinx.component.TextInputBox;
+import com.pinball3d.zone.sphinx.container.ContainerIOPanel;
+import com.pinball3d.zone.sphinx.container.GuiContainerIOPanel;
 import com.pinball3d.zone.tileentity.TEIOPanel;
 import com.pinball3d.zone.util.HugeItemStack;
 import com.pinball3d.zone.util.StorageWrapper;
@@ -44,7 +44,7 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		super(parent, x, y, 140, 56, false);
 		this.stack = stack;
 		this.amount = amount;
-		components.add(box = new TextInputBox(this, this.x + 70, this.y + 4, 60, 13, 9, null, 4).setOnInput(() -> {
+		addComponent(box = new TextInputBox(this, this.x + 70, this.y + 4, 60, 13, 9, null, 4).setOnInput(() -> {
 			int count = -1;
 			if (!box.text.isEmpty()) {
 				count = Integer.valueOf(box.text);
@@ -62,15 +62,15 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		box.text = "1";
 
 		refreshTime();
-		components.add(slider = new Slider(this, this.x + 33, this.y + 18, 96));
+		addComponent(slider = new Slider(this, this.x + 33, this.y + 18, 96));
 		slider.setOnChange(() -> {
 			box.text = String.valueOf((int) ((SubscreenIOPanelRequest.this.amount - 1) * slider.get() + 1));
 			refreshTime();
 		});
-		components.add(new TextButton(this, this.x + 15, this.y + 41, I18n.format("sphinx.confirm"), () -> {
+		addComponent(new TextButton(this, this.x + 15, this.y + 41, I18n.format("sphinx.confirm"), () -> {
 			onConfirm();
 		}));
-		components.add(new TextButton(this, this.x + 83, this.y + 41, I18n.format("sphinx.cancel"), () -> {
+		addComponent(new TextButton(this, this.x + 83, this.y + 41, I18n.format("sphinx.cancel"), () -> {
 			parent.removeScreen(SubscreenIOPanelRequest.this);
 		}));
 	}

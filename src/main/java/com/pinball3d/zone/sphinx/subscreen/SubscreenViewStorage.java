@@ -8,10 +8,10 @@ import org.lwjgl.input.Keyboard;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.TextInputBox;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
+import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.util.HugeItemStack;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;
@@ -37,16 +37,16 @@ public class SubscreenViewStorage extends Subscreen {
 
 	public SubscreenViewStorage(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		components.add(box = new TextInputBox(this, x + 27, y + 27, 61, 15, 55, () -> {
+		addComponent(box = new TextInputBox(this, x + 27, y + 27, 61, 15, 55, () -> {
 			box.isFocus = true;
 		}).setIsPixel(true));
-		components.add(new TexturedButton(this, x + 87, y + 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
+		addComponent(new TexturedButton(this, x + 87, y + 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
 			box.isFocus = false;
 		}));
-		components.add(new TexturedButton(this, this.x + 120, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, () -> {
+		addComponent(new TexturedButton(this, this.x + 120, this.y + 180, ICONS, 92, 32, 5, 9, 1.0F, () -> {
 			page = page - 1 < 1 ? maxPage : page - 1;
 		}));
-		components.add(new TexturedButton(this, this.x + 175, this.y + 180, ICONS, 97, 32, 5, 9, 1.0F, () -> {
+		addComponent(new TexturedButton(this, this.x + 175, this.y + 180, ICONS, 97, 32, 5, 9, 1.0F, () -> {
 			page = page + 1 > maxPage ? 1 : page + 1;
 		}));
 	}
@@ -173,14 +173,14 @@ public class SubscreenViewStorage extends Subscreen {
 			}
 		}
 		FontRenderer fr = Util.getFontRenderer();
-		fr.drawString(I18n.format("sphinx.view_storages"), x + 15, y + 8, 0xFF1ECCDE);
-		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
+		Util.renderGlowString(I18n.format("sphinx.view_storages"), x + 15, y + 8);
+		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 		String text = page + "/" + maxPage;
-		fr.drawString(text, x + 150 - fr.getStringWidth(text) / 2, y + 181, 0xFF1ECCDE);
+		Util.renderGlowString(text, x + 150 - fr.getStringWidth(text) / 2, y + 181);
 		int usedStorage = ConnectHelperClient.getInstance().getUsedStorage();
 		int maxStorage = ConnectHelperClient.getInstance().getMaxStorage();
 		text = I18n.format("sphinx.storage_space") + ": " + usedStorage + "/" + maxStorage;
-		fr.drawString(text, x + 175, y + 30, 0xFF1ECCDE);
+		Util.renderGlowString(text, x + 175, y + 30);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();

@@ -1,7 +1,8 @@
-package com.pinball3d.zone.sphinx;
+package com.pinball3d.zone.sphinx.container;
 
 import java.util.UUID;
 
+import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.tileentity.TEIOPanel;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;

@@ -9,6 +9,8 @@ import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.ScrollingEdgeList;
 import com.pinball3d.zone.sphinx.component.ScrollingEdgeList.ListBar;
+import com.pinball3d.zone.sphinx.component.TexturedButton;
+import com.pinball3d.zone.sphinx.map.MapHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.Util;
 
@@ -33,7 +35,41 @@ public class SubscreenManageUser extends Subscreen {
 
 	public SubscreenManageUser(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 360, 200, true);
-		components.add(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195));
+		addComponent(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195));
+		addComponent(new TexturedButton(this, x + 83, y + 73, ICONS, 97, 100, 30, 30, 0.5F, () -> {
+			MapHandler.focus((int) Minecraft.getMinecraft().player.posX, (int) Minecraft.getMinecraft().player.posZ);
+			parent.removeScreen(this);
+		}));
+		addComponent(
+				new TexturedButton(this, x + 100, y + 73, ICONS, 157, 100, 30, 30, 0.5F, () -> System.out.println(1))
+						.setEnable(() -> {
+							if (!ConnectHelperClient.getInstance().isAdmin()) {
+								return false;
+							}
+							ListBar bar = list.get();
+							if (bar != null) {
+								UserData data = (UserData) bar.getData();
+								if (!data.admin) {
+									return true;
+								}
+							}
+							return false;
+						}));
+		addComponent(
+				new TexturedButton(this, x + 117, y + 73, ICONS, 187, 100, 30, 30, 0.5F, () -> System.out.println(2))
+						.setEnable(() -> {
+							if (!ConnectHelperClient.getInstance().isAdmin()) {
+								return false;
+							}
+							ListBar bar = list.get();
+							if (bar != null) {
+								UserData data = (UserData) bar.getData();
+								if (!data.admin) {
+									return true;
+								}
+							}
+							return false;
+						}));
 	}
 
 	@Override
@@ -70,25 +106,30 @@ public class SubscreenManageUser extends Subscreen {
 		Util.renderGlowHorizonLine(x + 70, y + 20, 280);
 		Gui.drawRect(x + 76, y + 24, x + 344, y + 194, 0x651CC3B5);
 		Util.renderGlowString(I18n.format("sphinx.manage_user"), x + 75, y + 8);
-		Util.drawBorder(x + 75, y + 23, 270, 172, 1, 0xFF1ECCDE);
+		Util.renderGlowBorder(x + 75, y + 23, 270, 172);
 		FontRenderer fr = Util.getFontRenderer();
 		ListBar bar = list.get();
 		if (bar != null) {
 			UserData user = (UserData) bar.getData();
 			Util.drawBorder(x + 83, y + 28, 40, 40, 1, 0xFF1ECCDE);
-			Util.drawBorder(x + 83, y + 73, 15, 15, 1, 0xFF1ECCDE);
-			Util.drawBorder(x + 100, y + 73, 15, 15, 1, 0xFF1ECCDE);
-			Util.drawBorder(x + 117, y + 73, 15, 15, 1, 0xFF1ECCDE);
-			Util.drawBorder(x + 134, y + 73, 15, 15, 1, 0xFF1ECCDE);
-			Util.drawBorder(x + 151, y + 73, 15, 15, 1, 0xFF1ECCDE);
-			Util.renderGlowString(user.name, x + 128, y + 30);
-			Util.renderGlowString("Admininstrator", x + 128, y + 37);
-			fr.drawString("Offline", x + 128, y + 44, 0xFFBFBFBF);
 			drawGravatar(user.email, x + 84, y + 29);
+			if (mouseX >= x + 83 && mouseX <= x + 123 && mouseY >= y + 28 && mouseY <= y + 68) {
+				Util.drawTexture(ICONS, x + 112, y + 57, 216, 0, 40, 40, 0.25F);
+			}
+			Util.renderGlowString(user.name, x + 128, y + 30);
+			Util.renderGlowString(user.admin ? I18n.format("sphinx.admin") : I18n.format("sphinx.user"), x + 128,
+					y + 37);
+			if (user.online) {
+				Util.renderGlowString(I18n.format("sphinx.online"), x + 128, y + 44);
+			} else {
+				fr.drawString(I18n.format("sphinx.offline"), x + 128, y + 44, 0xFFBFBFBF);
+			}
+
 		}
 	}
 
 	private void drawGravatar(String mail, int x, int y) {
+		Util.resetOpenGl();
 		if (image == null) {
 			image = new ThreadDownloadImageData(null, Util.genGravatarUrl(mail), null, new ImageBufferDownload());
 			Minecraft.getMinecraft().getTextureManager()

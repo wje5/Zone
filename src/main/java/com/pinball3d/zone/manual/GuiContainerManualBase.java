@@ -4,7 +4,6 @@ import com.pinball3d.zone.gui.GuiContainerZone;
 import com.pinball3d.zone.manual.component.ButtonPage;
 import com.pinball3d.zone.util.Util;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiContainerManualBase extends GuiContainerZone {
@@ -53,11 +52,8 @@ public abstract class GuiContainerManualBase extends GuiContainerZone {
 	}
 
 	public void drawTextBlock(String key, int x, int y) {
-		String s = I18n.format(key);
-		String[] texts = s.split("\\\\n");
-		for (int i = 0; i < texts.length; i++) {
-			fontRenderer.drawString(texts[i], x, i * fontRenderer.FONT_HEIGHT + y, 0xFF000000);
-		}
+		String s = Util.formatAndAntiEscape(key);
+		fontRenderer.drawSplitString(s, x, y, 292, 0xFF000000);
 	}
 
 	public void drawFrame(int x, int y) {

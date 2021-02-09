@@ -29,7 +29,7 @@ public class SubscreenNetworkInfo extends Subscreen {
 		super(parent, x, y, 300, 200, true);
 		this.pos = pos;
 		NetworkHandler.instance.sendToServer(new MessageRequestNetworkInfo(mc.player, pos));
-		components.add(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.confirm"), () -> {
+		addComponent(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.confirm"), () -> {
 			parent.removeScreen(SubscreenNetworkInfo.this);
 		}));
 	}
@@ -54,22 +54,22 @@ public class SubscreenNetworkInfo extends Subscreen {
 		Gui.drawRect(x + 44, y + 155, x + 255, y + 200, 0x2F000000);
 		Util.renderGlowHorizonLine(x + 10, y + 20, 280);
 		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
-		Util.getFontRenderer().drawString(I18n.format("sphinx.network_info"), x + 15, y + 8, 0xFF1ECCDE);
+		Util.renderGlowString(I18n.format("sphinx.network_info"), x + 15, y + 8);
 		if (name != null) {
-			Util.getFontRenderer().drawString(I18n.format("sphinx.sphinx_name") + ":", x + 27, y + 35, 0xFF1ECCDE);
-			Util.getFontRenderer().drawString(name, x + 180, y + 35, 0xFF1ECCDE);
-			Util.getFontRenderer().drawString(I18n.format("sphinx.working_state") + ":", x + 27, y + 55, 0xFF1ECCDE);
-			Util.getFontRenderer().drawString(state.toString(), x + 180, y + 55, 0xFF1ECCDE);
-			Util.getFontRenderer().drawString(I18n.format("sphinx.energy") + ":", x + 27, y + 65, 0xFF1ECCDE);
+			Util.renderGlowString(I18n.format("sphinx.sphinx_name") + ":", x + 27, y + 35);
+			Util.renderGlowString(name, x + 180, y + 35);
+			Util.renderGlowString(I18n.format("sphinx.working_state") + ":", x + 27, y + 55);
+			Util.renderGlowString(state.toString(), x + 180, y + 55);
+			Util.renderGlowString(I18n.format("sphinx.energy") + ":", x + 27, y + 65);
 			String text = "FULL";
 			if (energy < 512) {
 				text = ((int) (energy * 100.0F / 576)) + "%";
 			}
-			Util.getFontRenderer().drawString(text, x + 180, y + 65, 0xFF1ECCDE);
-			Util.getFontRenderer().drawString(I18n.format("sphinx.location") + ":", x + 27, y + 85, 0xFF1ECCDE);
+			Util.renderGlowString(text, x + 180, y + 65);
+			Util.renderGlowString(I18n.format("sphinx.location") + ":", x + 27, y + 85);
 			text = pos.getPos().getX() + "," + pos.getPos().getY() + "," + pos.getPos().getZ();
-			Util.getFontRenderer().drawString(text, x + 180, y + 85, 0xFF1ECCDE);
+			Util.renderGlowString(text, x + 180, y + 85);
 		}
-		Util.drawBorder(x + 15, y + 23, 270, 172, 1, 0xFF1ECCDE);
+		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 	}
 }
