@@ -13,6 +13,7 @@ import com.pinball3d.zone.block.BlockControllerMainframe;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEBeaconCore;
@@ -86,26 +87,21 @@ public class ConnectionHelper {
 			stack = player.getHeldItemOffhand();
 		}
 		if (stack.getItem() == ItemLoader.terminal && stack.getItemDamage() == 0) {
-			NBTTagCompound tag = stack.getTagCompound();
-			if (tag != null && tag.hasUniqueId("network")) {
-				UUID network = tag.getUniqueId("network");
-				GlobalNetworkData data = GlobalNetworkData.getData(player.world);
-				WorldPos pos = data.getNetwork(network);
-				if (!pos.isOrigin()) {
-					TileEntity tileentity = pos.getTileEntity();
-					if (tileentity instanceof TEProcessingCenter) {
-						TEProcessingCenter te = ((TEProcessingCenter) tileentity);
-						Connect connect;
-						if (te.isPointInRange(player.dimension, player.posX, player.posY, player.posZ)
-								&& te.getWorkingState() == WorkingState.WORKING) {
-							connect = new Connect(player, te.getUUID(), WorldPos.ORIGIN, ConnectType.TERMINAL, types);
-						} else {
-							connect = new Connect(player, null, WorldPos.ORIGIN, ConnectType.TERMINAL, types);
-						}
-						if (connect.isValid()) {
-							pool.put(uuid, connect);
-							return;
-						}
+			WorldPos pos = SphinxUtil.getNetworkPosFromTerminal(player);
+			if (!pos.isOrigin()) {
+				TileEntity tileentity = pos.getTileEntity();
+				if (tileentity instanceof TEProcessingCenter) {
+					TEProcessingCenter te = ((TEProcessingCenter) tileentity);
+					Connect connect;
+					if (te.isPointInRange(player.dimension, player.posX, player.posY, player.posZ)
+							&& te.getWorkingState() == WorkingState.WORKING) {
+						connect = new Connect(player, te.getUUID(), WorldPos.ORIGIN, ConnectType.TERMINAL, types);
+					} else {
+						connect = new Connect(player, null, WorldPos.ORIGIN, ConnectType.TERMINAL, types);
+					}
+					if (connect.isValid()) {
+						pool.put(uuid, connect);
+						return;
 					}
 				}
 			}
@@ -129,8 +125,7 @@ public class ConnectionHelper {
 			INeedNetwork te = (INeedNetwork) tileentity;
 			UUID network = te.getNetwork();
 			if (network != null) {
-				GlobalNetworkData data = GlobalNetworkData.getData(player.world);
-				WorldPos pos = data.getNetwork(network);
+				WorldPos pos = GlobalNetworkData.getPos(network);
 				if (!pos.isOrigin()) {
 					tileentity = pos.getTileEntity();
 					if (tileentity instanceof TEProcessingCenter) {
@@ -182,9 +177,7 @@ public class ConnectionHelper {
 			switch (connectType) {
 			case CONTROLLER:
 				if (network != null) {
-					WorldPos pos = GlobalNetworkData
-							.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
-							.getNetwork(network);
+					WorldPos pos = GlobalNetworkData.getPos(network);
 					if (pos.isOrigin()) {
 						return false;
 					}
@@ -195,10 +188,9 @@ public class ConnectionHelper {
 				}
 				return false;
 			case TERMINAL:
+				network = SphinxUtil.getNetworkUUIDFromTerminal(player);
 				if (network != null) {
-					WorldPos pos = GlobalNetworkData
-							.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
-							.getNetwork(network);
+					WorldPos pos = GlobalNetworkData.getPos(network);
 					if (pos.isOrigin()) {
 						network = null;
 					} else {
@@ -214,10 +206,9 @@ public class ConnectionHelper {
 				}
 				break;
 			case NEEDNETWORK:
+				network = SphinxUtil.getNetworkUUIDFromNeedNetwork(needNetwork);
 				if (network != null) {
-					WorldPos pos = GlobalNetworkData
-							.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
-							.getNetwork(network);
+					WorldPos pos = GlobalNetworkData.getPos(network);
 					if (pos.isOrigin()) {
 						network = null;
 					} else {
@@ -263,8 +254,7 @@ public class ConnectionHelper {
 			TEProcessingCenter te = null;
 			INeedNetwork needNetwork = null;
 			if (connect.network != null) {
-				pos = GlobalNetworkData.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
-						.getNetwork(connect.network);
+				pos = GlobalNetworkData.getPos(connect.network);
 				te = (TEProcessingCenter) pos.getTileEntity();
 			}
 			if (!connect.needNetwork.isOrigin()) {
@@ -396,7 +386,10 @@ public class ConnectionHelper {
 				break;
 			case NEEDNETWORKSERIAL:
 				if (te != null && needNetwork != null) {
-					tag.setTag(name(), te.getSerialNumberFromPos(connect.needNetwork).writeToNBT(new NBTTagCompound()));
+					SerialNumber serial = te.getSerialNumberFromPos(connect.needNetwork);
+					if (serial != null) {
+						tag.setTag(name(), serial.writeToNBT(new NBTTagCompound()));
+					}
 				}
 				break;
 			}

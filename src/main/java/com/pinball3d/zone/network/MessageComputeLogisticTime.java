@@ -55,8 +55,7 @@ public class MessageComputeLogisticTime implements IMessage {
 				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
 				TileEntity te = message.needNetwork.getTileEntity();
 				if (te instanceof INeedNetwork) {
-					WorldPos pos = GlobalNetworkData.getData(te.getWorld())
-							.getNetwork(((INeedNetwork) te).getNetwork());
+					WorldPos pos = GlobalNetworkData.getPos(((INeedNetwork) te).getNetwork());
 					if (pos != null) {
 						TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
 						int time = pc.requestItems(message.wrapper.copy(), message.needNetwork, true);

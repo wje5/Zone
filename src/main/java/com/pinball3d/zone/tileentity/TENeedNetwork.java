@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import com.pinball3d.zone.ChunkHandler;
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
-import com.pinball3d.zone.util.Util;
+import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -40,7 +40,7 @@ public class TENeedNetwork extends TileEntity implements INeedNetwork, ITickable
 			return;
 		}
 		if (network != null) {
-			WorldPos pcpos = Util.getPosFromUUID(network);
+			WorldPos pcpos = GlobalNetworkData.getPos(network);
 			if (!pcpos.isOrigin() && pcpos.getTileEntity() instanceof TEProcessingCenter) {
 				if (((TEProcessingCenter) pcpos.getTileEntity()).isOn()) {
 					if (connected) {

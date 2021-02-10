@@ -26,7 +26,7 @@ public class ContainerSphinxNeedNetwork extends ContainerSphinxBase {
 		if (network == null) {
 			return true;
 		}
-		WorldPos pos = GlobalNetworkData.getData(playerIn.world).getNetwork(network);
+		WorldPos pos = GlobalNetworkData.getPos(network);
 		if (pos.isOrigin()) {
 			return true;
 		}

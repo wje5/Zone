@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class GlobalNetworkData extends WorldSavedData {
 	private Map<UUID, WorldPos> map;
@@ -22,7 +23,7 @@ public class GlobalNetworkData extends WorldSavedData {
 		map = new HashMap<UUID, WorldPos>();
 	}
 
-	public WorldPos getNetwork(UUID uuid) {
+	public WorldPos getNetworkPos(UUID uuid) {
 		WorldPos p = map.get(uuid);
 		return p == null ? WorldPos.ORIGIN : p;
 	}
@@ -33,7 +34,7 @@ public class GlobalNetworkData extends WorldSavedData {
 		markDirty();
 	}
 
-	public UUID getUUID(WorldPos pos) {
+	public UUID getNetworkUUID(WorldPos pos) {
 		checkData();
 		if (map.containsValue(pos)) {
 			Iterator<Entry<UUID, WorldPos>> it = map.entrySet().iterator();
@@ -97,5 +98,15 @@ public class GlobalNetworkData extends WorldSavedData {
 		});
 		nbt.setTag("data", list);
 		return nbt;
+	}
+
+	public static WorldPos getPos(UUID uuid) {
+		return GlobalNetworkData.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
+				.getNetworkPos(uuid);
+	}
+
+	public static UUID getUUID(WorldPos pos) {
+		return GlobalNetworkData.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
+				.getNetworkUUID(pos);
 	}
 }

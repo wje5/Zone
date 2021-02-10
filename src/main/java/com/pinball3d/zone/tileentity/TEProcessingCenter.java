@@ -209,6 +209,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public void removeNeedNetwork(SerialNumber number) {
+		if (!serialNumberToPos.containsKey(number)) {
+			return;
+		}
 		TileEntity te = serialNumberToPos.get(number).getTileEntity();
 		if (te instanceof INeedNetwork) {
 			((INeedNetwork) te).deleteNetwork();
@@ -512,6 +515,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			return true;
 		}
 		return false;
+	}
+
+	public void updateSerials() {
+		Iterator<Entry<SerialNumber, WorldPos>> it = serialNumberToPos.entrySet().iterator();
+		while (it.hasNext()) {
+			SerialNumber k = it.next().getKey();
+			if (!nodes.contains(k) && !storages.contains(k) && !devices.contains(k) && !productions.contains(k)) {
+				it.remove();
+			}
+		}
 	}
 
 	public StorageWrapper insertToItemHandler(StorageWrapper wrapper, IItemHandler handler) {
@@ -1048,7 +1061,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			return;
 		}
 		if (uuid == null) {
-			setUUID(GlobalNetworkData.getData(world).getUUID(worldPos));
+			setUUID(GlobalNetworkData.getUUID(worldPos));
 			callUpdate();
 		}
 		if (loadTick > 0) {
@@ -1076,12 +1089,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 		}
 		energyTick--;
-		if (updateDevice() || map == null || mapDirty) {
+		boolean flag = updateDevice();
+		updateSerials();
+		System.out.println(serialNumberToPos);
+		if (flag || map == null || mapDirty) {
 			refreshMap();
 			updatePack(true);
 		} else {
 			updatePack(false);
 		}
+
 	}
 
 	@Override

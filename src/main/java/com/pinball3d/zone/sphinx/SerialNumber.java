@@ -64,6 +64,29 @@ public class SerialNumber {
 		return number * 31 + type.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		String prefix = "";
+		switch (type) {
+		case NODE:
+			prefix = "N";
+			break;
+		case STORAGE:
+			prefix = "S";
+			break;
+		case DEVICE:
+			prefix = "D";
+			break;
+		case PRODUCTION:
+			prefix = "P";
+			break;
+		case PACK:
+			prefix = "W";
+			break;
+		}
+		return prefix + number;
+	}
+
 	public static enum Type {
 		NODE, STORAGE, DEVICE, PRODUCTION, PACK
 	}

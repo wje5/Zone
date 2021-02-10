@@ -29,6 +29,7 @@ public class GuiContainerNeedNetwork extends GuiContainerSphinxBase {
 		Set<Type> set = super.getDataTypes();
 		set.add(Type.NETWORKUUID);
 		set.add(Type.NEEDNETWORKVALIDNETWORK);
+		set.add(Type.NEEDNETWORKSERIAL);
 		return set;
 	}
 

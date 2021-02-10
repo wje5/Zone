@@ -29,7 +29,6 @@ public class NetworkHandler {
 		registerMessage(MessageRequestNeedNetworkInfo.Handler.class, MessageRequestNeedNetworkInfo.class, Side.SERVER);
 		registerMessage(MessageSendNeedNetworkInfoToClient.Handler.class, MessageSendNeedNetworkInfoToClient.class,
 				Side.CLIENT);
-		registerMessage(MessageDeleteNeedNetworkUnit.Handler.class, MessageDeleteNeedNetworkUnit.class, Side.SERVER);
 		registerMessage(MessageComputeLogisticTime.Handler.class, MessageComputeLogisticTime.class, Side.SERVER);
 		registerMessage(MessageSendLogisticTimeToClient.Handler.class, MessageSendLogisticTimeToClient.class,
 				Side.CLIENT);

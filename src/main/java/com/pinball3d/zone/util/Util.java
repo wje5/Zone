@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.UUID;
 
 import org.lwjgl.opengl.GL11;
 
@@ -18,7 +17,6 @@ import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
 import com.pinball3d.zone.pdf.PDFHelper;
 import com.pinball3d.zone.pdf.PDFImage;
-import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 
 import net.minecraft.client.Minecraft;
@@ -37,7 +35,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -542,10 +539,5 @@ public class Util {
 			}
 		}
 		return "https://secure.gravatar.com/avatar?s=64";
-	}
-
-	public static WorldPos getPosFromUUID(UUID uuid) {
-		return GlobalNetworkData.getData(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0))
-				.getNetwork(uuid);
 	}
 }

@@ -2,8 +2,8 @@ package com.pinball3d.zone.tileentity;
 
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
 import com.pinball3d.zone.block.BlockBeaconCore;
+import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.INode;
-import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
 public class TEBeaconCore extends TENeedNetwork implements IChunkLoader, INode {
@@ -19,7 +19,7 @@ public class TEBeaconCore extends TENeedNetwork implements IChunkLoader, INode {
 			boolean old = full;
 			full = BlockBeaconCore.isFullStructure(world, pos);
 			if (old != full) {
-				WorldPos pos = Util.getPosFromUUID(network);
+				WorldPos pos = GlobalNetworkData.getPos(network);
 				if (!pos.isOrigin()) {
 					((TEProcessingCenter) pos.getTileEntity()).markMapDirty();
 				}

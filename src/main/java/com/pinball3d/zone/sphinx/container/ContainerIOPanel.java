@@ -86,7 +86,7 @@ public class ContainerIOPanel extends ContainerSphinxBase {
 		if (network == null) {
 			return true;
 		}
-		WorldPos pos = GlobalNetworkData.getData(tileEntity.getWorld()).getNetwork(network);
+		WorldPos pos = GlobalNetworkData.getPos(network);
 		if (pos.isOrigin()) {
 			return true;
 		}

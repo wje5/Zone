@@ -58,8 +58,7 @@ public class ItemTerminal extends ZoneItem {
 				if (tileentity instanceof INeedNetwork) {
 					if (tag.hasUniqueId("network")) {
 						UUID uuid = tag.getUniqueId("network");
-						GlobalNetworkData data = GlobalNetworkData.getData(worldIn);
-						WorldPos network = data.getNetwork(uuid);
+						WorldPos network = GlobalNetworkData.getPos(uuid);
 						if (network != null) {
 							TileEntity t = network.getTileEntity();
 							if (t instanceof TEProcessingCenter) {

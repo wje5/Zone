@@ -57,7 +57,7 @@ public abstract class MessageSphinxNeedNetwork implements IMessage {
 		if (tileentity instanceof INeedNetwork) {
 			INeedNetwork needNetwork = (INeedNetwork) tileentity;
 			UUID network = needNetwork.getNetwork();
-			WorldPos pcpos = GlobalNetworkData.getData(tileentity.getWorld()).getNetwork(network);
+			WorldPos pcpos = GlobalNetworkData.getPos(network);
 			if (!pcpos.isOrigin()) {
 				return (TEProcessingCenter) pcpos.getTileEntity();
 			}
