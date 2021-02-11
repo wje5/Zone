@@ -1091,7 +1091,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		energyTick--;
 		boolean flag = updateDevice();
 		updateSerials();
-		System.out.println(serialNumberToPos);
 		if (flag || map == null || mapDirty) {
 			refreshMap();
 			updatePack(true);
@@ -1168,7 +1167,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setString("name", name);
+		if (name != null) {
+			compound.setString("name", name);
+		}
 		compound.setInteger("loadTick", loadTick);
 		compound.setInteger("energyTick", energyTick);
 		compound.setBoolean("on", on);
@@ -1180,27 +1181,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		compound.setInteger("packId", packId);
 		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {
-//			try {
 			nodeList.appendTag(e.writeToNBT(new NBTTagCompound()));
-//			} catch (Exception ex) {
-//				String name = "[Data Corruption]";
-//				try {
-//					name = e.getBlockState().getBlock().getLocalizedName();
-//				} catch (Exception exc) {
-//					LOGGER.error(exc);
-//				}
-//				String serialNumber = "[Data Corruption]";
-//				try {
-//					TileEntity tileentity = e.getTileEntity();
-//					if(tileentity instanceof INeedNetwork) {
-//						
-//					}
-//				} catch (Exception exc) {
-//					LOGGER.error(exc);
-//				}
-//				LOGGER.error("{} {} has throw an exception trying to write state. It's network data will be removed.",
-//						name, e);
-//			}
 		});
 		compound.setTag("nodes", nodeList);
 		NBTTagList storgeList = new NBTTagList();
@@ -1236,17 +1217,51 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		compound.setTag("serialNumbers", serialNumberList);
 		NBTTagList classifyList = new NBTTagList();
 		classifyGroups.forEach(e -> {
-			classifyList.appendTag(e.writeToNBT(new NBTTagCompound()));
+			try {
+				classifyList.appendTag(e.writeToNBT(new NBTTagCompound()));
+			} catch (Exception ex) {
+				String name = "[Data Corruption]";
+				try {
+					name = e.getName();
+				} catch (Exception ex2) {
+
+				}
+				LOGGER.error(
+						"Classify Group {} has throw an exception trying to write state. It's network data will be removed.",
+						name, ex);
+			}
 		});
 		compound.setTag("classifyGroups", classifyList);
 		NBTTagList usersList = new NBTTagList();
 		users.values().forEach(e -> {
-			usersList.appendTag(e.writeToNBT(new NBTTagCompound()));
+			try {
+				usersList.appendTag(e.writeToNBT(new NBTTagCompound()));
+			} catch (Exception ex) {
+				String name = "[Data Corruption]";
+				try {
+					name = e.name;
+				} catch (Exception ex2) {
+
+				}
+				LOGGER.error("User {} has throw an exception trying to write state. It's network data will be removed.",
+						name, ex);
+			}
 		});
 		compound.setTag("users", usersList);
 		NBTTagList logsList = new NBTTagList();
 		logCache.forEach(e -> {
-			logsList.appendTag(e.writeToNBT(new NBTTagCompound()));
+			try {
+				logsList.appendTag(e.writeToNBT(new NBTTagCompound()));
+			} catch (Exception ex) {
+				String name = "[Data Corruption]";
+				try {
+					name = e.getId() + "";
+				} catch (Exception ex2) {
+
+				}
+				LOGGER.error("Log {} has throw an exception trying to write state. It's network data will be removed.",
+						name, ex);
+			}
 		});
 		compound.setTag("logs", logsList);
 		return super.writeToNBT(compound);
