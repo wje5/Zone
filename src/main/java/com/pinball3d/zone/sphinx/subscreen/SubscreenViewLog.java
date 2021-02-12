@@ -3,9 +3,11 @@ package com.pinball3d.zone.sphinx.subscreen;
 import java.util.Set;
 
 import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.RadioButton;
+import com.pinball3d.zone.sphinx.component.ScrollingLog;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
@@ -15,6 +17,7 @@ import net.minecraft.util.ResourceLocation;
 public class SubscreenViewLog extends Subscreen {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	public RadioButton button1, button2, button3, button4;
+	public ScrollingLog list;
 
 	public SubscreenViewLog(IHasSubscreen parent) {
 		this(parent, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
@@ -38,6 +41,7 @@ public class SubscreenViewLog extends Subscreen {
 			button4.setState(!button4.getState());
 			System.out.println(4);
 		}));
+		addComponent(list = new ScrollingLog(this, this.x + 16, this.y + 35, 268, 170));
 	}
 
 	@Override
@@ -50,10 +54,9 @@ public class SubscreenViewLog extends Subscreen {
 	@Override
 	public void update() {
 		super.update();
-//		if (!hasData && ConnectHelperClient.getInstance().hasData()) {
-//			box.text = ConnectHelperClient.getInstance().getName();
-//			hasData = true;
-//		}
+		if (ConnectHelperClient.getInstance().hasData()) {
+			list.setLogs(ConnectHelperClient.getInstance().getLogs());
+		}
 	}
 
 	@Override

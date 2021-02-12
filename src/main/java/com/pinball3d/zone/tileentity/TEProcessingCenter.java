@@ -37,6 +37,7 @@ import com.pinball3d.zone.sphinx.log.LogSendPack;
 import com.pinball3d.zone.util.HugeItemStack;
 import com.pinball3d.zone.util.LimitedQueue;
 import com.pinball3d.zone.util.StorageWrapper;
+import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.resources.I18n;
@@ -347,13 +348,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 					List<Path> l = dijkstra(target);
 					for (Path i : l) {
 						if (i.getTarget().equals(pos)) {
+							time = (int) (time < i.distance ? i.distance : time);
 							if (!isSimulate) {
 								LogisticPack pack = new LogisticPack(packId++, i.flip().routes, w, new WorldPos(te));
 								packs.add(pack);
 								List<SerialNumber> p = new ArrayList<SerialNumber>();
-								fireLog(new LogSendPack(logId++, pack.getId(), w, p));
+								pack.routes.forEach(j -> {
+									p.add(getSerialNumberFromPos(j));
+								});
+								fireLog(new LogSendPack(logId++, pack.getId(), w, p, time));
 							}
-							time = (int) (time < i.distance ? i.distance : time);
 						}
 					}
 				}
@@ -1149,18 +1153,36 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		classifyGroups.clear();
 		list = compound.getTagList("classifyGroups", 10);
 		list.forEach(e -> {
-			classifyGroups.add(new ClassifyGroup((NBTTagCompound) e));
+			try {
+				classifyGroups.add(new ClassifyGroup((NBTTagCompound) e));
+			} catch (Exception ex) {
+				LOGGER.error("Classify Group " + Util.DATA_CORRUPTION
+						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
+						ex);
+			}
 		});
 		users.clear();
 		list = compound.getTagList("users", 10);
 		list.forEach(e -> {
-			UserData user = new UserData((NBTTagCompound) e);
-			users.put(user.uuid, user);
+			try {
+				UserData user = new UserData((NBTTagCompound) e);
+				users.put(user.uuid, user);
+			} catch (Exception ex) {
+				LOGGER.error("User " + Util.DATA_CORRUPTION
+						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
+						ex);
+			}
 		});
 		logCache.clear();
 		list = compound.getTagList("logs", 10);
 		list.forEach(e -> {
-			logCache.add(Log.readLogFromNBT((NBTTagCompound) e));
+			try {
+				logCache.add(Log.readLogFromNBT((NBTTagCompound) e));
+			} catch (Exception ex) {
+				LOGGER.error("Log " + Util.DATA_CORRUPTION
+						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
+						ex);
+			}
 		});
 		super.readFromNBT(compound);
 	}
@@ -1220,7 +1242,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			try {
 				classifyList.appendTag(e.writeToNBT(new NBTTagCompound()));
 			} catch (Exception ex) {
-				String name = "[Data Corruption]";
+				String name = Util.DATA_CORRUPTION;
 				try {
 					name = e.getName();
 				} catch (Exception ex2) {
@@ -1237,7 +1259,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			try {
 				usersList.appendTag(e.writeToNBT(new NBTTagCompound()));
 			} catch (Exception ex) {
-				String name = "[Data Corruption]";
+				String name = Util.DATA_CORRUPTION;
 				try {
 					name = e.name;
 				} catch (Exception ex2) {
@@ -1253,7 +1275,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			try {
 				logsList.appendTag(e.writeToNBT(new NBTTagCompound()));
 			} catch (Exception ex) {
-				String name = "[Data Corruption]";
+				String name = Util.DATA_CORRUPTION;
 				try {
 					name = e.getId() + "";
 				} catch (Exception ex2) {

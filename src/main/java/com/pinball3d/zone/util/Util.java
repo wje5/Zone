@@ -58,6 +58,8 @@ public class Util {
 		}
 	};
 
+	public static String DATA_CORRUPTION = "[Data Corruption]";
+
 	@SideOnly(Side.CLIENT)
 	public static void drawTexture(ResourceLocation texture, int x, int y, int width, int height) {
 		drawTexture(texture, x, y, 0, 0, width, height, 1.0F);
