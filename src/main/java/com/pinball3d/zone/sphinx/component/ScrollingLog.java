@@ -42,7 +42,6 @@ public class ScrollingLog extends Component {
 			if (renderY <= y + height && renderY + bar.height >= y) {
 				int upCut = y - renderY > 0 ? y - renderY : 0;
 				int downCut = renderY + bar.height - (y + height) > 0 ? renderY + bar.height - (y + height) : 0;
-				boolean flag = mouseX >= x && mouseX <= x + width && mouseY > renderY && mouseY <= renderY + bar.height;
 				bar.doRender(x, renderY, upCut, downCut);
 			}
 			yOffset += bar.height;
@@ -113,7 +112,7 @@ public class ScrollingLog extends Component {
 				Gui.drawRect(x, a, x + width, b, color);
 			}
 			if (upCut < 10 && downCut < 10) {
-				Util.renderGlowString(log.toString(), x + 5, y + 1);
+				Util.renderGlowString(Util.cutStringToWidth(log.toString(), width - 5), x + 5, y + 1);
 			}
 		}
 	}

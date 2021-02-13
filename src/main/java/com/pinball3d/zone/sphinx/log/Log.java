@@ -56,7 +56,7 @@ public class Log {
 		return id;
 	}
 
-	public long getDate() {
+	public long getTime() {
 		return time;
 	}
 

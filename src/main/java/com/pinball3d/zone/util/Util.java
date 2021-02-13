@@ -3,6 +3,7 @@ package com.pinball3d.zone.util;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -298,6 +299,15 @@ public class Util {
 	}
 
 	@SideOnly(Side.CLIENT)
+	public static String cutStringToWidth(String text, int width) {
+		FontRenderer fr = Util.getFontRenderer();
+		while (fr.getStringWidth(text) > width && !text.isEmpty()) {
+			text = text.substring(0, text.length() - 1);
+		}
+		return text;
+	}
+
+	@SideOnly(Side.CLIENT)
 	public static void renderGlowHorizonLine(int x, int y, int length) {
 		length *= 2;
 		Util.drawTexture(BORDER_2, x - 3, y - 3, 0, 0, 14, 17, 0.5F);
@@ -541,5 +551,14 @@ public class Util {
 			}
 		}
 		return "https://secure.gravatar.com/avatar?s=64";
+	}
+
+	public static String transferTickToString(int tick) {
+		int h = tick / 72000;
+		int m = (tick % 72000) / 1200;
+		int s = (tick % 1200) / 20;
+		NumberFormat format = NumberFormat.getInstance();
+		format.setMinimumIntegerDigits(2);
+		return "[" + format.format(h) + ":" + format.format(m) + ":" + format.format(s) + "]";
 	}
 }

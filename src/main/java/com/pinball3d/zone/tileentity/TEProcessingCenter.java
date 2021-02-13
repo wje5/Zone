@@ -59,7 +59,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 public class TEProcessingCenter extends TileEntity implements ITickable, IChunkLoader {
-	private boolean on;
+	private boolean on, inited;
 	private String name = "Name Undone";
 	private int loadTick;
 	private int energyTick;
@@ -89,6 +89,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	private UUID uuid;
 	private double[][] map;
 	private List<ClassifyGroup> classifyGroups = new ArrayList<ClassifyGroup>();
+	private SerialNumber centerSerial;
 	private boolean mapDirty;
 	private Map<WorldPos, List<Path>> dijkstraCache = new HashMap<WorldPos, List<Path>>();
 	private Map<UUID, UserData> users = new HashMap<UUID, UserData>();
@@ -99,15 +100,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	}
 
-	public boolean isOn() {
-		return on;
+	public void initSphinx() {
+		centerSerial = genSerialNumber(new WorldPos(this), Type.NODE);
 	}
 
-	public void callUpdate() {
-		markDirty();
-//		IBlockState state = getBlockType().getStateFromMeta(getBlockMetadata());
-//		world.notifyBlockUpdate(pos, state, state,
-//				Constants.BlockFlags.SEND_TO_CLIENTS | Constants.BlockFlags.NO_RERENDER);
+	public boolean isOn() {
+		return on;
 	}
 
 	public void shutdown() {
@@ -115,7 +113,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		BlockProcessingCenter.setState(false, world, pos);
 		loadTick = 0;
 		energyTick = 0;
-		callUpdate();
 	}
 
 	public String getName() {
@@ -135,14 +132,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			loadTick = 256;
 			BlockProcessingCenter.setState(true, world, pos);
 			markDirty();
-			callUpdate();
 		}
 	}
 
 	public void setName(String name) {
 		if (name.length() >= 4) {
 			this.name = name;
-			callUpdate();
 			markDirty();
 		}
 	}
@@ -257,7 +252,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public void setUUID(UUID uuid) {
 		this.uuid = uuid;
 		markDirty();
-		callUpdate();
 	}
 
 	public boolean isPointInRange(int dim, double x, double y, double z) {
@@ -307,11 +301,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			TETransmissionModule te = (TETransmissionModule) world.getTileEntity(p);
 			boolean flag = te.tryUseEnergy(amount, false);
 			energy = te.getEnergy();
-			callUpdate();
 			return flag;
 		} else {
 			energy = 0;
-			callUpdate();
 			return false;
 		}
 	}
@@ -355,6 +347,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 								List<SerialNumber> p = new ArrayList<SerialNumber>();
 								pack.routes.forEach(j -> {
 									p.add(getSerialNumberFromPos(j));
+									if (getSerialNumberFromPos(j) == null) {
+										System.out.println(j);
+									}
 								});
 								fireLog(new LogSendPack(logId++, pack.getId(), w, p, time));
 							}
@@ -363,7 +358,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 		}
-		callUpdate();
 		return time;
 	}
 
@@ -391,7 +385,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 		});
-		callUpdate();
 		return wrapper;
 	}
 
@@ -458,7 +451,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		} else {
 			nodes = s;
 			markDirty();
-			callUpdate();
 			return true;
 		}
 	}
@@ -515,7 +507,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		if (flag) {
 			markDirty();
-			callUpdate();
 			return true;
 		}
 		return false;
@@ -525,7 +516,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		Iterator<Entry<SerialNumber, WorldPos>> it = serialNumberToPos.entrySet().iterator();
 		while (it.hasNext()) {
 			SerialNumber k = it.next().getKey();
-			if (!nodes.contains(k) && !storages.contains(k) && !devices.contains(k) && !productions.contains(k)) {
+			if (!nodes.contains(k) && !storages.contains(k) && !devices.contains(k) && !productions.contains(k)
+					&& !centerSerial.equals(k)) {
 				it.remove();
 			}
 		}
@@ -965,7 +957,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			LogisticPack i = it.next();
 			if (!isPointInRange(i.dim, i.x, i.y, i.z)) {
 				it.remove();
-				callUpdate();
 				continue;
 			}
 			if (refreshPath) {
@@ -1019,7 +1010,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		deads.forEach(e -> {
 			dispenceItems(e.items, new WorldPos((int) e.x, (int) e.y, (int) e.z, e.dim));
 		});
-		callUpdate();
 	}
 
 	public void markMapDirty() {
@@ -1028,10 +1018,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public void fireLog(Log log) {
 		logCache.add(log);
-		logCache.forEach(e -> {
-			System.out.println(e);
-		});
-		System.out.println("#######################");
+		System.out.println(log);
 	}
 
 	public void load() {
@@ -1052,7 +1039,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public void update() {
 		load();
 		markDirty();
-		callUpdate();
 		if (world.isRemote) {
 			if (loadTick > 0) {
 				loadTick--;
@@ -1060,13 +1046,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			return;
 		}
 		WorldPos worldPos = new WorldPos(pos, world);
+		if (!inited) {
+			initSphinx();
+			inited = true;
+		}
 		if (!((BlockProcessingCenter) blockType).isFullStructure(worldPos)) {
 			shutdown();
 			return;
 		}
 		if (uuid == null) {
 			setUUID(GlobalNetworkData.getUUID(worldPos));
-			callUpdate();
 		}
 		if (loadTick > 0) {
 			if (consumeEnergy(1)) {
@@ -1074,7 +1063,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				if (loadTick == 0) {
 					loadTick = -1;
 					on = true;
-					callUpdate();
 				}
 			} else {
 				shutdown();
@@ -1116,6 +1104,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		packId = compound.getInteger("deviceId");
 		packId = compound.getInteger("productionId");
 		packId = compound.getInteger("packId");
+		inited = compound.getBoolean("inited");
 		nodes.clear();
 		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
@@ -1136,6 +1125,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		list.forEach(e -> {
 			productions.add(new SerialNumber((NBTTagCompound) e));
 		});
+		centerSerial = new SerialNumber(compound.getCompoundTag("centerSerial"));
 		serialNumberToPos.clear();
 		list = compound.getTagList("serialNumbers", 10);
 		list.forEach(e -> {
@@ -1201,6 +1191,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		compound.setInteger("deviceId", packId);
 		compound.setInteger("productionId", packId);
 		compound.setInteger("packId", packId);
+		compound.setBoolean("inited", inited);
 		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {
 			nodeList.appendTag(e.writeToNBT(new NBTTagCompound()));
@@ -1224,6 +1215,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		if (uuid != null) {
 			compound.setUniqueId("uuid", uuid);
 		}
+		compound.setTag("centerSerial", centerSerial.writeToNBT(new NBTTagCompound()));
 		NBTTagList packList = new NBTTagList();
 		packs.forEach(e -> {
 			packList.appendTag(e.writeToNBT(new NBTTagCompound()));

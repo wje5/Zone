@@ -13,15 +13,15 @@ import net.minecraft.nbt.NBTTagList;
 
 public class LogSendPack extends Log {
 	private StorageWrapper items;
-	private int packId, time;
+	private int packId, packTime;
 	private List<SerialNumber> path;
 
-	public LogSendPack(int id, int packId, StorageWrapper items, List<SerialNumber> path, int time) {
+	public LogSendPack(int id, int packId, StorageWrapper items, List<SerialNumber> path, int packTime) {
 		super(Level.DEBUG, Type.SENDPACK, id);
 		this.packId = packId;
 		this.items = items;
 		this.path = path;
-		this.time = time;
+		this.packTime = packTime;
 	}
 
 	public LogSendPack(NBTTagCompound tag) {
@@ -40,8 +40,8 @@ public class LogSendPack extends Log {
 		return path;
 	}
 
-	public int getTime() {
-		return time;
+	public int getPackTime() {
+		return packTime;
 	}
 
 	@Override
@@ -55,7 +55,9 @@ public class LogSendPack extends Log {
 			}
 			s += path.get(i);
 		}
-		return super.toString() + " " + I18n.format("log.send_pack", "P" + packId, start, s, time, end);
+//		System.out.println(Util.transferTickToString(packTime));
+		return super.toString() + " "
+				+ I18n.format("log.send_pack", "P" + packId, start, s, Util.transferTickToString(packTime), end);
 	}
 
 	@Override
@@ -65,7 +67,7 @@ public class LogSendPack extends Log {
 		items = new StorageWrapper(tag.getCompoundTag("items"));
 		path = new ArrayList<SerialNumber>();
 		tag.getTagList("path", 10).forEach(e -> path.add(new SerialNumber((NBTTagCompound) e)));
-		time = tag.getInteger("time");
+		packTime = tag.getInteger("packTime");
 	}
 
 	@Override
@@ -77,7 +79,8 @@ public class LogSendPack extends Log {
 		path.forEach(e -> {
 			list.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
-		tag.setInteger("time", time);
+		tag.setTag("path", list);
+		tag.setInteger("packTime", packTime);
 		return tag;
 	}
 }
