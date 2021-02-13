@@ -298,6 +298,10 @@ public class Util {
 		}
 	}
 
+	public static void formatAndRenderGlowString(int x, int y) {
+
+	}
+
 	@SideOnly(Side.CLIENT)
 	public static String cutStringToWidth(String text, int width) {
 		FontRenderer fr = Util.getFontRenderer();
