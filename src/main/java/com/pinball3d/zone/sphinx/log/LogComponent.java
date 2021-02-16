@@ -19,12 +19,6 @@ public class LogComponent {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void doRender(int x, int y, int width) {
-		Util.getFontRenderer().drawString(Util.cutStringToWidth(toString(), width), x, y,
-				type == Type.STRING ? 0xFFE0E0E0 : 0xFF3AFAFD);
-	}
-
-	@SideOnly(Side.CLIENT)
 	public int getWidth() {
 		FontRenderer fr = Util.getFontRenderer();
 		return fr.getStringWidth(toString());

@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx.component;
+package com.pinball3d.zone.gui;
 
 import com.pinball3d.zone.sphinx.IHasComponents;
 
@@ -11,6 +11,7 @@ public class Component {
 	public int x, y;
 	public int width, height;
 	public IHasComponents parent;
+	public boolean renderLast;
 
 	public Component(IHasComponents parent, int x, int y, int width, int height) {
 		this.parent = parent;

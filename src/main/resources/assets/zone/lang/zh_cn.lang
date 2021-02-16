@@ -235,7 +235,8 @@ sphinx.admin=管理员
 sphinx.user=用户
 sphinx.online=在线
 sphinx.offline=离线
-sphinx.view_log=浏览日志
+sphinx.browse_log=浏览日志
+sphinx.view_log=查看日志
 
 log.send_pack=物流包<0>已于<1>处发出，经<2>，将于<3>后到达<4>。
 

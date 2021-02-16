@@ -235,6 +235,7 @@ sphinx.admin=Admininstrator
 sphinx.user=User
 sphinx.online=Online
 sphinx.offline=Offline
+sphinx.browse_log=Browse Log
 sphinx.view_log=View Log
 
 log.send_pack=Logistic pack <0> sent from <1>, via <2>, will delivery <4> in <3>.

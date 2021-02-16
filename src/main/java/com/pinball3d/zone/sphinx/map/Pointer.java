@@ -3,8 +3,8 @@ package com.pinball3d.zone.sphinx.map;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.sphinx.IHasComponents;
-import com.pinball3d.zone.sphinx.component.Component;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;

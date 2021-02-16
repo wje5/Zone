@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageTryConnectToNetwork;
 import com.pinball3d.zone.network.NetworkHandler;

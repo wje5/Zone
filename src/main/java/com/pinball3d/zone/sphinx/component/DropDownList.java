@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
 
+import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
@@ -20,6 +21,7 @@ public class DropDownList extends Component {
 		super(parent, x, y, width + 10, 15);
 		this.x = x;
 		this.y = y;
+		this.renderLast = true;
 	}
 
 	public void addBar(String title, Runnable onClick) {
@@ -73,7 +75,6 @@ public class DropDownList extends Component {
 			}
 		}
 		Util.drawTexture(ICONS, x + width - 11, y, 196, 41, 11, 15, 1.0F);
-
 	}
 
 	public class ListBar {

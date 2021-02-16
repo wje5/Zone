@@ -1,13 +1,9 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
-import java.util.Set;
-
 import com.pinball3d.zone.gui.Subscreen;
-import com.pinball3d.zone.network.ConnectHelperClient;
-import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
-import com.pinball3d.zone.sphinx.component.RadioButton;
-import com.pinball3d.zone.sphinx.component.ScrollingLog;
+import com.pinball3d.zone.sphinx.component.ScrollingViewLog;
+import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
@@ -16,47 +12,20 @@ import net.minecraft.util.ResourceLocation;
 
 public class SubscreenViewLog extends Subscreen {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
-	public RadioButton button1, button2, button3, button4;
-	public ScrollingLog list;
+	private FormattedLog log;
 
-	public SubscreenViewLog(IHasSubscreen parent) {
-		this(parent, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
+	public SubscreenViewLog(IHasSubscreen parent, FormattedLog log) {
+		this(parent, log, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
 	}
 
-	public SubscreenViewLog(IHasSubscreen parent, int x, int y) {
+	public SubscreenViewLog(IHasSubscreen parent, FormattedLog log, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		addComponent(button1 = new RadioButton(this, x + 40, y + 27, () -> {
-			button1.setState(!button1.getState());
-			System.out.println(1);
-		}));
-		addComponent(button2 = new RadioButton(this, x + 100, y + 27, () -> {
-			button2.setState(!button2.getState());
-			System.out.println(2);
-		}));
-		addComponent(button3 = new RadioButton(this, x + 160, y + 27, () -> {
-			button3.setState(!button3.getState());
-			System.out.println(3);
-		}));
-		addComponent(button4 = new RadioButton(this, x + 220, y + 27, () -> {
-			button4.setState(!button4.getState());
-			System.out.println(4);
-		}));
-		addComponent(list = new ScrollingLog(this, this.x + 16, this.y + 35, 268, 170));
+		this.log = log;
+		addComponent(new ScrollingViewLog(this, log, this.x + 21, this.y + 27, 263, 167));
 	}
 
-	@Override
-	public Set<Type> getDataTypes() {
-		Set<Type> s = super.getDataTypes();
-		s.add(Type.LOGS);
-		return s;
-	}
-
-	@Override
-	public void update() {
-		super.update();
-		if (ConnectHelperClient.getInstance().hasData()) {
-			list.setLogs(ConnectHelperClient.getInstance().getLogs());
-		}
+	public FormattedLog getLog() {
+		return log;
 	}
 
 	@Override
@@ -73,9 +42,12 @@ public class SubscreenViewLog extends Subscreen {
 		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
 		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 		Util.renderGlowString(I18n.format("sphinx.view_log"), x + 15, y + 8);
-		Util.renderGlowString(I18n.format("sphinx.important"), x + 50, y + 26);
-		Util.renderGlowString(I18n.format("sphinx.info"), x + 110, y + 26);
-		Util.renderGlowString(I18n.format("sphinx.debug"), x + 170, y + 26);
-		Util.renderGlowString(I18n.format("sphinx.chat"), x + 230, y + 26);
+	}
+
+	@Override
+	public boolean onQuit() {
+		parent.removeScreen(this);
+		parent.putScreen(new SubscreenBrowseLog(parent));
+		return false;
 	}
 }

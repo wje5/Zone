@@ -255,6 +255,7 @@ public class Util {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.colorMask(true, true, true, false);
 		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
 	}
 
 	@SideOnly(Side.CLIENT)

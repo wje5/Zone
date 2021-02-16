@@ -7,8 +7,8 @@ import java.util.Set;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
-import com.pinball3d.zone.sphinx.component.Component;
 import com.pinball3d.zone.sphinx.container.GuiContainerNetworkBase;
+import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -49,26 +49,37 @@ public class Subscreen implements IHasComponents {
 
 	public void doRender(int mouseX, int mouseY) {
 		update();
+		Util.resetOpenGl();
 		GlStateManager.pushMatrix();
-		GlStateManager.disableLighting();
-		GlStateManager.disableDepth();
-		GlStateManager.disableBlend();
 		GlStateManager.translate(0, 0, 300F);
 		if (renderCover) {
 			Minecraft mc = Minecraft.getMinecraft();
 			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0x8F000000);
 		}
+		Util.resetOpenGl();
+		GlStateManager.pushMatrix();
 		doRenderBackground(mouseX, mouseY);
-		GlStateManager.disableLighting();
-		GlStateManager.disableDepth();
-		GlStateManager.disableBlend();
+		GlStateManager.popMatrix();
 		components.forEach(e -> {
-			e.doRender(mouseX, mouseY);
+			if (!e.renderLast) {
+				Util.resetOpenGl();
+				GlStateManager.pushMatrix();
+				e.doRender(mouseX, mouseY);
+				GlStateManager.popMatrix();
+			}
 		});
+		Util.resetOpenGl();
+		GlStateManager.pushMatrix();
 		doRenderForeground(mouseX, mouseY);
-		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
-		GlStateManager.enableBlend();
+		GlStateManager.popMatrix();
+		components.forEach(e -> {
+			if (e.renderLast) {
+				Util.resetOpenGl();
+				GlStateManager.pushMatrix();
+				e.doRender(mouseX, mouseY);
+				GlStateManager.popMatrix();
+			}
+		});
 		GlStateManager.popMatrix();
 	}
 

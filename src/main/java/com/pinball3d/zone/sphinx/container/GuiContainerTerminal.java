@@ -12,7 +12,7 @@ import com.pinball3d.zone.sphinx.subscreen.SubscreenNetworkConfig;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenShutdownSphinx;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenSphinxConfig;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenSynodLibrary;
-import com.pinball3d.zone.sphinx.subscreen.SubscreenViewLog;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenBrowseLog;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenViewStorage;
 
 public class GuiContainerTerminal extends GuiContainerSphinxAdvanced {
@@ -47,7 +47,7 @@ public class GuiContainerTerminal extends GuiContainerSphinxAdvanced {
 			subscreens.push(new SubscreenManageUser(GuiContainerTerminal.this));
 		}).setEnable(() -> ConnectHelperClient.getInstance().isConnected()));
 		addComponent(new TexturedButton(this, width - 56, 2, TEXTURE, 217, 100, 30, 25, 0.25F, () -> {
-			subscreens.push(new SubscreenViewLog(GuiContainerTerminal.this));
+			subscreens.push(new SubscreenBrowseLog(GuiContainerTerminal.this));
 		}).setEnable(() -> ConnectHelperClient.getInstance().isConnected()));
 		addComponent(new TexturedButton(this, width - 66, 2, TEXTURE, 0, 42, 24, 26, 0.25F, () -> {
 			subscreens.push(new SubscreenShutdownSphinx(GuiContainerTerminal.this));

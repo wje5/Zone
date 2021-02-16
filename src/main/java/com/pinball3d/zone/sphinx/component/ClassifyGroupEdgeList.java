@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageNewClass;
 import com.pinball3d.zone.network.NetworkHandler;

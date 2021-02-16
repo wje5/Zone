@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
-import com.pinball3d.zone.sphinx.component.Component;
+import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.sphinx.component.IUnitButton;
 import com.pinball3d.zone.sphinx.map.MapHandler;
 import com.pinball3d.zone.sphinx.map.Pointer;

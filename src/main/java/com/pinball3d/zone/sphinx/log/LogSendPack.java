@@ -72,7 +72,7 @@ public class LogSendPack extends Log {
 	@Override
 	public FormattedLog format() {
 		return new FormattedLog(getTime(), getLevel(), "log.send_pack", new LogComponentPack(packId, items), start,
-				path, packTime, end);
+				path, Util.transferTickToString(packTime), end);
 	}
 
 	@Override

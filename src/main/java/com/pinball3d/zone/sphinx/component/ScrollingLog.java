@@ -5,9 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 
+import com.pinball3d.zone.gui.Component;
+import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.sphinx.log.Log;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenViewLog;
+import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
 
@@ -76,7 +80,8 @@ public class ScrollingLog extends Component {
 	}
 
 	public void onClickBar(Log log) {
-		System.out.println(log);
+		Util.getRoot().removeScreen((Subscreen) parent);
+		Util.getRoot().putScreen(new SubscreenViewLog(Util.getRoot(), log.format()));
 	}
 
 	public class LogBar {

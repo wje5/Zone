@@ -1,5 +1,6 @@
 package com.pinball3d.zone.sphinx.component;
 
+import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.pdf.PDF;
 import com.pinball3d.zone.pdf.PDFImage;
 import com.pinball3d.zone.sphinx.IHasComponents;

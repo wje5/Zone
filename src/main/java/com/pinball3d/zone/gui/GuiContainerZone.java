@@ -11,7 +11,6 @@ import org.lwjgl.input.Mouse;
 
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
-import com.pinball3d.zone.sphinx.component.Component;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.inventory.GuiContainer;

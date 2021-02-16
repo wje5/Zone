@@ -8,6 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.pinball3d.zone.sphinx.log.Log.Level;
+import com.pinball3d.zone.sphinx.log.LogComponent.Type;
+import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.resources.I18n;
 
@@ -34,9 +36,12 @@ public class FormattedLog {
 				} else {
 					Object o = parms[index];
 					if (o instanceof List) {
-						((List<?>) o).forEach(e -> {
-							components.add(LogComponent.of(e));
-						});
+						for (int i = 0; i < ((List<?>) o).size(); i++) {
+							components.add(LogComponent.of(((List<?>) o).get(i)));
+							if (i < ((List<?>) o).size() - 1) {
+								components.add(LogComponent.of(","));
+							}
+						}
 					} else {
 						components.add(LogComponent.of(o));
 					}
@@ -45,9 +50,14 @@ public class FormattedLog {
 		}
 	}
 
+	public List<LogComponent> getComponents() {
+		return components;
+	}
+
 	public void doRender(int x, int y, int width) {
 		for (LogComponent c : components) {
-			c.doRender(x, y, width);
+			Util.getFontRenderer().drawString(Util.cutStringToWidth(c.toString(), width), x, y,
+					c.getType() == Type.STRING ? 0xFFE0E0E0 : 0xFF3AFAFD);
 			int w = c.getWidth();
 			x += w;
 			width -= w;
