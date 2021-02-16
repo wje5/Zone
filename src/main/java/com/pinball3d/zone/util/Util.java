@@ -298,14 +298,14 @@ public class Util {
 		}
 	}
 
-	public static void formatAndRenderGlowString(int x, int y) {
-
-	}
-
 	@SideOnly(Side.CLIENT)
 	public static String cutStringToWidth(String text, int width) {
 		FontRenderer fr = Util.getFontRenderer();
+		fr.drawString(" ", 0, 0, 0x00000000);
 		while (fr.getStringWidth(text) > width && !text.isEmpty()) {
+			if (text.length() <= 1) {
+				return "";
+			}
 			text = text.substring(0, text.length() - 1);
 		}
 		return text;

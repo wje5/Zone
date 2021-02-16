@@ -15,11 +15,15 @@ public class LogSendPack extends Log {
 	private StorageWrapper items;
 	private int packId, packTime;
 	private List<SerialNumber> path;
+	private SerialNumber start, end;
 
-	public LogSendPack(int id, int packId, StorageWrapper items, List<SerialNumber> path, int packTime) {
+	public LogSendPack(int id, int packId, StorageWrapper items, SerialNumber start, SerialNumber end,
+			List<SerialNumber> path, int packTime) {
 		super(Level.DEBUG, Type.SENDPACK, id);
 		this.packId = packId;
 		this.items = items;
+		this.start = start;
+		this.end = end;
 		this.path = path;
 		this.packTime = packTime;
 	}
@@ -40,6 +44,14 @@ public class LogSendPack extends Log {
 		return path;
 	}
 
+	public SerialNumber getStart() {
+		return start;
+	}
+
+	public SerialNumber getEnd() {
+		return end;
+	}
+
 	public int getPackTime() {
 		return packTime;
 	}
@@ -47,17 +59,20 @@ public class LogSendPack extends Log {
 	@Override
 	public String toString() {
 		String s = "";
-		String start = path.isEmpty() ? Util.DATA_CORRUPTION : path.get(0).toString();
-		String end = path.isEmpty() ? Util.DATA_CORRUPTION : path.get(path.size() - 1).toString();
-		for (int i = 1; i < path.size() - 1; i++) {
+		for (int i = 0; i < path.size(); i++) {
 			if (!s.isEmpty()) {
 				s += ",";
 			}
 			s += path.get(i);
 		}
-//		System.out.println(Util.transferTickToString(packTime));
 		return super.toString() + " "
 				+ I18n.format("log.send_pack", "P" + packId, start, s, Util.transferTickToString(packTime), end);
+	}
+
+	@Override
+	public FormattedLog format() {
+		return new FormattedLog(getTime(), getLevel(), "log.send_pack", new LogComponentPack(packId, items), start,
+				path, packTime, end);
 	}
 
 	@Override
@@ -65,6 +80,8 @@ public class LogSendPack extends Log {
 		super.readFromNBT(tag);
 		packId = tag.getInteger("packId");
 		items = new StorageWrapper(tag.getCompoundTag("items"));
+		start = new SerialNumber(tag.getCompoundTag("start"));
+		end = new SerialNumber(tag.getCompoundTag("end"));
 		path = new ArrayList<SerialNumber>();
 		tag.getTagList("path", 10).forEach(e -> path.add(new SerialNumber((NBTTagCompound) e)));
 		packTime = tag.getInteger("packTime");
@@ -75,6 +92,8 @@ public class LogSendPack extends Log {
 		super.writeToNBT(tag);
 		tag.setInteger("packId", packId);
 		tag.setTag("items", items.writeToNBT(new NBTTagCompound()));
+		tag.setTag("start", start.writeToNBT(new NBTTagCompound()));
+		tag.setTag("end", end.writeToNBT(new NBTTagCompound()));
 		NBTTagList list = new NBTTagList();
 		path.forEach(e -> {
 			list.appendTag(e.writeToNBT(new NBTTagCompound()));

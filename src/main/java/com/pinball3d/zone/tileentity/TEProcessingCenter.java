@@ -344,14 +344,15 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 							if (!isSimulate) {
 								LogisticPack pack = new LogisticPack(packId++, i.flip().routes, w, new WorldPos(te));
 								packs.add(pack);
+								SerialNumber start = getSerialNumberFromPos(pack.routes.get(0));
+								SerialNumber end = getSerialNumberFromPos(pack.routes.get(pack.routes.size() - 1));
 								List<SerialNumber> p = new ArrayList<SerialNumber>();
-								pack.routes.forEach(j -> {
-									p.add(getSerialNumberFromPos(j));
-									if (getSerialNumberFromPos(j) == null) {
-										System.out.println(j);
-									}
-								});
-								fireLog(new LogSendPack(logId++, pack.getId(), w, p, time));
+								for (int index = 1; index < pack.routes.size() - 1; index++) {
+									SerialNumber j = getSerialNumberFromPos(pack.routes.get(index));
+									p.add(j);
+								}
+								fireLog(new LogSendPack(logId++, pack.getId(), w, start, end, p, time));
+								System.out.println(p);
 							}
 						}
 					}

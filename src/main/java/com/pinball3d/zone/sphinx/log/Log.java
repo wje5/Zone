@@ -70,6 +70,10 @@ public class Log {
 		return getDateString() + " " + level;
 	}
 
+	public FormattedLog format() {
+		return new FormattedLog(time, level, "");
+	}
+
 	public static enum Level {
 		IMPORTANT("IMPORTANT"), INFO("INFO"), DEBUG("DEBUG"), CHAT("CHAT");
 

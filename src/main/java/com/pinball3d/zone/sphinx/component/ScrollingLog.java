@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Queue;
 
 import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.sphinx.log.Log;
-import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
 
@@ -81,6 +81,7 @@ public class ScrollingLog extends Component {
 
 	public class LogBar {
 		protected Log log;
+		protected FormattedLog formattedLog;
 		protected int width;
 		protected int height;
 
@@ -88,6 +89,7 @@ public class ScrollingLog extends Component {
 			this.width = width;
 			this.height = height;
 			this.log = log;
+			this.formattedLog = log.format();
 		}
 
 		public void doRender(int x, int y, int upCut, int downCut) {
@@ -112,7 +114,7 @@ public class ScrollingLog extends Component {
 				Gui.drawRect(x, a, x + width, b, color);
 			}
 			if (upCut < 10 && downCut < 10) {
-				Util.renderGlowString(Util.cutStringToWidth(log.toString(), width - 5), x + 5, y + 1);
+				formattedLog.doRender(x + 5, y + 1, width - 5);
 			}
 		}
 	}
