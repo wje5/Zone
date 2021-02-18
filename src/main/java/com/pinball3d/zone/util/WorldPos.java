@@ -153,7 +153,7 @@ public class WorldPos {
 
 	@Override
 	public String toString() {
-		return "dim:" + dim + " pos:" + pos;
+		return dim + "," + pos.getX() + "," + pos.getY() + "," + pos.getZ();
 	}
 
 	public int compare(WorldPos p) {

@@ -354,8 +354,11 @@ public class ConnectionHelper {
 				if (te != null) {
 					if (connect.classifyRefreshColddown <= 0) {
 						NBTTagList list = new NBTTagList();
-						te.getClassifyGroups().forEach(e -> {
-							list.appendTag(e.writeToNBT(new NBTTagCompound()));
+						te.getClassifyGroups().forEach((k, v) -> {
+							NBTTagCompound t = new NBTTagCompound();
+							t.setInteger("id", k);
+							t.setTag("group", v.writeToNBT(new NBTTagCompound()));
+							list.appendTag(t);
 						});
 						tag.setTag(name(), list);
 						connect.classifyRefreshColddown += ConfigLoader.classifyUpdateRate;

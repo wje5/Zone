@@ -4,6 +4,7 @@ import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.MessageRequestNeedNetworkInfo;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
+import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.component.TextButton;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 import com.pinball3d.zone.util.Util;
@@ -19,6 +20,7 @@ public class SubscreenNeedNetworkInfo extends Subscreen {
 	private WorldPos pos;
 	private String name;
 	private WorkingState state;
+	private SerialNumber serial;
 
 	public SubscreenNeedNetworkInfo(IHasSubscreen parent, WorldPos pos) {
 		this(parent, pos, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
@@ -37,6 +39,7 @@ public class SubscreenNeedNetworkInfo extends Subscreen {
 		if (pos.equals(this.pos)) {
 			name = tag.getString("name");
 			state = WorkingState.values()[tag.getInteger("state")];
+			serial = new SerialNumber((NBTTagCompound) tag.getTag("serial"));
 		}
 	}
 
@@ -56,11 +59,12 @@ public class SubscreenNeedNetworkInfo extends Subscreen {
 		if (name != null) {
 			Util.renderGlowString(I18n.format("sphinx.unit_name") + ":", x + 27, y + 35);
 			Util.renderGlowString(name, x + 180, y + 35);
-			Util.renderGlowString(I18n.format("sphinx.working_state") + ":", x + 27, y + 55);
-			Util.renderGlowString(state.toString(), x + 180, y + 55);
-			Util.renderGlowString(I18n.format("sphinx.location") + ":", x + 27, y + 65);
-			String text = pos.getPos().getX() + "," + pos.getPos().getY() + "," + pos.getPos().getZ();
-			Util.renderGlowString(text, x + 180, y + 65);
+			Util.renderGlowString(I18n.format("sphinx.serial_number") + ":", x + 27, y + 45);
+			Util.renderGlowString(serial.toString(), x + 180, y + 45);
+			Util.renderGlowString(I18n.format("sphinx.working_state") + ":", x + 27, y + 65);
+			Util.renderGlowString(state.toString(), x + 180, y + 65);
+			Util.renderGlowString(I18n.format("sphinx.location") + ":", x + 27, y + 75);
+			Util.renderGlowString(pos.toString(), x + 180, y + 75);
 		}
 		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 	}

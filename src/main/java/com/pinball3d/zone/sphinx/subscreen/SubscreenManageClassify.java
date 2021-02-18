@@ -1,7 +1,7 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
@@ -14,6 +14,7 @@ import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.ClassifyGroupEdgeList;
+import com.pinball3d.zone.sphinx.component.ClassifyGroupEdgeList.ListBar;
 import com.pinball3d.zone.sphinx.component.DropDownList;
 import com.pinball3d.zone.sphinx.component.TextInputBox;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
@@ -72,10 +73,14 @@ public class SubscreenManageClassify extends Subscreen {
 		addComponent(new TexturedButton(this, this.x + 122, this.y + 49, ICONS, 167, 41, 15, 13, 1.0F, () -> {
 			System.out.println("button3");
 		}));
+		addComponent(new TexturedButton(this, this.x + 122, this.y + 71, ICONS, 0, 172, 16, 15, 0.5F, () -> {
+			parent.putScreen(new SubscreenTextInputBox(parent, I18n.format("sphinx.change_name"),
+					I18n.format("sphinx.set_classify_name"), s -> System.out.println(s), 6, 8));
+		}).setEnable(() -> getGroup() != null));
 		addComponent(new TexturedButton(this, this.x + 142, this.y + 48, ICONS, 207, 41, 15, 15, 1.0F, () -> {
 			if (ConnectHelperClient.getInstance().hasData()) {
 				NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(mc.player,
-						ConnectHelperClient.getInstance().getNetworkPos(), local));
+						ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, local));
 				dirty = false;
 			}
 		}));
@@ -85,13 +90,15 @@ public class SubscreenManageClassify extends Subscreen {
 				parent.putScreen(new SubscreenYNCBox(parent, I18n.format("sphinx.save"),
 						I18n.format("sphinx.save_change", local.getName()), () -> {
 							NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(mc.player,
-									ConnectHelperClient.getInstance().getNetworkPos(), local));
+									ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, local));
 							list.index = index;
-							local = ConnectHelperClient.getInstance().getClassify().get(index);
+							ListBar bar = list.get();
+							local = ConnectHelperClient.getInstance().getClassify().get(bar.id);
 							dirty = false;
 						}, () -> {
 							list.index = index;
-							local = ConnectHelperClient.getInstance().getClassify().get(index);
+							ListBar bar = list.get();
+							local = ConnectHelperClient.getInstance().getClassify().get(bar.id);
 							dirty = false;
 						}));
 				return false;
@@ -276,9 +283,9 @@ public class SubscreenManageClassify extends Subscreen {
 	public void updateList() {
 		list.clear();
 		if (ConnectHelperClient.getInstance().hasData()) {
-			List<ClassifyGroup> l = ConnectHelperClient.getInstance().getClassify();
-			l.forEach(e -> {
-				list.addBar(e.getName(), () -> {
+			Map<Integer, ClassifyGroup> m = ConnectHelperClient.getInstance().getClassify();
+			m.forEach((k, v) -> {
+				list.addBar(v.getName(), k, () -> {
 
 				});
 			});
@@ -312,7 +319,12 @@ public class SubscreenManageClassify extends Subscreen {
 			}
 		}
 		FontRenderer fr = Util.getFontRenderer();
+		ClassifyGroup group = getGroup();
 		Util.renderGlowString(I18n.format("sphinx.manage_classify") + (dirty ? "*" : ""), x + 75, y + 8);
+		if (group != null) {
+			Util.renderGlowString(group.getName(), x + 82, y + 70);
+		}
+
 		Util.renderGlowBorder(x + 75, y + 23, 270, 172);
 		String text = page + "/" + maxPage;
 		Util.renderGlowString(text, x + 205 - fr.getStringWidth(text) / 2, y + 181);
@@ -327,7 +339,7 @@ public class SubscreenManageClassify extends Subscreen {
 		if (!ConnectHelperClient.getInstance().hasData()) {
 			return;
 		}
-		ClassifyGroup group = getGroup();
+		int c = 0;
 		for (int j = 0; j < 7; j++) {
 			for (int i = 0; i < 9; i++) {
 				int amount = 0;
@@ -342,10 +354,12 @@ public class SubscreenManageClassify extends Subscreen {
 						GlStateManager.translate(0, 0, 400F);
 						Util.drawTexture(ICONS, x + 174 + i * 19, y + 56 + j * 19, 92, 56, 7, 7, 1.0F);
 						GlStateManager.popMatrix();
+						c++;
 					}
 				}
 			}
 		}
+		Util.renderGlowString(I18n.format("sphinx.object_amount", c), x + 82, y + 85);
 		int slot = getHoveredSlot(mouseX, mouseY);
 		if (slot != -1) {
 			renderCover(slot);
@@ -369,7 +383,7 @@ public class SubscreenManageClassify extends Subscreen {
 			parent.putScreen(new SubscreenYNCBox(parent, I18n.format("sphinx.save"),
 					I18n.format("sphinx.save_change", local.getName()), () -> {
 						NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(mc.player,
-								ConnectHelperClient.getInstance().getNetworkPos(), local));
+								ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, local));
 						parent.removeScreen(SubscreenManageClassify.this);
 					}, () -> parent.removeScreen(SubscreenManageClassify.this)));
 			return false;

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import com.google.common.collect.Sets;
@@ -46,7 +47,7 @@ public class ConnectHelperClient {
 	private int loadTick, usedStorage, maxStorage;
 	private boolean on, inited;
 	private WorkingState workingState;
-	private List<ClassifyGroup> classify = new ArrayList<ClassifyGroup>();
+	private Map<Integer, ClassifyGroup> classify = new TreeMap<Integer, ClassifyGroup>();
 	private List<UserData> users = new ArrayList<UserData>();
 	private Queue<Log> logs = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);
 	private SerialNumber needNetworkSerial;
@@ -128,8 +129,8 @@ public class ConnectHelperClient {
 						classify.clear();
 						NBTTagList list = data.getTagList(e.name(), 10);
 						list.forEach(i -> {
-							ClassifyGroup c = new ClassifyGroup((NBTTagCompound) i);
-							classify.add(c);
+							ClassifyGroup c = new ClassifyGroup((NBTTagCompound) ((NBTTagCompound) i).getTag("group"));
+							classify.put(((NBTTagCompound) i).getInteger("id"), c);
 						});
 					}
 					break;
@@ -312,7 +313,7 @@ public class ConnectHelperClient {
 		return maxStorage;
 	}
 
-	public List<ClassifyGroup> getClassify() {
+	public Map<Integer, ClassifyGroup> getClassify() {
 		return classify;
 	}
 

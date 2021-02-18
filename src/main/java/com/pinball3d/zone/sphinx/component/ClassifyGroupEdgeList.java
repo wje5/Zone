@@ -26,8 +26,8 @@ public class ClassifyGroupEdgeList extends Component {
 		super(parent, x, y, 56, height);
 	}
 
-	public void addBar(String title, Runnable onClick) {
-		list.add(new ListBar(title, onClick));
+	public void addBar(String title, int id, Runnable onClick) {
+		list.add(new ListBar(title, id, onClick));
 	}
 
 	public void addBar(ListBar bar) {
@@ -156,11 +156,13 @@ public class ClassifyGroupEdgeList extends Component {
 
 	public static class ListBar {
 		public String title;
+		public int id;
 		private Runnable event;
 		private Object data;
 
-		public ListBar(String name, Runnable onClick) {
+		public ListBar(String name, int id, Runnable onClick) {
 			title = name;
+			this.id = id;
 			event = onClick;
 		}
 

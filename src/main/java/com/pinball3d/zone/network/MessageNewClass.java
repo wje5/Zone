@@ -1,7 +1,7 @@
 package com.pinball3d.zone.network;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
@@ -30,10 +30,10 @@ public class MessageNewClass extends MessageSphinx {
 	@Override
 	public void run(MessageContext ctx) {
 		TEProcessingCenter te = getProcessingCenter();
-		List<ClassifyGroup> list = te.getClassifyGroups();
+		Collection<ClassifyGroup> c = te.getClassifyGroups().values();
 		tag: for (int i = 0;; i++) {
 			String s = "Unnamed" + (i > 0 ? i : "");
-			Iterator<ClassifyGroup> it = list.iterator();
+			Iterator<ClassifyGroup> it = c.iterator();
 			while (it.hasNext()) {
 				if (it.next().getName().equals(s)) {
 					continue tag;

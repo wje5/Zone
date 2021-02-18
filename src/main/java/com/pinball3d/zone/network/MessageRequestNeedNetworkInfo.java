@@ -1,6 +1,8 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.tileentity.INeedNetwork;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
@@ -52,6 +54,9 @@ public class MessageRequestNeedNetworkInfo implements IMessage {
 					NBTTagCompound tag = new NBTTagCompound();
 					tag.setString("name", te.getName());
 					tag.setInteger("state", te.getWorkingState().ordinal());
+					TEProcessingCenter pc = (TEProcessingCenter) GlobalNetworkData.getPos(te.getNetwork())
+							.getTileEntity();
+					tag.setTag("serial", pc.getSerialNumberFromPos(message.pos).writeToNBT(new NBTTagCompound()));
 					NetworkHandler.instance.sendTo(new MessageSendNeedNetworkInfoToClient(message.pos, tag), player);
 				}
 			});

@@ -390,16 +390,26 @@ public class Util {
 		String lowerCase = "abcdefghijklmnopqrstuvwxyz";
 		String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		String number = "1234567890";
+		boolean flag2 = false;
 		if (lowerCase.contains(String.valueOf(input))) {
-			return flag % 2 == 1;
+			flag2 = true;
+			if (flag % 2 != 1) {
+				return false;
+			}
 		}
 		if (upperCase.contains(String.valueOf(input))) {
-			return flag % 4 >= 2;
+			flag2 = true;
+			if (flag % 4 < 2) {
+				return false;
+			}
 		}
 		if (number.contains(String.valueOf(input))) {
-			return flag >= 4;
+			flag2 = true;
+			if (flag < 4) {
+				return false;
+			}
 		}
-		return false;
+		return flag2;
 	}
 
 	public static String transferString(int count) {

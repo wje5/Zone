@@ -216,6 +216,7 @@ sphinx.disconnected=断线
 sphinx.break=故障
 sphinx.unit_info=单位信息
 sphinx.unit_name=单位名称
+sphinx.serial_number=编号
 sphinx.waiting_for_server=等待服务器中
 sphinx.storage_space=存储空间
 sphinx.synod_library=悉诺议会图书馆
@@ -237,6 +238,9 @@ sphinx.online=在线
 sphinx.offline=离线
 sphinx.browse_log=浏览日志
 sphinx.view_log=查看日志
+sphinx.object_amount=%1$s个对象
+sphinx.change_name=修改名称
+sphinx.set_classify_name=设置分类名称
 
 log.send_pack=物流包<0>已于<1>处发出，经<2>，将于<3>后到达<4>。
 

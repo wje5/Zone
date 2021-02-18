@@ -1,7 +1,5 @@
 package com.pinball3d.zone.network;
 
-import java.util.Iterator;
-
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
@@ -21,8 +19,9 @@ public class MessageManageClassify extends MessageSphinx {
 		super(player, pos, tag);
 	}
 
-	public static MessageManageClassify newMessage(EntityPlayer player, WorldPos pos, ClassifyGroup group) {
+	public static MessageManageClassify newMessage(EntityPlayer player, WorldPos pos, int id, ClassifyGroup group) {
 		NBTTagCompound tag = new NBTTagCompound();
+		tag.setInteger("id", id);
 		tag.setTag("group", group.writeToNBT(new NBTTagCompound()));
 		return new MessageManageClassify(player, pos, tag);
 	}
@@ -31,16 +30,7 @@ public class MessageManageClassify extends MessageSphinx {
 	public void run(MessageContext ctx) {
 		TEProcessingCenter te = getProcessingCenter();
 		ClassifyGroup group = new ClassifyGroup(tag.getCompoundTag("group"));
-		Iterator<ClassifyGroup> it = te.getClassifyGroups().iterator();
-		while (it.hasNext()) {
-			ClassifyGroup e = it.next();
-			if (e.getName().equals(group.getName())) {
-				e.clear();
-				e.addAll(group.getItems());
-				return;
-			}
-		}
-		te.getClassifyGroups().add(group);
+		te.getClassifyGroups().put(tag.getInteger("id"), group);
 	}
 
 	public static class Handler implements IMessageHandler<MessageManageClassify, IMessage> {

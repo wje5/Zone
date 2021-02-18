@@ -216,6 +216,7 @@ sphinx.disconnected=Disconnected
 sphinx.break=Break
 sphinx.unit_info=Unit Infomation
 sphinx.unit_name=Unit name
+sphinx.serial_number=Serial Number
 sphinx.waiting_for_server=Waiting For Server
 sphinx.storage_space=Storage Space
 sphinx.synod_library=Synod Library
@@ -237,6 +238,9 @@ sphinx.online=Online
 sphinx.offline=Offline
 sphinx.browse_log=Browse Log
 sphinx.view_log=View Log
+sphinx.object_amount=%1$s Objects
+sphinx.change_name=Change Name
+sphinx.set_classify_name=Set Classify Name
 
 log.send_pack=Logistic pack <0> sent from <1>, via <2>, will delivery <4> in <3>.
 

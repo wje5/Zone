@@ -88,13 +88,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			SerialNumber.serialNumberComparator);
 	private UUID uuid;
 	private double[][] map;
-	private List<ClassifyGroup> classifyGroups = new ArrayList<ClassifyGroup>();
+	private Map<Integer, ClassifyGroup> classifyGroups = new TreeMap<Integer, ClassifyGroup>();
 	private SerialNumber centerSerial;
 	private boolean mapDirty;
 	private Map<WorldPos, List<Path>> dijkstraCache = new HashMap<WorldPos, List<Path>>();
 	private Map<UUID, UserData> users = new HashMap<UUID, UserData>();
 	private Queue<Log> logCache = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);
-	private int logId, nodeId, storageId, deviceId, productionId, packId;
+	private int logId, nodeId, storageId, deviceId, productionId, packId, classifyGroupId;
 
 	public TEProcessingCenter() {
 
@@ -914,10 +914,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public void addClassifyGroup(ClassifyGroup group) {
-		classifyGroups.add(group);
+		classifyGroups.put(classifyGroupId++, group);
 	}
 
-	public List<ClassifyGroup> getClassifyGroups() {
+	public Map<Integer, ClassifyGroup> getClassifyGroups() {
 		return classifyGroups;
 	}
 
@@ -1100,11 +1100,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		energyTick = compound.getInteger("energyTick");
 		on = compound.getBoolean("on");
 		logId = compound.getInteger("logId");
-		packId = compound.getInteger("nodeId");
-		packId = compound.getInteger("storageId");
-		packId = compound.getInteger("deviceId");
-		packId = compound.getInteger("productionId");
+		nodeId = compound.getInteger("nodeId");
+		storageId = compound.getInteger("storageId");
+		deviceId = compound.getInteger("deviceId");
+		productionId = compound.getInteger("productionId");
 		packId = compound.getInteger("packId");
+		classifyGroupId = compound.getInteger("classifyGroupId");
 		inited = compound.getBoolean("inited");
 		nodes.clear();
 		NBTTagList list = compound.getTagList("nodes", 10);
@@ -1145,7 +1146,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		list = compound.getTagList("classifyGroups", 10);
 		list.forEach(e -> {
 			try {
-				classifyGroups.add(new ClassifyGroup((NBTTagCompound) e));
+				classifyGroups.put(((NBTTagCompound) e).getInteger("id"),
+						new ClassifyGroup(((NBTTagCompound) e).getCompoundTag("group")));
 			} catch (Exception ex) {
 				LOGGER.error("Classify Group " + Util.DATA_CORRUPTION
 						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
@@ -1187,11 +1189,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		compound.setInteger("energyTick", energyTick);
 		compound.setBoolean("on", on);
 		compound.setInteger("logId", logId);
-		compound.setInteger("nodeId", packId);
-		compound.setInteger("storageId", packId);
-		compound.setInteger("deviceId", packId);
-		compound.setInteger("productionId", packId);
+		compound.setInteger("nodeId", nodeId);
+		compound.setInteger("storageId", storageId);
+		compound.setInteger("deviceId", deviceId);
+		compound.setInteger("productionId", productionId);
 		compound.setInteger("packId", packId);
+		compound.setInteger("classifyGroupId", classifyGroupId);
 		compound.setBoolean("inited", inited);
 		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {
@@ -1216,7 +1219,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		if (uuid != null) {
 			compound.setUniqueId("uuid", uuid);
 		}
-		compound.setTag("centerSerial", centerSerial.writeToNBT(new NBTTagCompound()));
+		if (centerSerial != null) {
+			compound.setTag("centerSerial", centerSerial.writeToNBT(new NBTTagCompound()));
+		}
 		NBTTagList packList = new NBTTagList();
 		packs.forEach(e -> {
 			packList.appendTag(e.writeToNBT(new NBTTagCompound()));
@@ -1231,13 +1236,16 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		});
 		compound.setTag("serialNumbers", serialNumberList);
 		NBTTagList classifyList = new NBTTagList();
-		classifyGroups.forEach(e -> {
+		classifyGroups.forEach((k, v) -> {
 			try {
-				classifyList.appendTag(e.writeToNBT(new NBTTagCompound()));
+				NBTTagCompound t = new NBTTagCompound();
+				t.setInteger("id", k);
+				t.setTag("group", v.writeToNBT(new NBTTagCompound()));
+				classifyList.appendTag(t);
 			} catch (Exception ex) {
 				String name = Util.DATA_CORRUPTION;
 				try {
-					name = e.getName();
+					name = v.getName();
 				} catch (Exception ex2) {
 
 				}

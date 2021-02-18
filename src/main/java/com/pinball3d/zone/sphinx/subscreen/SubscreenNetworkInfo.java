@@ -67,8 +67,7 @@ public class SubscreenNetworkInfo extends Subscreen {
 			}
 			Util.renderGlowString(text, x + 180, y + 65);
 			Util.renderGlowString(I18n.format("sphinx.location") + ":", x + 27, y + 85);
-			text = pos.getPos().getX() + "," + pos.getPos().getY() + "," + pos.getPos().getZ();
-			Util.renderGlowString(text, x + 180, y + 85);
+			Util.renderGlowString(pos.toString(), x + 180, y + 85);
 		}
 		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 	}

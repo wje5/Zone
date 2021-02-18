@@ -58,8 +58,17 @@ public class TextInputBox extends Component {
 	@Override
 	public boolean onKeyTyped(char typedChar, int keyCode) {
 		if (isFocus) {
-			if (GuiScreen.isKeyComboCtrlV(keyCode)) {
-				text += GuiScreen.getClipboardString();
+			if (GuiScreen.isKeyComboCtrlV(keyCode) && text.length() < maxLength) {
+				String s = GuiScreen.getClipboardString();
+				for (int i = 0; i < s.length(); i++) {
+					if (!Util.isValidChar(s.charAt(i), flag)) {
+						return false;
+					}
+				}
+				text += s;
+				if (text.length() > maxLength) {
+					text = text.substring(0, maxLength);
+				}
 				if (onInput != null) {
 					onInput.run();
 				}
