@@ -121,7 +121,7 @@ public class ClassifyGroupEdgeList extends Component {
 					change(index);
 				} else {
 					NetworkHandler.instance.sendToServer(
-							MessageNewClass.newMessage(mc.player, ConnectHelperClient.getInstance().getNetworkPos()));
+							MessageNewClass.newMessage(ConnectHelperClient.getInstance().getNetworkPos()));
 				}
 				return true;
 			}

@@ -23,9 +23,6 @@ public class NetworkHandler {
 		registerMessage(MessagePlaySoundAtPos.Handler.class, MessagePlaySoundAtPos.class, Side.CLIENT);
 		registerMessage(MessageTryConnectToNetwork.Handler.class, MessageTryConnectToNetwork.class, Side.SERVER);
 		registerMessage(MessageConnectNetworkCallback.Handler.class, MessageConnectNetworkCallback.class, Side.CLIENT);
-		registerMessage(MessageRequestNetworkInfo.Handler.class, MessageRequestNetworkInfo.class, Side.SERVER);
-		registerMessage(MessageSendNetworkInfoToClient.Handler.class, MessageSendNetworkInfoToClient.class,
-				Side.CLIENT);
 		registerMessage(MessageRequestNeedNetworkInfo.Handler.class, MessageRequestNeedNetworkInfo.class, Side.SERVER);
 		registerMessage(MessageSendNeedNetworkInfoToClient.Handler.class, MessageSendNeedNetworkInfoToClient.class,
 				Side.CLIENT);

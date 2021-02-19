@@ -1,65 +1,54 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.tileentity.INeedNetwork;
-import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageRequestNeedNetworkInfo implements IMessage {
-	String name;
-	WorldPos pos;
+public class MessageRequestNeedNetworkInfo extends MessageSphinx {
 
 	public MessageRequestNeedNetworkInfo() {
 
 	}
 
-	public MessageRequestNeedNetworkInfo(EntityPlayer player, WorldPos pos) {
-		name = player.getName();
-		this.pos = pos;
+	private MessageRequestNeedNetworkInfo(WorldPos pos, NBTTagCompound tag) {
+		super(pos, tag);
+	}
+
+	public static MessageRequestNeedNetworkInfo newMessage(WorldPos pos, SerialNumber serial) {
+		NBTTagCompound tag = new NBTTagCompound();
+		tag.setTag("serial", serial.writeToNBT(new NBTTagCompound()));
+		return new MessageRequestNeedNetworkInfo(pos, tag);
 	}
 
 	@Override
-	public void fromBytes(ByteBuf buf) {
-		name = ByteBufUtils.readUTF8String(buf);
-		pos = WorldPos.readFromByte(buf);
-	}
-
-	@Override
-	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeUTF8String(buf, name);
-		pos.writeToByte(buf);
+	public void run(MessageContext ctx) {
+		SerialNumber s = new SerialNumber(tag.getCompoundTag("serial"));
+		WorldPos pos = getProcessingCenter().getPosFromSerialNumber(s);
+		if (!pos.isOrigin()) {
+			TileEntity tileentity = pos.getTileEntity();
+			if (tileentity instanceof INeedNetwork) {
+				INeedNetwork te = (INeedNetwork) tileentity;
+				NBTTagCompound tag = new NBTTagCompound();
+				tag.setString("name", te.getName());
+				tag.setInteger("state", te.getWorkingState().ordinal());
+				tag.setTag("pos", pos.writeToNBT(new NBTTagCompound()));
+				NetworkHandler.instance.sendTo(new MessageSendNeedNetworkInfoToClient(s, tag),
+						(EntityPlayerMP) getPlayer(ctx));
+			}
+		}
 	}
 
 	public static class Handler implements IMessageHandler<MessageRequestNeedNetworkInfo, IMessage> {
 		@Override
 		public IMessage onMessage(MessageRequestNeedNetworkInfo message, MessageContext ctx) {
-			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-				World world = message.pos.getWorld();
-				EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByName(message.name);
-				TileEntity tileentity = message.pos.getTileEntity();
-				if (tileentity instanceof INeedNetwork) {
-					INeedNetwork te = (INeedNetwork) tileentity;
-					NBTTagCompound tag = new NBTTagCompound();
-					tag.setString("name", te.getName());
-					tag.setInteger("state", te.getWorkingState().ordinal());
-					TEProcessingCenter pc = (TEProcessingCenter) GlobalNetworkData.getPos(te.getNetwork())
-							.getTileEntity();
-					tag.setTag("serial", pc.getSerialNumberFromPos(message.pos).writeToNBT(new NBTTagCompound()));
-					NetworkHandler.instance.sendTo(new MessageSendNeedNetworkInfoToClient(message.pos, tag), player);
-				}
-			});
+			message.doHandler(ctx);
 			return null;
 		}
 	}

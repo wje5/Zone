@@ -3,7 +3,6 @@ package com.pinball3d.zone.network;
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.util.WorldPos;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -14,14 +13,14 @@ public class MessageDisconnect extends MessageSphinx {
 
 	}
 
-	private MessageDisconnect(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
-		super(player, pos, tag);
+	private MessageDisconnect(WorldPos pos, NBTTagCompound tag) {
+		super(pos, tag);
 	}
 
-	public static MessageDisconnect newMessage(EntityPlayer player, WorldPos pos, SerialNumber serialNumber) {
+	public static MessageDisconnect newMessage(WorldPos pos, SerialNumber serialNumber) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setTag("serial", serialNumber.writeToNBT(new NBTTagCompound()));
-		return new MessageDisconnect(player, pos, tag);
+		return new MessageDisconnect(pos, tag);
 	}
 
 	@Override

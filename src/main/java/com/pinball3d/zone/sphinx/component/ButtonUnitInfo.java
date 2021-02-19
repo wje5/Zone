@@ -19,9 +19,9 @@ public class ButtonUnitInfo extends TexturedButton implements IUnitButton {
 		super(parent, x, y, TEXTURE, 116, 68, 32, 32, 0.25F, () -> {
 			IHasSubscreen root = Util.getRoot();
 			if (unit instanceof PointerProcessingCenter) {
-				root.putScreen(new SubscreenNetworkInfo(root, ((PointerProcessingCenter) unit).pos));
+				root.putScreen(new SubscreenNetworkInfo(root));
 			} else if (unit instanceof PointerNeedNetwork) {
-				root.putScreen(new SubscreenNeedNetworkInfo(root, ((PointerNeedNetwork) unit).pos));
+				root.putScreen(new SubscreenNeedNetworkInfo(root, ((PointerNeedNetwork) unit).serial));
 			}
 		});
 		this.unit = unit;

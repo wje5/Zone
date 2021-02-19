@@ -21,13 +21,10 @@ public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
 	@Override
 	public void addComponents() {
 		super.addComponents();
-		addComponent(new TexturedButton(this, width - 8, 2, TEXTURE, 0, 42, 24, 26, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 17, 2, TEXTURE_4, 60, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenShutdownSphinx(GuiContainerSphinxController.this));
 		}));
-//		addComponent(new TexturedButton(this, width - 20, 2, TEXTURE, 0, 68, 32, 32, 0.25F, () -> {
-//			subscreens.push(new SubscreenSphinxConfig(GuiContainerSphinxController.this));
-//		}));
-		addComponent(new TexturedButton(this, width - 20, 2, TEXTURE_4, 0, 0, 60, 60, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 34, 2, TEXTURE_4, 0, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenSphinxConfig(GuiContainerSphinxController.this));
 		}));
 		addComponent(new TexturedButton(this, width - 30, 2, TEXTURE, 94, 68, 22, 30, 0.25F, () -> {

@@ -4,7 +4,6 @@ import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -15,15 +14,15 @@ public class MessageManageClassify extends MessageSphinx {
 
 	}
 
-	private MessageManageClassify(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
-		super(player, pos, tag);
+	private MessageManageClassify(WorldPos pos, NBTTagCompound tag) {
+		super(pos, tag);
 	}
 
-	public static MessageManageClassify newMessage(EntityPlayer player, WorldPos pos, int id, ClassifyGroup group) {
+	public static MessageManageClassify newMessage(WorldPos pos, int id, ClassifyGroup group) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("id", id);
 		tag.setTag("group", group.writeToNBT(new NBTTagCompound()));
-		return new MessageManageClassify(player, pos, tag);
+		return new MessageManageClassify(pos, tag);
 	}
 
 	@Override

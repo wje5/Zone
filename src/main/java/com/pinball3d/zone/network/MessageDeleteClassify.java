@@ -2,7 +2,6 @@ package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.util.WorldPos;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -13,14 +12,14 @@ public class MessageDeleteClassify extends MessageSphinx {
 
 	}
 
-	public MessageDeleteClassify(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
-		super(player, pos, tag);
+	private MessageDeleteClassify(WorldPos pos, NBTTagCompound tag) {
+		super(pos, tag);
 	}
 
-	public static MessageDeleteClassify newMessage(EntityPlayer player, WorldPos pos, int id) {
+	public static MessageDeleteClassify newMessage(WorldPos pos, int id) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("id", id);
-		return new MessageDeleteClassify(player, pos, tag);
+		return new MessageDeleteClassify(pos, tag);
 	}
 
 	@Override

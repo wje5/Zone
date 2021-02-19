@@ -15,7 +15,7 @@ public class ButtonUnitDelete extends TexturedButton implements IUnitButton {
 
 	public ButtonUnitDelete(IHasComponents parent, Pointer unit, int x, int y) {
 		super(parent, x, y, TEXTURE, 148, 68, 32, 32, 0.25F, () -> {
-			NetworkHandler.instance.sendToServer(MessageDisconnect.newMessage(mc.player,
+			NetworkHandler.instance.sendToServer(MessageDisconnect.newMessage(
 					ConnectHelperClient.getInstance().getNetworkPos(), (((PointerNeedNetwork) unit).serial)));
 		});
 		this.unit = unit;

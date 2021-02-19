@@ -63,30 +63,34 @@ public class MessageTryConnectToNetwork implements IMessage {
 				TileEntity tileentity = message.network.getTileEntity();
 				if (tileentity instanceof TEProcessingCenter) {
 					TEProcessingCenter te = (TEProcessingCenter) tileentity;
-					NetworkHandler.instance.sendTo(new MessageConnectNetworkCallback(true), player);
-					if (message.isPlayer) {
-						ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
-						if (stack.getItem() != ItemLoader.terminal) {
-							stack = player.getHeldItem(EnumHand.OFF_HAND);
+					if (te.isUser(player)) {
+						NetworkHandler.instance.sendTo(new MessageConnectNetworkCallback(true), player);
+						if (message.isPlayer) {
+							ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
 							if (stack.getItem() != ItemLoader.terminal) {
-								return;
+								stack = player.getHeldItem(EnumHand.OFF_HAND);
+								if (stack.getItem() != ItemLoader.terminal) {
+									return;
+								}
+							}
+							NBTTagCompound tag = stack.getTagCompound();
+							if (tag == null) {
+								tag = new NBTTagCompound();
+							}
+							tag.setUniqueId("network", te.getUUID());
+							stack.setTagCompound(tag);
+						} else {
+							TileEntity t = message.pos.getTileEntity();
+							if (t instanceof INeedNetwork) {
+								te.addNeedNetwork(message.pos, player);
 							}
 						}
-						NBTTagCompound tag = stack.getTagCompound();
-						if (tag == null) {
-							tag = new NBTTagCompound();
+						Connect c = ConnectionHelper.getConnect(player.getUniqueID());
+						if (c != null) {
+							c.network = te.getUUID();
 						}
-						tag.setUniqueId("network", te.getUUID());
-						stack.setTagCompound(tag);
 					} else {
-						TileEntity t = message.pos.getTileEntity();
-						if (t instanceof INeedNetwork) {
-							te.addNeedNetwork(message.pos, player);
-						}
-					}
-					Connect c = ConnectionHelper.getConnect(player.getUniqueID());
-					if (c != null) {
-						c.network = te.getUUID();
+						NetworkHandler.instance.sendTo(new MessageConnectNetworkCallback(false), player);
 					}
 				} else {
 					NetworkHandler.instance.sendTo(new MessageConnectNetworkCallback(false), player);

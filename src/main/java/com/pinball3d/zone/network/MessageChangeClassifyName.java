@@ -3,7 +3,6 @@ package com.pinball3d.zone.network;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.util.WorldPos;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -14,15 +13,15 @@ public class MessageChangeClassifyName extends MessageSphinx {
 
 	}
 
-	public MessageChangeClassifyName(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
-		super(player, pos, tag);
+	private MessageChangeClassifyName(WorldPos pos, NBTTagCompound tag) {
+		super(pos, tag);
 	}
 
-	public static MessageChangeClassifyName newMessage(EntityPlayer player, WorldPos pos, int id, String name) {
+	public static MessageChangeClassifyName newMessage(WorldPos pos, int id, String name) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger("id", id);
 		tag.setString("name", name);
-		return new MessageChangeClassifyName(player, pos, tag);
+		return new MessageChangeClassifyName(pos, tag);
 	}
 
 	@Override

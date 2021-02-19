@@ -44,7 +44,7 @@ public class ConnectHelperClient {
 	private Map<WorldPos, String> playerValidNetworks = new HashMap<WorldPos, String>();
 	private Map<WorldPos, String> needNetworkValidNetworks = new HashMap<WorldPos, String>();
 	private String name = "";
-	private int loadTick, usedStorage, maxStorage;
+	private int loadTick, usedStorage, maxStorage, energy;
 	private boolean on, inited;
 	private WorkingState workingState;
 	private Map<Integer, ClassifyGroup> classify = new TreeMap<Integer, ClassifyGroup>();
@@ -152,6 +152,9 @@ public class ConnectHelperClient {
 				case NEEDNETWORKSERIAL:
 					needNetworkSerial = new SerialNumber(data.getCompoundTag(e.name()));
 					break;
+				case ENERGY:
+					energy = data.getInteger(e.name());
+					break;
 				}
 			}
 		}
@@ -173,6 +176,7 @@ public class ConnectHelperClient {
 		maxStorage = 0;
 		users.clear();
 		needNetworkSerial = null;
+		energy = 0;
 	}
 
 	public void clearHuges() {
@@ -331,5 +335,9 @@ public class ConnectHelperClient {
 
 	public SerialNumber getNeedNetworkSerial() {
 		return needNetworkSerial;
+	}
+
+	public int getEnergy() {
+		return energy;
 	}
 }

@@ -19,8 +19,8 @@ public class SubscreenShutdownSphinx extends Subscreen {
 	public SubscreenShutdownSphinx(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 160, 90, false);
 		addComponent(new TextButton(this, this.x + 25, this.y + 75, I18n.format("sphinx.yes"), () -> {
-			NetworkHandler.instance.sendToServer(
-					MessageShutdownSphinx.newMessage(mc.player, ConnectHelperClient.getInstance().getNetworkPos()));
+			NetworkHandler.instance
+					.sendToServer(MessageShutdownSphinx.newMessage(ConnectHelperClient.getInstance().getNetworkPos()));
 			mc.displayGuiScreen(null);
 		}));
 		addComponent(new TextButton(this, this.x + 120, this.y + 75, I18n.format("sphinx.no"), () -> {

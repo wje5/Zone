@@ -1,7 +1,5 @@
 package com.pinball3d.zone.network;
 
-import java.util.UUID;
-
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -17,35 +15,26 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public abstract class MessageSphinxAdmin implements IMessage {
 	WorldPos pos;
 	NBTTagCompound tag;
-	UUID uuid;
-	int playerDim;
 
 	public MessageSphinxAdmin() {
 
 	}
 
-	public MessageSphinxAdmin(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
+	public MessageSphinxAdmin(WorldPos pos, NBTTagCompound tag) {
 		this.pos = pos;
 		this.tag = tag;
-		uuid = player.getUniqueID();
-		playerDim = player.dimension;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		pos = WorldPos.readFromByte(buf);
 		tag = ByteBufUtils.readTag(buf);
-		uuid = new UUID(buf.readLong(), buf.readLong());
-		playerDim = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		pos.writeToByte(buf);
 		ByteBufUtils.writeTag(buf, tag);
-		buf.writeLong(uuid.getMostSignificantBits());
-		buf.writeLong(uuid.getLeastSignificantBits());
-		buf.writeInt(playerDim);
 	}
 
 	public abstract void run(MessageContext ctx);
@@ -58,20 +47,20 @@ public abstract class MessageSphinxAdmin implements IMessage {
 		return null;
 	}
 
-	public EntityPlayer getPlayer() {
-		return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(playerDim).getPlayerEntityByUUID(uuid);
+	public EntityPlayer getPlayer(MessageContext ctx) {
+		return ctx.getServerHandler().player;
 	}
 
 	public void doHandler(MessageContext ctx) {
 		FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-			if (doCheck()) {
+			if (doCheck(ctx)) {
 				MessageSphinxAdmin.this.run(ctx);
 			}
 		});
 	}
 
-	public boolean doCheck() {
+	public boolean doCheck(MessageContext ctx) {
 		TEProcessingCenter te = getProcessingCenter();
-		return te != null && te.isAdmin(getPlayer());
+		return te != null && te.isAdmin(getPlayer(ctx));
 	}
 }

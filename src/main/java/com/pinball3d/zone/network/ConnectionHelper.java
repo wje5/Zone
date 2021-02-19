@@ -247,7 +247,7 @@ public class ConnectionHelper {
 	public static enum Type {
 		NETWORKUUID, ITEMS, NETWORKPOS, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
 		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY, USERS, LOGS,
-		NEEDNETWORKSERIAL;
+		NEEDNETWORKSERIAL, ENERGY;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
 			WorldPos pos = WorldPos.ORIGIN;
@@ -395,6 +395,10 @@ public class ConnectionHelper {
 					}
 				}
 				break;
+			case ENERGY:
+				if (te != null) {
+					tag.setInteger(name(), te.getEnergy());
+				}
 			}
 		}
 	}

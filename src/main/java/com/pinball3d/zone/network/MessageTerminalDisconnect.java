@@ -24,7 +24,7 @@ public class MessageTerminalDisconnect implements IMessage {
 
 	}
 
-	public MessageTerminalDisconnect(EntityPlayer player) {// XXX need change to MessageSphinx
+	public MessageTerminalDisconnect(EntityPlayer player) {
 		name = player.getName();
 		world = player.dimension;
 	}

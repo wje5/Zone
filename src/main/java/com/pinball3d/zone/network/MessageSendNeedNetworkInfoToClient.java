@@ -1,9 +1,9 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenNeedNetworkInfo;
-import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -16,27 +16,27 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageSendNeedNetworkInfoToClient implements IMessage {
-	WorldPos pos;
+	SerialNumber serial;
 	NBTTagCompound data;
 
 	public MessageSendNeedNetworkInfoToClient() {
 
 	}
 
-	public MessageSendNeedNetworkInfoToClient(WorldPos pos, NBTTagCompound data) {
-		this.pos = pos;
+	public MessageSendNeedNetworkInfoToClient(SerialNumber serial, NBTTagCompound data) {
+		this.serial = serial;
 		this.data = data;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		pos = WorldPos.readFromByte(buf);
+		serial = new SerialNumber(buf);
 		data = ByteBufUtils.readTag(buf);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		pos.writeToByte(buf);
+		serial.writeToByte(buf);
 		ByteBufUtils.writeTag(buf, data);
 	}
 
@@ -50,7 +50,7 @@ public class MessageSendNeedNetworkInfoToClient implements IMessage {
 					if (!adv.getSubscreens().empty()) {
 						Subscreen s = adv.getSubscreens().get(0);
 						if (s instanceof SubscreenNeedNetworkInfo) {
-							((SubscreenNeedNetworkInfo) s).setData(message.pos, message.data);
+							((SubscreenNeedNetworkInfo) s).setData(message.serial, message.data);
 						}
 					}
 				}

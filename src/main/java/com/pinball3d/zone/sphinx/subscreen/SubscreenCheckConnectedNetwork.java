@@ -37,15 +37,15 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 				}
 			}
 			parent.removeScreen(SubscreenCheckConnectedNetwork.this);
-			parent.putScreen(new SubscreenNetworkInfo(parent, ConnectHelperClient.getInstance().getNetworkPos()));
+			parent.putScreen(new SubscreenNetworkInfo(parent));
 		}));
 		addComponent(new HyperTextButton(this, this.x + 70, this.y + 24, I18n.format("sphinx.disconnect"), () -> {
 			if (parent instanceof GuiContainerTerminal) {
 				parent.removeScreen(SubscreenCheckConnectedNetwork.this);
 				NetworkHandler.instance.sendToServer(new MessageTerminalDisconnect(mc.player));
 			} else if (parent instanceof GuiContainerNeedNetwork) {
-				NetworkHandler.instance.sendToServer(
-						MessageDisconnect.newMessage(mc.player, ConnectHelperClient.getInstance().getNetworkPos(),
+				NetworkHandler.instance
+						.sendToServer(MessageDisconnect.newMessage(ConnectHelperClient.getInstance().getNetworkPos(),
 								ConnectHelperClient.getInstance().getNeedNetworkSerial()));
 				parent.removeScreen(SubscreenCheckConnectedNetwork.this);
 			}

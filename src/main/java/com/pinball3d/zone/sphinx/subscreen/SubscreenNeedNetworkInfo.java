@@ -1,6 +1,7 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
 import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageRequestNeedNetworkInfo;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
@@ -22,24 +23,25 @@ public class SubscreenNeedNetworkInfo extends Subscreen {
 	private WorkingState state;
 	private SerialNumber serial;
 
-	public SubscreenNeedNetworkInfo(IHasSubscreen parent, WorldPos pos) {
-		this(parent, pos, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
+	public SubscreenNeedNetworkInfo(IHasSubscreen parent, SerialNumber serial) {
+		this(parent, serial, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
 	}
 
-	public SubscreenNeedNetworkInfo(IHasSubscreen parent, WorldPos pos, int x, int y) {
+	public SubscreenNeedNetworkInfo(IHasSubscreen parent, SerialNumber serial, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		NetworkHandler.instance.sendToServer(new MessageRequestNeedNetworkInfo(mc.player, pos));
+		NetworkHandler.instance.sendToServer(
+				MessageRequestNeedNetworkInfo.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), serial));
 		addComponent(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.confirm"), () -> {
 			parent.removeScreen(SubscreenNeedNetworkInfo.this);
 		}));
-		this.pos = pos;
+		this.serial = serial;
 	}
 
-	public void setData(WorldPos pos, NBTTagCompound tag) {
-		if (pos.equals(this.pos)) {
+	public void setData(SerialNumber serial, NBTTagCompound tag) {
+		if (this.serial.equals(serial)) {
 			name = tag.getString("name");
 			state = WorkingState.values()[tag.getInteger("state")];
-			serial = new SerialNumber((NBTTagCompound) tag.getTag("serial"));
+			pos = new WorldPos(tag.getCompoundTag("pos"));
 		}
 	}
 

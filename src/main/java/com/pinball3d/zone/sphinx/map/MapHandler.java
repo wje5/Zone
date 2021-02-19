@@ -409,7 +409,7 @@ public class MapHandler {
 			PointerNeedNetwork e2 = list.get(lines[i + 1]);
 			Util.drawLine(e.box.getXCenter() - getRenderOffsetX(width), e.box.getYCenter() - getRenderOffsetY(height),
 					e2.box.getXCenter() - getRenderOffsetX(width), e2.box.getYCenter() - getRenderOffsetY(height),
-					color);// XXX
+					color);
 		}
 	}
 }

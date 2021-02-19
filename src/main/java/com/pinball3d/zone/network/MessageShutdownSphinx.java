@@ -2,7 +2,6 @@ package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.util.WorldPos;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -13,13 +12,13 @@ public class MessageShutdownSphinx extends MessageSphinxAdmin {
 
 	}
 
-	private MessageShutdownSphinx(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
-		super(player, pos, tag);
+	private MessageShutdownSphinx(WorldPos pos, NBTTagCompound tag) {
+		super(pos, tag);
 	}
 
-	public static MessageShutdownSphinx newMessage(EntityPlayer player, WorldPos pos) {
+	public static MessageShutdownSphinx newMessage(WorldPos pos) {
 		NBTTagCompound tag = new NBTTagCompound();
-		return new MessageShutdownSphinx(player, pos, tag);
+		return new MessageShutdownSphinx(pos, tag);
 	}
 
 	@Override

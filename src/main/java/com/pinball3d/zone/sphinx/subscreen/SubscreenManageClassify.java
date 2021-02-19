@@ -79,24 +79,24 @@ public class SubscreenManageClassify extends Subscreen {
 			parent.putScreen(new SubscreenTextInputBox(parent, I18n.format("sphinx.change_name"),
 					I18n.format("sphinx.set_classify_name"), s -> {
 						local.setName(s);
-						NetworkHandler.instance.sendToServer(MessageChangeClassifyName.newMessage(mc.player,
-								ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, s));
+						NetworkHandler.instance.sendToServer(MessageChangeClassifyName
+								.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, s));
 					}, 8, 8).setIsValid(s -> s.length() >= 1 ? "" : I18n.format("sphinx.classify_name_length_error"))
 							.setText(getGroup().getName()));
 		}).setEnable(() -> getGroup() != null));
 		addComponent(new TexturedButton(this, this.x + 153, this.y + 86, ICONS, 16, 172, 11, 15, 0.5F, () -> {
 			parent.putScreen(new SubscreenConfirmBox(parent, I18n.format("sphinx.delete_classify"),
 					Util.formatAndAntiEscape("sphinx.confirm_delete_classify", list.get().title), () -> {
-						NetworkHandler.instance.sendToServer(MessageDeleteClassify.newMessage(mc.player,
-								ConnectHelperClient.getInstance().getNetworkPos(), list.get().id));
+						NetworkHandler.instance.sendToServer(MessageDeleteClassify
+								.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), list.get().id));
 						list.list.remove(list.index);
 						list.change(0);
 					}));
 		}).setEnable(() -> getGroup() != null));
 		addComponent(new TexturedButton(this, this.x + 142, this.y + 48, ICONS, 207, 41, 15, 15, 1.0F, () -> {
 			if (ConnectHelperClient.getInstance().hasData()) {
-				NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(mc.player,
-						ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, local));
+				NetworkHandler.instance.sendToServer(MessageManageClassify
+						.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, local));
 				dirty = false;
 			}
 		}));
@@ -105,7 +105,7 @@ public class SubscreenManageClassify extends Subscreen {
 			if (dirty) {
 				parent.putScreen(new SubscreenYNCBox(parent, I18n.format("sphinx.save"),
 						I18n.format("sphinx.save_change", local.getName()), () -> {
-							NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(mc.player,
+							NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(
 									ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, local));
 							list.index = index;
 							ListBar bar = list.get();
@@ -403,8 +403,8 @@ public class SubscreenManageClassify extends Subscreen {
 		if (dirty) {
 			parent.putScreen(new SubscreenYNCBox(parent, I18n.format("sphinx.save"),
 					I18n.format("sphinx.save_change", local.getName()), () -> {
-						NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(mc.player,
-								ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, local));
+						NetworkHandler.instance.sendToServer(MessageManageClassify
+								.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, local));
 						parent.removeScreen(SubscreenManageClassify.this);
 					}, () -> parent.removeScreen(SubscreenManageClassify.this)));
 			return false;

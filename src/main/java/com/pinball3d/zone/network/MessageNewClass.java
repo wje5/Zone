@@ -7,7 +7,6 @@ import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -18,13 +17,13 @@ public class MessageNewClass extends MessageSphinx {
 
 	}
 
-	private MessageNewClass(EntityPlayer player, WorldPos pos, NBTTagCompound tag) {
-		super(player, pos, tag);
+	private MessageNewClass(WorldPos pos, NBTTagCompound tag) {
+		super(pos, tag);
 	}
 
-	public static MessageNewClass newMessage(EntityPlayer player, WorldPos pos) {
+	public static MessageNewClass newMessage(WorldPos pos) {
 		NBTTagCompound tag = new NBTTagCompound();
-		return new MessageNewClass(player, pos, tag);
+		return new MessageNewClass(pos, tag);
 	}
 
 	@Override
