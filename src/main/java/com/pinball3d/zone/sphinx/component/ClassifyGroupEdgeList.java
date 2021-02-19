@@ -50,6 +50,15 @@ public class ClassifyGroupEdgeList extends Component {
 		this.onChange = onChange;
 	}
 
+	public void change(int index) {
+		if (index < list.size() && index != this.index) {
+			if (onChange == null || onChange.test(index)) {
+				list.get(index).event.run();
+				this.index = index;
+			}
+		}
+	}
+
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
@@ -109,12 +118,7 @@ public class ClassifyGroupEdgeList extends Component {
 			}
 			if (y >= index * 15 && y <= index * 15 + 13) {
 				if (flag) {
-					if (index != this.index) {
-						if (onChange == null || onChange.test(index)) {
-							e.event.run();
-							this.index = index;
-						}
-					}
+					change(index);
 				} else {
 					NetworkHandler.instance.sendToServer(
 							MessageNewClass.newMessage(mc.player, ConnectHelperClient.getInstance().getNetworkPos()));

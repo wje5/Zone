@@ -48,6 +48,10 @@ public class ClassifyGroup {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public boolean contains(ItemType item) {
 		return items.contains(item);
 	}

@@ -75,6 +75,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 		super.initGui();
 		if (!inited) {
 			init();
+			inited = true;
 		}
 	}
 

@@ -241,6 +241,10 @@ sphinx.view_log=View Log
 sphinx.object_amount=%1$s Objects
 sphinx.change_name=Change Name
 sphinx.set_classify_name=Set Classify Name
+sphinx.unselected_classify=Invalid operation: Unselected classify
+sphinx.classify_name_length_error=Classify name must 1-9 characters
+sphinx.delete_classify=Delete Classify
+sphinx.confirm_delete_classify=Are you sure you want to delete the class %1$s?\nThis operation cannot be undone.
 
 log.send_pack=Logistic pack <0> sent from <1>, via <2>, will delivery <4> in <3>.
 

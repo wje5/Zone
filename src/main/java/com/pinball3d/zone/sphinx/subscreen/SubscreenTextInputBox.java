@@ -1,6 +1,7 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
@@ -16,6 +17,7 @@ public class SubscreenTextInputBox extends Subscreen {
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	public String title, text;
 	public Consumer<String> event;
+	public Function<String, String> isValid;
 	public TextInputBox box;
 
 	public SubscreenTextInputBox(IHasSubscreen parent, String title, String text, Consumer<String> event, int maxLength,
@@ -27,14 +29,27 @@ public class SubscreenTextInputBox extends Subscreen {
 			int maxLength, int flag) {
 		super(parent, x, y, 150, 100, true);
 		addComponent(new TextButton(this, this.x + 95, this.y + 80, I18n.format("sphinx.confirm"), () -> {
-			parent.removeScreen(SubscreenTextInputBox.this);
-			event.accept(box.text);
+			String s = isValid == null ? "" : isValid.apply(box.text);
+			if (s.isEmpty()) {
+				parent.removeScreen(SubscreenTextInputBox.this);
+				event.accept(box.text);
+			}
 		}));
-		addComponent(
-				box = new TextInputBox(this, this.x + 12, this.y + 30, 100, 13, 9, () -> box.isFocus = true, flag));
+		addComponent(box = new TextInputBox(this, this.x + 12, this.y + 30, 100, 13, maxLength,
+				() -> box.isFocus = true, flag));
 		this.title = title;
 		this.text = text;
 		this.event = event;
+	}
+
+	public SubscreenTextInputBox setIsValid(Function<String, String> isValid) {
+		this.isValid = isValid;
+		return this;
+	}
+
+	public SubscreenTextInputBox setText(String text) {
+		box.text = text;
+		return this;
 	}
 
 	@Override
@@ -50,7 +65,11 @@ public class SubscreenTextInputBox extends Subscreen {
 		Util.renderGlowHorizonLineThin(x + 5, y + 10, 140);
 		Gui.drawRect(x + 8, y + 12, x + 142, y + 97, 0x651CC3B5);
 		Util.renderGlowString(title, x + 7, y + 2);
-		Util.renderSplitGlowString(text, x + 15, y + 15, 120);
+		Util.renderSplitGlowString(text, x + 14, y + 15, 120);
+		String s = isValid == null ? "" : isValid.apply(box.text);
+		if (!s.isEmpty()) {
+			Util.renderGlowString(s, x + 14, y + 45, 0xFFFC3D3D, 0xFFEF2020);
+		}
 		Util.renderGlowBorder(x + 7, y + 12, 135, 86);
 	}
 }

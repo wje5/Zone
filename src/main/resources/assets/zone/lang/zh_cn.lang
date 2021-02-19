@@ -241,6 +241,10 @@ sphinx.view_log=查看日志
 sphinx.object_amount=%1$s个对象
 sphinx.change_name=修改名称
 sphinx.set_classify_name=设置分类名称
+sphinx.unselected_classify=无效的操作：未选择任何分类
+sphinx.classify_name_length_error=分类名称必须为 1-9 个字符
+sphinx.delete_classify=删除分类
+sphinx.confirm_delete_classify=您确定要删除分类 %1$s 吗？\n此操作不能撤销。
 
 log.send_pack=物流包<0>已于<1>处发出，经<2>，将于<3>后到达<4>。
 

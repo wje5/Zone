@@ -9,6 +9,8 @@ import org.lwjgl.input.Keyboard;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.network.MessageChangeClassifyName;
+import com.pinball3d.zone.network.MessageDeleteClassify;
 import com.pinball3d.zone.network.MessageManageClassify;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
@@ -73,9 +75,23 @@ public class SubscreenManageClassify extends Subscreen {
 		addComponent(new TexturedButton(this, this.x + 122, this.y + 49, ICONS, 167, 41, 15, 13, 1.0F, () -> {
 			System.out.println("button3");
 		}));
-		addComponent(new TexturedButton(this, this.x + 122, this.y + 71, ICONS, 0, 172, 16, 15, 0.5F, () -> {
+		addComponent(new TexturedButton(this, this.x + 153, this.y + 71, ICONS, 0, 172, 16, 15, 0.5F, () -> {
 			parent.putScreen(new SubscreenTextInputBox(parent, I18n.format("sphinx.change_name"),
-					I18n.format("sphinx.set_classify_name"), s -> System.out.println(s), 6, 8));
+					I18n.format("sphinx.set_classify_name"), s -> {
+						local.setName(s);
+						NetworkHandler.instance.sendToServer(MessageChangeClassifyName.newMessage(mc.player,
+								ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, s));
+					}, 8, 8).setIsValid(s -> s.length() >= 1 ? "" : I18n.format("sphinx.classify_name_length_error"))
+							.setText(getGroup().getName()));
+		}).setEnable(() -> getGroup() != null));
+		addComponent(new TexturedButton(this, this.x + 153, this.y + 86, ICONS, 16, 172, 11, 15, 0.5F, () -> {
+			parent.putScreen(new SubscreenConfirmBox(parent, I18n.format("sphinx.delete_classify"),
+					Util.formatAndAntiEscape("sphinx.confirm_delete_classify", list.get().title), () -> {
+						NetworkHandler.instance.sendToServer(MessageDeleteClassify.newMessage(mc.player,
+								ConnectHelperClient.getInstance().getNetworkPos(), list.get().id));
+						list.list.remove(list.index);
+						list.change(0);
+					}));
 		}).setEnable(() -> getGroup() != null));
 		addComponent(new TexturedButton(this, this.x + 142, this.y + 48, ICONS, 207, 41, 15, 15, 1.0F, () -> {
 			if (ConnectHelperClient.getInstance().hasData()) {
@@ -103,7 +119,9 @@ public class SubscreenManageClassify extends Subscreen {
 						}));
 				return false;
 			} else {
-				local = ConnectHelperClient.getInstance().getClassify().get(index);
+				list.index = index;
+				ListBar bar = list.get();
+				local = ConnectHelperClient.getInstance().getClassify().get(bar.id);
 				return true;
 			}
 		});
@@ -153,7 +171,10 @@ public class SubscreenManageClassify extends Subscreen {
 					} else {
 						g.addItem(type);
 					}
-					dirty = !g.equals(ConnectHelperClient.getInstance().getClassify().get(list.index));
+					dirty = !g.equals(ConnectHelperClient.getInstance().getClassify().get(list.get().id));
+				} else {
+					parent.putScreen(new SubscreenMessageBox(parent, I18n.format("sphinx.error"),
+							I18n.format("sphinx.unselected_classify")));
 				}
 			}
 		}
@@ -241,7 +262,7 @@ public class SubscreenManageClassify extends Subscreen {
 		if (list.isEmpty()) {
 			local = null;
 		} else if (local == null && ConnectHelperClient.getInstance().hasData()) {
-			local = ConnectHelperClient.getInstance().getClassify().get(list.index);
+			local = ConnectHelperClient.getInstance().getClassify().get(list.get().id);
 		}
 		return local;
 	}
@@ -256,13 +277,13 @@ public class SubscreenManageClassify extends Subscreen {
 		ItemSample sample = new ItemSample(Util.search(list3.index == 0 ? getData() : Util.getItemList(), box.text));
 		if (list2.index == 0) {
 			ClassifyGroup group = list.isEmpty() ? null
-					: ConnectHelperClient.getInstance().getClassify().get(list.index);
+					: ConnectHelperClient.getInstance().getClassify().get(list.get().id);
 			if (group != null) {
 				sample.remove(group.getItems());
 			}
 		} else if (list2.index == 1) {
 			ClassifyGroup group = list.isEmpty() ? null
-					: ConnectHelperClient.getInstance().getClassify().get(list.index);
+					: ConnectHelperClient.getInstance().getClassify().get(list.get().id);
 			if (group != null) {
 				sample.and(group.getItems());
 			} else {
