@@ -41,7 +41,7 @@ public class SubscreenBrowseLog extends Subscreen {
 			button4.setState(!button4.getState());
 			System.out.println(4);
 		}));
-		addComponent(list = new ScrollingLog(this, this.x + 16, this.y + 35, 268, 170));
+		addComponent(list = new ScrollingLog(this, this.x + 16, this.y + 35, 268, 159));
 	}
 
 	@Override

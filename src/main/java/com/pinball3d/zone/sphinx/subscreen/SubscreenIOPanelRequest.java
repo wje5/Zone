@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageComputeLogisticTime;
 import com.pinball3d.zone.network.MessageIOPanelRequest;
 import com.pinball3d.zone.network.NetworkHandler;
@@ -108,7 +109,8 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		StorageWrapper wrapper = stack.getMaxStackSize() <= 1 ? new StorageWrapper(stack.copy())
 				: new StorageWrapper(new HugeItemStack(stack.copy(), amount));
 		TEIOPanel te = ((ContainerIOPanel) ((GuiContainerIOPanel) parent).inventorySlots).tileEntity;
-		NetworkHandler.instance.sendToServer(new MessageComputeLogisticTime(mc.player, new WorldPos(te), wrapper));
+		NetworkHandler.instance.sendToServer(MessageComputeLogisticTime
+				.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), new WorldPos(te), wrapper));
 	}
 
 	public void updateTime(int time, StorageWrapper wrapper) {

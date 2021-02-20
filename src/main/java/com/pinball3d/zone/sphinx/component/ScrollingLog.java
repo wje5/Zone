@@ -10,6 +10,8 @@ import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.sphinx.log.Log;
+import com.pinball3d.zone.sphinx.log.LogComponent;
+import com.pinball3d.zone.sphinx.log.LogComponent.Type;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenViewLog;
 import com.pinball3d.zone.util.Util;
 
@@ -32,7 +34,8 @@ public class ScrollingLog extends Component {
 
 	public void setLogs(Queue<Log> logs) {
 		list.clear();
-		logs.forEach(e -> list.add(new LogBar(width, lineHeight, e)));
+		length = 0;
+		logs.forEach(e -> addLogBar(e));
 	}
 
 	@Override
@@ -56,6 +59,15 @@ public class ScrollingLog extends Component {
 	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
 		super.onDrag(mouseX, mouseY, moveX, moveY);
 		scrollingDistance -= moveY;
+		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
+		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+		return true;
+	}
+
+	@Override
+	public boolean onMouseScroll(int mouseX, int mouseY, boolean isUp) {
+		super.onMouseScroll(mouseX, mouseY, isUp);
+		scrollingDistance += isUp ? 15 : -15;
 		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 		return true;
@@ -119,7 +131,22 @@ public class ScrollingLog extends Component {
 				Gui.drawRect(x, a, x + width, b, color);
 			}
 			if (upCut < 10 && downCut < 10) {
-				formattedLog.doRender(x + 5, y + 1, width - 5);
+				renderLog(x + 5, y + 1, width - 5, upCut, downCut, formattedLog);
+			}
+		}
+
+		public void renderLog(int x, int y, int width, int upCut, int downCut, FormattedLog log) {
+			for (LogComponent c : log.getComponents()) {
+				if (upCut <= 0 && downCut + Util.getFontRenderer().FONT_HEIGHT - height <= 0) {
+					Util.getFontRenderer().drawString(Util.cutStringToWidth(c.toString(), width), x, y,
+							c.getType() == Type.STRING ? 0xFFE0E0E0 : 0xFF3AFAFD);
+				}
+				int w = c.getWidth();
+				x += w;
+				width -= w;
+				if (width <= 0) {
+					return;
+				}
 			}
 		}
 	}

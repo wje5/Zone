@@ -235,6 +235,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 			} else {
 				Subscreen screen = subscreens.peek();
 				screen.onClickScreen(mouseX, mouseY, button != 1);
+				flag = true;
 			}
 		}
 		onMouseReleaseScreen(mouseX, mouseY, button, flag);

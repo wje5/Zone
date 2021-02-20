@@ -27,20 +27,20 @@ public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
 		addComponent(new TexturedButton(this, width - 34, 2, TEXTURE_4, 0, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenSphinxConfig(GuiContainerSphinxController.this));
 		}));
-		addComponent(new TexturedButton(this, width - 30, 2, TEXTURE, 94, 68, 22, 30, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 51, 2, TEXTURE_4, 0, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenViewStorage(GuiContainerSphinxController.this));
 		}));
-		addComponent(new TexturedButton(this, width - 39, 2, TEXTURE, 24, 100, 23, 30, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 68, 2, TEXTURE_4, 60, 60, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenSynodLibrary(GuiContainerSphinxController.this));
 		}));
-		addComponent(new TexturedButton(this, width - 49, 2, TEXTURE, 47, 100, 28, 25, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 85, 2, TEXTURE_4, 0, 60, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenManageClassify(GuiContainerSphinxController.this));
 
 		}));
-		addComponent(new TexturedButton(this, width - 58, 2, TEXTURE, 75, 100, 22, 27, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 102, 2, TEXTURE_4, 180, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenManageUser(GuiContainerSphinxController.this));
 		}));
-		addComponent(new TexturedButton(this, width - 68, 2, TEXTURE, 217, 100, 30, 25, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 119, 2, TEXTURE_4, 120, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenBrowseLog(GuiContainerSphinxController.this));
 		}));
 	}
@@ -49,7 +49,6 @@ public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
 	public Set<Type> getDataTypes() {
 		Set<Type> set = super.getDataTypes();
 		set.add(Type.PLAYERVALIDNETWORK);
-		set.add(Type.NETWORKPOS);
 		set.add(Type.WORKINGSTATE);
 		return set;
 	}

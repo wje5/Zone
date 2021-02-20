@@ -352,7 +352,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 									p.add(j);
 								}
 								fireLog(new LogSendPack(logId++, pack.getId(), w, start, end, p, time));
-								System.out.println(p);
 							}
 						}
 					}

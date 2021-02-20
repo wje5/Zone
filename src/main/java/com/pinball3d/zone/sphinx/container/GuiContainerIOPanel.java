@@ -62,6 +62,7 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 	@Override
 	public Set<Type> getDataTypes() {
 		Set<Type> set = super.getDataTypes();
+		set.add(Type.NETWORKPOS);
 		set.add(Type.ITEMS);
 		return set;
 	}

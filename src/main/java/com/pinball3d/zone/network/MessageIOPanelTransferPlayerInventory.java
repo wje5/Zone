@@ -1,5 +1,7 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.sphinx.container.ContainerIOPanel;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -46,7 +48,7 @@ public class MessageIOPanelTransferPlayerInventory implements IMessage {
 				MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 				World world = server.getWorld(message.world);
 				EntityPlayer player = world.getPlayerEntityByName(message.name);
-				if (player != null && player.openContainer != null) {
+				if (player != null && player.openContainer instanceof ContainerIOPanel) {
 					if (message.flag) {
 						for (int i = 54; i < 90; i++) {
 							player.openContainer.transferStackInSlot(player, i);

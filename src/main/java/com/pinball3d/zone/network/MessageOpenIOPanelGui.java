@@ -4,10 +4,16 @@ import java.util.UUID;
 
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
+import com.pinball3d.zone.sphinx.GlobalNetworkData;
+import com.pinball3d.zone.tileentity.TEIOPanel;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -61,10 +67,28 @@ public class MessageOpenIOPanelGui implements IMessage {
 				World world = server.getWorld(message.world);
 				EntityPlayer player = world.getPlayerEntityByUUID(message.uuid);
 				if (player != null) {
-					player.openGui(Zone.instance,
-							message.flag ? GuiElementLoader.SPHINX_IO_PANEL
-									: GuiElementLoader.SPHINX_NEED_NETWORK_IO_PANEL,
-							world, message.x, message.y, message.z);
+					TileEntity tileentity = world.getTileEntity(new BlockPos(message.x, message.y, message.z));
+					if (tileentity instanceof TEIOPanel) {
+						UUID network = ((TEIOPanel) tileentity).getNetwork();
+						boolean flag = false;
+						if (network == null) {
+							flag = true;
+						} else {
+							WorldPos pos = GlobalNetworkData.getPos(network);
+							if (pos.isOrigin()) {
+								flag = true;
+							} else {
+								TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
+								flag = te.isUser(player);
+							}
+						}
+						if (flag) {
+							player.openGui(Zone.instance,
+									message.flag ? GuiElementLoader.SPHINX_IO_PANEL
+											: GuiElementLoader.SPHINX_NEED_NETWORK_IO_PANEL,
+									world, message.x, message.y, message.z);
+						}
+					}
 				}
 			});
 			return null;

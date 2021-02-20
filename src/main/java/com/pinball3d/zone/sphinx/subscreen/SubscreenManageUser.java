@@ -6,6 +6,8 @@ import java.util.Set;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.network.MessageChangeGravatar;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.ScrollingEdgeList;
 import com.pinball3d.zone.sphinx.component.ScrollingEdgeList.ListBar;
@@ -89,6 +91,22 @@ public class SubscreenManageUser extends Subscreen {
 				bar.setData(e);
 				list.addBar(bar);
 			});
+		}
+	}
+
+	@Override
+	public void onClick(int x, int y, boolean isLeft) {
+		super.onClick(x, y, isLeft);
+		if (x - this.x >= 83 && x - this.x <= 123 && y - this.y >= 28 && y - this.y <= 68) {
+			parent.putScreen(new SubscreenTextInputBox(parent, I18n.format("sphinx.set_gravatar"),
+					I18n.format("sphinx.set_gravatar_email"), s -> {
+						NetworkHandler.instance.sendToServer(
+								MessageChangeGravatar.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), s));
+						image = new ThreadDownloadImageData(null, Util.genGravatarUrl(s), null,
+								new ImageBufferDownload());
+						Minecraft.getMinecraft().getTextureManager().loadTexture(
+								new ResourceLocation("zone:gravatars/" + StringUtils.stripControlCodes(s)), image);
+					}, x, y).setText(list.get() == null ? "" : ((UserData) list.get().getData()).email));
 		}
 	}
 
