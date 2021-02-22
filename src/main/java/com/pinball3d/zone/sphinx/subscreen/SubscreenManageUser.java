@@ -28,6 +28,7 @@ import net.minecraft.util.StringUtils;
 public class SubscreenManageUser extends Subscreen {
 	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
+	private static final ResourceLocation TEXTURE_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
 	private ScrollingEdgeList list;
 	private ThreadDownloadImageData image;
 
@@ -38,12 +39,27 @@ public class SubscreenManageUser extends Subscreen {
 	public SubscreenManageUser(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 360, 200, true);
 		addComponent(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195));
-		addComponent(new TexturedButton(this, x + 83, y + 73, ICONS, 97, 100, 30, 30, 0.5F, () -> {
+		addComponent(new TexturedButton(this, x + 83, y + 73, TEXTURE_4, 60, 120, 60, 60, 0.25F, () -> {
 			MapHandler.focus((int) Minecraft.getMinecraft().player.posX, (int) Minecraft.getMinecraft().player.posZ);
 			parent.removeScreen(this);
 		}));
+		addComponent(new TexturedButton(this, x + 100, y + 73, TEXTURE_4, 180, 120, 60, 60, 0.25F,
+				() -> System.out.println(1)).setEnable(() -> {
+					if (!ConnectHelperClient.getInstance().isAdmin()) {
+						return false;
+					}
+					ListBar bar = list.get();
+					if (bar != null) {
+						UserData data = (UserData) bar.getData();
+						if (!data.admin) {
+							return true;
+						}
+					}
+//							return false;
+					return true;
+				}));
 		addComponent(
-				new TexturedButton(this, x + 100, y + 73, ICONS, 157, 100, 30, 30, 0.5F, () -> System.out.println(1))
+				new TexturedButton(this, x + 117, y + 73, TEXTURE_4, 0, 180, 60, 60, 0.25F, () -> System.out.println(2))
 						.setEnable(() -> {
 							if (!ConnectHelperClient.getInstance().isAdmin()) {
 								return false;
@@ -55,22 +71,8 @@ public class SubscreenManageUser extends Subscreen {
 									return true;
 								}
 							}
-							return false;
-						}));
-		addComponent(
-				new TexturedButton(this, x + 117, y + 73, ICONS, 187, 100, 30, 30, 0.5F, () -> System.out.println(2))
-						.setEnable(() -> {
-							if (!ConnectHelperClient.getInstance().isAdmin()) {
-								return false;
-							}
-							ListBar bar = list.get();
-							if (bar != null) {
-								UserData data = (UserData) bar.getData();
-								if (!data.admin) {
-									return true;
-								}
-							}
-							return false;
+//							return false;
+							return true;
 						}));
 	}
 

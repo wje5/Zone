@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 public class Component {
 	public static Minecraft mc = Minecraft.getMinecraft();
 	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	public static final ResourceLocation TEXTURE_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
 	public int x, y;
 	public int width, height;
 	public IHasComponents parent;

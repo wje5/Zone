@@ -25,19 +25,19 @@ public class SubscreenBrowseLog extends Subscreen {
 
 	public SubscreenBrowseLog(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
-		addComponent(button1 = new RadioButton(this, x + 40, y + 27, () -> {
+		addComponent(button1 = new RadioButton(this, x + 40, y + 26, () -> {
 			button1.setState(!button1.getState());
 			System.out.println(1);
 		}));
-		addComponent(button2 = new RadioButton(this, x + 100, y + 27, () -> {
+		addComponent(button2 = new RadioButton(this, x + 100, y + 26, () -> {
 			button2.setState(!button2.getState());
 			System.out.println(2);
 		}));
-		addComponent(button3 = new RadioButton(this, x + 160, y + 27, () -> {
+		addComponent(button3 = new RadioButton(this, x + 160, y + 26, () -> {
 			button3.setState(!button3.getState());
 			System.out.println(3);
 		}));
-		addComponent(button4 = new RadioButton(this, x + 220, y + 27, () -> {
+		addComponent(button4 = new RadioButton(this, x + 220, y + 26, () -> {
 			button4.setState(!button4.getState());
 			System.out.println(4);
 		}));

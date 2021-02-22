@@ -51,7 +51,7 @@ public class ClassifyGroupEdgeList extends Component {
 	}
 
 	public void change(int index) {
-		if (index < list.size() && index != this.index) {
+		if (index < list.size()) {
 			if (onChange == null || onChange.test(index)) {
 				list.get(index).event.run();
 				this.index = index;

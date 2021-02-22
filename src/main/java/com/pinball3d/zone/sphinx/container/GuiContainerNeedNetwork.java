@@ -36,7 +36,7 @@ public class GuiContainerNeedNetwork extends GuiContainerSphinxBase {
 	@Override
 	public void addComponents() {
 		super.addComponents();
-		addComponent(new ButtonNetworkConfig(this, width - 10, 2, () -> {
+		addComponent(new ButtonNetworkConfig(this, width - 17, 2, () -> {
 			subscreens.push(new SubscreenNetworkConfig(GuiContainerNeedNetwork.this, pos));
 		}, () -> ConnectHelperClient.getInstance().isConnected()));
 	}

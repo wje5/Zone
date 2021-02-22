@@ -9,7 +9,7 @@ public class RadioButton extends Component {
 	protected boolean isChoosed;
 
 	public RadioButton(IHasComponents parent, int x, int y, Runnable onClick) {
-		super(parent, x, y, 8, 8);
+		super(parent, x, y, 9, 9);
 		this.x = x;
 		this.y = y;
 		event = onClick;
@@ -35,6 +35,6 @@ public class RadioButton extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		Util.drawTexture(ICONS, x, y, isChoosed ? 122 : 107, 41, 15, 15, 0.5F);
+		Util.drawTexture(TEXTURE_4, x, y, isChoosed ? 120 : 60, 180, 60, 60, 0.13F);
 	}
 }
