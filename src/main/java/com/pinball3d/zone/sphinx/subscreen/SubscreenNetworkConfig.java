@@ -50,4 +50,9 @@ public class SubscreenNetworkConfig extends Subscreen {
 		Util.renderGlowString(I18n.format("sphinx.network_config"), x + 15, y + 8);
 		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 	}
+
+	@Override
+	public boolean isBlockOtherSubscreen() {
+		return true;
+	}
 }

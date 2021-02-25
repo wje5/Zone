@@ -411,4 +411,9 @@ public class SubscreenManageClassify extends Subscreen {
 		}
 		return true;
 	}
+
+	@Override
+	public boolean isBlockOtherSubscreen() {
+		return true;
+	}
 }

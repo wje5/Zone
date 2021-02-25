@@ -16,6 +16,8 @@ public class SerialNumber {
 		return a.number - b.number;
 	};
 
+	public static final SerialNumber CENTER = new SerialNumber(Type.NODE, 0);
+
 	public SerialNumber(Type type, int number) {
 		this.type = type;
 		this.number = number;

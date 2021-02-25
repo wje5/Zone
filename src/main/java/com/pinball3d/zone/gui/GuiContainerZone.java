@@ -3,6 +3,7 @@ package com.pinball3d.zone.gui;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
@@ -128,12 +129,29 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(-guiLeft, -guiTop, 0);
 		components.forEach(e -> {
-			e.doRender(mouseX, mouseY);
+			if (!e.getRenderLast()) {
+				Util.resetOpenGl();
+				GlStateManager.pushMatrix();
+				e.doRender(mouseX, mouseY);
+				GlStateManager.popMatrix();
+			}
 		});
 		GlStateManager.popMatrix();
 		Util.resetOpenGl();
 		GlStateManager.pushMatrix();
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+		GlStateManager.popMatrix();
+		Util.resetOpenGl();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(-guiLeft, -guiTop, 0);
+		components.forEach(e -> {
+			if (e.getRenderLast()) {
+				Util.resetOpenGl();
+				GlStateManager.pushMatrix();
+				e.doRender(mouseX, mouseY);
+				GlStateManager.popMatrix();
+			}
+		});
 		GlStateManager.popMatrix();
 		Util.resetOpenGl();
 		GlStateManager.pushMatrix();
@@ -144,10 +162,22 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 			if (screen.dead) {
 				it.remove();
 			} else {
-				GlStateManager.pushMatrix();
-				screen.doRender(mouseX, mouseY);
-				GlStateManager.popMatrix();
-				Util.resetOpenGl();
+				boolean flag = false;
+				if (it.hasNext()) {
+					List<Subscreen> l = subscreens.subList(subscreens.indexOf(screen) + 1, subscreens.size());
+					Iterator<Subscreen> it2 = l.iterator();
+					while (it2.hasNext()) {
+						if (it2.next().isBlockOtherSubscreen()) {
+							flag = true;
+						}
+					}
+				}
+				if (!flag) {
+					GlStateManager.pushMatrix();
+					screen.doRender(mouseX, mouseY);
+					GlStateManager.popMatrix();
+					Util.resetOpenGl();
+				}
 			}
 		}
 		GlStateManager.popMatrix();

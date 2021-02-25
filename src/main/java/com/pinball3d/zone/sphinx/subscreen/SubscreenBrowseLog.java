@@ -1,5 +1,7 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
+import java.util.Iterator;
+import java.util.Queue;
 import java.util.Set;
 
 import com.pinball3d.zone.gui.Subscreen;
@@ -8,6 +10,7 @@ import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.RadioButton;
 import com.pinball3d.zone.sphinx.component.ScrollingLog;
+import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
@@ -27,21 +30,17 @@ public class SubscreenBrowseLog extends Subscreen {
 		super(parent, x, y, 300, 200, true);
 		addComponent(button1 = new RadioButton(this, x + 40, y + 26, () -> {
 			button1.setState(!button1.getState());
-			System.out.println(1);
-		}));
+		}).setState(true));
 		addComponent(button2 = new RadioButton(this, x + 100, y + 26, () -> {
 			button2.setState(!button2.getState());
-			System.out.println(2);
-		}));
+		}).setState(true));
 		addComponent(button3 = new RadioButton(this, x + 160, y + 26, () -> {
 			button3.setState(!button3.getState());
-			System.out.println(3);
 		}));
 		addComponent(button4 = new RadioButton(this, x + 220, y + 26, () -> {
 			button4.setState(!button4.getState());
-			System.out.println(4);
-		}));
-		addComponent(list = new ScrollingLog(this, this.x + 16, this.y + 35, 268, 159));
+		}).setState(true));
+		addComponent(list = new ScrollingLog(this, this.x + 16, this.y + 34, 268, 160));
 	}
 
 	@Override
@@ -55,7 +54,33 @@ public class SubscreenBrowseLog extends Subscreen {
 	public void update() {
 		super.update();
 		if (ConnectHelperClient.getInstance().hasData()) {
-			list.setLogs(ConnectHelperClient.getInstance().getLogs());
+			Queue<Log> q = ConnectHelperClient.getInstance().getLogs();
+			Iterator<Log> it = q.iterator();
+			while (it.hasNext()) {
+				switch (it.next().getLevel()) {
+				case IMPORTANT:
+					if (!button1.getState()) {
+						it.remove();
+					}
+					break;
+				case INFO:
+					if (!button2.getState()) {
+						it.remove();
+					}
+					break;
+				case DEBUG:
+					if (!button3.getState()) {
+						it.remove();
+					}
+					break;
+				case CHAT:
+					if (!button4.getState()) {
+						it.remove();
+					}
+					break;
+				}
+			}
+			list.setLogs(q);
 		}
 	}
 
@@ -77,5 +102,10 @@ public class SubscreenBrowseLog extends Subscreen {
 		Util.renderGlowString(I18n.format("sphinx.info"), x + 110, y + 26);
 		Util.renderGlowString(I18n.format("sphinx.debug"), x + 170, y + 26);
 		Util.renderGlowString(I18n.format("sphinx.chat"), x + 230, y + 26);
+	}
+
+	@Override
+	public boolean isBlockOtherSubscreen() {
+		return true;
 	}
 }

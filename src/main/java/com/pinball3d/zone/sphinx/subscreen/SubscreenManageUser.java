@@ -55,8 +55,7 @@ public class SubscreenManageUser extends Subscreen {
 							return true;
 						}
 					}
-//							return false;
-					return true;
+					return false;
 				}));
 		addComponent(
 				new TexturedButton(this, x + 117, y + 73, TEXTURE_4, 0, 180, 60, 60, 0.25F, () -> System.out.println(2))
@@ -71,8 +70,7 @@ public class SubscreenManageUser extends Subscreen {
 									return true;
 								}
 							}
-//							return false;
-							return true;
+							return false;
 						}));
 	}
 
@@ -158,5 +156,10 @@ public class SubscreenManageUser extends Subscreen {
 		Minecraft.getMinecraft().getTextureManager()
 				.bindTexture(new ResourceLocation("zone:gravatars/" + StringUtils.stripControlCodes(mail)));
 		Gui.drawScaledCustomSizeModalRect(x, y, 0, 0, 256, 256, 38, 38, 256, 256);
+	}
+
+	@Override
+	public boolean isBlockOtherSubscreen() {
+		return true;
 	}
 }

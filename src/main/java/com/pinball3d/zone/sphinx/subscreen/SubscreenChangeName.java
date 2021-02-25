@@ -86,4 +86,9 @@ public class SubscreenChangeName extends Subscreen {
 			Util.renderGlowString(I18n.format("sphinx.name_length_error"), x + 30, y + 155, 0xFFFC3D3D, 0xFFEF2020);
 		}
 	}
+
+	@Override
+	public boolean isBlockOtherSubscreen() {
+		return true;
+	}
 }

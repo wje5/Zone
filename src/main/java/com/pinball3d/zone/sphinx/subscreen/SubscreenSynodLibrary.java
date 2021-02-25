@@ -94,4 +94,9 @@ public class SubscreenSynodLibrary extends Subscreen {
 		Util.getFontRenderer().drawString(I18n.format("sphinx.synod_library"), x + 75, y + 8, 0xFF1ECCDE);
 		Util.renderGlowBorder(x + 75, y + 23, 226, 172);
 	}
+
+	@Override
+	public boolean isBlockOtherSubscreen() {
+		return true;
+	}
 }

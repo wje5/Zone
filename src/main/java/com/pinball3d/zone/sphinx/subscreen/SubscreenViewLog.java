@@ -21,7 +21,7 @@ public class SubscreenViewLog extends Subscreen {
 	public SubscreenViewLog(IHasSubscreen parent, FormattedLog log, int x, int y) {
 		super(parent, x, y, 300, 200, true);
 		this.log = log;
-		addComponent(new ScrollingViewLog(this, log, this.x + 21, this.y + 27, 263, 167));
+		addComponent(new ScrollingViewLog(this, log, this.x + 21, this.y + 23, 263, 172));
 	}
 
 	public FormattedLog getLog() {
@@ -49,5 +49,10 @@ public class SubscreenViewLog extends Subscreen {
 		parent.removeScreen(this);
 		parent.putScreen(new SubscreenBrowseLog(parent));
 		return false;
+	}
+
+	@Override
+	public boolean isBlockOtherSubscreen() {
+		return true;
 	}
 }

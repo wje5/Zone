@@ -220,4 +220,9 @@ public class SubscreenViewStorage extends Subscreen {
 			box.isFocus = false;
 		}
 	}
+
+	@Override
+	public boolean isBlockOtherSubscreen() {
+		return true;
+	}
 }

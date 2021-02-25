@@ -137,7 +137,7 @@ public class ScrollingLog extends Component {
 
 		public void renderLog(int x, int y, int width, int upCut, int downCut, FormattedLog log) {
 			for (LogComponent c : log.getComponents()) {
-				if (upCut <= 0 && downCut + Util.getFontRenderer().FONT_HEIGHT - height <= 0) {
+				if (upCut <= 1 && downCut + Util.getFontRenderer().FONT_HEIGHT - height <= 0) {
 					Util.getFontRenderer().drawString(Util.cutStringToWidth(c.toString(), width), x, y,
 							c.getType() == Type.STRING ? 0xFFE0E0E0 : 0xFF3AFAFD);
 				}

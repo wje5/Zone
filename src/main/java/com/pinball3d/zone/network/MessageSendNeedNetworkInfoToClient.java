@@ -1,6 +1,5 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenNeedNetworkInfo;
@@ -48,10 +47,11 @@ public class MessageSendNeedNetworkInfoToClient implements IMessage {
 				if (screen instanceof GuiContainerSphinxAdvanced) {
 					GuiContainerSphinxAdvanced adv = (GuiContainerSphinxAdvanced) screen;
 					if (!adv.getSubscreens().empty()) {
-						Subscreen s = adv.getSubscreens().get(0);
-						if (s instanceof SubscreenNeedNetworkInfo) {
-							((SubscreenNeedNetworkInfo) s).setData(message.serial, message.data);
-						}
+						adv.getSubscreens().forEach(s -> {
+							if (s instanceof SubscreenNeedNetworkInfo) {
+								((SubscreenNeedNetworkInfo) s).setData(message.serial, message.data);
+							}
+						});
 					}
 				}
 			});

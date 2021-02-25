@@ -21,7 +21,6 @@ public class DropDownList extends Component {
 		super(parent, x, y, width + 10, 15);
 		this.x = x;
 		this.y = y;
-		this.renderLast = true;
 	}
 
 	public void addBar(String title, Runnable onClick) {
@@ -55,6 +54,11 @@ public class DropDownList extends Component {
 	public void setState(boolean isDrop) {
 		this.isDrop = isDrop;
 		height = isDrop ? 15 + list.size() * 14 : 15;
+	}
+
+	@Override
+	public boolean getRenderLast() {
+		return true;
 	}
 
 	@Override

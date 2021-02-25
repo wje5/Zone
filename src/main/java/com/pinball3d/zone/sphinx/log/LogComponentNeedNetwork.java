@@ -10,6 +10,10 @@ public class LogComponentNeedNetwork extends LogComponent {
 		this.serial = serial;
 	}
 
+	public SerialNumber getSerial() {
+		return serial;
+	}
+
 	@Override
 	public String toString() {
 		return serial.toString();

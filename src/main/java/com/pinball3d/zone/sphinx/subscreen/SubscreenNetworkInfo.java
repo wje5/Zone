@@ -66,4 +66,9 @@ public class SubscreenNetworkInfo extends Subscreen {
 		}
 		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 	}
+
+	@Override
+	public boolean isBlockOtherSubscreen() {
+		return true;
+	}
 }

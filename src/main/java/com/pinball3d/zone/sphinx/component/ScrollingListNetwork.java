@@ -20,7 +20,6 @@ import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.gui.Gui;
-import net.minecraft.util.ResourceLocation;
 
 public class ScrollingListNetwork extends Component {
 	protected int length, lineHeight, scrollingDistance;
@@ -58,13 +57,11 @@ public class ScrollingListNetwork extends Component {
 		});
 		list = new ArrayList<ListBar>();
 		length = 0;
-		scrollingDistance = 0;
 		l.forEach(e -> {
 			String name = m.get(e);
 			list.add(new ListBar(e, name, e.equals(connected), width, lineHeight));
 			length += lineHeight;
 		});
-
 	}
 
 	@Override
@@ -145,20 +142,19 @@ public class ScrollingListNetwork extends Component {
 					Gui.drawRect(x, a, x + width, b, 0x4FFFFFFF);
 				}
 			}
-			y += 6;
-			upCut = upCut - 6 > 0 ? upCut - 6 : 0;
-			downCut = downCut - 6 > 0 ? downCut - 6 : 0;
-			Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/icons.png"), x + 7, y + upCut, 0,
-					16 + upCut * 2, 32, 26 - (upCut + downCut) * 2, 0.5F);
-			if (upCut < 4 && downCut < 4) {
-				Util.renderGlowString(name, x + 30, y + 3);
+			y += 7;
+			upCut = upCut - 7 > 0 ? upCut - 7 : 0;
+			downCut = downCut - 7 > 0 ? downCut - 7 : 0;
+			Util.drawTexture(TEXTURE_4, x + 7, y + upCut, 127, (int) (68 + upCut / 0.25F), 45,
+					(int) (45 - (upCut + downCut) / 0.25F), 0.25F);
+			if (upCut < 3 && downCut < 2) {
+				Util.renderGlowString(name, x + 30, y + 2);
 			}
 			if (selected) {
 				y += 2;
 				upCut = upCut - 2 > 0 ? upCut - 2 : 0;
-				downCut = downCut - 2 > 0 ? downCut - 2 : 0;
-				Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/icons.png"), x + 240, y + upCut, 0,
-						100 + upCut * 2, 24, 18 - (upCut + downCut) * 2, 0.5F);
+//				downCut = downCut - 2 > 0 ? downCut - 2 : 0;
+				Util.drawTexture(ICONS, x + 240, y + upCut, 0, 100 + upCut * 2, 24, 18 - (upCut + downCut) * 2, 0.5F);
 			}
 		}
 	}

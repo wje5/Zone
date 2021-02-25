@@ -15,8 +15,9 @@ public class RadioButton extends Component {
 		event = onClick;
 	}
 
-	public void setState(boolean flag) {
+	public RadioButton setState(boolean flag) {
 		this.isChoosed = flag;
+		return this;
 	}
 
 	public boolean getState() {

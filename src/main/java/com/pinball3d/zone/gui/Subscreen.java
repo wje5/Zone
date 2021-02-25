@@ -61,7 +61,7 @@ public class Subscreen implements IHasComponents {
 		doRenderBackground(mouseX, mouseY);
 		GlStateManager.popMatrix();
 		components.forEach(e -> {
-			if (!e.renderLast) {
+			if (!e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
 				e.doRender(mouseX, mouseY);
@@ -73,7 +73,7 @@ public class Subscreen implements IHasComponents {
 		doRenderForeground(mouseX, mouseY);
 		GlStateManager.popMatrix();
 		components.forEach(e -> {
-			if (e.renderLast) {
+			if (e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
 				e.doRender(mouseX, mouseY);
@@ -205,6 +205,10 @@ public class Subscreen implements IHasComponents {
 			Component c = it.next();
 			flag = c.onKeyTyped(typedChar, keyCode);
 		}
+	}
+
+	public boolean isBlockOtherSubscreen() {
+		return false;
 	}
 
 	@Override

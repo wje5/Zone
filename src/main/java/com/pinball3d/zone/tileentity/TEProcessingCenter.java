@@ -89,7 +89,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	private UUID uuid;
 	private double[][] map;
 	private Map<Integer, ClassifyGroup> classifyGroups = new TreeMap<Integer, ClassifyGroup>();
-	private SerialNumber centerSerial;
 	private boolean mapDirty;
 	private Map<WorldPos, List<Path>> dijkstraCache = new HashMap<WorldPos, List<Path>>();
 	private Map<UUID, UserData> users = new HashMap<UUID, UserData>();
@@ -101,7 +100,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public void initSphinx() {
-		centerSerial = genSerialNumber(new WorldPos(this), Type.NODE);
+		genSerialNumber(new WorldPos(this), Type.NODE);
 	}
 
 	public boolean isOn() {
@@ -517,7 +516,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		while (it.hasNext()) {
 			SerialNumber k = it.next().getKey();
 			if (!nodes.contains(k) && !storages.contains(k) && !devices.contains(k) && !productions.contains(k)
-					&& !centerSerial.equals(k)) {
+					&& !SerialNumber.CENTER.equals(k)) {
 				it.remove();
 			}
 		}
@@ -1126,7 +1125,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		list.forEach(e -> {
 			productions.add(new SerialNumber((NBTTagCompound) e));
 		});
-		centerSerial = new SerialNumber(compound.getCompoundTag("centerSerial"));
 		serialNumberToPos.clear();
 		list = compound.getTagList("serialNumbers", 10);
 		list.forEach(e -> {
@@ -1217,9 +1215,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		compound.setTag("productions", productionList);
 		if (uuid != null) {
 			compound.setUniqueId("uuid", uuid);
-		}
-		if (centerSerial != null) {
-			compound.setTag("centerSerial", centerSerial.writeToNBT(new NBTTagCompound()));
 		}
 		NBTTagList packList = new NBTTagList();
 		packs.forEach(e -> {
