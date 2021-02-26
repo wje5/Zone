@@ -1,8 +1,9 @@
-[10:44:48] [Server thread/INFO] [FML]: MinecraftForge v14.23.5.2847 Initialized
-[10:44:48] [Server thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
-[10:44:48] [Server thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
-[10:44:48] [Server thread/INFO] [FML]: Replaced 1227 ore ingredients
-[10:44:48] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: Encountered an unexpected exception
+[18:45:28] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Starting minecraft server version 1.12.2
+[18:45:28] [Server thread/INFO] [FML]: MinecraftForge v14.23.5.2847 Initialized
+[18:45:28] [Server thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
+[18:45:29] [Server thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
+[18:45:29] [Server thread/INFO] [FML]: Replaced 1227 ore ingredients
+[18:45:30] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: Encountered an unexpected exception
 java.lang.ExceptionInInitializerError: null
 	at net.minecraftforge.fml.common.FMLCommonHandler.onServerStart(FMLCommonHandler.java:332) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
 	at net.minecraft.server.dedicated.DedicatedServer.init(DedicatedServer.java:128) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
@@ -38,6 +39,6 @@ Caused by: java.lang.NoSuchFieldException: field_150915_c
 	at net.minecraftforge.fml.server.FMLServerHandler.<init>(FMLServerHandler.java:86) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
 	at net.minecraftforge.fml.server.FMLServerHandler.<clinit>(FMLServerHandler.java:77) ~[forgeSrc-1.12.2-14.23.5.2847.jar:?]
 	... 4 more
-[10:44:48] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: This crash report has been saved to: D:\work\Zone\.\crash-reports\crash-2021-02-07_10.44.48-server.txt
-[10:44:48] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server
-[10:44:48] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving worlds
+[18:45:30] [Server thread/ERROR] [net.minecraft.server.MinecraftServer]: This crash report has been saved to: D:\work\Zone\.\crash-reports\crash-2021-02-25_18.45.30-server.txt
+[18:45:30] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server
+[18:45:30] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving worlds

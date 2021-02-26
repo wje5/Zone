@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageRequestNeedNetworkInfo extends MessageSphinx {
-
 	public MessageRequestNeedNetworkInfo() {
 
 	}

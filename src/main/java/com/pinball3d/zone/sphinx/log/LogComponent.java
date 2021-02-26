@@ -18,10 +18,18 @@ public class LogComponent {
 		return type;
 	}
 
+	public int getColor() {
+		return 0xFF3AFAFD;
+	}
+
 	@SideOnly(Side.CLIENT)
 	public int getWidth() {
 		FontRenderer fr = Util.getFontRenderer();
 		return fr.getStringWidth(toString());
+	}
+
+	public void onClick() {
+
 	}
 
 	public static LogComponent of(Object o) {

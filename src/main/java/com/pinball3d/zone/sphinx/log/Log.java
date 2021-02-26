@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.function.Function;
 
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public class Log {
@@ -63,6 +65,10 @@ public class Log {
 	public String getDateString() {
 		date.setTime(time);
 		return formatter.format(date);
+	}
+
+	public void check(TEProcessingCenter te) {
+
 	}
 
 	@Override

@@ -1,6 +1,10 @@
 package com.pinball3d.zone.sphinx.log;
 
+import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenNeedNetworkInfo;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenNetworkInfo;
+import com.pinball3d.zone.util.Util;
 
 public class LogComponentNeedNetwork extends LogComponent {
 	private SerialNumber serial;
@@ -12,6 +16,24 @@ public class LogComponentNeedNetwork extends LogComponent {
 
 	public SerialNumber getSerial() {
 		return serial;
+	}
+
+	@Override
+	public void onClick() {
+		super.onClick();
+		IHasSubscreen root = Util.getRoot();
+		if (!serial.isDead()) {
+			if (serial.equals(SerialNumber.CENTER)) {
+				root.putScreen(new SubscreenNetworkInfo(root));
+			} else {
+				root.putScreen(new SubscreenNeedNetworkInfo(root, serial));
+			}
+		}
+	}
+
+	@Override
+	public int getColor() {
+		return serial.isDead() ? 0xFFFC3D3D : 0xFF3AFAFD;
 	}
 
 	@Override

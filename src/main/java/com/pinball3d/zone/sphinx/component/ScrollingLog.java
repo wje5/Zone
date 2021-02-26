@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.Queue;
 
 import com.pinball3d.zone.gui.Component;
-import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.sphinx.log.LogComponent;
-import com.pinball3d.zone.sphinx.log.LogComponent.Type;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenViewLog;
 import com.pinball3d.zone.util.Util;
 
@@ -92,7 +90,6 @@ public class ScrollingLog extends Component {
 	}
 
 	public void onClickBar(Log log) {
-		Util.getRoot().removeScreen((Subscreen) parent);
 		Util.getRoot().putScreen(new SubscreenViewLog(Util.getRoot(), log.format()));
 	}
 
@@ -138,8 +135,7 @@ public class ScrollingLog extends Component {
 		public void renderLog(int x, int y, int width, int upCut, int downCut, FormattedLog log) {
 			for (LogComponent c : log.getComponents()) {
 				if (upCut <= 1 && downCut + Util.getFontRenderer().FONT_HEIGHT - height <= 0) {
-					Util.getFontRenderer().drawString(Util.cutStringToWidth(c.toString(), width), x, y,
-							c.getType() == Type.STRING ? 0xFFE0E0E0 : 0xFF3AFAFD);
+					Util.getFontRenderer().drawString(Util.cutStringToWidth(c.toString(), width), x, y, c.getColor());
 				}
 				int w = c.getWidth();
 				x += w;

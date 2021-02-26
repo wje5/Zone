@@ -45,13 +45,6 @@ public class SubscreenViewLog extends Subscreen {
 	}
 
 	@Override
-	public boolean onQuit() {
-		parent.removeScreen(this);
-		parent.putScreen(new SubscreenBrowseLog(parent));
-		return false;
-	}
-
-	@Override
 	public boolean isBlockOtherSubscreen() {
 		return true;
 	}

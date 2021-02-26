@@ -2,12 +2,15 @@ package com.pinball3d.zone.sphinx;
 
 import java.util.Comparator;
 
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class SerialNumber {
 	private Type type;
 	private int number;
+	private boolean dead;
 	public static Comparator<SerialNumber> serialNumberComparator = (a, b) -> {
 		int t = a.type.compareTo(b.type);
 		if (t != 0) {
@@ -19,8 +22,13 @@ public class SerialNumber {
 	public static final SerialNumber CENTER = new SerialNumber(Type.NODE, 0);
 
 	public SerialNumber(Type type, int number) {
+		this(type, number, false);
+	}
+
+	public SerialNumber(Type type, int number, boolean dead) {
 		this.type = type;
 		this.number = number;
+		this.dead = dead;
 	}
 
 	public SerialNumber(NBTTagCompound tag) {
@@ -28,7 +36,7 @@ public class SerialNumber {
 	}
 
 	public SerialNumber(ByteBuf buf) {
-		this(Type.values()[buf.readInt()], buf.readInt());
+		this(Type.values()[buf.readInt()], buf.readInt(), buf.readBoolean());
 	}
 
 	public Type getType() {
@@ -39,20 +47,35 @@ public class SerialNumber {
 		return number;
 	}
 
+	public boolean isDead() {
+		return dead;
+	}
+
+	public void setDead(boolean dead) {
+		this.dead = dead;
+	}
+
+	public void check(TEProcessingCenter te) {
+		setDead(te.getPosFromSerialNumber(this).isOrigin());
+	}
+
 	public void readFromNBT(NBTTagCompound tag) {
 		type = Type.values()[tag.getInteger("type")];
 		number = tag.getInteger("number");
+		dead = tag.getBoolean("dead");
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setInteger("type", type.ordinal());
 		tag.setInteger("number", number);
+		tag.setBoolean("dead", dead);
 		return tag;
 	}
 
 	public void writeToByte(ByteBuf buf) {
 		buf.writeInt(type.ordinal());
 		buf.writeInt(number);
+		buf.writeBoolean(dead);
 	}
 
 	@Override

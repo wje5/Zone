@@ -15,6 +15,7 @@ import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.SphinxUtil;
+import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEBeaconCore;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
@@ -380,7 +381,10 @@ public class ConnectionHelper {
 				if (te != null) {
 					if (connect.logUpdateRate <= 0) {
 						NBTTagList list = new NBTTagList();
-						te.getLogCache().forEach(e -> list.appendTag(e.writeToNBT(new NBTTagCompound())));
+						for (Log e : te.getLogCache()) {
+							e.check(te);
+							list.appendTag(e.writeToNBT(new NBTTagCompound()));
+						}
 						tag.setTag(name(), list);
 						connect.logUpdateRate += ConfigLoader.logUpdateRate;
 					}
@@ -391,6 +395,7 @@ public class ConnectionHelper {
 				if (te != null && needNetwork != null) {
 					SerialNumber serial = te.getSerialNumberFromPos(connect.needNetwork);
 					if (serial != null) {
+						serial.check(te);
 						tag.setTag(name(), serial.writeToNBT(new NBTTagCompound()));
 					}
 				}

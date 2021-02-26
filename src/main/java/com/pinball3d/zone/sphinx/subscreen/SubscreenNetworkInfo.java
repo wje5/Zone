@@ -7,14 +7,18 @@ import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.TextButton;
+import com.pinball3d.zone.sphinx.component.TexturedButton;
+import com.pinball3d.zone.sphinx.map.MapHandler;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 
 public class SubscreenNetworkInfo extends Subscreen {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
+	private static final ResourceLocation TEXTURE_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
 
 	public SubscreenNetworkInfo(IHasSubscreen parent) {
 		this(parent, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
@@ -22,6 +26,15 @@ public class SubscreenNetworkInfo extends Subscreen {
 
 	public SubscreenNetworkInfo(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
+		addComponent(new TexturedButton(this, x + 27, y + 100, TEXTURE_4, 60, 120, 60, 60, 0.25F, () -> {
+			if (ConnectHelperClient.getInstance().hasData()) {
+				BlockPos pos = ConnectHelperClient.getInstance().getNetworkPos().getPos();
+				MapHandler.focus(pos.getX(), pos.getZ());
+				while (!parent.getSubscreens().empty()) {
+					parent.removeScreen(parent.getSubscreens().peek());
+				}
+			}
+		}));
 		addComponent(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.confirm"), () -> {
 			parent.removeScreen(SubscreenNetworkInfo.this);
 		}));

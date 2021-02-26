@@ -247,6 +247,7 @@ sphinx.delete_classify=删除分类
 sphinx.confirm_delete_classify=您确定要删除分类 %1$s 吗？\n此操作不能撤销。
 sphinx.set_gravatar=设置头像
 sphinx.set_gravatar_email=设置Gravatar邮箱：
+sphinx.view_items=查看物品信息
 
 log.send_pack=物流包<0>已于<1>处发出，经<2>，将于<3>后到达<4>。
 

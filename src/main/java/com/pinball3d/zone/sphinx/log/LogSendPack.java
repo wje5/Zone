@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;
 
@@ -21,7 +22,7 @@ public class LogSendPack extends Log {
 			List<SerialNumber> path, int packTime) {
 		super(Level.DEBUG, Type.SENDPACK, id);
 		this.packId = packId;
-		this.items = items;
+		this.items = items.copy();
 		this.start = start;
 		this.end = end;
 		this.path = path;
@@ -57,6 +58,14 @@ public class LogSendPack extends Log {
 	}
 
 	@Override
+	public void check(TEProcessingCenter te) {
+		super.check(te);
+		start.check(te);
+		end.check(te);
+		path.forEach(e -> e.check(te));
+	}
+
+	@Override
 	public String toString() {
 		String s = "";
 		for (int i = 0; i < path.size(); i++) {
@@ -71,7 +80,7 @@ public class LogSendPack extends Log {
 
 	@Override
 	public FormattedLog format() {
-		return new FormattedLog(getTime(), getLevel(), "log.send_pack", new LogComponentPack(packId, items), start,
+		return new FormattedLog(getTime(), getLevel(), "log.send_pack", new LogComponentPack(packId, getItems()), start,
 				path, Util.transferTickToString(packTime), end);
 	}
 

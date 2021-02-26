@@ -41,7 +41,9 @@ public class SubscreenManageUser extends Subscreen {
 		addComponent(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195));
 		addComponent(new TexturedButton(this, x + 83, y + 73, TEXTURE_4, 60, 120, 60, 60, 0.25F, () -> {
 			MapHandler.focus((int) Minecraft.getMinecraft().player.posX, (int) Minecraft.getMinecraft().player.posZ);
-			parent.removeScreen(this);
+			while (!parent.getSubscreens().empty()) {
+				parent.removeScreen(parent.getSubscreens().peek());
+			}
 		}));
 		addComponent(new TexturedButton(this, x + 100, y + 73, TEXTURE_4, 180, 120, 60, 60, 0.25F,
 				() -> System.out.println(1)).setEnable(() -> {

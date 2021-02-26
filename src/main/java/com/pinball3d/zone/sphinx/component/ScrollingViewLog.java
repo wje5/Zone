@@ -4,14 +4,8 @@ import java.util.Iterator;
 
 import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.sphinx.IHasComponents;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
-import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.sphinx.log.LogComponent;
-import com.pinball3d.zone.sphinx.log.LogComponent.Type;
-import com.pinball3d.zone.sphinx.log.LogComponentNeedNetwork;
-import com.pinball3d.zone.sphinx.subscreen.SubscreenNeedNetworkInfo;
-import com.pinball3d.zone.sphinx.subscreen.SubscreenNetworkInfo;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -64,8 +58,7 @@ public class ScrollingViewLog extends Component {
 				do {
 					String s = Util.cutStringToWidth(text, width - xOffset);
 					if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
-						fr.drawString(s, x + xOffset, y + yOffset - scrollingDistance,
-								c.getType() == Type.STRING ? 0xFFE0E0E0 : 0xFF3AFAFD);
+						fr.drawString(s, x + xOffset, y + yOffset - scrollingDistance, c.getColor());
 					}
 					xOffset = 0;
 					yOffset += 10;
@@ -73,15 +66,13 @@ public class ScrollingViewLog extends Component {
 				} while (fr.getStringWidth(text) > width - xOffset);
 				if (!text.isEmpty()) {
 					if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
-						fr.drawString(text, x + xOffset, y + yOffset - scrollingDistance,
-								c.getType() == Type.STRING ? 0xFFE0E0E0 : 0xFF3AFAFD);
+						fr.drawString(text, x + xOffset, y + yOffset - scrollingDistance, c.getColor());
 					}
 					xOffset += fr.getStringWidth(text);
 				}
 			} else {
 				if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
-					fr.drawString(text, x + xOffset, y + yOffset - scrollingDistance,
-							c.getType() == Type.STRING ? 0xFFE0E0E0 : 0xFF3AFAFD);
+					fr.drawString(text, x + xOffset, y + yOffset - scrollingDistance, c.getColor());
 				}
 				xOffset += w;
 			}
@@ -141,21 +132,6 @@ public class ScrollingViewLog extends Component {
 	}
 
 	public void onClick(LogComponent c) {
-		System.out.println(c);
-		switch (c.getType()) {
-		case STRING:
-			break;
-		case NEEDNETWORK:
-			SerialNumber serial = ((LogComponentNeedNetwork) c).getSerial();
-			IHasSubscreen root = Util.getRoot();
-			if (serial.equals(SerialNumber.CENTER)) {
-				root.putScreen(new SubscreenNetworkInfo(root));
-			} else {
-				root.putScreen(new SubscreenNeedNetworkInfo(root, serial));
-			}
-			break;
-		case PACK:
-			break;
-		}
+		c.onClick();
 	}
 }

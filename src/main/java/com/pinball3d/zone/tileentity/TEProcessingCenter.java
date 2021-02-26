@@ -319,6 +319,19 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return wrapper;
 	}
 
+	public void firePack(StorageWrapper w, Path path, WorldPos startPos) {
+		LogisticPack pack = new LogisticPack(packId++, path.routes, w, startPos);
+		packs.add(pack);
+		SerialNumber start = getSerialNumberFromPos(pack.routes.get(0));
+		SerialNumber end = getSerialNumberFromPos(pack.routes.get(pack.routes.size() - 1));
+		List<SerialNumber> p = new ArrayList<SerialNumber>();
+		for (int index = 1; index < pack.routes.size() - 1; index++) {
+			SerialNumber j = getSerialNumberFromPos(pack.routes.get(index));
+			p.add(j);
+		}
+		fireLog(new LogSendPack(logId++, pack.getId(), pack.items, start, end, p, (int) path.distance));
+	}
+
 	public int requestItems(StorageWrapper wrapper, WorldPos target, boolean isSimulate) {
 		TreeSet<SerialNumber> sortset = new TreeSet<SerialNumber>((o1, o2) -> {
 			double dist1 = getPosFromSerialNumber(o1).getPos().distanceSq(target.getPos());
@@ -341,16 +354,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 						if (i.getTarget().equals(pos)) {
 							time = (int) (time < i.distance ? i.distance : time);
 							if (!isSimulate) {
-								LogisticPack pack = new LogisticPack(packId++, i.flip().routes, w, new WorldPos(te));
-								packs.add(pack);
-								SerialNumber start = getSerialNumberFromPos(pack.routes.get(0));
-								SerialNumber end = getSerialNumberFromPos(pack.routes.get(pack.routes.size() - 1));
-								List<SerialNumber> p = new ArrayList<SerialNumber>();
-								for (int index = 1; index < pack.routes.size() - 1; index++) {
-									SerialNumber j = getSerialNumberFromPos(pack.routes.get(index));
-									p.add(j);
-								}
-								fireLog(new LogSendPack(logId++, pack.getId(), w, start, end, p, time));
+								firePack(w, i.flip(), pos);
 							}
 						}
 					}
@@ -377,8 +381,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 					List<Path> l = dijkstra(pos);
 					for (Path i : l) {
 						if (i.getTarget().equals(p)) {
-							LogisticPack pack = new LogisticPack(packId++, i.routes, w, pos);
-							packs.add(pack);
+							firePack(w, i, pos);
 						}
 					}
 				}
@@ -793,6 +796,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				INeedNetwork te = (INeedNetwork) p.getTileEntity();
 				NBTTagCompound n = new NBTTagCompound();
 				n.setTag("pos", p.writeToNBT(new NBTTagCompound()));
+				e.check(this);
 				n.setTag("serial", e.writeToNBT(new NBTTagCompound()));
 				n.setInteger("state", te.getWorkingState().ordinal());
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(p.getBlockState().getBlock())));
@@ -810,6 +814,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				INeedNetwork te = (INeedNetwork) p.getTileEntity();
 				NBTTagCompound n = new NBTTagCompound();
 				n.setTag("pos", p.writeToNBT(new NBTTagCompound()));
+				e.check(this);
 				n.setTag("serial", e.writeToNBT(new NBTTagCompound()));
 				n.setInteger("state", te.getWorkingState().ordinal());
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(p.getBlockState().getBlock())));
@@ -824,6 +829,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				INeedNetwork te = (INeedNetwork) p.getTileEntity();
 				NBTTagCompound n = new NBTTagCompound();
 				n.setTag("pos", p.writeToNBT(new NBTTagCompound()));
+				e.check(this);
 				n.setTag("serial", e.writeToNBT(new NBTTagCompound()));
 				n.setInteger("state", te.getWorkingState().ordinal());
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(p.getBlockState().getBlock())));
@@ -838,6 +844,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				INeedNetwork te = (INeedNetwork) p.getTileEntity();
 				NBTTagCompound n = new NBTTagCompound();
 				n.setTag("pos", p.writeToNBT(new NBTTagCompound()));
+				e.check(this);
 				n.setTag("serial", e.writeToNBT(new NBTTagCompound()));
 				n.setInteger("state", te.getWorkingState().ordinal());
 				n.setInteger("id", Item.getIdFromItem(Item.getItemFromBlock(p.getBlockState().getBlock())));
@@ -1017,7 +1024,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public void fireLog(Log log) {
 		logCache.add(log);
-		System.out.println(log);
 	}
 
 	public void load() {
@@ -1195,21 +1201,25 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		compound.setBoolean("inited", inited);
 		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {
+			e.check(this);
 			nodeList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("nodes", nodeList);
 		NBTTagList storgeList = new NBTTagList();
 		storages.forEach(e -> {
+			e.check(this);
 			storgeList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("storges", storgeList);
 		NBTTagList deviceList = new NBTTagList();
 		devices.forEach(e -> {
+			e.check(this);
 			deviceList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("devices", deviceList);
 		NBTTagList productionList = new NBTTagList();
 		productions.forEach(e -> {
+			e.check(this);
 			productionList.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
 		compound.setTag("productions", productionList);
@@ -1224,6 +1234,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		NBTTagList serialNumberList = new NBTTagList();
 		serialNumberToPos.forEach((k, v) -> {
 			NBTTagCompound t = new NBTTagCompound();
+			k.check(this);
 			t.setTag("number", k.writeToNBT(new NBTTagCompound()));
 			t.setTag("pos", v.writeToNBT(new NBTTagCompound()));
 			serialNumberList.appendTag(t);
