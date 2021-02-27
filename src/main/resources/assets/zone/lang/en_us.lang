@@ -250,6 +250,7 @@ sphinx.set_gravatar_email=Set Gravatar mail:
 sphinx.view_items=View Items
 
 log.send_pack=Logistic pack <0> sent from <1>, via <2>, will delivery <4> in <3>.
+log.recv_pack=Logistic pack <0> sent from <1> has arrived at <4>, via <2>, total time is <3>.
 
 manual.preface=   Welcome to Zone!!\n\nCurrently it introduced\n*An ore multiplying Cricible\n*A kind of Drill with replaceable\nhead\n*The Grinder crushing ores to\n32 pieces\n*Even more ore-multiplying ways\n(up to 7x!)\n*The Nail Gun making holes all\nover your enemies\n*An adorable submarine\n*All-Mighty Sphinx© System\n*and more...
 manual.menu=            Menu\n          -Tier 1-\n-Tools and Materials-\n-Crucible and Miscellaneous-\n-Drainer-\n-Grinder-\n-Electric Furnace-\n-Alloy Smelter-\n          -Tier 2-\n-Boiler-\n-Drill-\n-Centrifuge-\n-Crystallizer-\n-Sphinx© System-

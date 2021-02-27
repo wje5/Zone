@@ -96,7 +96,7 @@ public class Log {
 	}
 
 	public static enum Type {
-		SENDPACK(LogSendPack::new);
+		SENDPACK(LogSendPack::new), RECVPACK(LogRecvPack::new);
 
 		private Function<NBTTagCompound, Log> cons;
 

@@ -16,8 +16,13 @@ import net.minecraft.item.ItemStack;
 
 public class RecipeHandler {
 	private static Map<Type, Set<Recipe>> map = new HashMap<Type, Set<Recipe>>();
+	private static boolean inited;
 
 	public static void init() {
+		if (inited) {
+			return;
+		}
+		inited = true;
 		for (Type t : Type.values()) {
 			map.put(t, new HashSet<Recipe>());
 		}
@@ -207,10 +212,16 @@ public class RecipeHandler {
 	}
 
 	public static void register(Recipe recipe) {
+		if (!inited) {
+			init();
+		}
 		map.get(recipe.getType()).add(recipe);
 	}
 
 	public static Recipe getRecipe(Type type, List<ItemStack> inputs) {
+		if (!inited) {
+			init();
+		}
 		Set<Recipe> set = map.get(type);
 		Iterator<Recipe> it = set.iterator();
 		while (it.hasNext()) {
@@ -223,10 +234,33 @@ public class RecipeHandler {
 	}
 
 	public static Set<Recipe> getRecipes(Type type) {
+		if (!inited) {
+			init();
+		}
 		return map.get(type);
 	}
 
+	public static void removeRecipe(Recipe recipe) {
+		if (!inited) {
+			init();
+		}
+		Set<Recipe> s = map.get(recipe.getType());
+		if (s.contains(recipe)) {
+			s.remove(recipe);
+		}
+	}
+
+	public static void removeAll(Type type) {
+		if (!inited) {
+			init();
+		}
+		map.get(type).clear();
+	}
+
 	public static boolean match(Recipe recipe, List<ItemStack> inputs) {
+		if (!inited) {
+			init();
+		}
 		if (inputs.size() == recipe.getInputs().size()) {
 			for (int i = 0; i < inputs.size(); i++) {
 				if (!recipe.apply(i, inputs.get(i))) {

@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 
 public class LogisticPack {
 	public List<WorldPos> routes;
+	public List<WorldPos> path = new ArrayList<WorldPos>();
 	public StorageWrapper items;
 	public double x, y, z;
 	public int dim;
@@ -53,6 +54,7 @@ public class LogisticPack {
 				z = next.getPos().getZ();
 				distance -= total;
 				routes.remove(0);
+				path.add(next);
 				while (!routes.isEmpty()) {
 					Block block = next.getBlockState().getBlock();
 					TileEntity te = next.getTileEntity();
@@ -97,6 +99,11 @@ public class LogisticPack {
 		list.forEach(e -> {
 			routes.add(new WorldPos((NBTTagCompound) e));
 		});
+		path = new ArrayList<WorldPos>();
+		NBTTagList list2 = tag.getTagList("path", 10);
+		list2.forEach(e -> {
+			path.add(new WorldPos((NBTTagCompound) e));
+		});
 		items = new StorageWrapper(tag.getCompoundTag("items"));
 		x = tag.getDouble("x");
 		y = tag.getDouble("y");
@@ -110,6 +117,12 @@ public class LogisticPack {
 		routes.forEach(e -> {
 			list.appendTag(e.writeToNBT(new NBTTagCompound()));
 		});
+		tag.setTag("routes", list);
+		NBTTagList list2 = new NBTTagList();
+		path.forEach(e -> {
+			list2.appendTag(e.writeToNBT(new NBTTagCompound()));
+		});
+		tag.setTag("path", list2);
 		tag.setTag("items", items.writeToNBT(new NBTTagCompound()));
 		tag.setDouble("x", x);
 		tag.setDouble("y", y);

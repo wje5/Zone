@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +34,7 @@ import com.pinball3d.zone.sphinx.LogisticPack.Path;
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.SerialNumber.Type;
 import com.pinball3d.zone.sphinx.log.Log;
+import com.pinball3d.zone.sphinx.log.LogRecvPack;
 import com.pinball3d.zone.sphinx.log.LogSendPack;
 import com.pinball3d.zone.util.HugeItemStack;
 import com.pinball3d.zone.util.LimitedQueue;
@@ -987,6 +989,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 			if (i.forward(1D)) {
+				List<SerialNumber> l = i.path.stream().map(this::getSerialNumberFromPos).collect(Collectors.toList());
+				fireLog(new LogRecvPack(logId++, i.getId(), i.items, l.get(0), l.get(l.size() - 1),
+						l.subList(1, l.size() - 1), packId));
 				TileEntity te = i.getTarget().getTileEntity();
 				if (te instanceof IStorable) {
 					StorageWrapper wrapper = insertToItemHandler(i.items, ((IStorable) te).getStorage());

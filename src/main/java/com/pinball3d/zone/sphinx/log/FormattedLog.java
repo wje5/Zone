@@ -18,8 +18,8 @@ public class FormattedLog {
 	private static Date date = new Date();
 
 	public FormattedLog(long time, Level level, String key, Object... parms) {
-		String prefix = formatter.format(date) + level.toString() + " ";
 		date.setTime(time);
+		String prefix = formatter.format(date) + level.toString() + " ";
 		components.add(new LogComponentString(prefix));
 		String text = I18n.format(key);
 		Matcher m = Pattern.compile("<[0-9]*>").matcher(text);
