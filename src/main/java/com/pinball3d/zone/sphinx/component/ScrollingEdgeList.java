@@ -39,11 +39,21 @@ public class ScrollingEdgeList extends Component {
 	}
 
 	public ListBar get() {
-		return list.isEmpty() ? null : list.get(index);
+		return list.size() > index ? list.get(index) : null;
 	}
 
-	public void setOnChange(Predicate<Integer> onChange) {
+	public ScrollingEdgeList setOnChange(Predicate<Integer> onChange) {
 		this.onChange = onChange;
+		return this;
+	}
+
+	public void change(int index) {
+		if (index < list.size()) {
+			if (onChange == null || onChange.test(index)) {
+				list.get(index).event.run();
+				this.index = index;
+			}
+		}
 	}
 
 	@Override

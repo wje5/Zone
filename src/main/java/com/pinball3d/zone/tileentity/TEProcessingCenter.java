@@ -937,12 +937,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public boolean isUser(EntityPlayer player) {
-		return users.containsKey(player.getUniqueID());
+		UserData data = users.get(player.getUniqueID());
+		return data != null && !data.reviewing;
 	}
 
 	public boolean isAdmin(EntityPlayer player) {
 		UserData data = users.get(player.getUniqueID());
-		return data != null && data.admin;
+		return data != null && !data.reviewing && data.admin;
 	}
 
 	public Map<WorldPos, Double> getNodesInRange(int dim, double x, double y, double z) {
@@ -1373,17 +1374,18 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public static class UserData {
 		public UUID uuid;
 		public String name, email = "";
-		public boolean admin, online;
+		public boolean admin, reviewing, online;
 
-		public UserData(UUID uuid, String name, boolean admin, boolean online) {
+		public UserData(UUID uuid, String name, boolean admin, boolean reviewing, boolean online) {
 			this.uuid = uuid;
 			this.name = name;
 			this.admin = admin;
+			this.reviewing = reviewing;
 			this.online = online;
 		}
 
-		public UserData(EntityPlayer player, boolean admin, boolean online) {
-			this(player.getUniqueID(), player.getName(), admin, online);
+		public UserData(EntityPlayer player, boolean admin, boolean reviewing, boolean online) {
+			this(player.getUniqueID(), player.getName(), admin, reviewing, online);
 		}
 
 		public UserData(NBTTagCompound tag) {
@@ -1400,6 +1402,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			name = tag.getString("name");
 			email = tag.getString("email");
 			admin = tag.getBoolean("admin");
+			reviewing = tag.getBoolean("reviewing");
 			online = tag.getBoolean("online");
 		}
 
@@ -1408,6 +1411,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			tag.setString("name", name);
 			tag.setString("email", email);
 			tag.setBoolean("admin", admin);
+			tag.setBoolean("reviewing", reviewing);
 			tag.setBoolean("online", online);
 			return tag;
 		}

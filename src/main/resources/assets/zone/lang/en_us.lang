@@ -248,6 +248,12 @@ sphinx.confirm_delete_classify=Are you sure you want to delete the class %1$s?\n
 sphinx.set_gravatar=Set Gravatar
 sphinx.set_gravatar_email=Set Gravatar mail:
 sphinx.view_items=View Items
+sphinx.waiting_review=Waiting for administrator review
+sphinx.remove_user=Remove User
+sphinx.confirm_remove_user=Are you sure you want to remove this user from sphinx?
+sphinx.transfer_admin=Transfer Admin
+sphinx.confirm_transfer_admin=Are you sure you want to transfer the administrator？
+sphinx.reviewing=Reviewing
 
 log.send_pack=Logistic pack <0> sent from <1>, via <2>, will delivery <4> in <3>.
 log.recv_pack=Logistic pack <0> sent from <1> has arrived at <4>, via <2>, total time is <3>.

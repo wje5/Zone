@@ -1,5 +1,6 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +25,11 @@ public class MessageChangeGravatar extends MessageSphinx {
 
 	@Override
 	public void run(MessageContext ctx) {
-		getProcessingCenter().getUsers().get(getPlayer(ctx).getUniqueID()).email = tag.getString("email");
+		UserData data = getProcessingCenter().getUsers().get(getPlayer(ctx).getUniqueID());
+		if (data != null) {
+			data.email = tag.getString("email");
+		}
+
 	}
 
 	public static class Handler implements IMessageHandler<MessageChangeGravatar, IMessage> {

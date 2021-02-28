@@ -6,6 +6,7 @@ import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.network.ConnectionHelper.Connect;
 import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.WorldPos;
 
 import io.netty.buffer.ByteBuf;
@@ -90,10 +91,9 @@ public class MessageTryConnectToNetwork implements IMessage {
 							c.network = te.getUUID();
 						}
 					} else {
+						te.addUser(new UserData(player, false, true, true));
 						NetworkHandler.instance.sendTo(new MessageConnectNetworkCallback(false), player);
 					}
-				} else {
-					NetworkHandler.instance.sendTo(new MessageConnectNetworkCallback(false), player);
 				}
 			});
 			return null;

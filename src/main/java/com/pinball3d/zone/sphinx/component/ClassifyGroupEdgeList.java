@@ -46,8 +46,9 @@ public class ClassifyGroupEdgeList extends Component {
 		return list.isEmpty() ? null : list.get(index);
 	}
 
-	public void setOnChange(Predicate<Integer> onChange) {
+	public ClassifyGroupEdgeList setOnChange(Predicate<Integer> onChange) {
 		this.onChange = onChange;
+		return this;
 	}
 
 	public void change(int index) {

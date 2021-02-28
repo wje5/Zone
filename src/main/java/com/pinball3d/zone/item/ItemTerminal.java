@@ -64,10 +64,16 @@ public class ItemTerminal extends ZoneItem {
 							if (t instanceof TEProcessingCenter) {
 								TEProcessingCenter pc = (TEProcessingCenter) t;
 								if (pc.isDeviceInRange(p)) {
-									pc.addNeedNetwork(p, player);
-									player.sendMessage(TextComponentHelper.createComponentTranslation(player,
-											"sphinx.connect_to_network", pc.getName()));
-									return EnumActionResult.SUCCESS;
+									if (pc.isUser(player)) {
+										pc.addNeedNetwork(p, player);
+										player.sendMessage(TextComponentHelper.createComponentTranslation(player,
+												"sphinx.connect_to_network", pc.getName()));
+										return EnumActionResult.SUCCESS;
+									} else {
+										player.sendMessage(TextComponentHelper.createComponentTranslation(player,
+												"sphinx.permission_denied"));
+										return EnumActionResult.FAIL;
+									}
 								}
 								player.sendMessage(TextComponentHelper.createComponentTranslation(player,
 										"sphinx.network_not_coverage"));

@@ -100,8 +100,7 @@ public class SubscreenManageClassify extends Subscreen {
 				dirty = false;
 			}
 		}));
-		addComponent(list = new ClassifyGroupEdgeList(this, this.x, this.y + 9, 195));
-		list.setOnChange((index) -> {
+		addComponent(list = new ClassifyGroupEdgeList(this, this.x, this.y + 9, 195).setOnChange((index) -> {
 			if (dirty) {
 				parent.putScreen(new SubscreenYNCBox(parent, I18n.format("sphinx.save"),
 						I18n.format("sphinx.save_change", local.getName()), () -> {
@@ -124,7 +123,7 @@ public class SubscreenManageClassify extends Subscreen {
 				local = ConnectHelperClient.getInstance().getClassify().get(bar.id);
 				return true;
 			}
-		});
+		}));
 		addComponent(list2 = new DropDownList(this, this.x + 180, this.y + 27, 61).setOnChange(i -> {
 			refreshData();
 		}));

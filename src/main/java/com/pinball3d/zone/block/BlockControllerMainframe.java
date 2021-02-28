@@ -50,7 +50,7 @@ public class BlockControllerMainframe extends Block {
 							pos.getZ());
 				} else {
 					if (te.getUsers().isEmpty()) {
-						te.addUser(new UserData(playerIn, true, true));
+						te.addUser(new UserData(playerIn, true, false, true));
 					}
 					if (te.isAdmin(playerIn)) {
 						te.open();

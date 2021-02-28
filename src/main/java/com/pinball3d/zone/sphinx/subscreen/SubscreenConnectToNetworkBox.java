@@ -49,7 +49,7 @@ public class SubscreenConnectToNetworkBox extends Subscreen {
 		if (!fail) {
 			Util.renderGlowString(I18n.format("sphinx.waiting_for_server"), x + 35, y + 20);
 		} else if (fail && quit > 0) {
-			Util.renderGlowString(I18n.format("sphinx.permission_denied"), x + 35, y + 20);
+			Util.renderGlowString(I18n.format("sphinx.waiting_review"), x + 35, y + 20);
 		}
 		if (fail && quit == 0) {
 			dead = true;

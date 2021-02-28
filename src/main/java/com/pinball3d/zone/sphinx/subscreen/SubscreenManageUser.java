@@ -7,6 +7,9 @@ import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.network.MessageChangeGravatar;
+import com.pinball3d.zone.network.MessageDeleteUser;
+import com.pinball3d.zone.network.MessageReviewUser;
+import com.pinball3d.zone.network.MessageTransferAdmin;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.ScrollingEdgeList;
@@ -29,6 +32,7 @@ public class SubscreenManageUser extends Subscreen {
 	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	private static final ResourceLocation TEXTURE_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
+	private static final ResourceLocation TEXTURE_5 = new ResourceLocation("zone:textures/gui/sphinx/icons_5.png");
 	private ScrollingEdgeList list;
 	private ThreadDownloadImageData image;
 
@@ -38,42 +42,96 @@ public class SubscreenManageUser extends Subscreen {
 
 	public SubscreenManageUser(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 360, 200, true);
-		addComponent(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195));
+		addComponent(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195).setOnChange(i -> {
+			image = null;
+			return true;
+		}));
 		addComponent(new TexturedButton(this, x + 83, y + 73, TEXTURE_4, 60, 120, 60, 60, 0.25F, () -> {
 			MapHandler.focus((int) Minecraft.getMinecraft().player.posX, (int) Minecraft.getMinecraft().player.posZ);
 			while (!parent.getSubscreens().empty()) {
 				parent.removeScreen(parent.getSubscreens().peek());
 			}
+		}).setEnable(() -> {
+			ListBar bar = list.get();
+			if (bar != null) {
+				UserData data = (UserData) bar.getData();
+				if (!data.reviewing) {
+					return true;
+				}
+			}
+			return false;
 		}));
-		addComponent(new TexturedButton(this, x + 100, y + 73, TEXTURE_4, 180, 120, 60, 60, 0.25F,
-				() -> System.out.println(1)).setEnable(() -> {
-					if (!ConnectHelperClient.getInstance().isAdmin()) {
-						return false;
-					}
-					ListBar bar = list.get();
-					if (bar != null) {
-						UserData data = (UserData) bar.getData();
-						if (!data.admin) {
-							return true;
-						}
-					}
-					return false;
-				}));
 		addComponent(
-				new TexturedButton(this, x + 117, y + 73, TEXTURE_4, 0, 180, 60, 60, 0.25F, () -> System.out.println(2))
-						.setEnable(() -> {
-							if (!ConnectHelperClient.getInstance().isAdmin()) {
-								return false;
-							}
-							ListBar bar = list.get();
-							if (bar != null) {
-								UserData data = (UserData) bar.getData();
-								if (!data.admin) {
-									return true;
-								}
-							}
-							return false;
-						}));
+				new TexturedButton(this, x + 100, y + 73, TEXTURE_4, 180, 120, 60, 60, 0.25F,
+						() -> parent.putScreen(new SubscreenConfirmBox(parent, I18n.format("sphinx.transfer_admin"),
+								I18n.format("sphinx.confirm_transfer_admin"),
+								() -> NetworkHandler.instance.sendToServer(MessageTransferAdmin.newMessage(
+										ConnectHelperClient.getInstance().getNetworkPos(),
+										((UserData) list.get().getData()).uuid))))).setEnable(() -> {
+											if (!ConnectHelperClient.getInstance().isAdmin()) {
+												return false;
+											}
+											ListBar bar = list.get();
+											if (bar != null) {
+												UserData data = (UserData) bar.getData();
+												if (!data.admin && !data.reviewing) {
+													return true;
+												}
+											}
+											return false;
+										}));
+		addComponent(
+				new TexturedButton(this, x + 117, y + 73, TEXTURE_4, 0, 180, 60, 60, 0.25F,
+						() -> parent
+								.putScreen(new SubscreenConfirmBox(parent, I18n.format("sphinx.remove_user"),
+										I18n.format("sphinx.confirm_remove_user"),
+										() -> NetworkHandler.instance.sendToServer(MessageDeleteUser.newMessage(
+												ConnectHelperClient.getInstance().getNetworkPos(),
+												((UserData) list.get().getData()).uuid))))).setEnable(() -> {
+													if (!ConnectHelperClient.getInstance().isAdmin()) {
+														return false;
+													}
+													ListBar bar = list.get();
+													if (bar != null) {
+														UserData data = (UserData) bar.getData();
+														if (!data.admin && !data.reviewing) {
+															return true;
+														}
+													}
+													return false;
+												}));
+		addComponent(new TexturedButton(this, x + 83, y + 73, TEXTURE_5, 0, 0, 60, 60, 0.25F,
+				() -> NetworkHandler.instance.sendToServer(MessageReviewUser.newMessage(
+						ConnectHelperClient.getInstance().getNetworkPos(), ((UserData) list.get().getData()).uuid)))
+								.setEnable(() -> {
+									if (!ConnectHelperClient.getInstance().isAdmin()) {
+										return false;
+									}
+									ListBar bar = list.get();
+									if (bar != null) {
+										UserData data = (UserData) bar.getData();
+										if (data.reviewing) {
+											return true;
+										}
+									}
+									return false;
+								}));
+		addComponent(new TexturedButton(this, x + 100, y + 73, TEXTURE_4, 0, 180, 60, 60, 0.25F,
+				() -> NetworkHandler.instance.sendToServer(MessageDeleteUser.newMessage(
+						ConnectHelperClient.getInstance().getNetworkPos(), ((UserData) list.get().getData()).uuid)))
+								.setEnable(() -> {
+									if (!ConnectHelperClient.getInstance().isAdmin()) {
+										return false;
+									}
+									ListBar bar = list.get();
+									if (bar != null) {
+										UserData data = (UserData) bar.getData();
+										if (data.reviewing) {
+											return true;
+										}
+									}
+									return false;
+								}));
 	}
 
 	@Override
@@ -84,6 +142,7 @@ public class SubscreenManageUser extends Subscreen {
 	}
 
 	public void updateList() {
+		int s = list.list.size();
 		list.clear();
 		if (ConnectHelperClient.getInstance().hasData()) {
 			List<UserData> l = ConnectHelperClient.getInstance().getUsers();
@@ -93,6 +152,9 @@ public class SubscreenManageUser extends Subscreen {
 				bar.setData(e);
 				list.addBar(bar);
 			});
+		}
+		if (list.list.size() != s) {
+			list.change(0);
 		}
 	}
 
@@ -137,8 +199,12 @@ public class SubscreenManageUser extends Subscreen {
 				Util.drawTexture(ICONS, x + 112, y + 57, 216, 0, 40, 40, 0.25F);
 			}
 			Util.renderGlowString(user.name, x + 128, y + 30);
-			Util.renderGlowString(user.admin ? I18n.format("sphinx.admin") : I18n.format("sphinx.user"), x + 128,
-					y + 37);
+			if (user.reviewing) {
+				fr.drawString(I18n.format("sphinx.reviewing"), x + 128, y + 37, 0xFFBFBFBF);
+			} else {
+				Util.renderGlowString(user.admin ? I18n.format("sphinx.admin") : I18n.format("sphinx.user"), x + 128,
+						y + 37);
+			}
 			if (user.online) {
 				Util.renderGlowString(I18n.format("sphinx.online"), x + 128, y + 44);
 			} else {
