@@ -19,17 +19,25 @@ public class Slider extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		Gui.drawRect(x + 2, y - 1, x + width - 2, y, 0xFF1ECCDE);
-		Util.drawTexture(TEXTURE, x + scrollingDistance, y + 1, 102, 32, 5, 5, 1.0F);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
+		}
+		Gui.drawRect(getX() + 2, getY() - 1, getX() + width - 2, getY(), 0xFF1ECCDE);
+		Util.drawTexture(TEXTURE, getX() + scrollingDistance, getY() + 1, 102, 32, 5, 5, 1.0F);
 	}
 
 	@Override
 	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
+		if (super.onDrag(mouseX, mouseY, moveX, moveY)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		scrollingDistance = mouseX - 2;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 		scrollingDistance = scrollingDistance > width - 5 ? width - 5 : scrollingDistance;
 		onChange.run();
-		super.onDrag(mouseX, mouseY, moveX, moveY);
 		return true;
 	}
 

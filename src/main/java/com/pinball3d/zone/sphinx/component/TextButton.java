@@ -12,8 +12,6 @@ public class TextButton extends Component {
 
 	public TextButton(IHasComponents parent, int x, int y, String text, Runnable onClick) {
 		super(parent, x, y, Util.getFontRenderer().getStringWidth(text) + 8, 11);
-		this.x = x;
-		this.y = y;
 		this.text = text;
 		event = onClick;
 	}
@@ -23,6 +21,9 @@ public class TextButton extends Component {
 		if (super.onLeftClick(x, y)) {
 			return true;
 		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		event.run();
 		return true;
 	}
@@ -30,12 +31,14 @@ public class TextButton extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		Util.drawTexture(ICONS, x - 4, y - 4, 117, 138, 38, 49, 0.375F);
-		Util.drawTexture(ICONS, x + width - 7, y - 4, 155, 138, 38, 49, 0.375F);
-		if (width > 15) {
-			Gui.drawRect(x + 10, y, x + width - 7, y + 11, 0x32000000);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
 		}
-//		Util.getFontRenderer().drawString(text, x + 6, y + 1, 0xFF1ECCDE);
-		Util.renderGlowString(text, x + 6, y + 1);
+		Util.drawTexture(ICONS, getX() - 4, getY() - 4, 117, 138, 38, 49, 0.375F);
+		Util.drawTexture(ICONS, getX() + width - 7, getY() - 4, 155, 138, 38, 49, 0.375F);
+		if (width > 15) {
+			Gui.drawRect(getX() + 10, getY(), getX() + width - 7, getY() + 11, 0x32000000);
+		}
+		Util.renderGlowString(text, getX() + 6, getY() + 1);
 	}
 }

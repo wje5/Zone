@@ -1,5 +1,7 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.log.LogIOPanelDispense;
 import com.pinball3d.zone.tileentity.TEIOPanel;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.StorageWrapper;
@@ -34,13 +36,18 @@ public class MessageIOPanelSendItemToStorage extends MessageSphinxNeedNetwork {
 			TEProcessingCenter pc = getProcessingCenter();
 			StorageWrapper wrapper = new StorageWrapper(te.inv, false);
 			if (!wrapper.isEmpty()) {
-				StorageWrapper wrapper2 = pc.dispenceItems(wrapper, new WorldPos(te.getPos(), te.getWorld()));
+				StorageWrapper wrapper3 = wrapper.copy();
+				StorageWrapper wrapper2 = pc.dispenseItems(wrapper, new WorldPos(te.getPos(), te.getWorld()));
+
 				if (!wrapper2.isEmpty()) {
 					EntityPlayer player = getPlayer();
 					if (player != null) {
 						NetworkHandler.instance.sendTo(new MessageErrorStorageFull(), (EntityPlayerMP) player);
 					}
 				}
+				SerialNumber serial = pc.getSerialNumberFromPos(pos);
+				wrapper3.shrink(wrapper2.copy());
+				getProcessingCenter().fireLog(new LogIOPanelDispense(pc.getNextLogId(), getPlayer(), serial, wrapper3));
 				pc.insertToItemHandler(wrapper2, te.inv);
 			}
 		}

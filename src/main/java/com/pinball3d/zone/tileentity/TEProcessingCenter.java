@@ -34,6 +34,7 @@ import com.pinball3d.zone.sphinx.LogisticPack.Path;
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.SerialNumber.Type;
 import com.pinball3d.zone.sphinx.log.Log;
+import com.pinball3d.zone.sphinx.log.LogConnectToNetwork;
 import com.pinball3d.zone.sphinx.log.LogRecvPack;
 import com.pinball3d.zone.sphinx.log.LogSendPack;
 import com.pinball3d.zone.util.HugeItemStack;
@@ -188,18 +189,26 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			return;
 		}
 		TileEntity te = pos.getTileEntity();
+		SerialNumber number = null;
 		if (te instanceof INode) {
-			nodes.add(genSerialNumber(pos, Type.NODE));
+			number = genSerialNumber(pos, Type.NODE);
+			nodes.add(number);
 			((INeedNetwork) te).connect(getUUID());
 		} else if (te instanceof IStorable) {
-			storages.add(genSerialNumber(pos, Type.STORAGE));
+			number = genSerialNumber(pos, Type.STORAGE);
+			storages.add(number);
 			((INeedNetwork) te).connect(getUUID());
 		} else if (te instanceof IDevice) {
-			devices.add(genSerialNumber(pos, Type.DEVICE));
+			number = genSerialNumber(pos, Type.DEVICE);
+			devices.add(number);
 			((INeedNetwork) te).connect(getUUID());
 		} else if (te instanceof IProduction) {
-			productions.add(genSerialNumber(pos, Type.PRODUCTION));
+			number = genSerialNumber(pos, Type.PRODUCTION);
+			productions.add(number);
 			((INeedNetwork) te).connect(getUUID());
+		}
+		if (number != null) {
+			fireLog(new LogConnectToNetwork(getNextLogId(), player, number, pos));
 		}
 		refreshMap();
 		markDirty();
@@ -331,7 +340,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			SerialNumber j = getSerialNumberFromPos(pack.routes.get(index));
 			p.add(j);
 		}
-		fireLog(new LogSendPack(logId++, pack.getId(), pack.items, start, end, p, (int) path.distance));
+		fireLog(new LogSendPack(getNextLogId(), pack.getId(), pack.items, start, end, p, (int) path.distance));
 	}
 
 	public int requestItems(StorageWrapper wrapper, WorldPos target, boolean isSimulate) {
@@ -366,7 +375,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return time;
 	}
 
-	public StorageWrapper dispenceItems(StorageWrapper wrapper, WorldPos pos) {
+	public StorageWrapper dispenseItems(StorageWrapper wrapper, WorldPos pos) {
 		TreeSet<SerialNumber> sortset = new TreeSet<SerialNumber>((o1, o2) -> {
 			double dist1 = getPosFromSerialNumber(o1).getPos().distanceSq(pos.getPos());
 			double dist2 = getPosFromSerialNumber(o2).getPos().distanceSq(pos.getPos());
@@ -937,12 +946,20 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public boolean isUser(EntityPlayer player) {
-		UserData data = users.get(player.getUniqueID());
+		return isUser(player.getUniqueID());
+	}
+
+	public boolean isUser(UUID uuid) {
+		UserData data = users.get(uuid);
 		return data != null && !data.reviewing;
 	}
 
 	public boolean isAdmin(EntityPlayer player) {
-		UserData data = users.get(player.getUniqueID());
+		return isAdmin(player.getUniqueID());
+	}
+
+	public boolean isAdmin(UUID uuid) {
+		UserData data = users.get(uuid);
 		return data != null && !data.reviewing && data.admin;
 	}
 
@@ -991,7 +1008,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 			if (i.forward(1D)) {
 				List<SerialNumber> l = i.path.stream().map(this::getSerialNumberFromPos).collect(Collectors.toList());
-				fireLog(new LogRecvPack(logId++, i.getId(), i.items, l.get(0), l.get(l.size() - 1),
+				fireLog(new LogRecvPack(getNextLogId(), i.getId(), i.items, l.get(0), l.get(l.size() - 1),
 						l.subList(1, l.size() - 1), packId));
 				TileEntity te = i.getTarget().getTileEntity();
 				if (te instanceof IStorable) {
@@ -1020,7 +1037,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 		}
 		deads.forEach(e -> {
-			dispenceItems(e.items, new WorldPos((int) e.x, (int) e.y, (int) e.z, e.dim));
+			dispenseItems(e.items, new WorldPos((int) e.x, (int) e.y, (int) e.z, e.dim));
 		});
 	}
 
@@ -1030,6 +1047,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public void fireLog(Log log) {
 		logCache.add(log);
+	}
+
+	public int getNextLogId() {
+		return logId++;
 	}
 
 	public void load() {
@@ -1375,6 +1396,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		public UUID uuid;
 		public String name, email = "";
 		public boolean admin, reviewing, online;
+		public WorldPos pos = WorldPos.ORIGIN;
 
 		public UserData(UUID uuid, String name, boolean admin, boolean reviewing, boolean online) {
 			this.uuid = uuid;
@@ -1386,15 +1408,23 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 		public UserData(EntityPlayer player, boolean admin, boolean reviewing, boolean online) {
 			this(player.getUniqueID(), player.getName(), admin, reviewing, online);
+			pos = new WorldPos(player);
 		}
 
 		public UserData(NBTTagCompound tag) {
 			readFromNBT(tag);
 		}
 
-		public void checkOnline() {
-			online = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-					.getPlayerByUUID(uuid) != null;
+		public void updateData() {
+			EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+					.getPlayerByUUID(uuid);
+			if (player != null) {
+				online = true;
+				pos = new WorldPos(player);
+			} else {
+				online = false;
+				pos = WorldPos.ORIGIN;
+			}
 		}
 
 		public void readFromNBT(NBTTagCompound tag) {
@@ -1404,6 +1434,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			admin = tag.getBoolean("admin");
 			reviewing = tag.getBoolean("reviewing");
 			online = tag.getBoolean("online");
+			pos = new WorldPos(tag.getCompoundTag("pos"));
 		}
 
 		public NBTTagCompound writeToNBT(NBTTagCompound tag) {
@@ -1413,6 +1444,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			tag.setBoolean("admin", admin);
 			tag.setBoolean("reviewing", reviewing);
 			tag.setBoolean("online", online);
+			tag.setTag("pos", pos.writeToNBT(new NBTTagCompound()));
 			return tag;
 		}
 	}

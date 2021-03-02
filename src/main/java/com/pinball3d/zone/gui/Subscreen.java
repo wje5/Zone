@@ -114,8 +114,8 @@ public class Subscreen implements IHasComponents {
 			Iterator<Component> it = components.iterator();
 			while (it.hasNext()) {
 				Component c = it.next();
-				int cX = x - c.x;
-				int cY = y - c.y;
+				int cX = x - c.getX();
+				int cY = y - c.getY();
 				if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
 					if (c.onClickScreen(cX, cY, isLeft)) {
 						return true;
@@ -139,16 +139,17 @@ public class Subscreen implements IHasComponents {
 				Iterator<Component> it = components.iterator();
 				while (it.hasNext()) {
 					Component c = it.next();
-					int cX = x - c.x;
-					int cY = y - c.y;
+					int cX = x - c.getX();
+					int cY = y - c.getY();
 					if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
-						if (c.onDrag(x - c.x, y - c.y, moveX, moveY)) {
+						if (c.onDrag(x - c.getX(), y - c.getY(), moveX, moveY)) {
 							draggingComponent = c;
 							break;
 						}
 					}
 				}
-			} else if (!draggingComponent.onDrag(x - draggingComponent.x, y - draggingComponent.y, moveX, moveY)) {
+			} else if (!draggingComponent.onDrag(x - draggingComponent.getX(), y - draggingComponent.getY(), moveX,
+					moveY)) {
 				draggingComponent = null;
 				flag = false;
 			}
@@ -170,8 +171,8 @@ public class Subscreen implements IHasComponents {
 			Iterator<Component> it = components.iterator();
 			while (it.hasNext()) {
 				Component c = it.next();
-				int cX = x - c.x;
-				int cY = y - c.y;
+				int cX = x - c.getX();
+				int cY = y - c.getY();
 				if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
 					if (c.onMouseScroll(cX, cY, isUp)) {
 						return true;

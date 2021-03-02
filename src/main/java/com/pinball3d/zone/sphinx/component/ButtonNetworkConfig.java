@@ -19,7 +19,11 @@ public class ButtonNetworkConfig extends TexturedButton {
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
+		}
 		boolean flag = connect.getAsBoolean();
-		Util.drawTexture(texture, x, y, flag ? 120 : 180, 60, uWidth, vHeight, 0.25F);
+		Util.drawTexture(texture, getX(), getY(), flag ? 120 : 180, 60, uWidth, vHeight, 0.25F);
 	}
 }

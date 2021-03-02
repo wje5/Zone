@@ -29,16 +29,21 @@ public class ScrollingList extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
+		}
 		Iterator<ListBar> it = list.iterator();
 		int yOffset = 0;
 		while (it.hasNext()) {
 			ListBar bar = it.next();
-			int renderY = y + yOffset - scrollingDistance;
-			if (renderY <= y + height && renderY + bar.height >= y) {
-				int upCut = y - renderY > 0 ? y - renderY : 0;
-				int downCut = renderY + bar.height - (y + height) > 0 ? renderY + bar.height - (y + height) : 0;
-				boolean flag = mouseX >= x && mouseX <= x + width && mouseY > renderY && mouseY <= renderY + bar.height;
-				bar.doRender(x, renderY, upCut, downCut, flag);
+			int renderY = getY() + yOffset - scrollingDistance;
+			if (renderY <= getY() + height && renderY + bar.height >= getY()) {
+				int upCut = getY() - renderY > 0 ? getY() - renderY : 0;
+				int downCut = renderY + bar.height - (getY() + height) > 0 ? renderY + bar.height - (getY() + height)
+						: 0;
+				boolean flag = mouseX >= getX() && mouseX <= getX() + width && mouseY > renderY
+						&& mouseY <= renderY + bar.height;
+				bar.doRender(getX(), renderY, upCut, downCut, flag);
 			}
 			yOffset += bar.height;
 		}
@@ -46,7 +51,12 @@ public class ScrollingList extends Component {
 
 	@Override
 	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
-		super.onDrag(mouseX, mouseY, moveX, moveY);
+		if (super.onDrag(mouseX, mouseY, moveX, moveY)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		scrollingDistance -= moveY;
 		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
@@ -57,6 +67,9 @@ public class ScrollingList extends Component {
 	public boolean onLeftClick(int x, int y) {
 		if (super.onLeftClick(x, y)) {
 			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
 		}
 		Iterator<ListBar> it = list.iterator();
 		int yOffset = 0;

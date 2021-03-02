@@ -10,8 +10,6 @@ public class HyperTextButton extends Component {
 
 	public HyperTextButton(IHasComponents parent, int x, int y, String text, Runnable onClick) {
 		super(parent, x, y, Util.getFontRenderer().getStringWidth(text), Util.getFontRenderer().FONT_HEIGHT);
-		this.x = x;
-		this.y = y;
 		this.text = text;
 		event = onClick;
 	}
@@ -21,6 +19,9 @@ public class HyperTextButton extends Component {
 		if (super.onLeftClick(x, y)) {
 			return true;
 		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		event.run();
 		return true;
 	}
@@ -28,7 +29,9 @@ public class HyperTextButton extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-//		Util.getFontRenderer().drawString(text, x, y, 0xFF1ECCDE);
-		Util.renderGlowString(text, x, y);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
+		}
+		Util.renderGlowString(text, getX(), getY());
 	}
 }

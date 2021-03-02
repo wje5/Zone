@@ -2,6 +2,7 @@ package com.pinball3d.zone.sphinx.subscreen;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
@@ -18,6 +19,7 @@ import com.pinball3d.zone.sphinx.component.TexturedButton;
 import com.pinball3d.zone.sphinx.map.MapHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.Util;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -35,6 +37,7 @@ public class SubscreenManageUser extends Subscreen {
 	private static final ResourceLocation TEXTURE_5 = new ResourceLocation("zone:textures/gui/sphinx/icons_5.png");
 	private ScrollingEdgeList list;
 	private ThreadDownloadImageData image;
+	private UUID jumpTo;
 
 	public SubscreenManageUser(IHasSubscreen parent) {
 		this(parent, getDisplayWidth() / 2 - 210, getDisplayHeight() / 2 - 100);
@@ -42,12 +45,14 @@ public class SubscreenManageUser extends Subscreen {
 
 	public SubscreenManageUser(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 360, 200, true);
+		jumpTo = mc.player.getUniqueID();
 		addComponent(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195).setOnChange(i -> {
 			image = null;
 			return true;
 		}));
 		addComponent(new TexturedButton(this, x + 83, y + 73, TEXTURE_4, 60, 120, 60, 60, 0.25F, () -> {
-			MapHandler.focus((int) Minecraft.getMinecraft().player.posX, (int) Minecraft.getMinecraft().player.posZ);
+			WorldPos pos = ((UserData) list.get().getData()).pos;
+			MapHandler.focus(pos.getPos().getX(), pos.getPos().getZ());
 			while (!parent.getSubscreens().empty()) {
 				parent.removeScreen(parent.getSubscreens().peek());
 			}
@@ -55,7 +60,7 @@ public class SubscreenManageUser extends Subscreen {
 			ListBar bar = list.get();
 			if (bar != null) {
 				UserData data = (UserData) bar.getData();
-				if (!data.reviewing) {
+				if (!data.reviewing && data.online) {
 					return true;
 				}
 			}
@@ -79,7 +84,8 @@ public class SubscreenManageUser extends Subscreen {
 												}
 											}
 											return false;
-										}));
+										}).setXSupplier(
+												() -> ((UserData) list.get().getData()).online ? x + 100 : x + 83));
 		addComponent(
 				new TexturedButton(this, x + 117, y + 73, TEXTURE_4, 0, 180, 60, 60, 0.25F,
 						() -> parent
@@ -99,7 +105,8 @@ public class SubscreenManageUser extends Subscreen {
 														}
 													}
 													return false;
-												}));
+												}).setXSupplier(() -> ((UserData) list.get().getData()).online ? x + 117
+														: x + 100));
 		addComponent(new TexturedButton(this, x + 83, y + 73, TEXTURE_5, 0, 0, 60, 60, 0.25F,
 				() -> NetworkHandler.instance.sendToServer(MessageReviewUser.newMessage(
 						ConnectHelperClient.getInstance().getNetworkPos(), ((UserData) list.get().getData()).uuid)))
@@ -134,6 +141,11 @@ public class SubscreenManageUser extends Subscreen {
 								}));
 	}
 
+	public SubscreenManageUser setUser(UUID uuid) {
+		jumpTo = uuid;
+		return this;
+	}
+
 	@Override
 	public Set<Type> getDataTypes() {
 		Set<Type> s = super.getDataTypes();
@@ -155,6 +167,14 @@ public class SubscreenManageUser extends Subscreen {
 		}
 		if (list.list.size() != s) {
 			list.change(0);
+		}
+		if (jumpTo != null && !list.list.isEmpty()) {
+			for (int i = 0; i < list.list.size(); i++) {
+				if (((UserData) list.list.get(i).getData()).uuid.equals(jumpTo)) {
+					list.change(i);
+				}
+			}
+			jumpTo = null;
 		}
 	}
 

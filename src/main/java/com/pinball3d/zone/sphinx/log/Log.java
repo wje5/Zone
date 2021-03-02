@@ -73,7 +73,7 @@ public class Log {
 
 	@Override
 	public String toString() {
-		return getDateString() + " " + level;
+		return format().toString();
 	}
 
 	public FormattedLog format() {
@@ -96,7 +96,9 @@ public class Log {
 	}
 
 	public static enum Type {
-		SENDPACK(LogSendPack::new), RECVPACK(LogRecvPack::new);
+		SENDPACK(LogSendPack::new), RECVPACK(LogRecvPack::new), IOPANELREQUEST(LogIOPanelRequest::new),
+		IOPANELDISPENSE(LogIOPanelDispense::new), CONNECTTONETWORK(LogConnectToNetwork::new),
+		DISCONNECTFROMNETWORK(LogDisconnectFromNetwork::new);
 
 		private Function<NBTTagCompound, Log> cons;
 

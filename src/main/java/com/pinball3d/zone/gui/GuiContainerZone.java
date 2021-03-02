@@ -95,8 +95,8 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 				boolean flag = false;
 				while (it.hasNext()) {
 					Component c = it.next();
-					int x = mouseX - c.x;
-					int y = mouseY - c.y;
+					int x = mouseX - c.getX();
+					int y = mouseY - c.getY();
 					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
 						if (c.onMouseScroll(x, y, d < 0)) {
 							flag = true;
@@ -253,8 +253,8 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 				Iterator<Component> it = components.iterator();
 				while (it.hasNext()) {
 					Component c = it.next();
-					int x = mouseX - c.x;
-					int y = mouseY - c.y;
+					int x = mouseX - c.getX();
+					int y = mouseY - c.getY();
 					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
 						if (c.onClickScreen(x, y, button != 1)) {
 							flag = true;

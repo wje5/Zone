@@ -19,8 +19,6 @@ public class DropDownList extends Component {
 
 	public DropDownList(IHasComponents parent, int x, int y, int width) {
 		super(parent, x, y, width + 10, 15);
-		this.x = x;
-		this.y = y;
 	}
 
 	public void addBar(String title, Runnable onClick) {
@@ -31,6 +29,9 @@ public class DropDownList extends Component {
 	public boolean onLeftClick(int x, int y) {
 		if (super.onLeftClick(x, y)) {
 			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
 		}
 		if (isDrop && y >= 16) {
 			int i = (y - 16) / 14;
@@ -64,21 +65,25 @@ public class DropDownList extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
+		}
 		FontRenderer renderer = Util.getFontRenderer();
-		Util.drawBorder(x, y, width, 15, 1, 0xFF1ECCDE);
+		Util.drawBorder(getX(), getY(), width, 15, 1, 0xFF1ECCDE);
 		if (!list.isEmpty()) {
-			renderer.drawString(list.get(index).title, x + 3, y + 3, 0xFF1ECCDE);
+			renderer.drawString(list.get(index).title, getX() + 3, getY() + 3, 0xFF1ECCDE);
 		}
 		if (isDrop) {
 			for (int i = 0; i < list.size(); i++) {
-				Gui.drawRect(x, y + i * 14 + 15, x + 1, y + i * 14 + 29, 0xFF00479D);
-				Gui.drawRect(x + width - 1, y + i * 14 + 15, x + width, y + i * 14 + 29, 0xFF00479D);
-				Gui.drawRect(x + 1, y + i * 14 + 28, x + width - 1, y + i * 14 + 29, 0xFF00479D);
-				Gui.drawRect(x + 1, y + i * 14 + 15, x + width - 1, y + i * 14 + 28, 0xFFE0E0E0);
-				renderer.drawString(list.get(i).title, x + 3, y + 17 + i * 14, 0xFF000000);
+				Gui.drawRect(getX(), getY() + i * 14 + 15, getX() + 1, getY() + i * 14 + 29, 0xFF00479D);
+				Gui.drawRect(getX() + width - 1, getY() + i * 14 + 15, getX() + width, getY() + i * 14 + 29,
+						0xFF00479D);
+				Gui.drawRect(getX() + 1, getY() + i * 14 + 28, getX() + width - 1, getY() + i * 14 + 29, 0xFF00479D);
+				Gui.drawRect(getX() + 1, getY() + i * 14 + 15, getX() + width - 1, getY() + i * 14 + 28, 0xFFE0E0E0);
+				renderer.drawString(list.get(i).title, getX() + 3, getY() + 17 + i * 14, 0xFF000000);
 			}
 		}
-		Util.drawTexture(ICONS, x + width - 11, y, 196, 41, 11, 15, 1.0F);
+		Util.drawTexture(ICONS, getX() + width - 11, getY(), 196, 41, 11, 15, 1.0F);
 	}
 
 	public class ListBar {

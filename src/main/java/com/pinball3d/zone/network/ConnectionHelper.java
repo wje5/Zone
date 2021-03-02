@@ -371,7 +371,7 @@ public class ConnectionHelper {
 				if (te != null) {
 					NBTTagList list = new NBTTagList();
 					te.getUsers().values().forEach(e -> {
-						e.checkOnline();
+						e.updateData();
 						list.appendTag(e.writeToNBT(new NBTTagCompound()));
 					});
 					tag.setTag(name(), list);

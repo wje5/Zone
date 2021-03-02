@@ -37,7 +37,7 @@ public class OutlineTree extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		if (outline == null) {
+		if (enable != null && !enable.getAsBoolean() || outline == null) {
 			return;
 		}
 		Iterator<PDOutlineItem> it = outlineList.iterator();
@@ -49,19 +49,19 @@ public class OutlineTree extends Component {
 			int cutUp = posY < 0 ? -posY : 0;
 			int cutDown = posY + 13 - height > 0 ? posY + 13 - height : 0;
 			if (cutUp < 13 && cutDown < 13) {
-				Util.drawTexture(ICONS, x + indents.get(index) * 15, y + posY + cutUp, 0, 187 + cutUp * 4,
+				Util.drawTexture(ICONS, getX() + indents.get(index) * 15, getY() + posY + cutUp, 0, 187 + cutUp * 4,
 						225 - indents.get(index) * 60, 50 - cutUp * 4 - cutDown * 4, 0.25F);
 				if (e.hasChildren()) {
-					Util.drawTexture(ICONS, x + indents.get(index) * 15 + 10, y + posY + cutUp + 3,
+					Util.drawTexture(ICONS, getX() + indents.get(index) * 15 + 10, getY() + posY + cutUp + 3,
 							e.isNodeOpen() ? 64 : 32, 155 + cutUp * 4, 32, 32 - cutUp * 4 - cutDown * 4, 0.25F);
 				} else {
-					Util.drawTexture(ICONS, x + indents.get(index) * 15 + 12, y + posY + cutUp + 3, 96, 155 + cutUp * 4,
-							21, 32 - cutUp * 4 - cutDown * 4, 0.25F);
+					Util.drawTexture(ICONS, getX() + indents.get(index) * 15 + 12, getY() + posY + cutUp + 3, 96,
+							155 + cutUp * 4, 21, 32 - cutUp * 4 - cutDown * 4, 0.25F);
 				}
 				if (cutUp <= 3 && cutDown <= 3 && indents.get(index) < 2) {
 					String text = Util.formatString(e.getTitle());
 					text = Util.formatStringToWidth(fr, text, 28 - indents.get(index) * 15);
-					fr.drawString(text, x + 20 + indents.get(index) * 15, y + 3 + posY, 0xFF1ECCDE);
+					fr.drawString(text, getX() + 20 + indents.get(index) * 15, getY() + 3 + posY, 0xFF1ECCDE);
 				}
 			}
 			index++;
@@ -96,6 +96,9 @@ public class OutlineTree extends Component {
 	public boolean onLeftClick(int x, int y) {
 		if (super.onLeftClick(x, y)) {
 			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
 		}
 		int index = 0;
 		Iterator<PDOutlineItem> it = outlineList.iterator();
@@ -134,7 +137,12 @@ public class OutlineTree extends Component {
 
 	@Override
 	public boolean onMouseScroll(int mouseX, int mouseY, boolean isUp) {
-		super.onMouseScroll(mouseX, mouseY, isUp);
+		if (super.onMouseScroll(mouseX, mouseY, isUp)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		int maxScrollingDistance = outlineList == null ? 0 : outlineList.size() * 15 - height;
 		scrollingDistance += isUp ? 15 : -15;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
@@ -144,7 +152,12 @@ public class OutlineTree extends Component {
 
 	@Override
 	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
-		super.onDrag(mouseX, mouseY, moveX, moveY);
+		if (super.onDrag(mouseX, mouseY, moveX, moveY)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		int maxScrollingDistance = outlineList == null ? 0 : outlineList.size() * 15 - height;
 		scrollingDistance -= moveY;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;

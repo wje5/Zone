@@ -18,6 +18,6 @@ public class BlockShow extends Component {
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
-		Util.renderItem(stack, x, y, scale);
+		Util.renderItem(stack, getX(), getY(), scale);
 	}
 }

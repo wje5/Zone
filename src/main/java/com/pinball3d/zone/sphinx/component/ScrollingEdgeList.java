@@ -59,6 +59,9 @@ public class ScrollingEdgeList extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
+		}
 		Iterator<ListBar> it = list.iterator();
 		FontRenderer fr = Util.getFontRenderer();
 		int index = 0;
@@ -68,18 +71,20 @@ public class ScrollingEdgeList extends Component {
 			int cutUp = posY < 0 ? -posY : 0;
 			int cutDown = posY + 13 - height > 0 ? posY + 13 - height : 0;
 			if (cutUp < 13 && cutDown < 13) {
-				Util.drawTexture(ICONS, (this.index == index ? x : x + 43 - stretch) - 3, y + posY + cutUp - 3, 0,
-						187 + cutUp * 4, (stretch >= 43 || this.index == index ? 225 : stretch * 4 + 52) + 19,
+				Util.drawTexture(ICONS, (this.index == index ? getX() : getX() + 43 - stretch) - 3,
+						getY() + posY + cutUp - 3, 0, 187 + cutUp * 4,
+						(stretch >= 43 || this.index == index ? 225 : stretch * 4 + 52) + 19,
 						(50 - cutUp * 4 - cutDown * 4) + 19, 0.25F);
 				if (cutUp <= 3 && cutDown <= 3 && (this.index == index || stretch > 7)) {
 					String text = Util.formatString(e.title);
 					text = Util.formatStringToWidth(fr, text, this.index == index ? 36 : stretch - 7);
-					Util.renderGlowString(text, this.index == index ? x + 20 : x + 63 - stretch, y + 3 + posY);
+					Util.renderGlowString(text, this.index == index ? getX() + 20 : getX() + 63 - stretch,
+							getY() + 3 + posY);
 				}
 			}
 			index++;
 		}
-		if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height) {
+		if (mouseX >= getX() && mouseX <= getX() + width && mouseY >= getY() && mouseY <= getY() + height) {
 			stretch = stretch + 5 >= 43 ? 43 : stretch + 5;
 		} else {
 			stretch = 0;
@@ -90,6 +95,9 @@ public class ScrollingEdgeList extends Component {
 	public boolean onLeftClick(int x, int y) {
 		if (super.onLeftClick(x, y)) {
 			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
 		}
 		int index = 0;
 		Iterator<ListBar> it = list.iterator();
@@ -112,7 +120,12 @@ public class ScrollingEdgeList extends Component {
 
 	@Override
 	public boolean onMouseScroll(int mouseX, int mouseY, boolean isUp) {
-		super.onMouseScroll(mouseX, mouseY, isUp);
+		if (super.onMouseScroll(mouseX, mouseY, isUp)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		int maxScrollingDistance = list.size() * 15 - height;
 		if (maxScrollingDistance < 0) {
 			scrollingDistance = 0;
@@ -126,7 +139,12 @@ public class ScrollingEdgeList extends Component {
 
 	@Override
 	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
-		super.onDrag(mouseX, mouseY, moveX, moveY);
+		if (super.onDrag(mouseX, mouseY, moveX, moveY)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		int maxScrollingDistance = list.size() * 15 - height;
 		if (maxScrollingDistance < 0) {
 			scrollingDistance = 0;

@@ -223,6 +223,16 @@ public class StorageWrapper {
 		return storges.size() + other.size();
 	}
 
+	public int getCount() {
+		int count = 0;
+		Iterator<HugeItemStack> it = storges.iterator();
+		while (it.hasNext()) {
+			count += it.next().count;
+		}
+		count += other.size();
+		return count;
+	}
+
 	public StorageWrapper copy() {
 		StorageWrapper wrapper = new StorageWrapper();
 		storges.forEach(e -> {

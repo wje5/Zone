@@ -1,5 +1,8 @@
 package com.pinball3d.zone.gui;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.IntSupplier;
+
 import com.pinball3d.zone.sphinx.IHasComponents;
 
 import net.minecraft.client.Minecraft;
@@ -9,9 +12,11 @@ public class Component {
 	public static Minecraft mc = Minecraft.getMinecraft();
 	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	public static final ResourceLocation TEXTURE_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
-	public int x, y;
+	private int x, y;
 	public int width, height;
 	public IHasComponents parent;
+	protected BooleanSupplier enable;
+	protected IntSupplier xSupplier, ySupplier;
 
 	public Component(IHasComponents parent, int x, int y, int width, int height) {
 		this.parent = parent;
@@ -27,6 +32,29 @@ public class Component {
 		} else {
 			return onRightClick(x, y);
 		}
+	}
+
+	public Component setEnable(BooleanSupplier enable) {
+		this.enable = enable;
+		return this;
+	}
+
+	public Component setXSupplier(IntSupplier xSupplier) {
+		this.xSupplier = xSupplier;
+		return this;
+	}
+
+	public Component setYSupplier(IntSupplier ySupplier) {
+		this.ySupplier = ySupplier;
+		return this;
+	}
+
+	public int getX() {
+		return xSupplier == null ? x : xSupplier.getAsInt();
+	}
+
+	public int getY() {
+		return ySupplier == null ? y : ySupplier.getAsInt();
 	}
 
 	public boolean onLeftClick(int x, int y) {

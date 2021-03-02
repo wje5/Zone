@@ -19,8 +19,8 @@ public class ButtonPage extends TexturedButton {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		if ((enable == null || enable.getAsBoolean())
-				&& (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height)) {
-			Util.drawTexture(flag ? TEXTURE : TEXTURE2, x, y, width, height, u, v, uWidth, vHeight);
+				&& (mouseX >= getX() && mouseX <= getX() + width && mouseY >= getY() && mouseY <= getY() + height)) {
+			Util.drawTexture(flag ? TEXTURE : TEXTURE2, getX(), getY(), width, height, u, v, uWidth, vHeight);
 		}
 	}
 }

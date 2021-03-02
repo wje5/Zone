@@ -43,7 +43,12 @@ public class PDFRenderer extends Component {
 
 	@Override
 	public boolean onMouseScroll(int mouseX, int mouseY, boolean isUp) {
-		super.onMouseScroll(mouseX, mouseY, isUp);
+		if (super.onMouseScroll(mouseX, mouseY, isUp)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		scrollingDistance += isUp ? 15 : -15;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 		scrollingDistance = scrollingDistance > maxScrollingDistance ? maxScrollingDistance : scrollingDistance;
@@ -52,7 +57,12 @@ public class PDFRenderer extends Component {
 
 	@Override
 	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
-		super.onDrag(mouseX, mouseY, moveX, moveY);
+		if (super.onDrag(mouseX, mouseY, moveX, moveY)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		scrollingDistance -= moveY;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 		scrollingDistance = scrollingDistance > maxScrollingDistance ? maxScrollingDistance : scrollingDistance;
@@ -62,6 +72,9 @@ public class PDFRenderer extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
+		}
 		float yOffset = 0;
 		if (pdf != null) {
 			int max = pdf.doc.getNumberOfPages();
@@ -70,7 +83,7 @@ public class PDFRenderer extends Component {
 				if (yOffset + imageHeight >= scrollingDistance && yOffset <= scrollingDistance + height) {
 					PDFImage image = pdf.getImage(i);
 					int yOff = (int) (scrollingDistance - yOffset);
-					Util.drawPDF(image, x, yOff < 0 ? y - yOff : y, width, yOff < 0 ? 0 : yOff,
+					Util.drawPDF(image, getX(), yOff < 0 ? getY() - yOff : getY(), width, yOff < 0 ? 0 : yOff,
 							(int) (yOff < 0 ? height + yOff
 									: imageHeight - yOff > height ? height : imageHeight - yOff));
 				}

@@ -10,8 +10,6 @@ public class RadioButton extends Component {
 
 	public RadioButton(IHasComponents parent, int x, int y, Runnable onClick) {
 		super(parent, x, y, 9, 9);
-		this.x = x;
-		this.y = y;
 		event = onClick;
 	}
 
@@ -29,6 +27,9 @@ public class RadioButton extends Component {
 		if (super.onLeftClick(x, y)) {
 			return true;
 		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		event.run();
 		return true;
 	}
@@ -36,6 +37,9 @@ public class RadioButton extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		Util.drawTexture(TEXTURE_4, x, y, isChoosed ? 120 : 60, 180, 60, 60, 0.13F);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
+		}
+		Util.drawTexture(TEXTURE_4, getX(), getY(), isChoosed ? 120 : 60, 180, 60, 60, 0.13F);
 	}
 }

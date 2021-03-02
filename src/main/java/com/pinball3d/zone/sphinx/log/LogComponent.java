@@ -43,6 +43,6 @@ public class LogComponent {
 	}
 
 	public static enum Type {
-		STRING, NEEDNETWORK, PACK;
+		STRING, NEEDNETWORK, PACK, ITEMS, PLAYER, POS;
 	}
 }

@@ -173,14 +173,10 @@ public abstract class GuiContainerSphinxAdvanced extends GuiContainerSphinxBase 
 		}
 		if (!chosen.isEmpty()) {
 			List<Component> l = chosen.get(chosenIndex).getUnitButtons(this);
-			it = l.iterator();
-			int index = 0;
-			while (it.hasNext()) {
-				Component c = it.next();
-				c.x = width - 100 + index * 13;
-				c.y = height - 12;
-				index++;
-			}
+			l.forEach(c -> {
+				c.setXSupplier(() -> width - 100 + l.indexOf(c) * 13);
+				c.setYSupplier(() -> height - 12);
+			});
 			components.addAll(l);
 		}
 	}

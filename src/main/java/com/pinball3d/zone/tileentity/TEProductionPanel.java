@@ -31,7 +31,7 @@ public class TEProductionPanel extends TENeedNetwork implements IProduction {
 					WorldPos pos = GlobalNetworkData.getPos(network);
 					if (!pos.isOrigin()) {
 						TEProcessingCenter pc = (TEProcessingCenter) pos.getTileEntity();
-						pc.insertToItemHandler(pc.dispenceItems(wrapper, new WorldPos(this)), handler);
+						pc.insertToItemHandler(pc.dispenseItems(wrapper, new WorldPos(this)), handler);
 						markDirty();
 					}
 				}

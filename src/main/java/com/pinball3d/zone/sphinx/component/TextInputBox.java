@@ -49,6 +49,9 @@ public class TextInputBox extends Component {
 		if (super.onLeftClick(x, y)) {
 			return true;
 		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		if (event != null) {
 			event.run();
 		}
@@ -57,6 +60,12 @@ public class TextInputBox extends Component {
 
 	@Override
 	public boolean onKeyTyped(char typedChar, int keyCode) {
+		if (super.onKeyTyped(typedChar, keyCode)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		if (isFocus) {
 			if (GuiScreen.isKeyComboCtrlV(keyCode) && text.length() < maxLength) {
 				String s = GuiScreen.getClipboardString();
@@ -103,12 +112,15 @@ public class TextInputBox extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		Util.drawBorder(x, y, width, height, 1, 0xFF1ECCDE);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
+		}
+		Util.drawBorder(getX(), getY(), width, height, 1, 0xFF1ECCDE);
 		FontRenderer renderer = Util.getFontRenderer();
 		if (isFocus && mc.world.getTotalWorldTime() % 20 < 10) {
-			Gui.drawRect(x + 3 + renderer.getStringWidth(text), y + 2, x + 4 + renderer.getStringWidth(text),
-					y + height - 2, 0xFF1ECCDE);
+			Gui.drawRect(getX() + 3 + renderer.getStringWidth(text), getY() + 2,
+					getX() + 4 + renderer.getStringWidth(text), getY() + height - 2, 0xFF1ECCDE);
 		}
-		Util.renderGlowString(text, x + 3, y + 3);
+		Util.renderGlowString(text, getX() + 3, getY() + 3);
 	}
 }

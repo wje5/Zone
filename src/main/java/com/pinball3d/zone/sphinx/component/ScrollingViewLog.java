@@ -46,6 +46,9 @@ public class ScrollingViewLog extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
+		if (enable != null && !enable.getAsBoolean()) {
+			return;
+		}
 		Iterator<LogComponent> it = log.getComponents().iterator();
 		int xOffset = 0;
 		int yOffset = 3;
@@ -58,7 +61,7 @@ public class ScrollingViewLog extends Component {
 				do {
 					String s = Util.cutStringToWidth(text, width - xOffset);
 					if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
-						fr.drawString(s, x + xOffset, y + yOffset - scrollingDistance, c.getColor());
+						fr.drawString(s, getX() + xOffset, getY() + yOffset - scrollingDistance, c.getColor());
 					}
 					xOffset = 0;
 					yOffset += 10;
@@ -66,13 +69,13 @@ public class ScrollingViewLog extends Component {
 				} while (fr.getStringWidth(text) > width - xOffset);
 				if (!text.isEmpty()) {
 					if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
-						fr.drawString(text, x + xOffset, y + yOffset - scrollingDistance, c.getColor());
+						fr.drawString(text, getX() + xOffset, getY() + yOffset - scrollingDistance, c.getColor());
 					}
 					xOffset += fr.getStringWidth(text);
 				}
 			} else {
 				if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
-					fr.drawString(text, x + xOffset, y + yOffset - scrollingDistance, c.getColor());
+					fr.drawString(text, getX() + xOffset, getY() + yOffset - scrollingDistance, c.getColor());
 				}
 				xOffset += w;
 			}
@@ -81,7 +84,12 @@ public class ScrollingViewLog extends Component {
 
 	@Override
 	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
-		super.onDrag(mouseX, mouseY, moveX, moveY);
+		if (super.onDrag(mouseX, mouseY, moveX, moveY)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
 		scrollingDistance -= moveY;
 		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
@@ -92,6 +100,9 @@ public class ScrollingViewLog extends Component {
 	public boolean onLeftClick(int x, int y) {
 		if (super.onLeftClick(x, y)) {
 			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
 		}
 		FontRenderer fr = Util.getFontRenderer();
 		Iterator<LogComponent> it = log.getComponents().iterator();
