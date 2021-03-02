@@ -35,6 +35,7 @@ import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.SerialNumber.Type;
 import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.sphinx.log.LogConnectToNetwork;
+import com.pinball3d.zone.sphinx.log.LogDisconnectFromNetwork;
 import com.pinball3d.zone.sphinx.log.LogRecvPack;
 import com.pinball3d.zone.sphinx.log.LogSendPack;
 import com.pinball3d.zone.util.HugeItemStack;
@@ -214,11 +215,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		markDirty();
 	}
 
-	public void removeNeedNetwork(SerialNumber number) {
+	public void removeNeedNetwork(SerialNumber number, EntityPlayer player) {
 		if (!serialNumberToPos.containsKey(number)) {
 			return;
 		}
-		TileEntity te = serialNumberToPos.get(number).getTileEntity();
+		WorldPos pos = serialNumberToPos.get(number);
+		TileEntity te = pos.getTileEntity();
 		if (te instanceof INeedNetwork) {
 			((INeedNetwork) te).deleteNetwork();
 		}
@@ -227,6 +229,11 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		devices.remove(number);
 		productions.remove(number);
 		serialNumberToPos.remove(number);
+		if (player != null) {
+			fireLog(new LogDisconnectFromNetwork(getNextLogId(), player, number, pos));
+		} else {
+			System.out.println("DRRRRRRRRRRRR");
+		}
 		refreshMap();
 		markDirty();
 	}
@@ -275,8 +282,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				if (((INeedNetwork) te).isConnected() && ((INode) te).isPointInRange(dim, x, y, z)) {
 					return true;
 				}
-			} else {
-				it.remove();
 			}
 		}
 		return false;
@@ -447,22 +452,24 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 		} while (flag);
-		Set<SerialNumber> l = new HashSet<SerialNumber>();
-		nodes.forEach(e -> {
-			l.add(e);
-		});
 		Set<SerialNumber> s = new HashSet<SerialNumber>();
-		l.forEach(e -> {
+		nodes.forEach(e -> {
 			TileEntity tileentity = getPosFromSerialNumber(e).getTileEntity();
 			if (tileentity instanceof INode && getUUID().equals(((INeedNetwork) tileentity).getNetwork())) {
+				if (temp.contains(e)) {
+					((INeedNetwork) tileentity).setConnected(true);
+				} else {
+					((INeedNetwork) tileentity).setConnected(false);
+					s.add(e);
+				}
+			} else {
 				s.add(e);
-				((INeedNetwork) tileentity).setConnected(temp.contains(e));
 			}
 		});
-		if (nodes.equals(s)) {
+		if (s.isEmpty()) {
 			return false;
 		} else {
-			nodes = s;
+			s.forEach(e -> removeNeedNetwork(e, null));
 			markDirty();
 			return true;
 		}
@@ -471,10 +478,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public boolean updateDevice() {
 		boolean flag = updateNode();
 		Iterator<SerialNumber> it = storages.iterator();
+		Set<SerialNumber> set = new HashSet<SerialNumber>();
 		while (it.hasNext()) {
-			WorldPos pos = getPosFromSerialNumber(it.next());
+			SerialNumber s = it.next();
+			WorldPos pos = getPosFromSerialNumber(s);
 			if (!(pos.getTileEntity() instanceof IStorable)) {
-				it.remove();
+				set.add(s);
 				flag = true;
 			} else if (!isDeviceInRange(pos)) {
 				INeedNetwork te = (INeedNetwork) pos.getTileEntity();
@@ -488,9 +497,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		it = devices.iterator();
 		while (it.hasNext()) {
-			WorldPos pos = getPosFromSerialNumber(it.next());
+			SerialNumber s = it.next();
+			WorldPos pos = getPosFromSerialNumber(s);
 			if (!(pos.getTileEntity() instanceof IDevice)) {
-				it.remove();
+				set.add(s);
 				flag = true;
 			} else if (!isDeviceInRange(pos)) {
 				INeedNetwork te = (INeedNetwork) pos.getTileEntity();
@@ -504,9 +514,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		it = productions.iterator();
 		while (it.hasNext()) {
-			WorldPos pos = getPosFromSerialNumber(it.next());
+			SerialNumber s = it.next();
+			WorldPos pos = getPosFromSerialNumber(s);
 			if (!(pos.getTileEntity() instanceof IProduction)) {
-				it.remove();
+				set.add(s);
 				flag = true;
 			} else if (!isDeviceInRange(pos)) {
 				INeedNetwork te = (INeedNetwork) pos.getTileEntity();
@@ -518,6 +529,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				te.setConnected(true);
 			}
 		}
+		set.forEach(e -> removeNeedNetwork(e, null));
 		if (flag) {
 			markDirty();
 			return true;

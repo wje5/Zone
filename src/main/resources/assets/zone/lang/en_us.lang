@@ -261,7 +261,10 @@ log.io_panel_dispense=<0> request to dispense <2> at <1>.
 log.io_panel_request=<0> request <2> at <1>, will delivery in <3>.
 log.connect_to_network=<0> has connected to sphinx at <1>, operator: <2>.
 log.disconnect_from_network=<0> has disconnected from sphinx at <1>, operator: <2>.
-log.items=%1$s items
+log.manage_classify=Classify <0> has been changed, <1> item(s) removed, <2> item(s) added, operator: <3>.
+log.delete_classify=Classify <0> has been deleted, operator: <1>.
+log.rename_classify=Classify <0>'s name has been changed to <1>, operator: <2>.
+log.items=%1$s item(s)
 
 manual.preface=   Welcome to Zone!!\n\nCurrently it introduced\n*An ore multiplying Cricible\n*A kind of Drill with replaceable\nhead\n*The Grinder crushing ores to\n32 pieces\n*Even more ore-multiplying ways\n(up to 7x!)\n*The Nail Gun making holes all\nover your enemies\n*An adorable submarine\n*All-Mighty Sphinx© System\n*and more...
 manual.menu=            Menu\n          -Tier 1-\n-Tools and Materials-\n-Crucible and Miscellaneous-\n-Drainer-\n-Grinder-\n-Electric Furnace-\n-Alloy Smelter-\n          -Tier 2-\n-Boiler-\n-Drill-\n-Centrifuge-\n-Crystallizer-\n-Sphinx© System-

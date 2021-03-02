@@ -40,7 +40,7 @@ public class NetworkHandler {
 				Side.SERVER);
 		registerMessage(MessageNewClass.Handler.class, MessageNewClass.class, Side.SERVER);
 		registerMessage(MessageManageClassify.Handler.class, MessageManageClassify.class, Side.SERVER);
-		registerMessage(MessageChangeClassifyName.Handler.class, MessageChangeClassifyName.class, Side.SERVER);
+		registerMessage(MessageRenameClassify.Handler.class, MessageRenameClassify.class, Side.SERVER);
 		registerMessage(MessageDeleteClassify.Handler.class, MessageDeleteClassify.class, Side.SERVER);
 		registerMessage(MessageChangeGravatar.Handler.class, MessageChangeGravatar.class, Side.SERVER);
 		registerMessage(MessageDeleteUser.Handler.class, MessageDeleteUser.class, Side.SERVER);

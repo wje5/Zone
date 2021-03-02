@@ -98,7 +98,8 @@ public class Log {
 	public static enum Type {
 		SENDPACK(LogSendPack::new), RECVPACK(LogRecvPack::new), IOPANELREQUEST(LogIOPanelRequest::new),
 		IOPANELDISPENSE(LogIOPanelDispense::new), CONNECTTONETWORK(LogConnectToNetwork::new),
-		DISCONNECTFROMNETWORK(LogDisconnectFromNetwork::new);
+		DISCONNECTFROMNETWORK(LogDisconnectFromNetwork::new), MANAGECLASSIFY(LogManageClassify::new),
+		DELETECLASSIFY(LogDeleteClassify::new), RENAMECLASSIFY(LogRenameClassify::new);
 
 		private Function<NBTTagCompound, Log> cons;
 

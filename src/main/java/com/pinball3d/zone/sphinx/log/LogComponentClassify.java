@@ -1,25 +1,23 @@
 package com.pinball3d.zone.sphinx.log;
 
-import java.util.UUID;
-
 import com.pinball3d.zone.sphinx.IHasSubscreen;
-import com.pinball3d.zone.sphinx.subscreen.SubscreenManageUser;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenManageClassify;
 import com.pinball3d.zone.util.Util;
 
-public class LogComponentPlayer extends LogComponent {
-	private UUID uuid;
+public class LogComponentClassify extends LogComponent {
+	private int id;
 	private String name;
 	private boolean dead;
 
-	public LogComponentPlayer(UUID uuid, String name, boolean dead) {
-		super(Type.PLAYER);
-		this.uuid = uuid;
+	public LogComponentClassify(int id, String name, boolean dead) {
+		super(Type.CLASSIFY);
+		this.id = id;
 		this.name = name;
 		this.dead = dead;
 	}
 
-	public UUID getUUID() {
-		return uuid;
+	public int getId() {
+		return id;
 	}
 
 	public String getName() {
@@ -35,7 +33,7 @@ public class LogComponentPlayer extends LogComponent {
 		super.onClick();
 		if (!dead) {
 			IHasSubscreen root = Util.getRoot();
-			root.putScreen(new SubscreenManageUser(root).setUser(uuid));
+			root.putScreen(new SubscreenManageClassify(root).setId(id));
 		}
 	}
 

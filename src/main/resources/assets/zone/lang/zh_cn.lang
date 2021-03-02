@@ -261,6 +261,9 @@ log.io_panel_dispense=<0>在<1>处请求存入<2>。
 log.io_panel_request=<0>在<1>处请求提取<2>，将于<3>后到达。
 log.connect_to_network=<0>已于<1>处接入网络，操作者：<2>。
 log.disconnect=<0>已于<1>处断开连接，操作者：<2>。
+log.manage_classify=分类<0>已更改，移除<1>项，新增<2>项，操作者：<3>。
+log.delete_classify=分类<0>已被移除，操作者：<1>。
+log.rename_classify=分类<0>的名称已被更改为<1>，操作者：<2>。
 log.items=%1$s个物品
 
 manual.preface=   欢迎使用Zone!\n\n目前这个Mod带来了：\n*一个能增产矿物的坩埚\n*一个能更换头部的钻头\n*将矿石粉碎成32份的打粉机\n*更多的增产（7倍！）\n*能在各种意义上把人打成筛子\n的射钉枪\n*一艘可爱的潜水艇\n*伟大的史芬斯©系统\n*还有更多...

@@ -9,7 +9,7 @@ import org.lwjgl.input.Keyboard;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.network.MessageChangeClassifyName;
+import com.pinball3d.zone.network.MessageRenameClassify;
 import com.pinball3d.zone.network.MessageDeleteClassify;
 import com.pinball3d.zone.network.MessageManageClassify;
 import com.pinball3d.zone.network.NetworkHandler;
@@ -45,6 +45,7 @@ public class SubscreenManageClassify extends Subscreen {
 	private DropDownList list2, list3;
 	private ClassifyGroup local;
 	private boolean dirty;
+	private int jumpTo = -1;
 
 	public SubscreenManageClassify(IHasSubscreen parent) {
 		this(parent, getDisplayWidth() / 2 - 210, getDisplayHeight() / 2 - 100);
@@ -79,7 +80,7 @@ public class SubscreenManageClassify extends Subscreen {
 			parent.putScreen(new SubscreenTextInputBox(parent, I18n.format("sphinx.change_name"),
 					I18n.format("sphinx.set_classify_name"), s -> {
 						local.setName(s);
-						NetworkHandler.instance.sendToServer(MessageChangeClassifyName
+						NetworkHandler.instance.sendToServer(MessageRenameClassify
 								.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, s));
 					}, 8, 8).setIsValid(s -> s.length() >= 1 ? "" : I18n.format("sphinx.classify_name_length_error"))
 							.setText(getGroup().getName()));
@@ -308,8 +309,18 @@ public class SubscreenManageClassify extends Subscreen {
 				list.addBar(v.getName(), k, () -> {
 
 				});
+				if (k == jumpTo) {
+					list.index = list.list.size() - 1;
+					jumpTo = -1;
+				}
 			});
+			jumpTo = -1;
 		}
+	}
+
+	public SubscreenManageClassify setId(int id) {
+		this.jumpTo = id;
+		return this;
 	}
 
 	@Override

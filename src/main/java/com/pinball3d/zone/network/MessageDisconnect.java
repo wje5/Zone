@@ -25,7 +25,7 @@ public class MessageDisconnect extends MessageSphinx {
 
 	@Override
 	public void run(MessageContext ctx) {
-		getProcessingCenter().removeNeedNetwork(new SerialNumber(tag.getCompoundTag("serial")));
+		getProcessingCenter().removeNeedNetwork(new SerialNumber(tag.getCompoundTag("serial")), getPlayer(ctx));
 	}
 
 	public static class Handler implements IMessageHandler<MessageDisconnect, IMessage> {

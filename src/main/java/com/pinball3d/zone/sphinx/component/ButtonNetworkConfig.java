@@ -19,7 +19,6 @@ public class ButtonNetworkConfig extends TexturedButton {
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
 		if (enable != null && !enable.getAsBoolean()) {
 			return;
 		}

@@ -1,7 +1,11 @@
 package com.pinball3d.zone.network;
 
+import java.util.Iterator;
+
 import com.pinball3d.zone.sphinx.ClassifyGroup;
+import com.pinball3d.zone.sphinx.log.LogManageClassify;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
+import com.pinball3d.zone.util.ItemType;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +33,19 @@ public class MessageManageClassify extends MessageSphinx {
 	public void run(MessageContext ctx) {
 		TEProcessingCenter te = getProcessingCenter();
 		ClassifyGroup group = new ClassifyGroup(tag.getCompoundTag("group"));
-		te.getClassifyGroups().put(tag.getInteger("id"), group);
+		int id = tag.getInteger("id");
+		ClassifyGroup origin = te.getClassifyGroups().get(id);
+		int intersection = 0;
+		Iterator<ItemType> it = origin.getItems().get().iterator();
+		while (it.hasNext()) {
+			if (group.contains(it.next())) {
+				intersection++;
+			}
+		}
+		int added = group.getItems().get().size() - intersection;
+		int removed = origin.getItems().get().size() - intersection;
+		te.fireLog(new LogManageClassify(te.getNextLogId(), getPlayer(ctx), id, group.getName(), removed, added));
+		te.getClassifyGroups().put(id, group);
 	}
 
 	public static class Handler implements IMessageHandler<MessageManageClassify, IMessage> {
