@@ -27,7 +27,7 @@ public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
 		addComponent(new TexturedButton(this, width - 34, 2, TEXTURE_4, 0, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenSphinxConfig(GuiContainerSphinxController.this));
 		}));
-		addComponent(new TexturedButton(this, width - 51, 2, TEXTURE_4, 0, 0, 60, 60, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 51, 2, TEXTURE_4, 0, 120, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenViewStorage(GuiContainerSphinxController.this));
 		}));
 		addComponent(new TexturedButton(this, width - 68, 2, TEXTURE_4, 60, 60, 60, 60, 0.25F, () -> {
@@ -35,7 +35,6 @@ public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
 		}));
 		addComponent(new TexturedButton(this, width - 85, 2, TEXTURE_4, 0, 60, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenManageClassify(GuiContainerSphinxController.this));
-
 		}));
 		addComponent(new TexturedButton(this, width - 102, 2, TEXTURE_4, 180, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenManageUser(GuiContainerSphinxController.this));

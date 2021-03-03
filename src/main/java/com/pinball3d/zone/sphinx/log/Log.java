@@ -99,7 +99,13 @@ public class Log {
 		SENDPACK(LogSendPack::new), RECVPACK(LogRecvPack::new), IOPANELREQUEST(LogIOPanelRequest::new),
 		IOPANELDISPENSE(LogIOPanelDispense::new), CONNECTTONETWORK(LogConnectToNetwork::new),
 		DISCONNECTFROMNETWORK(LogDisconnectFromNetwork::new), MANAGECLASSIFY(LogManageClassify::new),
-		DELETECLASSIFY(LogDeleteClassify::new), RENAMECLASSIFY(LogRenameClassify::new);
+		DELETECLASSIFY(LogDeleteClassify::new), RENAMECLASSIFY(LogRenameClassify::new),
+		NEEDNETWORKDESTROYED(LogNeedNetworkDestroyed::new), REQUESTPERMISSION(LogRequestPermission::new),
+		APPROVEPERMISSION(LogApprovePermission::new), DENYPERMISSION(LogDenyPermission::new),
+		DELETEUSER(LogDeleteUser::new), TRANSFERADMIN(LogTransferAdmin::new), STORAGEFULL(LogStorageFull::new),
+		SPHINXOPEN(LogSphinxOpen::new), SPHINXOPENFINISH(LogSphinxOpenFinish::new),
+		SPHINXSHUTDOWN(LogSphinxShutdown::new), SPHINXSHUTDOWNENERGY(LogSphinxShutdownEnergy::new),
+		SPHINXSHUTDOWNSTRUCTURE(LogSphinxShutdownStructure::new), PACKLOST(LogPackLost::new);
 
 		private Function<NBTTagCompound, Log> cons;
 

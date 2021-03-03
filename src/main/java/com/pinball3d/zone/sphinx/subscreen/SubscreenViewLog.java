@@ -1,6 +1,9 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
+import java.util.Set;
+
 import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.ScrollingViewLog;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
@@ -26,6 +29,13 @@ public class SubscreenViewLog extends Subscreen {
 
 	public FormattedLog getLog() {
 		return log;
+	}
+
+	@Override
+	public Set<Type> getDataTypes() {
+		Set<Type> s = super.getDataTypes();
+		s.add(Type.NAME);
+		return s;
 	}
 
 	@Override

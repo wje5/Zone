@@ -1,5 +1,7 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.sphinx.log.LogSphinxShutdown;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,7 +25,10 @@ public class MessageShutdownSphinx extends MessageSphinxAdmin {
 
 	@Override
 	public void run(MessageContext ctx) {
-		getProcessingCenter().shutdown();
+		TEProcessingCenter te = getProcessingCenter();
+		te.shutdown();
+		te.fireLog(new LogSphinxShutdown(te.getNextLogId(), getPlayer(ctx)));
+
 	}
 
 	public static class Handler implements IMessageHandler<MessageShutdownSphinx, IMessage> {

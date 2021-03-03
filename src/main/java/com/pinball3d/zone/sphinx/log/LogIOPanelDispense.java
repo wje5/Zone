@@ -52,7 +52,7 @@ public class LogIOPanelDispense extends Log {
 	public void check(TEProcessingCenter te) {
 		super.check(te);
 		ioPanel.check(te);
-		playerDead = !te.isUser(uuid);
+		playerDead = !te.hasUser(uuid);
 	}
 
 	@Override

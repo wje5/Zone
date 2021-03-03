@@ -52,7 +52,7 @@ public class LogDisconnectFromNetwork extends Log {
 	public void check(TEProcessingCenter te) {
 		super.check(te);
 		serial.check(te);
-		playerDead = !te.isUser(uuid);
+		playerDead = !te.hasUser(uuid);
 	}
 
 	@Override

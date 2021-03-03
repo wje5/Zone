@@ -49,7 +49,7 @@ public class LogDeleteClassify extends Log {
 	@Override
 	public void check(TEProcessingCenter te) {
 		super.check(te);
-		playerDead = !te.isUser(uuid);
+		playerDead = !te.hasUser(uuid);
 		ClassifyGroup g = te.getClassifyGroups().get(classifyId);
 		classifyDead = g == null;
 		if (g != null) {

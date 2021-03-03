@@ -47,6 +47,7 @@ public class SubscreenBrowseLog extends Subscreen {
 	public Set<Type> getDataTypes() {
 		Set<Type> s = super.getDataTypes();
 		s.add(Type.LOGS);
+		s.add(Type.NAME);
 		return s;
 	}
 

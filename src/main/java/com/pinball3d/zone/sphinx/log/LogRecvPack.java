@@ -8,7 +8,6 @@ import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;
 
-import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -63,19 +62,6 @@ public class LogRecvPack extends Log {
 		start.check(te);
 		end.check(te);
 		path.forEach(e -> e.check(te));
-	}
-
-	@Override
-	public String toString() {
-		String s = "";
-		for (int i = 0; i < path.size(); i++) {
-			if (!s.isEmpty()) {
-				s += ",";
-			}
-			s += path.get(i);
-		}
-		return super.toString() + " "
-				+ I18n.format("log.send_pack", "P" + packId, start, s, Util.transferTickToString(packTime), end);
 	}
 
 	@Override

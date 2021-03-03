@@ -36,8 +36,14 @@ import com.pinball3d.zone.sphinx.SerialNumber.Type;
 import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.sphinx.log.LogConnectToNetwork;
 import com.pinball3d.zone.sphinx.log.LogDisconnectFromNetwork;
+import com.pinball3d.zone.sphinx.log.LogNeedNetworkDestroyed;
+import com.pinball3d.zone.sphinx.log.LogPackLost;
 import com.pinball3d.zone.sphinx.log.LogRecvPack;
 import com.pinball3d.zone.sphinx.log.LogSendPack;
+import com.pinball3d.zone.sphinx.log.LogSphinxOpenFinish;
+import com.pinball3d.zone.sphinx.log.LogSphinxShutdownEnergy;
+import com.pinball3d.zone.sphinx.log.LogSphinxShutdownStructure;
+import com.pinball3d.zone.sphinx.log.LogStorageFull;
 import com.pinball3d.zone.util.HugeItemStack;
 import com.pinball3d.zone.util.LimitedQueue;
 import com.pinball3d.zone.util.StorageWrapper;
@@ -97,7 +103,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	private Map<WorldPos, List<Path>> dijkstraCache = new HashMap<WorldPos, List<Path>>();
 	private Map<UUID, UserData> users = new HashMap<UUID, UserData>();
 	private Queue<Log> logCache = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);
-	private int logId, nodeId, storageId, deviceId, productionId, packId, classifyGroupId;
+	private int logId, nodeId, storageId, deviceId, productionId, packId, classifyGroupId, warningStorageFullCD;
 
 	public TEProcessingCenter() {
 
@@ -232,7 +238,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		if (player != null) {
 			fireLog(new LogDisconnectFromNetwork(getNextLogId(), player, number, pos));
 		} else {
-			System.out.println("DRRRRRRRRRRRR");
+			fireLog(new LogNeedNetworkDestroyed(getNextLogId(), number, pos));
 		}
 		refreshMap();
 		markDirty();
@@ -403,6 +409,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 		});
+		if (!wrapper.isEmpty()) {
+			if (warningStorageFullCD <= 0) {
+				fireLog(new LogStorageFull(getNextLogId()));
+				warningStorageFullCD = 300;
+			}
+		}
 		return wrapper;
 	}
 
@@ -966,6 +978,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return data != null && !data.reviewing;
 	}
 
+	public boolean hasUser(UUID uuid) {
+		return users.containsKey(uuid);
+	}
+
 	public boolean isAdmin(EntityPlayer player) {
 		return isAdmin(player.getUniqueID());
 	}
@@ -994,6 +1010,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		while (it.hasNext()) {
 			LogisticPack i = it.next();
 			if (!isPointInRange(i.dim, i.x, i.y, i.z)) {
+				List<SerialNumber> l = i.path.stream().map(this::getSerialNumberFromPos).collect(Collectors.toList());
+				fireLog(new LogPackLost(getNextLogId(), i.getId(), i.items, l.get(0), l.subList(1, l.size()),
+						new WorldPos((int) i.x, (int) i.y, (int) i.z, i.dim)));
 				it.remove();
 				continue;
 			}
@@ -1094,8 +1113,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			initSphinx();
 			inited = true;
 		}
-		if (!((BlockProcessingCenter) blockType).isFullStructure(worldPos)) {
+		if (!((BlockProcessingCenter) blockType).isFullStructure(worldPos) && (on || loadTick > 0)) {
 			shutdown();
+			fireLog(new LogSphinxShutdownStructure(getNextLogId()));
 			return;
 		}
 		if (uuid == null) {
@@ -1107,13 +1127,24 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				if (loadTick == 0) {
 					loadTick = -1;
 					on = true;
+					fireLog(new LogSphinxOpenFinish(getNextLogId()));
 				}
 			} else {
 				shutdown();
+				fireLog(new LogSphinxShutdownEnergy(getNextLogId()));
 			}
 			return;
 		}
 		if (!on) {
+			Iterator<LogisticPack> it = packs.iterator();
+			while (it.hasNext()) {
+				LogisticPack pack = it.next();
+				it.remove();
+				List<SerialNumber> l = pack.path.stream().map(this::getSerialNumberFromPos)
+						.collect(Collectors.toList());
+				fireLog(new LogPackLost(getNextLogId(), pack.getId(), pack.items, l.get(0), l.subList(1, l.size()),
+						new WorldPos((int) pack.x, (int) pack.y, (int) pack.z, pack.dim)));
+			}
 			return;
 		}
 		while (energyTick <= 0) {
@@ -1121,6 +1152,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				energyTick += 10;
 			} else {
 				shutdown();
+				fireLog(new LogSphinxShutdownEnergy(getNextLogId()));
 				return;
 			}
 		}
@@ -1133,7 +1165,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		} else {
 			updatePack(false);
 		}
-
+		warningStorageFullCD--;
 	}
 
 	@Override
@@ -1150,6 +1182,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		packId = compound.getInteger("packId");
 		classifyGroupId = compound.getInteger("classifyGroupId");
 		inited = compound.getBoolean("inited");
+		warningStorageFullCD = compound.getInteger("warningStorageFullCD");
 		nodes.clear();
 		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
@@ -1238,6 +1271,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		compound.setInteger("packId", packId);
 		compound.setInteger("classifyGroupId", classifyGroupId);
 		compound.setBoolean("inited", inited);
+		compound.setInteger("warningStorageFullCD", warningStorageFullCD);
 		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {
 			e.check(this);

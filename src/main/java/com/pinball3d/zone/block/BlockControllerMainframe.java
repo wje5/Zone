@@ -3,6 +3,7 @@ package com.pinball3d.zone.block;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
+import com.pinball3d.zone.sphinx.log.LogSphinxOpen;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
@@ -56,6 +57,7 @@ public class BlockControllerMainframe extends Block {
 						te.open();
 						playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_LOAD, worldIn, pos.getX(), pos.getY(),
 								pos.getZ());
+						te.fireLog(new LogSphinxOpen(te.getNextLogId(), playerIn));
 					}
 				}
 			}

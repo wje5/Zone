@@ -54,7 +54,7 @@ public class LogRenameClassify extends Log {
 	@Override
 	public void check(TEProcessingCenter te) {
 		super.check(te);
-		playerDead = !te.isUser(uuid);
+		playerDead = !te.hasUser(uuid);
 		classifyDead = te.getClassifyGroups().get(classifyId) == null;
 	}
 

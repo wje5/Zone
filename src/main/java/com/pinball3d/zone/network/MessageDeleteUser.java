@@ -3,6 +3,9 @@ package com.pinball3d.zone.network;
 import java.util.Map;
 import java.util.UUID;
 
+import com.pinball3d.zone.sphinx.log.LogDeleteUser;
+import com.pinball3d.zone.sphinx.log.LogDenyPermission;
+import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -28,9 +31,18 @@ public class MessageDeleteUser extends MessageSphinxAdmin {
 
 	@Override
 	public void run(MessageContext ctx) {
+		TEProcessingCenter te = getProcessingCenter();
 		UUID uuid = tag.getUniqueId("uuid");
-		Map<UUID, UserData> map = getProcessingCenter().getUsers();
-		map.remove(uuid);
+		Map<UUID, UserData> map = te.getUsers();
+		UserData data = map.get(uuid);
+		if (data != null) {
+			map.remove(uuid);
+			if (data.reviewing) {
+				te.fireLog(new LogDenyPermission(te.getNextLogId(), getPlayer(ctx), data.uuid, data.name));
+			} else {
+				te.fireLog(new LogDeleteUser(te.getNextLogId(), getPlayer(ctx), data.uuid, data.name));
+			}
+		}
 	}
 
 	public static class Handler implements IMessageHandler<MessageDeleteUser, IMessage> {
