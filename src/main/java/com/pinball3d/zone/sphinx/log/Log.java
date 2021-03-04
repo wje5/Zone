@@ -105,7 +105,8 @@ public class Log {
 		DELETEUSER(LogDeleteUser::new), TRANSFERADMIN(LogTransferAdmin::new), STORAGEFULL(LogStorageFull::new),
 		SPHINXOPEN(LogSphinxOpen::new), SPHINXOPENFINISH(LogSphinxOpenFinish::new),
 		SPHINXSHUTDOWN(LogSphinxShutdown::new), SPHINXSHUTDOWNENERGY(LogSphinxShutdownEnergy::new),
-		SPHINXSHUTDOWNSTRUCTURE(LogSphinxShutdownStructure::new), PACKLOST(LogPackLost::new);
+		SPHINXSHUTDOWNSTRUCTURE(LogSphinxShutdownStructure::new), PACKLOST(LogPackLost::new),
+		RECVPACKFULL(LogRecvPackFull::new);
 
 		private Function<NBTTagCompound, Log> cons;
 

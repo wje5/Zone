@@ -39,6 +39,7 @@ import com.pinball3d.zone.sphinx.log.LogDisconnectFromNetwork;
 import com.pinball3d.zone.sphinx.log.LogNeedNetworkDestroyed;
 import com.pinball3d.zone.sphinx.log.LogPackLost;
 import com.pinball3d.zone.sphinx.log.LogRecvPack;
+import com.pinball3d.zone.sphinx.log.LogRecvPackFull;
 import com.pinball3d.zone.sphinx.log.LogSendPack;
 import com.pinball3d.zone.sphinx.log.LogSphinxOpenFinish;
 import com.pinball3d.zone.sphinx.log.LogSphinxShutdownEnergy;
@@ -464,27 +465,28 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 		} while (flag);
-		Set<SerialNumber> s = new HashSet<SerialNumber>();
-		nodes.forEach(e -> {
+		Iterator<SerialNumber> it = nodes.iterator();
+		flag = false;
+		while (it.hasNext()) {
+			SerialNumber e = it.next();
 			TileEntity tileentity = getPosFromSerialNumber(e).getTileEntity();
 			if (tileentity instanceof INode && getUUID().equals(((INeedNetwork) tileentity).getNetwork())) {
 				if (temp.contains(e)) {
+					flag |= !((INeedNetwork) tileentity).isConnected();
 					((INeedNetwork) tileentity).setConnected(true);
 				} else {
+					flag |= ((INeedNetwork) tileentity).isConnected();
 					((INeedNetwork) tileentity).setConnected(false);
-					s.add(e);
 				}
 			} else {
-				s.add(e);
+				it.remove();
+				flag = true;
 			}
-		});
-		if (s.isEmpty()) {
-			return false;
-		} else {
-			s.forEach(e -> removeNeedNetwork(e, null));
-			markDirty();
-			return true;
 		}
+		if (flag) {
+			markDirty();
+		}
+		return flag;
 	}
 
 	public boolean updateDevice() {
@@ -547,17 +549,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			return true;
 		}
 		return false;
-	}
-
-	public void updateSerials() {
-		Iterator<Entry<SerialNumber, WorldPos>> it = serialNumberToPos.entrySet().iterator();
-		while (it.hasNext()) {
-			SerialNumber k = it.next().getKey();
-			if (!nodes.contains(k) && !storages.contains(k) && !devices.contains(k) && !productions.contains(k)
-					&& !SerialNumber.CENTER.equals(k)) {
-				it.remove();
-			}
-		}
 	}
 
 	public StorageWrapper insertToItemHandler(StorageWrapper wrapper, IItemHandler handler) {
@@ -1006,7 +997,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public void updatePack(boolean refreshPath) {
 		Iterator<LogisticPack> it = packs.iterator();
-		Set<LogisticPack> deads = new HashSet<LogisticPack>();
+		Map<LogisticPack, LogisticPack> deads = new HashMap<LogisticPack, LogisticPack>();
 		while (it.hasNext()) {
 			LogisticPack i = it.next();
 			if (!isPointInRange(i.dim, i.x, i.y, i.z)) {
@@ -1039,16 +1030,17 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 			if (i.forward(1D)) {
 				List<SerialNumber> l = i.path.stream().map(this::getSerialNumberFromPos).collect(Collectors.toList());
-				fireLog(new LogRecvPack(getNextLogId(), i.getId(), i.items, l.get(0), l.get(l.size() - 1),
-						l.subList(1, l.size() - 1), packId));
 				TileEntity te = i.getTarget().getTileEntity();
 				if (te instanceof IStorable) {
-					StorageWrapper wrapper = insertToItemHandler(i.items, ((IStorable) te).getStorage());
+					StorageWrapper wrapper = insertToItemHandler(i.items.copy(), ((IStorable) te).getStorage());
 					if (!wrapper.isEmpty()) {
-						deads.add(new LogisticPack(-1, new ArrayList<WorldPos>(), wrapper, i.x, i.y, i.z, i.dim));
+						deads.put(new LogisticPack(-1, new ArrayList<WorldPos>(), wrapper, i.x, i.y, i.z, i.dim), i);
+					} else {
+						fireLog(new LogRecvPack(getNextLogId(), i.getId(), i.items, l.get(0), l.get(l.size() - 1),
+								l.subList(1, l.size() - 1), packId));
 					}
 				} else if (te != null) {
-					StorageWrapper wrapper = insertToItemHandler(i.items,
+					StorageWrapper wrapper = insertToItemHandler(i.items.copy(),
 							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP));
 					wrapper = insertToItemHandler(wrapper,
 							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.NORTH));
@@ -1061,14 +1053,29 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 					wrapper = insertToItemHandler(wrapper,
 							te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN));
 					if (!wrapper.isEmpty()) {
-						deads.add(new LogisticPack(-1, i.routes, wrapper, i.x, i.y, i.z, i.dim));
+						deads.put(new LogisticPack(-1, new ArrayList<WorldPos>(), wrapper, i.x, i.y, i.z, i.dim), i);
+					} else {
+						fireLog(new LogRecvPack(getNextLogId(), i.getId(), i.items, l.get(0), l.get(l.size() - 1),
+								l.subList(1, l.size() - 1), packId));
 					}
+				} else {
+					// ??????
+					deads.put(new LogisticPack(-1, new ArrayList<WorldPos>(), i.items, i.x, i.y, i.z, i.dim), i);
 				}
 				it.remove();
 			}
 		}
-		deads.forEach(e -> {
-			dispenseItems(e.items, new WorldPos((int) e.x, (int) e.y, (int) e.z, e.dim));
+		deads.forEach((k, v) -> {
+			StorageWrapper w = dispenseItems(k.items.copy(), new WorldPos((int) k.x, (int) k.y, (int) k.z, k.dim));
+			if (!w.isEmpty()) {
+				List<SerialNumber> l = v.path.stream().map(this::getSerialNumberFromPos).collect(Collectors.toList());
+				fireLog(new LogRecvPackFull(getNextLogId(), v.getId(), v.items, l.get(0), l.get(l.size() - 1),
+						l.subList(1, l.size() - 1), packId, k.items));
+			} else {
+				List<SerialNumber> l = v.path.stream().map(this::getSerialNumberFromPos).collect(Collectors.toList());
+				fireLog(new LogRecvPack(getNextLogId(), v.getId(), v.items, l.get(0), l.get(l.size() - 1),
+						l.subList(1, l.size() - 1), packId));
+			}
 		});
 	}
 
@@ -1158,7 +1165,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		}
 		energyTick--;
 		boolean flag = updateDevice();
-		updateSerials();
 		if (flag || map == null || mapDirty) {
 			refreshMap();
 			updatePack(true);

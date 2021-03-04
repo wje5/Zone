@@ -9,7 +9,7 @@ import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.component.TextButton;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
 import com.pinball3d.zone.sphinx.map.MapHandler;
-import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
+import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
