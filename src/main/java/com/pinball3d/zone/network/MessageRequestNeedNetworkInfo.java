@@ -1,7 +1,8 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.sphinx.INeedNetwork;
+import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.SerialNumber;
-import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -38,6 +39,18 @@ public class MessageRequestNeedNetworkInfo extends MessageSphinx {
 				tag.setString("name", te.getName());
 				tag.setInteger("state", te.getWorkingState().ordinal());
 				tag.setTag("pos", pos.writeToNBT(new NBTTagCompound()));
+				if (te instanceof IStorable) {
+					int usedStorage = 0;
+					int maxStorage = ((IStorable) te).getStorage().getSlots();
+					for (int i = 0; i < maxStorage; i++) {
+						if (!((IStorable) te).getStorage().getStackInSlot(i).isEmpty()) {
+							usedStorage++;
+						}
+					}
+					tag.setInteger("usedStorage", usedStorage);
+					tag.setInteger("maxStorage", maxStorage);
+					tag.setTag("storage", ((IStorable) te).getStorages().writeToNBT(new NBTTagCompound()));
+				}
 				NetworkHandler.instance.sendTo(new MessageSendNeedNetworkInfoToClient(s, tag),
 						(EntityPlayerMP) getPlayer(ctx));
 			}

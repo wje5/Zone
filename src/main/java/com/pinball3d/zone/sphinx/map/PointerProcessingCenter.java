@@ -2,8 +2,8 @@ package com.pinball3d.zone.sphinx.map;
 
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.INeedNetwork.WorkingState;
 import com.pinball3d.zone.sphinx.SerialNumber.Type;
-import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 

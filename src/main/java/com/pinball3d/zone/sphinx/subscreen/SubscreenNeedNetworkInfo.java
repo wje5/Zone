@@ -5,11 +5,12 @@ import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageRequestNeedNetworkInfo;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.IHasSubscreen;
+import com.pinball3d.zone.sphinx.INeedNetwork.WorkingState;
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.component.TextButton;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
 import com.pinball3d.zone.sphinx.map.MapHandler;
-import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
+import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -21,10 +22,13 @@ import net.minecraft.util.ResourceLocation;
 public class SubscreenNeedNetworkInfo extends Subscreen {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	private static final ResourceLocation TEXTURE_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
+	private static final ResourceLocation TEXTURE_5 = new ResourceLocation("zone:textures/gui/sphinx/icons_5.png");
 	private WorldPos pos;
 	private String name;
 	private WorkingState state;
 	private SerialNumber serial;
+	private int usedStorage, maxStorage;
+	private StorageWrapper storage;
 
 	public SubscreenNeedNetworkInfo(IHasSubscreen parent, SerialNumber serial) {
 		this(parent, serial, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
@@ -41,11 +45,22 @@ public class SubscreenNeedNetworkInfo extends Subscreen {
 					parent.removeScreen(parent.getSubscreens().peek());
 				}
 			}
-		}));
+		}).setYSupplier(() -> this.y + 90 + getYOffset()));
+		addComponent(new TexturedButton(this, x + 44, y + 90, TEXTURE_5, 60, 0, 60, 60, 0.25F, () -> {
+			parent.putScreen(new SubscreenViewItems(parent, storage));
+		}).setYSupplier(() -> this.y + 90 + getYOffset()).setEnable(() -> usedStorage != 0 || maxStorage != 0));
 		addComponent(new TextButton(this, this.x + 235, this.y + 175, I18n.format("sphinx.confirm"), () -> {
 			parent.removeScreen(SubscreenNeedNetworkInfo.this);
 		}));
 		this.serial = serial;
+	}
+
+	public int getYOffset() {
+		int yOffset = 0;
+		if (usedStorage != 0 || maxStorage != 0) {
+			yOffset += 20;
+		}
+		return yOffset;
 	}
 
 	public void setData(SerialNumber serial, NBTTagCompound tag) {
@@ -53,6 +68,9 @@ public class SubscreenNeedNetworkInfo extends Subscreen {
 			name = tag.getString("name");
 			state = WorkingState.values()[tag.getInteger("state")];
 			pos = new WorldPos(tag.getCompoundTag("pos"));
+			usedStorage = tag.getInteger("usedStorage");
+			maxStorage = tag.getInteger("maxStorage");
+			storage = new StorageWrapper((NBTTagCompound) tag.getTag("storage"));
 		}
 	}
 
@@ -78,6 +96,12 @@ public class SubscreenNeedNetworkInfo extends Subscreen {
 			Util.renderGlowString(state.toString(), x + 180, y + 65);
 			Util.renderGlowString(I18n.format("sphinx.location") + ":", x + 27, y + 75);
 			Util.renderGlowString(pos.toString(), x + 180, y + 75);
+			int yOffset = 0;
+			if (usedStorage != 0 || maxStorage != 0) {
+				yOffset += 20;
+				Util.renderGlowString(I18n.format("sphinx.storage_space") + ":", x + 27, y + 75 + yOffset);
+				Util.renderGlowString(usedStorage + "/" + maxStorage, x + 180, y + 75 + yOffset);
+			}
 		}
 		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
 	}

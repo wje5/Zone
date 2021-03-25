@@ -98,7 +98,6 @@ public class PDF {
 			try {
 				BufferedImage img = renderer.renderImage(page, 1, ImageType.RGB, RenderDestination.VIEW);
 				image = new PDFImage(img, img.getWidth(), img.getHeight());
-				LOGGER.info(page);
 			} catch (Throwable e) {
 				LOGGER.error("Rendering PDF:");
 				e.printStackTrace();

@@ -12,9 +12,9 @@ import com.google.common.base.Predicate;
 import com.pinball3d.zone.sphinx.ClientMapDataHandler;
 import com.pinball3d.zone.sphinx.LogisticPack;
 import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.INeedNetwork.WorkingState;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.sphinx.map.Pointer.BoundingBox;
-import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 

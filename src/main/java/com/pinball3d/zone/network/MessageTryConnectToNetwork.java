@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.network.ConnectionHelper.Connect;
+import com.pinball3d.zone.sphinx.INeedNetwork;
 import com.pinball3d.zone.sphinx.log.LogRequestPermission;
-import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.WorldPos;

@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
-import com.pinball3d.zone.tileentity.INeedNetwork;
+import com.pinball3d.zone.sphinx.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 

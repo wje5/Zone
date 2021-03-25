@@ -5,8 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.pinball3d.zone.block.BlockLoader;
-import com.pinball3d.zone.tileentity.INeedNetwork;
-import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
+import com.pinball3d.zone.sphinx.INeedNetwork.WorkingState;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.WorldPos;
 

@@ -1,4 +1,4 @@
-package com.pinball3d.zone.tileentity;
+package com.pinball3d.zone.sphinx;
 
 import java.util.UUID;
 

@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
 import com.pinball3d.zone.util.WorldPos;

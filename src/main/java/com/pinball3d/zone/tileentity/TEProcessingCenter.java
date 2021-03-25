@@ -26,6 +26,7 @@ import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.IDevice;
+import com.pinball3d.zone.sphinx.INeedNetwork;
 import com.pinball3d.zone.sphinx.INode;
 import com.pinball3d.zone.sphinx.IProduction;
 import com.pinball3d.zone.sphinx.IStorable;

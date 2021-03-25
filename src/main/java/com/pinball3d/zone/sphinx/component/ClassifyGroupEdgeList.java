@@ -100,7 +100,7 @@ public class ClassifyGroupEdgeList extends Component {
 			index++;
 		}
 		if (mouseX >= getX() && mouseX <= getX() + width && mouseY >= getY() && mouseY <= getY() + height) {
-			stretch = stretch + 5 >= 43 ? 43 : stretch + 5;
+			stretch = stretch + 5 >= 28 ? 28 : stretch + 5;
 		} else {
 			stretch = 0;
 		}

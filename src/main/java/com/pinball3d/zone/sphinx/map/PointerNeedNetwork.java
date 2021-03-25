@@ -5,8 +5,8 @@ import java.util.List;
 import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.INeedNetwork.WorkingState;
 import com.pinball3d.zone.sphinx.component.ButtonUnitInfo;
-import com.pinball3d.zone.tileentity.INeedNetwork.WorkingState;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 

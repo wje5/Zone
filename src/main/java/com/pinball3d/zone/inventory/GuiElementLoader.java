@@ -22,6 +22,7 @@ import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem3;
 import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem4;
 import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem5;
 import com.pinball3d.zone.manual.GuiContainerManualToolAndMaterial;
+import com.pinball3d.zone.sphinx.INeedNetwork;
 import com.pinball3d.zone.sphinx.container.ContainerIOPanel;
 import com.pinball3d.zone.sphinx.container.ContainerSphinxController;
 import com.pinball3d.zone.sphinx.container.ContainerSphinxLoad;
@@ -33,7 +34,6 @@ import com.pinball3d.zone.sphinx.container.GuiContainerNeedNetworkIOPanel;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxController;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxLoad;
 import com.pinball3d.zone.sphinx.container.GuiContainerTerminal;
-import com.pinball3d.zone.tileentity.INeedNetwork;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
