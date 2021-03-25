@@ -41,7 +41,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Util {
-	@SideOnly(Side.CLIENT)
 	private static final ResourceLocation BORDER_2 = new ResourceLocation("zone:textures/gui/sphinx/ui_border_2.png");
 
 	public static Comparator<ItemStack> itemStackComparator = new Comparator<ItemStack>() {
@@ -552,6 +551,14 @@ public class Util {
 	}
 
 	public static String genGravatarUrl(String email) {
+		String md5 = genEmailMd5(email);
+		if (md5 == null) {
+			return "https://secure.gravatar.com/avatar?s=64";
+		}
+		return "https://secure.gravatar.com/avatar/" + md5 + "?s=64";
+	}
+
+	public static String genEmailMd5(String email) {
 		if (email != null && !email.isEmpty()) {
 			try {
 				MessageDigest md = MessageDigest.getInstance("MD5");
@@ -560,12 +567,12 @@ public class Util {
 				for (int i = 0; i < array.length; ++i) {
 					sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
 				}
-				return "https://secure.gravatar.com/avatar/" + sb.toString() + "?s=64";
+				return sb.toString();
 			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 		}
-		return "https://secure.gravatar.com/avatar?s=64";
+		return null;
 	}
 
 	public static String transferTickToString(int tick) {

@@ -1,5 +1,7 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -38,6 +40,7 @@ public class SubscreenManageUser extends Subscreen {
 	private ScrollingEdgeList list;
 	private ThreadDownloadImageData image;
 	private UUID jumpTo;
+	public static File dir;
 
 	public SubscreenManageUser(IHasSubscreen parent) {
 		this(parent, getDisplayWidth() / 2 - 210, getDisplayHeight() / 2 - 100);
@@ -237,7 +240,25 @@ public class SubscreenManageUser extends Subscreen {
 	private void drawGravatar(String mail, int x, int y) {
 		Util.resetOpenGl();
 		if (image == null) {
-			image = new ThreadDownloadImageData(null, Util.genGravatarUrl(mail), null, new ImageBufferDownload());
+			if (dir == null) {
+				try {
+					Field[] fields = Minecraft.class.getDeclaredFields();
+					for (Field f : fields) {
+						if (f.getName().equals("field_110446_Y") || f.getName().equals("fileAssets")) {
+							f.setAccessible(true);
+							dir = new File((File) f.get(Minecraft.getMinecraft()), "gravatars");
+						}
+					}
+				} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+			String md5 = Util.genEmailMd5(mail);
+			if (md5 == null) {
+				md5 = "default";
+			}
+			image = new ThreadDownloadImageData(new File(dir, md5), Util.genGravatarUrl(mail), null,
+					new ImageBufferDownload());
 			Minecraft.getMinecraft().getTextureManager()
 					.loadTexture(new ResourceLocation("zone:gravatars/" + StringUtils.stripControlCodes(mail)), image);
 		}

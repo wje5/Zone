@@ -49,8 +49,8 @@ public class OutlineTree extends Component {
 			int cutUp = posY < 0 ? -posY : 0;
 			int cutDown = posY + 13 - height > 0 ? posY + 13 - height : 0;
 			if (cutUp < 13 && cutDown < 13) {
-				Util.drawTexture(ICONS, getX() + indents.get(index) * 15, getY() + posY + cutUp, 0, 187 + cutUp * 4,
-						225 - indents.get(index) * 60, 50 - cutUp * 4 - cutDown * 4, 0.25F);
+				Util.drawTexture(ICONS, getX() + indents.get(index) * 15, getY() + posY + cutUp - 3, 0, 187 + cutUp * 4,
+						244 - indents.get(index) * 60, 69 - cutUp * 4 - cutDown * 4, 0.25F);
 				if (e.hasChildren()) {
 					Util.drawTexture(ICONS, getX() + indents.get(index) * 15 + 10, getY() + posY + cutUp + 3,
 							e.isNodeOpen() ? 64 : 32, 155 + cutUp * 4, 32, 32 - cutUp * 4 - cutDown * 4, 0.25F);
@@ -78,6 +78,10 @@ public class OutlineTree extends Component {
 			dimensionalityReduction(e, 0);
 		});
 		int maxScrollingDistance = outlineList == null ? 0 : outlineList.size() * 15 - height;
+		if (maxScrollingDistance < 0) {
+			scrollingDistance = 0;
+			return;
+		}
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 		scrollingDistance = scrollingDistance > maxScrollingDistance ? maxScrollingDistance : scrollingDistance;
 	}
@@ -144,6 +148,10 @@ public class OutlineTree extends Component {
 			return false;
 		}
 		int maxScrollingDistance = outlineList == null ? 0 : outlineList.size() * 15 - height;
+		if (maxScrollingDistance < 0) {
+			scrollingDistance = 0;
+			return true;
+		}
 		scrollingDistance += isUp ? 15 : -15;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 		scrollingDistance = scrollingDistance > maxScrollingDistance ? maxScrollingDistance : scrollingDistance;
@@ -159,6 +167,10 @@ public class OutlineTree extends Component {
 			return false;
 		}
 		int maxScrollingDistance = outlineList == null ? 0 : outlineList.size() * 15 - height;
+		if (maxScrollingDistance < 0) {
+			scrollingDistance = 0;
+			return true;
+		}
 		scrollingDistance -= moveY;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 		scrollingDistance = scrollingDistance > maxScrollingDistance ? maxScrollingDistance : scrollingDistance;
