@@ -5,10 +5,10 @@ import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.ScrollingEdgeList;
 import com.pinball3d.zone.sphinx.component.TextInputBox;
 import com.pinball3d.zone.sphinx.component.TexturedButton;

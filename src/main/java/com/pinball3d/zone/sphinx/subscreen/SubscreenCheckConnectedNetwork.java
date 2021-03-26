@@ -2,12 +2,12 @@ package com.pinball3d.zone.sphinx.subscreen;
 
 import java.util.Iterator;
 
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageDisconnect;
 import com.pinball3d.zone.network.MessageTerminalDisconnect;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.HyperTextButton;
 import com.pinball3d.zone.sphinx.container.GuiContainerNeedNetwork;
 import com.pinball3d.zone.sphinx.container.GuiContainerTerminal;

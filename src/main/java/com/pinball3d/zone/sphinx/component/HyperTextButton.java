@@ -1,7 +1,7 @@
 package com.pinball3d.zone.sphinx.component;
 
 import com.pinball3d.zone.gui.Component;
-import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
 public class HyperTextButton extends Component {

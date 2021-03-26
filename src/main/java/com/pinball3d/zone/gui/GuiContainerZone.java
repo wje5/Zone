@@ -10,8 +10,6 @@ import java.util.Stack;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import com.pinball3d.zone.sphinx.IHasComponents;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.inventory.GuiContainer;

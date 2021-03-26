@@ -8,6 +8,7 @@ import com.pinball3d.zone.sphinx.component.ButtonNetworkConfig;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenBrowseLog;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageClassify;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenManageQueue;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageUser;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenNetworkConfig;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenShutdownSphinx;
@@ -49,11 +50,14 @@ public class GuiContainerTerminal extends GuiContainerSphinxAdvanced {
 		addComponent(new TexturedButton(this, width - 102, 2, TEXTURE_4, 120, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenBrowseLog(GuiContainerTerminal.this));
 		}).setEnable(() -> ConnectHelperClient.getInstance().isConnected()));
-		addComponent(new TexturedButton(this, width - 119, 2, TEXTURE_4, 60, 0, 60, 60, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 119, 2, TEXTURE_4, 120, 0, 60, 60, 0.25F, () -> {
+			subscreens.push(new SubscreenManageQueue(GuiContainerTerminal.this));
+		}).setEnable(() -> ConnectHelperClient.getInstance().isConnected()));
+		addComponent(new TexturedButton(this, width - 136, 2, TEXTURE_4, 60, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenShutdownSphinx(GuiContainerTerminal.this));
 		}).setEnable(
 				() -> ConnectHelperClient.getInstance().isConnected() && ConnectHelperClient.getInstance().isAdmin()));
-		addComponent(new TexturedButton(this, width - 136, 2, TEXTURE_4, 0, 0, 60, 60, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 153, 2, TEXTURE_4, 0, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenSphinxConfig(GuiContainerTerminal.this));
 		}).setEnable(
 				() -> ConnectHelperClient.getInstance().isConnected() && ConnectHelperClient.getInstance().isAdmin()));

@@ -3,8 +3,6 @@ package com.pinball3d.zone.gui;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntSupplier;
 
-import com.pinball3d.zone.sphinx.IHasComponents;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
@@ -67,6 +65,10 @@ public class Component {
 
 	public boolean onDrag(int mouseX, int mouseY, int moveX, int moveY) {
 		return false;
+	}
+
+	public void onStopDrag() {
+
 	}
 
 	public boolean onMouseScroll(int mouseX, int mouseY, boolean isUp) {

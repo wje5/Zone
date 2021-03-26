@@ -2,7 +2,7 @@ package com.pinball3d.zone.sphinx.component;
 
 import java.util.function.BooleanSupplier;
 
-import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.util.ResourceLocation;
@@ -19,6 +19,7 @@ public class ButtonNetworkConfig extends TexturedButton {
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		if (enable != null && !enable.getAsBoolean()) {
 			return;
 		}

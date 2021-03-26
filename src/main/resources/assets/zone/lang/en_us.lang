@@ -254,6 +254,10 @@ sphinx.confirm_remove_user=Are you sure you want to remove this user from sphinx
 sphinx.transfer_admin=Transfer Admin
 sphinx.confirm_transfer_admin=Are you sure you want to transfer the administrator？
 sphinx.reviewing=Reviewing
+sphinx.manage_queue=Manage Queues
+sphinx.infinite_queue=Infinite Queue
+sphinx.pausing=Pausing
+sphinx.running=Running
 
 log.send_pack=Logistic pack <0> sent from <1>, via <2>, will delivery <4> in <3>.
 log.recv_pack=Logistic pack <0> sent from <1> has arrived at <4>, via <2>, total time is <3>.

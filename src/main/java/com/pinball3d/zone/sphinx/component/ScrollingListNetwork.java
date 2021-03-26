@@ -9,11 +9,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.pinball3d.zone.gui.Component;
+import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageTryConnectToNetwork;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.IHasComponents;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenCheckConnectedNetwork;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenConnectToNetworkBox;
 import com.pinball3d.zone.util.Util;

@@ -2,9 +2,9 @@ package com.pinball3d.zone.sphinx.subscreen;
 
 import java.util.Set;
 
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.ScrollingViewLog;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.util.Util;

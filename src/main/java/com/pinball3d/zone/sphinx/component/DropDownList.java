@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.IntConsumer;
 
 import com.pinball3d.zone.gui.Component;
-import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.FontRenderer;

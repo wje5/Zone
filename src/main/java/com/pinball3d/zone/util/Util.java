@@ -16,9 +16,9 @@ import org.lwjgl.opengl.GL11;
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.pdf.PDFHelper;
 import com.pinball3d.zone.pdf.PDFImage;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

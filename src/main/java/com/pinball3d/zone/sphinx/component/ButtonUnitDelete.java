@@ -1,9 +1,9 @@
 package com.pinball3d.zone.sphinx.component;
 
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageDisconnect;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.sphinx.map.Pointer;
 import com.pinball3d.zone.sphinx.map.PointerNeedNetwork;
 

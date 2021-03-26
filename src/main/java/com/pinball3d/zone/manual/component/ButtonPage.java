@@ -1,6 +1,6 @@
 package com.pinball3d.zone.manual.component;
 
-import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
 import com.pinball3d.zone.util.Util;
 

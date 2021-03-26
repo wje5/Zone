@@ -2,10 +2,10 @@ package com.pinball3d.zone.sphinx.subscreen;
 
 import java.io.IOException;
 
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.pdf.PDF;
 import com.pinball3d.zone.pdf.PDFHelper;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.OutlineTree;
 import com.pinball3d.zone.sphinx.component.PDFRenderer;
 import com.pinball3d.zone.util.Util;

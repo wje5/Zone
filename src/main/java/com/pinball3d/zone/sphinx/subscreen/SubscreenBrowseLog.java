@@ -4,10 +4,10 @@ import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
 
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.RadioButton;
 import com.pinball3d.zone.sphinx.component.ScrollingLog;
 import com.pinball3d.zone.sphinx.log.Log;

@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import com.pinball3d.zone.gui.Component;
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageNewClass;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.FontRenderer;
@@ -21,6 +21,7 @@ public class ClassifyGroupEdgeList extends Component {
 	private int stretch;
 	public int index;
 	private Predicate<Integer> onChange;
+	private final int array[] = new int[4];
 
 	public ClassifyGroupEdgeList(IHasComponents parent, int x, int y, int height) {
 		super(parent, x, y, 56, height);

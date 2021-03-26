@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Queue;
 
 import com.pinball3d.zone.gui.Component;
-import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.sphinx.log.LogComponent;

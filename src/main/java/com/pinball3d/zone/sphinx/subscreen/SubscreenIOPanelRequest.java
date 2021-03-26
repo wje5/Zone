@@ -5,12 +5,12 @@ import java.util.Iterator;
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.gui.Component;
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageComputeLogisticTime;
 import com.pinball3d.zone.network.MessageIOPanelRequest;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.Slider;
 import com.pinball3d.zone.sphinx.component.TextButton;
 import com.pinball3d.zone.sphinx.component.TextInputBox;

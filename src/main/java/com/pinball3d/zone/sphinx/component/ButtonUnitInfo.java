@@ -1,7 +1,7 @@
 package com.pinball3d.zone.sphinx.component;
 
-import com.pinball3d.zone.sphinx.IHasComponents;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
+import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.sphinx.map.Pointer;
 import com.pinball3d.zone.sphinx.map.PointerNeedNetwork;
 import com.pinball3d.zone.sphinx.map.PointerProcessingCenter;

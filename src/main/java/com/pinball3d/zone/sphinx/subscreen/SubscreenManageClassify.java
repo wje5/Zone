@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
@@ -14,7 +15,6 @@ import com.pinball3d.zone.network.MessageDeleteClassify;
 import com.pinball3d.zone.network.MessageManageClassify;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.ClassifyGroupEdgeList;
 import com.pinball3d.zone.sphinx.component.ClassifyGroupEdgeList.ListBar;
 import com.pinball3d.zone.sphinx.component.DropDownList;

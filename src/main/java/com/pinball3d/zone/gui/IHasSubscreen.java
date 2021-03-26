@@ -1,8 +1,6 @@
-package com.pinball3d.zone.sphinx;
+package com.pinball3d.zone.gui;
 
 import java.util.Stack;
-
-import com.pinball3d.zone.gui.Subscreen;
 
 public interface IHasSubscreen {
 	public void putScreen(Subscreen screen);

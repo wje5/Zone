@@ -1,6 +1,6 @@
 package com.pinball3d.zone.sphinx.log;
 
-import com.pinball3d.zone.sphinx.IHasSubscreen;
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenViewItems;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;

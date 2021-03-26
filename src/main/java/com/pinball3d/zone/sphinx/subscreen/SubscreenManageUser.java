@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
@@ -14,7 +15,6 @@ import com.pinball3d.zone.network.MessageDeleteUser;
 import com.pinball3d.zone.network.MessageReviewUser;
 import com.pinball3d.zone.network.MessageTransferAdmin;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.ScrollingEdgeList;
 import com.pinball3d.zone.sphinx.component.ScrollingEdgeList.ListBar;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
@@ -88,7 +88,9 @@ public class SubscreenManageUser extends Subscreen {
 											}
 											return false;
 										}).setXSupplier(
-												() -> ((UserData) list.get().getData()).online ? x + 100 : x + 83));
+												() -> !list.isEmpty() && ((UserData) list.get().getData()).online
+														? x + 100
+														: x + 83));
 		addComponent(
 				new TexturedButton(this, x + 117, y + 73, TEXTURE_4, 0, 180, 60, 60, 0.25F,
 						() -> parent
@@ -108,8 +110,9 @@ public class SubscreenManageUser extends Subscreen {
 														}
 													}
 													return false;
-												}).setXSupplier(() -> ((UserData) list.get().getData()).online ? x + 117
-														: x + 100));
+												}).setXSupplier(() -> !list.isEmpty()
+														&& ((UserData) list.get().getData()).online ? x + 117
+																: x + 100));
 		addComponent(new TexturedButton(this, x + 83, y + 73, TEXTURE_5, 0, 0, 60, 60, 0.25F,
 				() -> NetworkHandler.instance.sendToServer(MessageReviewUser.newMessage(
 						ConnectHelperClient.getInstance().getNetworkPos(), ((UserData) list.get().getData()).uuid)))

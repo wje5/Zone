@@ -11,7 +11,7 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocume
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
 import com.pinball3d.zone.gui.Component;
-import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenSynodLibrary;
 import com.pinball3d.zone.util.Util;
 

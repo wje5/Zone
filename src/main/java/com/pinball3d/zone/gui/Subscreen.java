@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.IHasComponents;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.container.GuiContainerNetworkBase;
 import com.pinball3d.zone.util.Util;
 
@@ -109,6 +107,9 @@ public class Subscreen implements IHasComponents {
 	}
 
 	public boolean onClickScreen(int x, int y, boolean isLeft) {
+		if (draggingComponent != null) {
+			draggingComponent.onStopDrag();
+		}
 		draggingComponent = null;
 		if (x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height) {
 			Iterator<Component> it = components.iterator();
@@ -132,34 +133,30 @@ public class Subscreen implements IHasComponents {
 
 	}
 
-	public boolean onDragScreen(int x, int y, int moveX, int moveY, int button) {
-		if (x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height) {
-			boolean flag = true;
-			if (draggingComponent == null) {
-				Iterator<Component> it = components.iterator();
-				while (it.hasNext()) {
-					Component c = it.next();
-					int cX = x - c.getX();
-					int cY = y - c.getY();
-					if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
-						if (c.onDrag(x - c.getX(), y - c.getY(), moveX, moveY)) {
-							draggingComponent = c;
-							break;
-						}
+	public void onDragScreen(int x, int y, int moveX, int moveY, int button) {
+		boolean flag = true;
+		if (draggingComponent == null) {
+			Iterator<Component> it = components.iterator();
+			while (it.hasNext()) {
+				Component c = it.next();
+				int cX = x - c.getX();
+				int cY = y - c.getY();
+				if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
+					if (c.onDrag(x - c.getX(), y - c.getY(), moveX, moveY)) {
+						draggingComponent = c;
+						break;
 					}
 				}
-			} else if (!draggingComponent.onDrag(x - draggingComponent.getX(), y - draggingComponent.getY(), moveX,
-					moveY)) {
-				draggingComponent = null;
-				flag = false;
 			}
-			if (flag && draggingComponent == null) {
-				onDrag(x, y, moveX, moveY, button);
-			}
-			return true;
+		} else if (!draggingComponent.onDrag(x - draggingComponent.getX(), y - draggingComponent.getY(), moveX,
+				moveY)) {
+			draggingComponent.onStopDrag();
+			draggingComponent = null;
+			flag = false;
 		}
-		draggingComponent = null;
-		return false;
+		if (flag && draggingComponent == null) {
+			onDrag(x, y, moveX, moveY, button);
+		}
 	}
 
 	public void onDrag(int x, int y, int moveX, int moveY, int button) {

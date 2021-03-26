@@ -1,8 +1,6 @@
-package com.pinball3d.zone.sphinx;
+package com.pinball3d.zone.gui;
 
 import java.util.Set;
-
-import com.pinball3d.zone.gui.Component;
 
 public interface IHasComponents {
 	public Set<Component> getComponents();

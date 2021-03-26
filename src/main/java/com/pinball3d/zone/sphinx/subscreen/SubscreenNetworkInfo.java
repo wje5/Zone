@@ -2,10 +2,10 @@ package com.pinball3d.zone.sphinx.subscreen;
 
 import java.util.Set;
 
+import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.IHasSubscreen;
 import com.pinball3d.zone.sphinx.component.TextButton;
 import com.pinball3d.zone.sphinx.component.TexturedButton;
 import com.pinball3d.zone.sphinx.map.MapHandler;

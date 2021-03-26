@@ -3,7 +3,7 @@ package com.pinball3d.zone.sphinx.component;
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.gui.Component;
-import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.FontRenderer;

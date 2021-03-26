@@ -254,6 +254,10 @@ sphinx.confirm_remove_user=您确定要将该用户从系统中移除吗？
 sphinx.transfer_admin=转让管理员
 sphinx.confirm_transfer_admin=您确定要转让管理员权限吗？
 sphinx.reviewing=审核中
+sphinx.manage_queue=队列管理
+sphinx.infinite_queue=无限队列
+sphinx.pausing=暂停中
+sphinx.running=运行中
 
 log.send_pack=物流包<0>已于<1>处发出，经<2>，将于<3>后到达<4>。
 log.recv_pack=于<1>处发出的物流包<0>已到达<4>，途经<2>，共计用时<3>。

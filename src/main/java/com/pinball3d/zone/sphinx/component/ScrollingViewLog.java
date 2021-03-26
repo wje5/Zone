@@ -3,7 +3,7 @@ package com.pinball3d.zone.sphinx.component;
 import java.util.Iterator;
 
 import com.pinball3d.zone.gui.Component;
-import com.pinball3d.zone.sphinx.IHasComponents;
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.sphinx.log.LogComponent;
 import com.pinball3d.zone.util.Util;
