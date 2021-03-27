@@ -10,9 +10,9 @@ import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.network.MessageRenameClassify;
 import com.pinball3d.zone.network.MessageDeleteClassify;
 import com.pinball3d.zone.network.MessageManageClassify;
+import com.pinball3d.zone.network.MessageRenameClassify;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.component.ClassifyGroupEdgeList;
@@ -68,13 +68,53 @@ public class SubscreenManageClassify extends Subscreen {
 			page = page + 1 > maxPage ? 1 : page + 1;
 		}));
 		addComponent(new TexturedButton(this, this.x + 82, this.y + 48, ICONS, 137, 41, 15, 15, 1.0F, () -> {
-			System.out.println("button1");
+			Set<ItemType> l = getItems();
+			Iterator<ItemType> it = l.iterator();
+			ClassifyGroup g = getGroup();
+			while (it.hasNext()) {
+				ItemType type = it.next();
+				if (g != null) {
+					g.addItem(type);
+				} else {
+					parent.putScreen(new SubscreenMessageBox(parent, I18n.format("sphinx.error"),
+							I18n.format("sphinx.unselected_classify")));
+				}
+			}
+			dirty = !g.equals(ConnectHelperClient.getInstance().getClassify().get(list.get().id));
 		}));
 		addComponent(new TexturedButton(this, this.x + 102, this.y + 48, ICONS, 152, 41, 15, 15, 1.0F, () -> {
-			System.out.println("button2");
+			Set<ItemType> l = getItems();
+			Iterator<ItemType> it = l.iterator();
+			ClassifyGroup g = getGroup();
+			while (it.hasNext()) {
+				ItemType type = it.next();
+				if (g != null) {
+					g.removeItem(type);
+				} else {
+					parent.putScreen(new SubscreenMessageBox(parent, I18n.format("sphinx.error"),
+							I18n.format("sphinx.unselected_classify")));
+				}
+			}
+			dirty = !g.equals(ConnectHelperClient.getInstance().getClassify().get(list.get().id));
 		}));
 		addComponent(new TexturedButton(this, this.x + 122, this.y + 49, ICONS, 167, 41, 15, 13, 1.0F, () -> {
-			System.out.println("button3");
+			Set<ItemType> l = getItems();
+			Iterator<ItemType> it = l.iterator();
+			ClassifyGroup g = getGroup();
+			while (it.hasNext()) {
+				ItemType type = it.next();
+				if (g != null) {
+					if (g.contains(type)) {
+						g.removeItem(type);
+					} else {
+						g.addItem(type);
+					}
+				} else {
+					parent.putScreen(new SubscreenMessageBox(parent, I18n.format("sphinx.error"),
+							I18n.format("sphinx.unselected_classify")));
+				}
+			}
+			dirty = !g.equals(ConnectHelperClient.getInstance().getClassify().get(list.get().id));
 		}));
 		addComponent(new TexturedButton(this, this.x + 153, this.y + 71, ICONS, 0, 172, 16, 15, 0.5F, () -> {
 			parent.putScreen(new SubscreenTextInputBox(parent, I18n.format("sphinx.change_name"),
@@ -390,6 +430,7 @@ public class SubscreenManageClassify extends Subscreen {
 				}
 			}
 		}
+		Util.resetOpenGl();
 		Util.renderGlowString(I18n.format("sphinx.object_amount", c), x + 82, y + 85);
 		int slot = getHoveredSlot(mouseX, mouseY);
 		if (slot != -1) {
