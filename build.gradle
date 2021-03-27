@@ -8,10 +8,13 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
+    dependencies {
+    	classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
+    }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.github.johnrengelman.shadow'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-
 
 version = "1.9.1"
 group = "com.pinball3d.zone" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -87,6 +90,23 @@ dependencies {
     runtime "mezz.jei:jei_${mc_version}:${jei_version}"
     compile "org.apache.pdfbox:pdfbox:2.0.21"
     compile "org.apache.pdfbox:fontbox:2.0.21"
+    provided files('lib/CraftTweaker2-1.12-4.1.20.618-deobf.jar')
+}
+
+shadowJar {
+    dependencies {
+        include(dependency('org.apache.pdfbox:pdfbox:2.0.21'))
+        include(dependency('org.apache.pdfbox:fontbox:2.0.21'))
+    }
+    exclude 'dummyThing' // can someone explain why this is here
+    classifier = 'release'
+}
+
+reobf {
+    shadowJar {
+        mappingType = 'SEARGE'
+        classpath = sourceSets.main.compileClasspath
+    }
 }
 
 processResources {
@@ -111,3 +131,5 @@ processResources {
 runClient {
     args = ["--username","3DPinball"]
 }
+
+build.dependsOn(shadowJar)

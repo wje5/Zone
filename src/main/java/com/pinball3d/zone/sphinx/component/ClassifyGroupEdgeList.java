@@ -21,7 +21,6 @@ public class ClassifyGroupEdgeList extends Component {
 	private int stretch;
 	public int index;
 	private Predicate<Integer> onChange;
-	private final int array[] = new int[4];
 
 	public ClassifyGroupEdgeList(IHasComponents parent, int x, int y, int height) {
 		super(parent, x, y, 56, height);
