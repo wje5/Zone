@@ -2,10 +2,10 @@ package com.pinball3d.zone.sphinx.map;
 
 import java.util.List;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
-import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.sphinx.INeedNetwork.WorkingState;
+import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.component.ButtonUnitInfo;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
@@ -13,10 +13,8 @@ import com.pinball3d.zone.util.WorldPos;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 public abstract class PointerNeedNetwork extends Pointer {
-	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	public WorldPos pos;
 	public SerialNumber serial;
 	public int id;
@@ -49,7 +47,7 @@ public abstract class PointerNeedNetwork extends Pointer {
 		if (state != WorkingState.WORKING) {
 			int width = box.x2 - box.x;
 			int height = box.y2 - box.y;
-			Util.drawTexture(TEXTURE, box.x - offsetX + width - 4, box.y - offsetZ + height - 4, 116, 21, 9, 9, 0.5F);
+			Util.drawTexture(ICONS, box.x - offsetX + width - 4, box.y - offsetZ + height - 4, 116, 21, 9, 9, 0.5F);
 		}
 	}
 
@@ -60,7 +58,7 @@ public abstract class PointerNeedNetwork extends Pointer {
 		if (state == WorkingState.DISCONNECTED) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(0, 0, 400);
-			Util.drawTexture(TEXTURE, x + 6, z + 6, 116, 21, 9, 9, 0.5F);
+			Util.drawTexture(ICONS, x + 6, z + 6, 116, 21, 9, 9, 0.5F);
 			GlStateManager.popMatrix();
 		}
 	}
@@ -72,7 +70,7 @@ public abstract class PointerNeedNetwork extends Pointer {
 		if (state == WorkingState.DISCONNECTED) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(0, 0, 400);
-			Util.drawTexture(TEXTURE, x + 14, z + 14, 116, 21, 9, 9, 1.0F);
+			Util.drawTexture(ICONS, x + 14, z + 14, 116, 21, 9, 9, 1.0F);
 			GlStateManager.popMatrix();
 		}
 	}

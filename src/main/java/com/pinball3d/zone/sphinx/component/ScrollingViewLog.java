@@ -2,8 +2,8 @@ package com.pinball3d.zone.sphinx.component;
 
 import java.util.Iterator;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.sphinx.log.LogComponent;
 import com.pinball3d.zone.util.Util;
@@ -44,11 +44,8 @@ public class ScrollingViewLog extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
 		Iterator<LogComponent> it = log.getComponents().iterator();
 		int xOffset = 0;
 		int yOffset = 3;
@@ -61,7 +58,7 @@ public class ScrollingViewLog extends Component {
 				do {
 					String s = Util.cutStringToWidth(text, width - xOffset);
 					if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
-						fr.drawString(s, getX() + xOffset, getY() + yOffset - scrollingDistance, c.getColor());
+						fr.drawString(s, xOffset, yOffset - scrollingDistance, c.getColor());
 					}
 					xOffset = 0;
 					yOffset += 10;
@@ -69,13 +66,13 @@ public class ScrollingViewLog extends Component {
 				} while (fr.getStringWidth(text) > width - xOffset);
 				if (!text.isEmpty()) {
 					if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
-						fr.drawString(text, getX() + xOffset, getY() + yOffset - scrollingDistance, c.getColor());
+						fr.drawString(text, xOffset, yOffset - scrollingDistance, c.getColor());
 					}
 					xOffset += fr.getStringWidth(text);
 				}
 			} else {
 				if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
-					fr.drawString(text, getX() + xOffset, getY() + yOffset - scrollingDistance, c.getColor());
+					fr.drawString(text, xOffset, yOffset - scrollingDistance, c.getColor());
 				}
 				xOffset += w;
 			}

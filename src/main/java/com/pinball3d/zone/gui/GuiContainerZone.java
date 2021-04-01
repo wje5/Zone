@@ -10,6 +10,7 @@ import java.util.Stack;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -85,7 +86,6 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-		drawDefaultBackground();
 		int d = Mouse.getDWheel();
 		if (d != 0) {
 			if (subscreens.empty()) {
@@ -105,9 +105,14 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 				onMouseScrolling(mouseX, mouseY, d < 0, flag);
 			} else {
 				Subscreen screen = subscreens.peek();
-				screen.onMouseScrollScreen(mouseX, mouseY, d < 0);
+				int x = mouseX - screen.x;
+				int y = mouseY - screen.y;
+				if (x >= 0 && x <= screen.width && y >= 0 && y <= screen.height) {
+					screen.onMouseScrollScreen(x, y, d < 0);
+				}
 			}
 		}
+		drawDefaultBackground();
 		GlStateManager.pushMatrix();
 		draw(mouseX, mouseY, partialTicks);
 		GlStateManager.popMatrix();
@@ -130,7 +135,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 			if (!e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRender(mouseX, mouseY);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), 0, 0);
 				GlStateManager.popMatrix();
 			}
 		});
@@ -146,7 +151,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 			if (e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRender(mouseX, mouseY);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), 0, 0);
 				GlStateManager.popMatrix();
 			}
 		});
@@ -172,7 +177,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 				}
 				if (!flag) {
 					GlStateManager.pushMatrix();
-					screen.doRender(mouseX, mouseY);
+					screen.doRenderScreen(mouseX - screen.x, mouseY - screen.y);
 					GlStateManager.popMatrix();
 					Util.resetOpenGl();
 				}
@@ -246,25 +251,25 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int button) {
 		boolean flag = false;
-		if ((clickX == -1 || Math.abs(mouseX - clickX) < 5) && (clickY == -1 || Math.abs(mouseY - clickY) < 5)) {
-			if (subscreens.empty()) {
-				Iterator<Component> it = components.iterator();
-				while (it.hasNext()) {
-					Component c = it.next();
-					int x = mouseX - c.getX();
-					int y = mouseY - c.getY();
-					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
-						if (c.onClickScreen(x, y, button != 1)) {
-							flag = true;
-							break;
-						}
+		boolean isClick = (clickX == -1 || Math.abs(mouseX - clickX) < 5)
+				&& (clickY == -1 || Math.abs(mouseY - clickY) < 5);
+		if (subscreens.empty()) {
+			Iterator<Component> it = components.iterator();
+			while (it.hasNext()) {
+				Component c = it.next();
+				int x = mouseX - c.getX();
+				int y = mouseY - c.getY();
+				if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
+					if (c.onClickScreen(x, y, button != 1)) {
+						flag = true;
+						break;
 					}
 				}
-			} else {
-				Subscreen screen = subscreens.peek();
-				screen.onClickScreen(mouseX, mouseY, button != 1);
-				flag = true;
 			}
+		} else {
+			Subscreen screen = subscreens.peek();
+			screen.onClickScreen(mouseX, mouseY, button != 1, isClick);
+			flag = true;
 		}
 		onMouseReleaseScreen(mouseX, mouseY, button, flag);
 		lastMouseX = -1;
@@ -291,6 +296,16 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 	public void updateScreen() {
 		super.updateScreen();
 		update();
+	}
+
+	@Override
+	public int getX() {
+		return 0;
+	}
+
+	@Override
+	public int getY() {
+		return 0;
 	}
 
 	@Override

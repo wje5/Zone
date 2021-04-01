@@ -1,6 +1,5 @@
-package com.pinball3d.zone.sphinx.component;
+package com.pinball3d.zone.gui.component;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
@@ -27,11 +26,8 @@ public class HyperTextButton extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
-		Util.renderGlowString(text, getX(), getY());
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+		Util.renderGlowString(text, 0, 0);
 	}
 }

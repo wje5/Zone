@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
-import com.pinball3d.zone.gui.Component;
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.sphinx.component.IUnitButton;
 import com.pinball3d.zone.sphinx.map.MapHandler;
 import com.pinball3d.zone.sphinx.map.Pointer;
@@ -69,7 +69,7 @@ public abstract class GuiContainerSphinxAdvanced extends GuiContainerSphinxBase 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
 		super.mouseReleased(mouseX, mouseY, mouseButton);
-		if (subscreens.empty() && mouseButton == 0) {
+		if (mouseButton == 0) {
 			if (dragBoxX != dragBoxX2 || dragBoxY != dragBoxY2) {
 				MapHandler.onReleaseDragBox(width, height, dragBoxX, dragBoxY, dragBoxX2, dragBoxY2);
 			} else {
@@ -101,7 +101,7 @@ public abstract class GuiContainerSphinxAdvanced extends GuiContainerSphinxBase 
 			updateChosenUnitButton();
 		}
 		if (!chosen.isEmpty()) {
-			Util.drawTexture(TEXTURE_3, width - 128, height - 58, 256, 115, 0.5F);
+			Util.drawTexture(ICONS_3, width - 128, height - 58, 256, 115, 0.5F);
 			Util.drawBorder(width - 106, height - 47, 28, 28, 1, 0xFF20E6E6);
 			chosen.get(chosenIndex).renderThumbHuge(width - 105, height - 46);
 			if (chosen.size() > 1) {

@@ -1,12 +1,11 @@
-package com.pinball3d.zone.sphinx.component;
+package com.pinball3d.zone.gui.component;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.util.ResourceLocation;
 
-public class TexturedButton extends Component {
+public class TexturedButton extends Button {
 	protected ResourceLocation texture;
 	protected int u, v, uWidth, vHeight;
 	protected Runnable event;
@@ -23,7 +22,7 @@ public class TexturedButton extends Component {
 
 	public TexturedButton(IHasComponents parent, int x, int y, ResourceLocation texture, int width, int height, int u,
 			int v, int uWidth, int vHeight, Runnable onClick) {
-		super(parent, x, y, width, height);
+		super(parent, x, y, width, height, onClick);
 		this.texture = texture;
 		this.u = u;
 		this.v = v;
@@ -33,22 +32,10 @@ public class TexturedButton extends Component {
 	}
 
 	@Override
-	public boolean onLeftClick(int x, int y) {
-		if (super.onLeftClick(x, y)) {
-			return true;
-		}
-		if (enable != null && !enable.getAsBoolean()) {
-			return false;
-		}
-		event.run();
-		return true;
-	}
-
-	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable == null || enable.getAsBoolean()) {
-			Util.drawTexture(texture, getX(), getY(), width, height, u, v, uWidth, vHeight);
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+		if (isEnable()) {
+			Util.drawTexture(texture, 0, 0, width, height, u, v, uWidth, vHeight);
 		}
 	}
 }

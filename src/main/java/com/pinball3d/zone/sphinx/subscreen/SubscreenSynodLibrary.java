@@ -16,7 +16,6 @@ import net.minecraft.util.ResourceLocation;
 
 public class SubscreenSynodLibrary extends Subscreen {
 	public static final ResourceLocation RESOURCE_LOCATION_EMPTY = new ResourceLocation("");
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
 	volatile private PDF pdf;
 	volatile private boolean failed;
 	private PDFRenderer pdfbox;
@@ -40,8 +39,8 @@ public class SubscreenSynodLibrary extends Subscreen {
 				}
 			};
 		}.start();
-		addComponent(pdfbox = new PDFRenderer(this, x + 76, y + 24, 224, 170));
-		addComponent(tree = new OutlineTree(this, x, y + 9, 195));
+		addComponent(pdfbox = new PDFRenderer(this, 76, 24, 224, 170));
+		addComponent(tree = new OutlineTree(this, 0, 9, 195));
 	}
 
 	public void setPage(int page) {
@@ -82,17 +81,17 @@ public class SubscreenSynodLibrary extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		Util.drawTexture(TEXTURE, x + 55, y - 5, 0, 0, 99, 99, 0.5F);
-		Util.drawTexture(TEXTURE, x + 271, y - 5, 99, 0, 99, 99, 0.5F);
-		Util.drawTexture(TEXTURE, x + 55, y + 155, 0, 99, 99, 99, 0.5F);
-		Util.drawTexture(TEXTURE, x + 271, y + 155, 99, 99, 99, 99, 0.5F);
-		Gui.drawRect(x + 104, y, x + 271, y + 44, 0x2F000000);
-		Gui.drawRect(x + 60, y + 44, x + 316, y + 155, 0x2F000000);
-		Gui.drawRect(x + 104, y + 155, x + 271, y + 200, 0x2F000000);
-		Util.renderGlowHorizonLine(x + 70, y + 20, 236);
-		Gui.drawRect(x + 76, y + 24, x + 300, y + 194, 0x651CC3B5);
-		Util.getFontRenderer().drawString(I18n.format("sphinx.synod_library"), x + 75, y + 8, 0xFF1ECCDE);
-		Util.renderGlowBorder(x + 75, y + 23, 226, 172);
+		Util.drawTexture(UI_BORDER, 55, -5, 0, 0, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 271, -5, 99, 0, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 55, 155, 0, 99, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 271, 155, 99, 99, 99, 99, 0.5F);
+		Gui.drawRect(104, 0, 271, 44, 0x2F000000);
+		Gui.drawRect(60, 44, 316, 155, 0x2F000000);
+		Gui.drawRect(104, 155, 271, 200, 0x2F000000);
+		Util.renderGlowHorizonLine(70, 20, 236);
+		Gui.drawRect(76, 24, 300, 194, 0x651CC3B5);
+		Util.getFontRenderer().drawString(I18n.format("sphinx.synod_library"), 75, 8, 0xFF1ECCDE);
+		Util.renderGlowBorder(75, 23, 226, 172);
 	}
 
 	@Override

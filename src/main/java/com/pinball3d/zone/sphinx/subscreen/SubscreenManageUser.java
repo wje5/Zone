@@ -8,6 +8,9 @@ import java.util.UUID;
 
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.gui.component.ScrollingEdgeList;
+import com.pinball3d.zone.gui.component.ScrollingEdgeList.ListBar;
+import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.network.MessageChangeGravatar;
@@ -15,9 +18,6 @@ import com.pinball3d.zone.network.MessageDeleteUser;
 import com.pinball3d.zone.network.MessageReviewUser;
 import com.pinball3d.zone.network.MessageTransferAdmin;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.component.ScrollingEdgeList;
-import com.pinball3d.zone.sphinx.component.ScrollingEdgeList.ListBar;
-import com.pinball3d.zone.sphinx.component.TexturedButton;
 import com.pinball3d.zone.sphinx.map.MapHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.Util;
@@ -33,10 +33,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 
 public class SubscreenManageUser extends Subscreen {
-	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
-	private static final ResourceLocation TEXTURE_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
-	private static final ResourceLocation TEXTURE_5 = new ResourceLocation("zone:textures/gui/sphinx/icons_5.png");
 	private ScrollingEdgeList list;
 	private ThreadDownloadImageData image;
 	private UUID jumpTo;
@@ -49,11 +45,11 @@ public class SubscreenManageUser extends Subscreen {
 	public SubscreenManageUser(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 360, 200, true);
 		jumpTo = mc.player.getUniqueID();
-		addComponent(list = new ScrollingEdgeList(this, this.x, this.y + 9, 195).setOnChange(i -> {
+		addComponent(list = new ScrollingEdgeList(this, 0, 9, 195).setOnChange(i -> {
 			image = null;
 			return true;
 		}));
-		addComponent(new TexturedButton(this, x + 83, y + 73, TEXTURE_4, 60, 120, 60, 60, 0.25F, () -> {
+		addComponent(new TexturedButton(this, 83, 73, ICONS_4, 60, 120, 60, 60, 0.25F, () -> {
 			WorldPos pos = ((UserData) list.get().getData()).pos;
 			MapHandler.focus(pos.getPos().getX(), pos.getPos().getZ());
 			while (!parent.getSubscreens().empty()) {
@@ -70,7 +66,7 @@ public class SubscreenManageUser extends Subscreen {
 			return false;
 		}));
 		addComponent(
-				new TexturedButton(this, x + 100, y + 73, TEXTURE_4, 180, 120, 60, 60, 0.25F,
+				new TexturedButton(this, 100, 73, ICONS_4, 180, 120, 60, 60, 0.25F,
 						() -> parent.putScreen(new SubscreenConfirmBox(parent, I18n.format("sphinx.transfer_admin"),
 								I18n.format("sphinx.confirm_transfer_admin"),
 								() -> NetworkHandler.instance.sendToServer(MessageTransferAdmin.newMessage(
@@ -88,11 +84,10 @@ public class SubscreenManageUser extends Subscreen {
 											}
 											return false;
 										}).setXSupplier(
-												() -> !list.isEmpty() && ((UserData) list.get().getData()).online
-														? x + 100
-														: x + 83));
+												() -> !list.isEmpty() && ((UserData) list.get().getData()).online ? 100
+														: 83));
 		addComponent(
-				new TexturedButton(this, x + 117, y + 73, TEXTURE_4, 0, 180, 60, 60, 0.25F,
+				new TexturedButton(this, 117, 73, ICONS_4, 0, 180, 60, 60, 0.25F,
 						() -> parent
 								.putScreen(new SubscreenConfirmBox(parent, I18n.format("sphinx.remove_user"),
 										I18n.format("sphinx.confirm_remove_user"),
@@ -111,9 +106,8 @@ public class SubscreenManageUser extends Subscreen {
 													}
 													return false;
 												}).setXSupplier(() -> !list.isEmpty()
-														&& ((UserData) list.get().getData()).online ? x + 117
-																: x + 100));
-		addComponent(new TexturedButton(this, x + 83, y + 73, TEXTURE_5, 0, 0, 60, 60, 0.25F,
+														&& ((UserData) list.get().getData()).online ? 117 : 100));
+		addComponent(new TexturedButton(this, 83, 73, ICONS_5, 0, 0, 60, 60, 0.25F,
 				() -> NetworkHandler.instance.sendToServer(MessageReviewUser.newMessage(
 						ConnectHelperClient.getInstance().getNetworkPos(), ((UserData) list.get().getData()).uuid)))
 								.setEnable(() -> {
@@ -129,7 +123,7 @@ public class SubscreenManageUser extends Subscreen {
 									}
 									return false;
 								}));
-		addComponent(new TexturedButton(this, x + 100, y + 73, TEXTURE_4, 0, 180, 60, 60, 0.25F,
+		addComponent(new TexturedButton(this, 100, 73, ICONS_4, 0, 180, 60, 60, 0.25F,
 				() -> NetworkHandler.instance.sendToServer(MessageDeleteUser.newMessage(
 						ConnectHelperClient.getInstance().getNetworkPos(), ((UserData) list.get().getData()).uuid)))
 								.setEnable(() -> {
@@ -187,7 +181,7 @@ public class SubscreenManageUser extends Subscreen {
 	@Override
 	public void onClick(int x, int y, boolean isLeft) {
 		super.onClick(x, y, isLeft);
-		if (x - this.x >= 83 && x - this.x <= 123 && y - this.y >= 28 && y - this.y <= 68) {
+		if (x >= 83 && x <= 123 && y >= 28 && y <= 68) {
 			parent.putScreen(new SubscreenTextInputBox(parent, I18n.format("sphinx.set_gravatar"),
 					I18n.format("sphinx.set_gravatar_email"), s -> {
 						NetworkHandler.instance.sendToServer(
@@ -204,37 +198,36 @@ public class SubscreenManageUser extends Subscreen {
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
 		updateList();
-		Util.drawTexture(TEXTURE, x + 55, y - 5, 0, 0, 99, 99, 0.5F);
-		Util.drawTexture(TEXTURE, x + 315, y - 5, 99, 0, 99, 99, 0.5F);
-		Util.drawTexture(TEXTURE, x + 55, y + 155, 0, 99, 99, 99, 0.5F);
-		Util.drawTexture(TEXTURE, x + 315, y + 155, 99, 99, 99, 99, 0.5F);
-		Gui.drawRect(x + 104, y, x + 315, y + 44, 0x2F000000);
-		Gui.drawRect(x + 60, y + 44, x + 360, y + 155, 0x2F000000);
-		Gui.drawRect(x + 104, y + 155, x + 315, y + 200, 0x2F000000);
-		Util.renderGlowHorizonLine(x + 70, y + 20, 280);
-		Gui.drawRect(x + 76, y + 24, x + 344, y + 194, 0x651CC3B5);
-		Util.renderGlowString(I18n.format("sphinx.manage_user"), x + 75, y + 8);
-		Util.renderGlowBorder(x + 75, y + 23, 270, 172);
+		Util.drawTexture(UI_BORDER, 55, -5, 0, 0, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 315, -5, 99, 0, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 55, 155, 0, 99, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 315, 155, 99, 99, 99, 99, 0.5F);
+		Gui.drawRect(104, 0, 315, 44, 0x2F000000);
+		Gui.drawRect(60, 44, 360, 155, 0x2F000000);
+		Gui.drawRect(104, 155, 315, 200, 0x2F000000);
+		Util.renderGlowHorizonLine(70, 20, 280);
+		Gui.drawRect(76, 24, 344, 194, 0x651CC3B5);
+		Util.renderGlowString(I18n.format("sphinx.manage_user"), 75, 8);
+		Util.renderGlowBorder(75, 23, 270, 172);
 		FontRenderer fr = Util.getFontRenderer();
 		ListBar bar = list.get();
 		if (bar != null) {
 			UserData user = (UserData) bar.getData();
-			Util.drawBorder(x + 83, y + 28, 40, 40, 1, 0xFF1ECCDE);
-			drawGravatar(user.email, x + 84, y + 29);
-			if (mouseX >= x + 83 && mouseX <= x + 123 && mouseY >= y + 28 && mouseY <= y + 68) {
-				Util.drawTexture(ICONS, x + 112, y + 57, 216, 0, 40, 40, 0.25F);
+			Util.drawBorder(83, 28, 40, 40, 1, 0xFF1ECCDE);
+			drawGravatar(user.email, 84, 29);
+			if (mouseX >= 83 && mouseX <= 123 && mouseY >= 28 && mouseY <= 68) {
+				Util.drawTexture(ICONS, 112, 57, 216, 0, 40, 40, 0.25F);
 			}
-			Util.renderGlowString(user.name, x + 128, y + 30);
+			Util.renderGlowString(user.name, 128, 30);
 			if (user.reviewing) {
-				fr.drawString(I18n.format("sphinx.reviewing"), x + 128, y + 37, 0xFFBFBFBF);
+				fr.drawString(I18n.format("sphinx.reviewing"), 128, 37, 0xFFBFBFBF);
 			} else {
-				Util.renderGlowString(user.admin ? I18n.format("sphinx.admin") : I18n.format("sphinx.user"), x + 128,
-						y + 37);
+				Util.renderGlowString(user.admin ? I18n.format("sphinx.admin") : I18n.format("sphinx.user"), 128, 37);
 			}
 			if (user.online) {
-				Util.renderGlowString(I18n.format("sphinx.online"), x + 128, y + 44);
+				Util.renderGlowString(I18n.format("sphinx.online"), 128, 44);
 			} else {
-				fr.drawString(I18n.format("sphinx.offline"), x + 128, y + 44, 0xFFBFBFBF);
+				fr.drawString(I18n.format("sphinx.offline"), 128, 44, 0xFFBFBFBF);
 			}
 
 		}

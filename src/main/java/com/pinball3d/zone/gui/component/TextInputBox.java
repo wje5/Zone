@@ -1,8 +1,7 @@
-package com.pinball3d.zone.sphinx.component;
+package com.pinball3d.zone.gui.component;
 
 import org.lwjgl.input.Keyboard;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
@@ -110,17 +109,14 @@ public class TextInputBox extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
-		Util.drawBorder(getX(), getY(), width, height, 1, 0xFF1ECCDE);
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+		Util.drawBorder(0, 0, width, height, 1, 0xFF1ECCDE);
 		FontRenderer renderer = Util.getFontRenderer();
 		if (isFocus && mc.world.getTotalWorldTime() % 20 < 10) {
-			Gui.drawRect(getX() + 3 + renderer.getStringWidth(text), getY() + 2,
-					getX() + 4 + renderer.getStringWidth(text), getY() + height - 2, 0xFF1ECCDE);
+			Gui.drawRect(3 + renderer.getStringWidth(text), 2, 4 + renderer.getStringWidth(text), height - 2,
+					0xFF1ECCDE);
 		}
-		Util.renderGlowString(text, getX() + 3, getY() + 3);
+		Util.renderGlowString(text, 3, 3);
 	}
 }

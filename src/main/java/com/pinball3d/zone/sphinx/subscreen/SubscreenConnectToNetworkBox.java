@@ -6,10 +6,8 @@ import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
 
 public class SubscreenConnectToNetworkBox extends Subscreen {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private int quit;
 	private boolean fail;
 	private String name;
@@ -43,13 +41,13 @@ public class SubscreenConnectToNetworkBox extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		Gui.drawRect(x, y, x + width, y + height, 0xAF282828);
-		Util.drawTexture(TEXTURE, x + 8, y + 8, 48, 0, 36, 36, 0.5F);
-		Util.renderGlowString(I18n.format("sphinx.connect_to_network", name), x + 35, y + 4);
+		Gui.drawRect(0, 0, width, height, 0xAF282828);
+		Util.drawTexture(ICONS, 8, 8, 48, 0, 36, 36, 0.5F);
+		Util.renderGlowString(I18n.format("sphinx.connect_to_network", name), 35, 4);
 		if (!fail) {
-			Util.renderGlowString(I18n.format("sphinx.waiting_for_server"), x + 35, y + 20);
+			Util.renderGlowString(I18n.format("sphinx.waiting_for_server"), 35, 20);
 		} else if (fail && quit > 0) {
-			Util.renderGlowString(I18n.format("sphinx.waiting_review"), x + 35, y + 20);
+			Util.renderGlowString(I18n.format("sphinx.waiting_review"), 35, 20);
 		}
 		if (fail && quit == 0) {
 			dead = true;

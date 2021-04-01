@@ -1,15 +1,13 @@
-package com.pinball3d.zone.sphinx.component;
+package com.pinball3d.zone.gui.component;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
-import net.minecraft.util.ResourceLocation;
 
 public class ScrollingList extends Component {
 	protected int length, lineHeight, scrollingDistance;
@@ -27,23 +25,18 @@ public class ScrollingList extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
 		Iterator<ListBar> it = list.iterator();
 		int yOffset = 0;
 		while (it.hasNext()) {
 			ListBar bar = it.next();
-			int renderY = getY() + yOffset - scrollingDistance;
-			if (renderY <= getY() + height && renderY + bar.height >= getY()) {
-				int upCut = getY() - renderY > 0 ? getY() - renderY : 0;
-				int downCut = renderY + bar.height - (getY() + height) > 0 ? renderY + bar.height - (getY() + height)
-						: 0;
-				boolean flag = mouseX >= getX() && mouseX <= getX() + width && mouseY > renderY
-						&& mouseY <= renderY + bar.height;
-				bar.doRender(getX(), renderY, upCut, downCut, flag);
+			int renderY = yOffset - scrollingDistance;
+			if (renderY <= height && renderY + bar.height >= 0) {
+				int renderUpcut = renderY < 0 ? -renderY : 0;
+				int renderDownCut = renderY + bar.height - height > 0 ? renderY + bar.height - height : 0;
+				boolean flag = mouseX >= 0 && mouseX <= 0 + width && mouseY > renderY && mouseY <= renderY + bar.height;
+				bar.doRender(0, renderY, renderUpcut, renderDownCut, flag);
 			}
 			yOffset += bar.height;
 		}
@@ -84,6 +77,20 @@ public class ScrollingList extends Component {
 		return false;
 	}
 
+	@Override
+	public boolean onMouseScroll(int mouseX, int mouseY, boolean isUp) {
+		if (super.onMouseScroll(mouseX, mouseY, isUp)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
+		scrollingDistance += isUp ? 15 : -15;
+		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
+		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+		return true;
+	}
+
 	public class ListBar {
 		protected String name;
 		protected int width;
@@ -120,8 +127,7 @@ public class ScrollingList extends Component {
 			y += d;
 			upCut = upCut - d > 0 ? upCut - d : 0;
 			downCut = downCut - d > 0 ? downCut - d : 0;
-			Util.drawTexture(new ResourceLocation("zone:textures/gui/sphinx/icons.png"), x + 7, y + upCut, u,
-					v + upCut * 2, uWidth, vHeight - (upCut + downCut) * 2, scale);
+			Util.drawTexture(ICONS, x + 7, y + upCut, u, v + upCut * 2, uWidth, vHeight - (upCut + downCut) * 2, scale);
 
 		}
 	}

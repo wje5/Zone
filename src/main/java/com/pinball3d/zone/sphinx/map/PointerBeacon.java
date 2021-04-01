@@ -1,7 +1,7 @@
 package com.pinball3d.zone.sphinx.map;
 
-import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.INeedNetwork.WorkingState;
+import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -14,7 +14,7 @@ public class PointerBeacon extends PointerNode {
 
 	@Override
 	public void render(int offsetX, int offsetZ) {
-		Util.drawTexture(TEXTURE, pos.getPos().getX() - offsetX - 3, pos.getPos().getZ() - offsetZ - 3, 195, 0, 18, 20,
+		Util.drawTexture(ICONS, pos.getPos().getX() - offsetX - 3, pos.getPos().getZ() - offsetZ - 3, 195, 0, 18, 20,
 				0.5F);
 	}
 }

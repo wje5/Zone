@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.gui.IHasSubscreen;
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageTryConnectToNetwork;
 import com.pinball3d.zone.network.NetworkHandler;
@@ -65,24 +65,19 @@ public class ScrollingListNetwork extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
 		refresh();
 		Iterator<ListBar> it = list.iterator();
 		int yOffset = 0;
 		while (it.hasNext()) {
 			ListBar bar = it.next();
-			int renderY = getY() + yOffset - scrollingDistance;
-			if (renderY <= getY() + height && renderY + bar.height >= getY()) {
-				int upCut = getY() - renderY > 0 ? getY() - renderY : 0;
-				int downCut = renderY + bar.height - (getY() + height) > 0 ? renderY + bar.height - (getY() + height)
-						: 0;
-				boolean flag = mouseX >= getX() && mouseX <= getX() + width && mouseY > renderY
-						&& mouseY <= renderY + bar.height;
-				bar.doRender(getX(), renderY, upCut, downCut, flag);
+			int renderY = yOffset - scrollingDistance;
+			if (renderY <= height && renderY + bar.height >= 0) {
+				int renderUpCut = renderY < 0 ? -renderY : 0;
+				int renderDownCut = renderY + bar.height - height > 0 ? renderY + bar.height - height : 0;
+				boolean flag = mouseX >= 0 && mouseX <= width && mouseY > renderY && mouseY <= renderY + bar.height;
+				bar.doRender(0, renderY, renderUpCut, renderDownCut, flag);
 			}
 			yOffset += bar.height;
 		}
@@ -117,13 +112,15 @@ public class ScrollingListNetwork extends Component {
 			if (y + scrollingDistance >= yOffset && y + scrollingDistance < yOffset + bar.height) {
 				IHasSubscreen root = Util.getRoot();
 				if (bar.selected) {
-					root.putScreen(new SubscreenCheckConnectedNetwork(root, bar.name, x + getX(), y + getY()));
+					root.putScreen(new SubscreenCheckConnectedNetwork(root, bar.name, x + getX() + parent.getX(),
+							y + getY() + parent.getY()));
 				} else {
 					NetworkHandler.instance.sendToServer(new MessageTryConnectToNetwork(mc.player, pos.isOrigin(),
 							pos.isOrigin() ? new WorldPos(mc.player.getPosition(), mc.world.provider.getDimension())
 									: pos,
 							bar.pos));
-					root.putScreen(new SubscreenConnectToNetworkBox(root, bar.name, getX() + x, getY() + y));
+					root.putScreen(new SubscreenConnectToNetworkBox(root, bar.name, getX() + x + parent.getX(),
+							getY() + y + parent.getY()));
 				}
 				return true;
 			}

@@ -1,9 +1,15 @@
-package com.pinball3d.zone.gui;
+package com.pinball3d.zone.gui.component;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.IntSupplier;
 
+import javax.annotation.Nonnegative;
+
+import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.util.Util;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
 public class Component {
@@ -55,6 +61,22 @@ public class Component {
 		return ySupplier == null ? y : ySupplier.getAsInt();
 	}
 
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public boolean isHover(int mouseX, int mouseY) {
+		return mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height;
+	}
+
+	public boolean isEnable() {
+		return enable == null || enable.getAsBoolean();
+	}
+
 	public boolean onLeftClick(int x, int y) {
 		return false;
 	}
@@ -75,8 +97,19 @@ public class Component {
 		return false;
 	}
 
-	public void doRender(int mouseX, int mouseY) {
+	public void doRender(int mouseX, int mouseY, @Nonnegative int cutUp, @Nonnegative int cutDown) {
 
+	}
+
+	public void doRenderScreen(int mouseX, int mouseY, @Nonnegative int cutUp, @Nonnegative int cutDown) {
+		if (!isEnable()) {
+			return;
+		}
+		Util.resetOpenGl();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(getX(), getY(), 50F);
+		doRender(mouseX, mouseY, cutUp, cutDown);
+		GlStateManager.popMatrix();
 	}
 
 	public boolean onKeyTyped(char typedChar, int keyCode) {

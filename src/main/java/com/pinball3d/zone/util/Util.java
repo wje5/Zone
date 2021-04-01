@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.annotation.Nonnegative;
+
 import org.lwjgl.opengl.GL11;
 
 import com.ibm.icu.text.ArabicShaping;
@@ -100,10 +102,20 @@ public class Util {
 
 	@SideOnly(Side.CLIENT)
 	public static void drawBorder(int x, int y, int width, int height, int lineWidth, int color) {
-		Gui.drawRect(x, y, x + width, y + lineWidth, color);
-		Gui.drawRect(x, y + height - lineWidth, x + width, y + height, color);
-		Gui.drawRect(x, y + lineWidth, x + lineWidth, y + height - lineWidth, color);
-		Gui.drawRect(x + width - lineWidth, y + lineWidth, x + width, y + height - lineWidth, color);
+		drawBorder(x, y, width, height, lineWidth, color, 0, 0);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void drawBorder(int x, int y, int width, int height, int lineWidth, int color, @Nonnegative int upCut,
+			@Nonnegative int downCut) {
+		if (upCut < lineWidth) {
+			Gui.drawRect(x, y + upCut, x + width, y + lineWidth, color);
+		}
+		if (downCut < lineWidth) {
+			Gui.drawRect(x, y + height - lineWidth, x + width, y + height - downCut, color);
+		}
+		Gui.drawRect(x, y + lineWidth + upCut, x + lineWidth, y + height - lineWidth - downCut, color);
+		Gui.drawRect(x + width - lineWidth, y + lineWidth + upCut, x + width, y + height - lineWidth - downCut, color);
 	}
 
 	@SideOnly(Side.CLIENT)

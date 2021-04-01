@@ -1,8 +1,8 @@
 package com.pinball3d.zone.sphinx.map;
 
 import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.INeedNetwork.WorkingState;
+import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.SerialNumber.Type;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
@@ -18,7 +18,7 @@ public class PointerProcessingCenter extends PointerNeedNetwork {
 
 	@Override
 	public void render(int offsetX, int offsetZ) {
-		Util.drawTexture(TEXTURE, pos.getPos().getX() - offsetX - 5, pos.getPos().getZ() - offsetZ - 5, 116, 0, 20, 22,
+		Util.drawTexture(ICONS, pos.getPos().getX() - offsetX - 5, pos.getPos().getZ() - offsetZ - 5, 116, 0, 20, 22,
 				0.5F);
 	}
 }

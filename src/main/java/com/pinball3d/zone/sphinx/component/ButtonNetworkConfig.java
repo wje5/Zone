@@ -3,27 +3,20 @@ package com.pinball3d.zone.sphinx.component;
 import java.util.function.BooleanSupplier;
 
 import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.gui.component.Button;
 import com.pinball3d.zone.util.Util;
 
-import net.minecraft.util.ResourceLocation;
-
-public class ButtonNetworkConfig extends TexturedButton {
-	private static final ResourceLocation TEXTURE_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
-
+public class ButtonNetworkConfig extends Button {
 	private BooleanSupplier connect;
 
 	public ButtonNetworkConfig(IHasComponents parent, int x, int y, Runnable onClick, BooleanSupplier connect) {
-		super(parent, x, y, TEXTURE_4, 120, 60, 60, 60, 0.25F, onClick);
+		super(parent, x, y, 15, 15, onClick);
 		this.connect = connect;
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
-		boolean flag = connect.getAsBoolean();
-		Util.drawTexture(texture, getX(), getY(), flag ? 120 : 180, 60, uWidth, vHeight, 0.25F);
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+		Util.drawTexture(TEXTURE_4, 0, 0, connect.getAsBoolean() ? 120 : 180, 60, 60, 60, 0.25F);
 	}
 }

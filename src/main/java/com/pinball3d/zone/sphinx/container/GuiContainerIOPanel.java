@@ -5,14 +5,14 @@ import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 
+import com.pinball3d.zone.gui.component.TextInputBox;
+import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.network.MessageIOPanelSendItemToStorage;
 import com.pinball3d.zone.network.MessageIOPanelTransferPlayerInventory;
 import com.pinball3d.zone.network.MessageOpenIOPanelGui;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.component.TextInputBox;
-import com.pinball3d.zone.sphinx.component.TexturedButton;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenIOPanelRequest;
 import com.pinball3d.zone.util.HugeItemStack;
 import com.pinball3d.zone.util.StorageWrapper;
@@ -34,7 +34,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 	public static final ResourceLocation IO_PANEL = new ResourceLocation("zone:textures/gui/sphinx/io_panel.png");
 	public static final ResourceLocation IO_PANEL2 = new ResourceLocation("zone:textures/gui/sphinx/io_panel_2.png");
-	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private TextInputBox box;
 	private int panelX, panelY, page = 1, maxPage = 1;
 	private WorldPos pos;
@@ -73,25 +72,25 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 		components.add(box = new TextInputBox(this, panelX + 7, panelY + 7, 61, 15, 55, () -> {
 			box.isFocus = true;
 		}).setIsPixel(true));
-		components.add(new TexturedButton(this, panelX + 15, panelY + 201, TEXTURE, 92, 32, 5, 9, 1.0F, () -> {
+		components.add(new TexturedButton(this, panelX + 15, panelY + 201, ICONS, 92, 32, 5, 9, 1.0F, () -> {
 			page = page - 1 < 1 ? maxPage : page - 1;
 		}));
-		components.add(new TexturedButton(this, panelX + 70, panelY + 201, TEXTURE, 97, 32, 5, 9, 1.0F, () -> {
+		components.add(new TexturedButton(this, panelX + 70, panelY + 201, ICONS, 97, 32, 5, 9, 1.0F, () -> {
 			page = page + 1 > maxPage ? 1 : page + 1;
 		}));
-		components.add(new TexturedButton(this, panelX + 67, panelY + 7, TEXTURE, 92, 41, 15, 15, 1.0F, () -> {
+		components.add(new TexturedButton(this, panelX + 67, panelY + 7, ICONS, 92, 41, 15, 15, 1.0F, () -> {
 			box.isFocus = false;
 		}));
-		components.add(new TexturedButton(this, panelX + 285, panelY + 5, TEXTURE, 64, 68, 30, 28, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 5, ICONS, 64, 68, 30, 28, 0.5F, () -> {
 			NetworkHandler.instance.sendToServer(MessageIOPanelSendItemToStorage.newMessage(mc.player, pos));
 		}));
-		components.add(new TexturedButton(this, panelX + 285, panelY + 24, TEXTURE, 0, 68, 32, 32, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 24, ICONS, 0, 68, 32, 32, 0.5F, () -> {
 			System.out.println("config");
 		}));
-		components.add(new TexturedButton(this, panelX + 285, panelY + 43, TEXTURE, 180, 68, 31, 32, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 43, ICONS, 180, 68, 31, 32, 0.5F, () -> {
 			NetworkHandler.instance.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, true));
 		}));
-		components.add(new TexturedButton(this, panelX + 285, panelY + 62, TEXTURE, 211, 68, 31, 32, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 62, ICONS, 211, 68, 31, 32, 0.5F, () -> {
 			NetworkHandler.instance.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, false));
 		}));
 	}

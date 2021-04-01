@@ -1,84 +1,74 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
-import com.pinball3d.zone.gui.Container;
+import static com.pinball3d.zone.gui.Subscreen.UI_BORDER;
+
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
-import com.pinball3d.zone.sphinx.component.RadioButton;
-import com.pinball3d.zone.sphinx.component.ScrollingListNetwork;
-import com.pinball3d.zone.sphinx.component.TextInputBox;
-import com.pinball3d.zone.sphinx.component.TexturedButton;
+import com.pinball3d.zone.gui.component.Container;
+import com.pinball3d.zone.gui.component.RadioButton;
+import com.pinball3d.zone.gui.component.ScrollingContainer;
+import com.pinball3d.zone.gui.component.TextInputBox;
+import com.pinball3d.zone.gui.component.Texture;
+import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.util.Util;
-import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
 
 public class SubscreenManageQueue extends Subscreen {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
-	private static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 	private TextInputBox box;
-	public ScrollingListNetwork list;
+	public ScrollingContainer list;
 	public RadioButton button1, button2, button3;
 
 	public SubscreenManageQueue(IHasSubscreen parent) {
 		this(parent, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
 	}
 
-	public SubscreenManageQueue(IHasSubscreen parent, WorldPos pos) {
-		this(parent, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100, pos);
-	}
-
 	public SubscreenManageQueue(IHasSubscreen parent, int x, int y) {
-		this(parent, x, y, WorldPos.ORIGIN);
-	}
-
-	public SubscreenManageQueue(IHasSubscreen parent, int x, int y, WorldPos pos) {
 		super(parent, x, y, 300, 200, true);
-		addComponent(box = new TextInputBox(this, x + 20, y + 27, 61, 15, 55, () -> {
+		addComponent(box = new TextInputBox(this, 20, 27, 61, 15, 55, () -> {
 			box.isFocus = true;
 		}).setIsPixel(true));
-		addComponent(new TexturedButton(this, x + 80, y + 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
+		addComponent(new TexturedButton(this, 80, 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
 			box.isFocus = false;
 		}));
-		addComponent(button1 = new RadioButton(this, x + 100, y + 31, () -> {
+		addComponent(button1 = new RadioButton(this, 100, 31, () -> {
 			button1.setState(!button1.getState());
 		}).setState(true));
-		addComponent(button2 = new RadioButton(this, x + 170, y + 31, () -> {
+		addComponent(button2 = new RadioButton(this, 170, 31, () -> {
 			button2.setState(!button2.getState());
 		}).setState(true));
-		addComponent(button3 = new RadioButton(this, x + 240, y + 31, () -> {
+		addComponent(button3 = new RadioButton(this, 240, 31, () -> {
 			button3.setState(!button3.getState());
 		}).setState(true));
-		addComponent(list = new ScrollingListNetwork(this, this.x + 16, this.y + 45, 268, 149, pos));
-		Container c = null;
-		addComponent(c = new Container(this, x + 5, y + 5, 100, 100));
-		c.addComponent(new RadioButton(this, x + 10, y + 31, () -> {
-			System.out.println(1);
-		}).setState(true));
+		addComponent(list = new ScrollingContainer(this, 16, 45, 268, 149));
+		Container c = new Container(list, 0, 0, 268, 25);
+		c.addComponent(new Texture(c, 5, 5, UI_BORDER, 193, 155, 32, 32, 0.5F));
+		list.addComponent(c);
 	}
 
-	public void refresh() {
-		list.refresh();
+	private Container genQueueBar() {
+		Container c = new Container(list, 0, 0, 268, 25);
+		return c;
 	}
 
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		Util.drawTexture(TEXTURE, x - 5, y - 5, 0, 0, 99, 99, 0.5F);
-		Util.drawTexture(TEXTURE, x + 255, y - 5, 99, 0, 99, 99, 0.5F);
-		Util.drawTexture(TEXTURE, x - 5, y + 155, 0, 99, 99, 99, 0.5F);
-		Util.drawTexture(TEXTURE, x + 255, y + 155, 99, 99, 99, 99, 0.5F);
-		Gui.drawRect(x + 44, y, x + 255, y + 44, 0x2F000000);
-		Gui.drawRect(x, y + 44, x + 300, y + 155, 0x2F000000);
-		Gui.drawRect(x + 44, y + 155, x + 255, y + 200, 0x2F000000);
-		Util.renderGlowHorizonLine(x + 10, y + 20, 280);
-		Gui.drawRect(x + 16, y + 24, x + 284, y + 194, 0x651CC3B5);
-		Util.renderGlowString(I18n.format("sphinx.manage_queue"), x + 15, y + 8);
-		Util.renderGlowBorder(x + 15, y + 23, 270, 172);
-		Util.renderGlowString(I18n.format("sphinx.infinite_queue"), x + 110, y + 31);
-		Util.renderGlowString(I18n.format("sphinx.pausing"), x + 180, y + 31);
-		Util.renderGlowString(I18n.format("sphinx.running"), x + 250, y + 31);
+		Util.drawTexture(UI_BORDER, -5, -5, 0, 0, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 255, -5, 99, 0, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, -5, 155, 0, 99, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 255, 155, 99, 99, 99, 99, 0.5F);
+		Gui.drawRect(44, 0, 255, 44, 0x2F000000);
+		Gui.drawRect(0, 44, 300, 155, 0x2F000000);
+		Gui.drawRect(44, 155, 255, 200, 0x2F000000);
+		Util.renderGlowHorizonLine(10, 20, 280);
+		Gui.drawRect(16, 24, 284, 194, 0x651CC3B5);
+		Util.renderGlowString(I18n.format("sphinx.manage_queue"), 15, 8);
+		Util.renderGlowBorder(15, 23, 270, 172);
+		Util.renderGlowString(I18n.format("sphinx.infinite_queue"), 110, 31);
+		Util.renderGlowString(I18n.format("sphinx.pausing"), 180, 31);
+		Util.renderGlowString(I18n.format("sphinx.running"), 250, 31);
 	}
 
 	@Override

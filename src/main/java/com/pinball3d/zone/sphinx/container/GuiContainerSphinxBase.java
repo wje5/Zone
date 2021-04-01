@@ -12,9 +12,10 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiContainerSphinxBase extends GuiContainerNetworkBase {
-	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
-	public static final ResourceLocation TEXTURE_3 = new ResourceLocation("zone:textures/gui/sphinx/icons_3.png");
-	public static final ResourceLocation TEXTURE_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
+	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	public static final ResourceLocation ICONS_3 = new ResourceLocation("zone:textures/gui/sphinx/icons_3.png");
+	public static final ResourceLocation ICONS_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
+	public static final ResourceLocation ICONS_5 = new ResourceLocation("zone:textures/gui/sphinx/icons_5.png");
 	public static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
 			"zone:textures/gui/sphinx/no_network.png");
 

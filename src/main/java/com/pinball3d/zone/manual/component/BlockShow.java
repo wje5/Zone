@@ -1,7 +1,7 @@
 package com.pinball3d.zone.manual.component;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.item.ItemStack;
@@ -17,7 +17,7 @@ public class BlockShow extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		Util.renderItem(stack, getX(), getY(), scale);
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		Util.renderItem(stack, 0, 0, scale);// TODO
 	}
 }

@@ -2,10 +2,10 @@ package com.pinball3d.zone.sphinx.subscreen;
 
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.gui.component.TextButton;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageShutdownSphinx;
 import com.pinball3d.zone.network.NetworkHandler;
-import com.pinball3d.zone.sphinx.component.TextButton;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
@@ -18,12 +18,12 @@ public class SubscreenShutdownSphinx extends Subscreen {
 
 	public SubscreenShutdownSphinx(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 160, 90, false);
-		addComponent(new TextButton(this, this.x + 25, this.y + 75, I18n.format("sphinx.yes"), () -> {
+		addComponent(new TextButton(this, 25, 75, I18n.format("sphinx.yes"), () -> {
 			NetworkHandler.instance
 					.sendToServer(MessageShutdownSphinx.newMessage(ConnectHelperClient.getInstance().getNetworkPos()));
 			mc.displayGuiScreen(null);
 		}));
-		addComponent(new TextButton(this, this.x + 120, this.y + 75, I18n.format("sphinx.no"), () -> {
+		addComponent(new TextButton(this, 120, 75, I18n.format("sphinx.no"), () -> {
 			parent.removeScreen(SubscreenShutdownSphinx.this);
 		}));
 	}
@@ -31,8 +31,8 @@ public class SubscreenShutdownSphinx extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		Gui.drawRect(x, y, x + width, y + height, 0xAF282828);
-		Util.renderSplitGlowString(Util.formatAndAntiEscape("sphinx.shutdown_sphinx"), x + 5, y + 5, 150);
-		Util.renderGlowBorder(x, y, width, height);
+		Gui.drawRect(0, 0, width, height, 0xAF282828);
+		Util.renderSplitGlowString(Util.formatAndAntiEscape("sphinx.shutdown_sphinx"), 5, 5, 150);
+		Util.renderGlowBorder(0, 0, width, height);
 	}
 }

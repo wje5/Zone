@@ -10,8 +10,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenSynodLibrary;
 import com.pinball3d.zone.util.Util;
 
@@ -35,9 +35,9 @@ public class OutlineTree extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean() || outline == null) {
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);
+		if (outline == null) {
 			return;
 		}
 		Iterator<PDOutlineItem> it = outlineList.iterator();
@@ -49,19 +49,19 @@ public class OutlineTree extends Component {
 			int cutUp = posY < 0 ? -posY : 0;
 			int cutDown = posY + 13 - height > 0 ? posY + 13 - height : 0;
 			if (cutUp < 13 && cutDown < 13) {
-				Util.drawTexture(ICONS, getX() + indents.get(index) * 15, getY() + posY + cutUp - 3, 0, 187 + cutUp * 4,
+				Util.drawTexture(ICONS, indents.get(index) * 15, posY + cutUp - 3, 0, 187 + cutUp * 4,
 						244 - indents.get(index) * 60, 69 - cutUp * 4 - cutDown * 4, 0.25F);
 				if (e.hasChildren()) {
-					Util.drawTexture(ICONS, getX() + indents.get(index) * 15 + 10, getY() + posY + cutUp + 3,
-							e.isNodeOpen() ? 64 : 32, 155 + cutUp * 4, 32, 32 - cutUp * 4 - cutDown * 4, 0.25F);
+					Util.drawTexture(ICONS, indents.get(index) * 15 + 10, posY + cutUp + 3, e.isNodeOpen() ? 64 : 32,
+							155 + cutUp * 4, 32, 32 - cutUp * 4 - cutDown * 4, 0.25F);
 				} else {
-					Util.drawTexture(ICONS, getX() + indents.get(index) * 15 + 12, getY() + posY + cutUp + 3, 96,
-							155 + cutUp * 4, 21, 32 - cutUp * 4 - cutDown * 4, 0.25F);
+					Util.drawTexture(ICONS, indents.get(index) * 15 + 12, posY + cutUp + 3, 96, 155 + cutUp * 4, 21,
+							32 - cutUp * 4 - cutDown * 4, 0.25F);
 				}
 				if (cutUp <= 3 && cutDown <= 3 && indents.get(index) < 2) {
 					String text = Util.formatString(e.getTitle());
 					text = Util.formatStringToWidth(fr, text, 28 - indents.get(index) * 15);
-					fr.drawString(text, getX() + 20 + indents.get(index) * 15, getY() + 3 + posY, 0xFF1ECCDE);
+					fr.drawString(text, 20 + indents.get(index) * 15, 3 + posY, 0xFF1ECCDE);
 				}
 			}
 			index++;

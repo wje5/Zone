@@ -3,15 +3,15 @@ package com.pinball3d.zone.sphinx.map;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.gui.component.Component;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class Pointer extends Gui {
 	public BoundingBox box;
-	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 
 	public abstract void doRender(int offsetX, int offsetZ);
 

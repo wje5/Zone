@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
 import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.sphinx.log.LogComponent;
@@ -37,21 +37,17 @@ public class ScrollingLog extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
 		Iterator<LogBar> it = list.iterator();
 		int yOffset = 0;
 		while (it.hasNext()) {
 			LogBar bar = it.next();
-			int renderY = getY() + yOffset - scrollingDistance;
-			if (renderY <= getY() + height && renderY + bar.height >= getY()) {
-				int upCut = getY() - renderY > 0 ? getY() - renderY : 0;
-				int downCut = renderY + bar.height - (getY() + height) > 0 ? renderY + bar.height - (getY() + height)
-						: 0;
-				bar.doRender(getX(), renderY, upCut, downCut);
+			int renderY = yOffset - scrollingDistance;
+			if (renderY <= height && renderY + bar.height >= 0) {
+				int renderUpCut = renderY < 0 ? -renderY : 0;
+				int renderDownCut = renderY + bar.height - height > 0 ? renderY + bar.height - height : 0;
+				bar.doRender(0, renderY, renderUpCut, renderDownCut);
 			}
 			yOffset += bar.height;
 		}

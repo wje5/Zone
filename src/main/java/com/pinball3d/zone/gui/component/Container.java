@@ -1,9 +1,10 @@
-package com.pinball3d.zone.gui;
+package com.pinball3d.zone.gui.component;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.renderer.GlStateManager;
@@ -32,6 +33,7 @@ public class Container extends Component implements IHasComponents {
 				}
 			}
 		}
+		System.out.println(this);
 		return false;
 	}
 
@@ -91,23 +93,23 @@ public class Container extends Component implements IHasComponents {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		// TODO Auto-generated method stub
-		super.doRender(mouseX, mouseY);
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);
 		components.forEach(e -> {
 			if (!e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRender(mouseX, mouseY);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), upCut - e.getY() < 0 ? 0 : upCut,
+						downCut - e.getY() + e.height < 0 ? 0 : downCut);
 				GlStateManager.popMatrix();
 			}
 		});
-		Util.drawBorder(getX(), getY(), width, height, 1, 0xFFFFFFFF);
 		components.forEach(e -> {
 			if (e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRender(mouseX, mouseY);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), upCut - e.getY() < 0 ? 0 : upCut,
+						downCut - e.getY() + e.height < 0 ? 0 : downCut);
 				GlStateManager.popMatrix();
 			}
 		});

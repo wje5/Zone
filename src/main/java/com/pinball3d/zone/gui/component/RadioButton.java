@@ -1,6 +1,5 @@
-package com.pinball3d.zone.sphinx.component;
+package com.pinball3d.zone.gui.component;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
@@ -35,11 +34,8 @@ public class RadioButton extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
-		Util.drawTexture(TEXTURE_4, getX(), getY(), isChoosed ? 120 : 60, 180, 60, 60, 0.13F);
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+		Util.drawTexture(TEXTURE_4, 0, 0, isChoosed ? 120 : 60, 180, 60, 60, 0.13F);
 	}
 }

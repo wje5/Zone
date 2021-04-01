@@ -1,10 +1,9 @@
-package com.pinball3d.zone.sphinx.component;
+package com.pinball3d.zone.gui.component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.IntConsumer;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
@@ -63,27 +62,23 @@ public class DropDownList extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
 		FontRenderer renderer = Util.getFontRenderer();
-		Util.drawBorder(getX(), getY(), width, 15, 1, 0xFF1ECCDE);
+		Util.drawBorder(0, 0, width, 15, 1, 0xFF1ECCDE);
 		if (!list.isEmpty()) {
-			renderer.drawString(list.get(index).title, getX() + 3, getY() + 3, 0xFF1ECCDE);
+			renderer.drawString(list.get(index).title, 3, 3, 0xFF1ECCDE);
 		}
 		if (isDrop) {
 			for (int i = 0; i < list.size(); i++) {
-				Gui.drawRect(getX(), getY() + i * 14 + 15, getX() + 1, getY() + i * 14 + 29, 0xFF00479D);
-				Gui.drawRect(getX() + width - 1, getY() + i * 14 + 15, getX() + width, getY() + i * 14 + 29,
-						0xFF00479D);
-				Gui.drawRect(getX() + 1, getY() + i * 14 + 28, getX() + width - 1, getY() + i * 14 + 29, 0xFF00479D);
-				Gui.drawRect(getX() + 1, getY() + i * 14 + 15, getX() + width - 1, getY() + i * 14 + 28, 0xFFE0E0E0);
-				renderer.drawString(list.get(i).title, getX() + 3, getY() + 17 + i * 14, 0xFF000000);
+				Gui.drawRect(0, i * 14 + 15, 1, i * 14 + 29, 0xFF00479D);
+				Gui.drawRect(width - 1, i * 14 + 15, width, i * 14 + 29, 0xFF00479D);
+				Gui.drawRect(1, i * 14 + 28, width - 1, i * 14 + 29, 0xFF00479D);
+				Gui.drawRect(1, i * 14 + 15, width - 1, i * 14 + 28, 0xFFE0E0E0);
+				renderer.drawString(list.get(i).title, 3, 17 + i * 14, 0xFF000000);
 			}
 		}
-		Util.drawTexture(ICONS, getX() + width - 11, getY(), 196, 41, 11, 15, 1.0F);
+		Util.drawTexture(ICONS, width - 11, 0, 196, 41, 11, 15, 1.0F);
 	}
 
 	public class ListBar {

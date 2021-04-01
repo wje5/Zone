@@ -1,6 +1,5 @@
-package com.pinball3d.zone.sphinx.component;
+package com.pinball3d.zone.gui.component;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
@@ -29,16 +28,13 @@ public class TextButton extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
-		Util.drawTexture(ICONS, getX() - 4, getY() - 4, 117, 138, 38, 49, 0.375F);
-		Util.drawTexture(ICONS, getX() + width - 7, getY() - 4, 155, 138, 38, 49, 0.375F);
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+		Util.drawTexture(ICONS, -4, -4, 117, 138, 38, 49, 0.375F);
+		Util.drawTexture(ICONS, width - 7, -4, 155, 138, 38, 49, 0.375F);
 		if (width > 15) {
-			Gui.drawRect(getX() + 10, getY(), getX() + width - 7, getY() + 11, 0x32000000);
+			Gui.drawRect(10, 0, width - 7, 11, 0x32000000);
 		}
-		Util.renderGlowString(text, getX() + 6, getY() + 1);
+		Util.renderGlowString(text, 6, 1);
 	}
 }

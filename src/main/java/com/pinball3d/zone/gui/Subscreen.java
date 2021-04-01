@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.container.GuiContainerNetworkBase;
 import com.pinball3d.zone.util.Util;
@@ -11,8 +12,13 @@ import com.pinball3d.zone.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 
 public class Subscreen implements IHasComponents {
+	public static final ResourceLocation UI_BORDER = new ResourceLocation("zone:textures/gui/sphinx/ui_border.png");
+	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	public static final ResourceLocation ICONS_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
+	public static final ResourceLocation ICONS_5 = new ResourceLocation("zone:textures/gui/sphinx/icons_5.png");
 	public static Minecraft mc = Minecraft.getMinecraft();
 	public boolean renderCover;
 	public int width, height;
@@ -46,23 +52,14 @@ public class Subscreen implements IHasComponents {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
-		update();
-		Util.resetOpenGl();
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(0, 0, 300F);
-		if (renderCover) {
-			Minecraft mc = Minecraft.getMinecraft();
-			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0x8F000000);
-		}
 		Util.resetOpenGl();
 		GlStateManager.pushMatrix();
 		doRenderBackground(mouseX, mouseY);
-		GlStateManager.popMatrix();
 		components.forEach(e -> {
 			if (!e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRender(mouseX, mouseY);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), 0, 0);
 				GlStateManager.popMatrix();
 			}
 		});
@@ -74,10 +71,23 @@ public class Subscreen implements IHasComponents {
 			if (e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRender(mouseX, mouseY);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), 0, 0);
 				GlStateManager.popMatrix();
 			}
 		});
+		GlStateManager.popMatrix();
+	}
+
+	public void doRenderScreen(int mouseX, int mouseY) {
+		update();
+		Util.resetOpenGl();
+		if (renderCover) {
+			Minecraft mc = Minecraft.getMinecraft();
+			Gui.drawRect(0, 0, mc.displayWidth, mc.displayHeight, 0x8F000000);
+		}
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y, 300F);
+		doRender(mouseX, mouseY);
 		GlStateManager.popMatrix();
 	}
 
@@ -106,24 +116,25 @@ public class Subscreen implements IHasComponents {
 		return new HashSet<Type>();
 	}
 
-	public boolean onClickScreen(int x, int y, boolean isLeft) {
+	public boolean onClickScreen(int mouseX, int mouseY, boolean isLeft, boolean isClick) {
 		if (draggingComponent != null) {
 			draggingComponent.onStopDrag();
 		}
 		draggingComponent = null;
-		if (x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height) {
+		if (isClick && mouseX >= this.x && mouseX <= this.x + width && mouseY >= this.y && mouseY <= this.y + height) {
+			mouseX -= this.x;
+			mouseY -= this.y;
 			Iterator<Component> it = components.iterator();
 			while (it.hasNext()) {
 				Component c = it.next();
-				int cX = x - c.getX();
-				int cY = y - c.getY();
-				if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
-					if (c.onClickScreen(cX, cY, isLeft)) {
+				if (mouseX >= c.getX() && mouseX <= c.getX() + c.width && mouseY >= c.getY()
+						&& mouseY <= c.getY() + c.height) {
+					if (c.onClickScreen(mouseX - c.getX(), mouseY - c.getY(), isLeft)) {
 						return true;
 					}
 				}
 			}
-			onClick(x, y, isLeft);
+			onClick(mouseX, mouseY, isLeft);
 			return true;
 		}
 		return false;
@@ -133,53 +144,54 @@ public class Subscreen implements IHasComponents {
 
 	}
 
-	public void onDragScreen(int x, int y, int moveX, int moveY, int button) {
+	public void onDragScreen(int mouseX, int mouseY, int moveX, int moveY, int button) {
 		boolean flag = true;
+		mouseX -= x;
+		mouseY -= y;
 		if (draggingComponent == null) {
-			Iterator<Component> it = components.iterator();
-			while (it.hasNext()) {
-				Component c = it.next();
-				int cX = x - c.getX();
-				int cY = y - c.getY();
-				if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
-					if (c.onDrag(x - c.getX(), y - c.getY(), moveX, moveY)) {
-						draggingComponent = c;
-						break;
+			if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+				Iterator<Component> it = components.iterator();
+				while (it.hasNext()) {
+					Component c = it.next();
+					int cX = mouseX - c.getX();
+					int cY = mouseY - c.getY();
+					if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
+						if (c.onDrag(cX, cY, moveX, moveY)) {
+							draggingComponent = c;
+							break;
+						}
 					}
 				}
 			}
-		} else if (!draggingComponent.onDrag(x - draggingComponent.getX(), y - draggingComponent.getY(), moveX,
-				moveY)) {
+
+		} else if (!draggingComponent.onDrag(mouseX - draggingComponent.getX(), mouseY - draggingComponent.getY(),
+				moveX, moveY)) {
 			draggingComponent.onStopDrag();
 			draggingComponent = null;
 			flag = false;
 		}
 		if (flag && draggingComponent == null) {
-			onDrag(x, y, moveX, moveY, button);
+			onDrag(mouseX, mouseY, moveX, moveY, button);
 		}
 	}
 
-	public void onDrag(int x, int y, int moveX, int moveY, int button) {
+	public void onDrag(int mouseX, int mouseY, int moveX, int moveY, int button) {
 
 	}
 
-	public boolean onMouseScrollScreen(int x, int y, boolean isUp) {
-		if (x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height) {
-			Iterator<Component> it = components.iterator();
-			while (it.hasNext()) {
-				Component c = it.next();
-				int cX = x - c.getX();
-				int cY = y - c.getY();
-				if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
-					if (c.onMouseScroll(cX, cY, isUp)) {
-						return true;
-					}
+	public void onMouseScrollScreen(int mouseX, int mouseY, boolean isUp) {
+		Iterator<Component> it = components.iterator();
+		while (it.hasNext()) {
+			Component c = it.next();
+			int cX = mouseX - c.getX();
+			int cY = mouseY - c.getY();
+			if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
+				if (c.onMouseScroll(cX, cY, isUp)) {
+					return;
 				}
 			}
-			onMouseScroll(x - this.x, y - this.y, isUp);
-			return true;
 		}
-		return false;
+		onMouseScroll(mouseX, mouseY, isUp);
 	}
 
 	public void onMouseScroll(int x, int y, boolean isUp) {
@@ -207,6 +219,16 @@ public class Subscreen implements IHasComponents {
 
 	public boolean isBlockOtherSubscreen() {
 		return false;
+	}
+
+	@Override
+	public int getX() {
+		return x;
+	}
+
+	@Override
+	public int getY() {
+		return y;
 	}
 
 	@Override

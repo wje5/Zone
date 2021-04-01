@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.MessageNewClass;
 import com.pinball3d.zone.network.NetworkHandler;
@@ -61,11 +61,8 @@ public class ClassifyGroupEdgeList extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
 		Iterator<ListBar> it = list.iterator();
 		FontRenderer fr = Util.getFontRenderer();
 		int index = 0;
@@ -81,25 +78,23 @@ public class ClassifyGroupEdgeList extends Component {
 			int cutUp = posY < 0 ? -posY : 0;
 			int cutDown = posY + 13 - height > 0 ? posY + 13 - height : 0;
 			if (cutUp < 13 && cutDown < 13) {
-				Util.drawTexture(ICONS, (this.index == index ? getX() : getX() + 43 - stretch) - 3,
-						getY() + posY + cutUp - 3, 0, 187 + cutUp * 4,
-						(stretch >= 43 || this.index == index ? 225 : stretch * 4 + 52) + 19,
+				Util.drawTexture(ICONS, (this.index == index ? 0 : 43 - stretch) - 3, posY + cutUp - 3, 0,
+						187 + cutUp * 4, (stretch >= 43 || this.index == index ? 225 : stretch * 4 + 52) + 19,
 						(50 - cutUp * 4 - cutDown * 4) + 19, 0.25F);
 				if (cutUp <= 3 && cutDown <= 3 && (this.index == index || stretch > 7)) {
 					String text = flag ? Util.formatString(e.title) : I18n.format("sphinx.new_class");
 					text = Util.formatStringToWidth(fr, text, this.index == index ? 36 : stretch - 7);
-					Util.renderGlowString(text, this.index == index ? getX() + 20 : getX() + 63 - stretch,
-							getY() + 3 + posY);
+					Util.renderGlowString(text, this.index == index ? 20 : 63 - stretch, 3 + posY);
 				}
 				if (!flag) {
 					int xOffset = this.index == index ? 10 : 53 - stretch;
-					Util.drawTexture(ICONS, getX() + xOffset, getY() + posY + cutUp + 3, 193, 155 + cutUp * 4, 32,
+					Util.drawTexture(ICONS, xOffset, posY + cutUp + 3, 193, 155 + cutUp * 4, 32,
 							32 - cutUp * 4 - cutDown * 4, 0.25F);
 				}
 			}
 			index++;
 		}
-		if (mouseX >= getX() && mouseX <= getX() + width && mouseY >= getY() && mouseY <= getY() + height) {
+		if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
 			stretch = stretch + 5 >= 28 ? 28 : stretch + 5;
 		} else {
 			stretch = 0;
@@ -162,7 +157,7 @@ public class ClassifyGroupEdgeList extends Component {
 		if (super.onDrag(mouseX, mouseY, moveX, moveY)) {
 			return true;
 		}
-		if (enable != null && !enable.getAsBoolean()) {
+		if (!isEnable()) {
 			return false;
 		}
 		int maxScrollingDistance = list.size() * 15 + 15 - height;

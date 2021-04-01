@@ -1,7 +1,7 @@
 package com.pinball3d.zone.sphinx.component;
 
-import com.pinball3d.zone.gui.Component;
 import com.pinball3d.zone.gui.IHasComponents;
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.pdf.PDF;
 import com.pinball3d.zone.pdf.PDFImage;
 import com.pinball3d.zone.util.Util;
@@ -70,11 +70,8 @@ public class PDFRenderer extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
-		super.doRender(mouseX, mouseY);
-		if (enable != null && !enable.getAsBoolean()) {
-			return;
-		}
+	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
+		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
 		float yOffset = 0;
 		if (pdf != null) {
 			int max = pdf.doc.getNumberOfPages();
@@ -83,7 +80,7 @@ public class PDFRenderer extends Component {
 				if (yOffset + imageHeight >= scrollingDistance && yOffset <= scrollingDistance + height) {
 					PDFImage image = pdf.getImage(i);
 					int yOff = (int) (scrollingDistance - yOffset);
-					Util.drawPDF(image, getX(), yOff < 0 ? getY() - yOff : getY(), width, yOff < 0 ? 0 : yOff,
+					Util.drawPDF(image, 0, yOff < 0 ? -yOff : 0, width, yOff < 0 ? 0 : yOff,
 							(int) (yOff < 0 ? height + yOff
 									: imageHeight - yOff > height ? height : imageHeight - yOff));
 				}
