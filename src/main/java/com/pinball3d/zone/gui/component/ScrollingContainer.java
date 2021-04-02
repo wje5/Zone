@@ -31,8 +31,8 @@ public class ScrollingContainer extends Component implements IHasComponents {
 		mouseY += scrollingDistance;
 		while (it.hasNext()) {
 			Container c = it.next();
-			int cX = mouseX - c.getX() + getX();
-			int cY = mouseY - c.getY() + getY();
+			int cX = mouseX - c.getX();
+			int cY = mouseY - c.getY();
 			if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
 				if (c.onClickScreen(cX, cY, isLeft)) {
 					return true;

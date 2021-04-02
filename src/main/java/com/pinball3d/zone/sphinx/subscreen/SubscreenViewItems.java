@@ -1,13 +1,19 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.gui.component.ScrollingEdgeList;
+import com.pinball3d.zone.gui.component.ScrollingEdgeList.ListBar;
 import com.pinball3d.zone.gui.component.TextInputBox;
 import com.pinball3d.zone.gui.component.TexturedButton;
+import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.util.HugeItemStack;
 import com.pinball3d.zone.util.StorageWrapper;
@@ -25,26 +31,28 @@ public class SubscreenViewItems extends Subscreen {
 	public int page = 1, maxPage = 1;
 	private TextInputBox box;
 	private StorageWrapper wrapper;
+	private ScrollingEdgeList list;
 
 	public SubscreenViewItems(IHasSubscreen parent, StorageWrapper wrapper) {
-		this(parent, getDisplayWidth() / 2 - 112, getDisplayHeight() / 2 - 90, wrapper);
+		this(parent, getDisplayWidth() / 2 - 172, getDisplayHeight() / 2 - 90, wrapper);
 	}
 
 	public SubscreenViewItems(IHasSubscreen parent, int x, int y, StorageWrapper wrapper) {
 		super(parent, x, y, 224, 181, true);
 		this.wrapper = wrapper;
-		addComponent(box = new TextInputBox(this, 27, 27, 61, 15, 55, () -> {
+		addComponent(box = new TextInputBox(this, 87, 27, 61, 15, 55, () -> {
 			box.isFocus = true;
 		}).setIsPixel(true));
-		addComponent(new TexturedButton(this, 87, 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
+		addComponent(new TexturedButton(this, 147, 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
 			box.isFocus = false;
 		}));
-		addComponent(new TexturedButton(this, 82, 161, ICONS, 92, 32, 5, 9, 1.0F, () -> {
+		addComponent(new TexturedButton(this, 142, 161, ICONS, 92, 32, 5, 9, 1.0F, () -> {
 			page = page - 1 < 1 ? maxPage : page - 1;
 		}));
-		addComponent(new TexturedButton(this, 137, 161, ICONS, 97, 32, 5, 9, 1.0F, () -> {
+		addComponent(new TexturedButton(this, 197, 161, ICONS, 97, 32, 5, 9, 1.0F, () -> {
 			page = page + 1 > maxPage ? 1 : page + 1;
 		}));
+		addComponent(list = new ScrollingEdgeList(this, 0, 9, 195).setNullable(true));
 	}
 
 	@Override
@@ -65,11 +73,18 @@ public class SubscreenViewItems extends Subscreen {
 		GlStateManager.disableDepth();
 		int slotX = slot % 9;
 		int slotY = slot / 9;
-		int j1 = slotX * 19 + 1 + 27;
+		int j1 = slotX * 19 + 1 + 87;
 		int k1 = slotY * 19 + 1 + 45;
 		Gui.drawRect(j1, k1, j1 + 16, k1 + 16, 0x80FFFFFF);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
+	}
+
+	@Override
+	public Set<Type> getDataTypes() {
+		Set<Type> s = super.getDataTypes();
+		s.add(Type.CLASSIFY);
+		return s;
 	}
 
 	@Override
@@ -104,7 +119,7 @@ public class SubscreenViewItems extends Subscreen {
 	}
 
 	public int getHoveredSlot(int mouseX, int mouseY) {
-		int mX = mouseX - 27;
+		int mX = mouseX - 87;
 		int mY = mouseY - 45;
 		if (mX >= 0 && mX <= 170 && mY >= 0 && mY <= 114 && mX % 19 < 18 && mY % 19 < 18) {
 			int slotX = mX / 19;
@@ -115,7 +130,11 @@ public class SubscreenViewItems extends Subscreen {
 	}
 
 	public StorageWrapper getItems() {
-		StorageWrapper s = Util.search(wrapper, box.text);
+		StorageWrapper s = wrapper.copy().search(box.text);
+		ListBar bar = list.get();
+		if (bar != null) {
+			s.search(((ClassifyGroup) bar.getData()).getItems());
+		}
 		maxPage = (s.getSize() - 1) / 54 + 1;
 		if (page > maxPage) {
 			page = maxPage;
@@ -126,18 +145,29 @@ public class SubscreenViewItems extends Subscreen {
 		return s;
 	}
 
+	public void updateList() {
+		list.clear();
+		if (ConnectHelperClient.getInstance().hasData()) {
+			ConnectHelperClient.getInstance().getClassify().values().forEach(e -> {
+				list.addBar(new ListBar(e.getName(), () -> {
+				}).setData(e));
+			});
+		}
+	}
+
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
-		Util.drawTexture(UI_BORDER, -5, -5, 0, 0, 99, 99, 0.5F);
-		Util.drawTexture(UI_BORDER, 179, -5, 99, 0, 99, 99, 0.5F);
-		Util.drawTexture(UI_BORDER, -5, 136, 0, 99, 99, 99, 0.5F);
-		Util.drawTexture(UI_BORDER, 179, 136, 99, 99, 99, 99, 0.5F);
-		Gui.drawRect(44, 0, 179, 44, 0x2F000000);
-		Gui.drawRect(0, 44, 224, 136, 0x2F000000);
-		Gui.drawRect(44, 155, 179, 181, 0x2F000000);
-		Util.renderGlowHorizonLine(10, 20, 204);
-		Gui.drawRect(16, 24, 208, 175, 0x651CC3B5);
+		updateList();
+		Util.drawTexture(UI_BORDER, 55, -5, 0, 0, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 239, -5, 99, 0, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 55, 136, 0, 99, 99, 99, 0.5F);
+		Util.drawTexture(UI_BORDER, 239, 136, 99, 99, 99, 99, 0.5F);
+		Gui.drawRect(104, 0, 239, 44, 0x2F000000);
+		Gui.drawRect(60, 44, 284, 136, 0x2F000000);
+		Gui.drawRect(104, 155, 239, 181, 0x2F000000);
+		Util.renderGlowHorizonLine(70, 20, 204);
+		Gui.drawRect(76, 24, 268, 175, 0x651CC3B5);
 		RenderItem ir = mc.getRenderItem();
 		StorageWrapper w = getItems();
 		Iterator<HugeItemStack> it = w.storges.iterator();
@@ -151,14 +181,14 @@ public class SubscreenViewItems extends Subscreen {
 		}
 		for (int j = 0; j < 6; j++) {
 			for (int i = 0; i < 9; i++) {
-				Util.drawBorder(27 + i * 19, 45 + j * 19, 18, 18, 1, 0xFF1ECCDE);
+				Util.drawBorder(87 + i * 19, 45 + j * 19, 18, 18, 1, 0xFF1ECCDE);
 			}
 		}
 		FontRenderer fr = Util.getFontRenderer();
-		Util.renderGlowString(I18n.format("sphinx.view_items"), 15, 8);
-		Util.renderGlowBorder(15, 23, 194, 153);
+		Util.renderGlowString(I18n.format("sphinx.view_items"), 75, 8);
+		Util.renderGlowBorder(75, 23, 194, 153);
 		String text = page + "/" + maxPage;
-		Util.renderGlowString(text, 112 - fr.getStringWidth(text) / 2, 162);
+		Util.renderGlowString(text, 172 - fr.getStringWidth(text) / 2, 162);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
@@ -181,9 +211,9 @@ public class SubscreenViewItems extends Subscreen {
 				}
 				stack = stack.copy();
 				stack.setCount(1);
-				ir.renderItemAndEffectIntoGUI(stack, 28 + i * 19, 46 + j * 19);
+				ir.renderItemAndEffectIntoGUI(stack, 88 + i * 19, 46 + j * 19);
 				text = amount <= 1 ? null : Util.transferString(amount);
-				ir.renderItemOverlayIntoGUI(fr, stack, 28 + i * 19, 46 + j * 19, text);
+				ir.renderItemOverlayIntoGUI(fr, stack, 88 + i * 19, 46 + j * 19, text);
 			}
 		}
 		int slot = getHoveredSlot(mouseX, mouseY);

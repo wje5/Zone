@@ -34,9 +34,7 @@ public class Texture extends Component {
 	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
 		super.doRender(mouseX, mouseY, upCut, downCut);
 		float scale = vHeight * 1.0F / height;
-		if (isEnable()) {
-			Util.drawTexture(texture, getX(), getY() + upCut, width, height - upCut - downCut, u,
-					v + (int) (scale * upCut), uWidth, vHeight - (int) (scale * (upCut + downCut)));
-		}
+		Util.drawTexture(texture, 0, upCut, width, height - upCut - downCut, u, v + (int) (scale * upCut), uWidth,
+				vHeight - (int) (scale * (upCut + downCut)));
 	}
 }

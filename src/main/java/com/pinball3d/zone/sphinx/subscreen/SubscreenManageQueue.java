@@ -1,12 +1,12 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
-import static com.pinball3d.zone.gui.Subscreen.UI_BORDER;
-
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.gui.component.Button;
 import com.pinball3d.zone.gui.component.Container;
 import com.pinball3d.zone.gui.component.RadioButton;
 import com.pinball3d.zone.gui.component.ScrollingContainer;
+import com.pinball3d.zone.gui.component.Text;
 import com.pinball3d.zone.gui.component.TextInputBox;
 import com.pinball3d.zone.gui.component.Texture;
 import com.pinball3d.zone.gui.component.TexturedButton;
@@ -43,12 +43,15 @@ public class SubscreenManageQueue extends Subscreen {
 		}).setState(true));
 		addComponent(list = new ScrollingContainer(this, 16, 45, 268, 149));
 		Container c = new Container(list, 0, 0, 268, 25);
-		c.addComponent(new Texture(c, 5, 5, UI_BORDER, 193, 155, 32, 32, 0.5F));
+		c.addComponent(new Texture(c, 5, 5, ICONS_5, 180, 0, 64, 64, 0.25F));
+		c.addComponent(new Button(c, 0, 0, 268, 25, () -> System.out.println(11111)));
+		c.addComponent(new Text(c, 23, 9, I18n.format("sphinx.add_new_queue")));
 		list.addComponent(c);
 	}
 
 	private Container genQueueBar() {
 		Container c = new Container(list, 0, 0, 268, 25);
+		list.addComponent(c);
 		return c;
 	}
 

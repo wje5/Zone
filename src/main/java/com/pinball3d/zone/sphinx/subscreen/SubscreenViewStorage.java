@@ -8,10 +8,12 @@ import org.lwjgl.input.Keyboard;
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.gui.component.ScrollingEdgeList;
+import com.pinball3d.zone.gui.component.ScrollingEdgeList.ListBar;
 import com.pinball3d.zone.gui.component.TextInputBox;
 import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.util.HugeItemStack;
 import com.pinball3d.zone.util.StorageWrapper;
@@ -48,7 +50,7 @@ public class SubscreenViewStorage extends Subscreen {
 		addComponent(new TexturedButton(this, 235, 180, ICONS, 97, 32, 5, 9, 1.0F, () -> {
 			page = page + 1 > maxPage ? 1 : page + 1;
 		}));
-		addComponent(list = new ScrollingEdgeList(this, 0, 9, 195));
+		addComponent(list = new ScrollingEdgeList(this, 0, 9, 195).setNullable(true));
 	}
 
 	@Override
@@ -131,7 +133,11 @@ public class SubscreenViewStorage extends Subscreen {
 	public StorageWrapper getItems() {
 		StorageWrapper s;
 		if (ConnectHelperClient.getInstance().hasData()) {
-			s = Util.search(ConnectHelperClient.getInstance().getItems(), box.text);
+			s = ConnectHelperClient.getInstance().getItems().copy().search(box.text);
+			ListBar bar = list.get();
+			if (bar != null) {
+				s.search(((ClassifyGroup) bar.getData()).getItems());
+			}
 		} else {
 			s = new StorageWrapper();
 		}
@@ -148,8 +154,10 @@ public class SubscreenViewStorage extends Subscreen {
 	public void updateList() {
 		list.clear();
 		if (ConnectHelperClient.getInstance().hasData()) {
-			ConnectHelperClient.getInstance().getClassify().values()
-					.forEach(e -> list.addBar(e.getName(), () -> System.out.println(e.getName())));
+			ConnectHelperClient.getInstance().getClassify().values().forEach(e -> {
+				list.addBar(new ListBar(e.getName(), () -> {
+				}).setData(e));
+			});
 		}
 	}
 

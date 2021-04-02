@@ -4,12 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.annotation.Nonnegative;
 
@@ -501,65 +496,6 @@ public class Util {
 			}
 		});
 		return wrapper;
-	}
-
-	public static StorageWrapper search(StorageWrapper wrapper, String search) {
-		if (search.isEmpty()) {
-			return wrapper.copy();
-		}
-		search = search.toLowerCase();
-		List<String[]> l = new ArrayList<String[]>();
-		for (String s : search.split("\\s+")) {
-			l.add(s.split("\\|+"));
-		}
-		Set<HugeItemStack> storges = new TreeSet<HugeItemStack>(StorageWrapper.hugeStackComparator);
-		Iterator<HugeItemStack> it = wrapper.storges.iterator();
-		tag2: while (it.hasNext()) {
-			HugeItemStack hugestack = it.next();
-			String name = hugestack.stack.getDisplayName().toLowerCase();
-			tag: for (String[] e : l) {
-				for (String s : e) {
-					if (s.startsWith("@")) {
-						if (hugestack.stack.getItem().getRegistryName().getResourceDomain().contains(s.substring(1))) {
-							continue tag;
-						}
-					}
-					if (name.contains(s)) {
-						continue tag;
-					}
-				}
-				continue tag2;
-			}
-			storges.add(hugestack);
-		}
-		Set<ItemStack> other = new TreeSet<ItemStack>(StorageWrapper.stackComparator);
-		Iterator<ItemStack> it2 = wrapper.other.iterator();
-		tag4: while (it2.hasNext()) {
-			ItemStack stack = it2.next();
-			String name = stack.getDisplayName().toLowerCase();
-			tag3: for (String[] e : l) {
-				for (String s : e) {
-					if (s.startsWith("@")) {
-						if (stack.getItem().getRegistryName().getResourceDomain().contains(s.substring(1))) {
-							continue tag3;
-						}
-					}
-					if (name.contains(s)) {
-						continue tag3;
-					}
-				}
-				continue tag4;
-			}
-			other.add(stack);
-		}
-		StorageWrapper r = new StorageWrapper();
-		storges.forEach(e -> {
-			r.merge(e.copy());
-		});
-		other.forEach(e -> {
-			r.merge(e.copy());
-		});
-		return r;
 	}
 
 	public static String genGravatarUrl(String email) {

@@ -168,24 +168,14 @@ public class SubscreenManageClassify extends Subscreen {
 		addComponent(list2 = new DropDownList(this, 180, 27, 61).setOnChange(i -> {
 			refreshData();
 		}));
-		list2.addBar(I18n.format("sphinx.only_show_unchosen"), () -> {
-
-		});
-		list2.addBar(I18n.format("sphinx.only_show_chosen"), () -> {
-
-		});
-		list2.addBar(I18n.format("sphinx.show_all"), () -> {
-
-		});
+		list2.addBar(I18n.format("sphinx.only_show_chosen"), null);
+		list2.addBar(I18n.format("sphinx.only_show_unchosen"), null);
+		list2.addBar(I18n.format("sphinx.show_all"), null);
 		addComponent(list3 = new DropDownList(this, 262, 27, 61).setOnChange(i -> {
 			refreshData();
 		}));
-		list3.addBar(I18n.format("sphinx.network_only"), () -> {
-
-		});
-		list3.addBar(I18n.format("sphinx.show_all"), () -> {
-
-		});
+		list3.addBar(I18n.format("sphinx.show_all"), null);
+		list3.addBar(I18n.format("sphinx.network_only"), null);
 	}
 
 	@Override
@@ -314,20 +304,20 @@ public class SubscreenManageClassify extends Subscreen {
 	}
 
 	public Set<ItemType> getItems() {
-		ItemSample sample = new ItemSample(Util.search(list3.index == 0 ? getData() : Util.getItemList(), box.text));
+		ItemSample sample = new ItemSample((list3.index == 1 ? getData().copy() : Util.getItemList()).search(box.text));
 		if (list2.index == 0) {
-			ClassifyGroup group = list.isEmpty() ? null
-					: ConnectHelperClient.getInstance().getClassify().get(list.get().id);
-			if (group != null) {
-				sample.remove(group.getItems());
-			}
-		} else if (list2.index == 1) {
 			ClassifyGroup group = list.isEmpty() ? null
 					: ConnectHelperClient.getInstance().getClassify().get(list.get().id);
 			if (group != null) {
 				sample.and(group.getItems());
 			} else {
 				sample.clear();
+			}
+		} else if (list2.index == 1) {
+			ClassifyGroup group = list.isEmpty() ? null
+					: ConnectHelperClient.getInstance().getClassify().get(list.get().id);
+			if (group != null) {
+				sample.remove(group.getItems());
 			}
 		}
 		Set<ItemType> s = sample.get();

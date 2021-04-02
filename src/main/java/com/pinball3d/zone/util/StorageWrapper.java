@@ -1,7 +1,9 @@
 package com.pinball3d.zone.util;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -242,6 +244,68 @@ public class StorageWrapper {
 			wrapper.other.add(e.copy());
 		});
 		return wrapper;
+	}
+
+	public void search(ItemSample sample) {
+		Iterator<HugeItemStack> it = storges.iterator();
+		while (it.hasNext()) {
+			if (!sample.contains(new ItemType(it.next().stack))) {
+				it.remove();
+			}
+		}
+		Iterator<ItemStack> it2 = other.iterator();
+		while (it2.hasNext()) {
+			if (!sample.contains(new ItemType(it2.next()))) {
+				it2.remove();
+			}
+		}
+	}
+
+	public StorageWrapper search(String search) {
+		search = search.toLowerCase();
+		List<String[]> l = new ArrayList<String[]>();
+		for (String s : search.split("\\s+")) {
+			l.add(s.split("\\|+"));
+		}
+		Iterator<HugeItemStack> it = this.storges.iterator();
+		tag2: while (it.hasNext()) {
+			HugeItemStack hugestack = it.next();
+			String name = hugestack.stack.getDisplayName().toLowerCase();
+			tag: for (String[] e : l) {
+				for (String s : e) {
+					if (s.startsWith("@")) {
+						if (hugestack.stack.getItem().getRegistryName().getResourceDomain().contains(s.substring(1))) {
+							continue tag;
+						}
+					}
+					if (name.contains(s)) {
+						continue tag;
+					}
+				}
+				it.remove();
+				continue tag2;
+			}
+		}
+		Iterator<ItemStack> it2 = other.iterator();
+		tag4: while (it2.hasNext()) {
+			ItemStack stack = it2.next();
+			String name = stack.getDisplayName().toLowerCase();
+			tag3: for (String[] e : l) {
+				for (String s : e) {
+					if (s.startsWith("@")) {
+						if (stack.getItem().getRegistryName().getResourceDomain().contains(s.substring(1))) {
+							continue tag3;
+						}
+					}
+					if (name.contains(s)) {
+						continue tag3;
+					}
+				}
+				it2.remove();
+				continue tag4;
+			}
+		}
+		return this;
 	}
 
 	@Override

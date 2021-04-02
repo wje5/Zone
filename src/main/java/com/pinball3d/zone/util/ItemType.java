@@ -38,6 +38,10 @@ public class ItemType {
 		this.meta = meta;
 	}
 
+	public ItemType(ItemStack stack) {
+		this(stack.getItem(), stack.getItemDamage());
+	}
+
 	public ItemStack createStack() {
 		return new ItemStack(item, 1, meta);
 	}

@@ -16,8 +16,15 @@ import com.pinball3d.zone.util.Util;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 public abstract class GuiContainerZone extends GuiContainer implements IHasComponents, IHasSubscreen {
+	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	public static final ResourceLocation ICONS_3 = new ResourceLocation("zone:textures/gui/sphinx/icons_3.png");
+	public static final ResourceLocation ICONS_4 = new ResourceLocation("zone:textures/gui/sphinx/icons_4.png");
+	public static final ResourceLocation ICONS_5 = new ResourceLocation("zone:textures/gui/sphinx/icons_5.png");
+	public static final ResourceLocation TEXTURE_NO_NETWORK = new ResourceLocation(
+			"zone:textures/gui/sphinx/no_network.png");
 	private boolean inited;
 	private int lastMouseX, lastMouseY, clickX, clickY;
 	protected float partialMoveX, partialMoveY;

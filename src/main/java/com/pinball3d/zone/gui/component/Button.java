@@ -15,9 +15,6 @@ public class Button extends Component {
 		if (super.onLeftClick(x, y)) {
 			return true;
 		}
-		if (!isEnable()) {
-			return false;
-		}
 		if (event != null) {
 			event.run();
 		}

@@ -156,7 +156,7 @@ public class Subscreen implements IHasComponents {
 					int cX = mouseX - c.getX();
 					int cY = mouseY - c.getY();
 					if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
-						if (c.onDrag(cX, cY, moveX, moveY)) {
+						if (c.onDragScreen(cX, cY, moveX, moveY)) {
 							draggingComponent = c;
 							break;
 						}
@@ -164,7 +164,7 @@ public class Subscreen implements IHasComponents {
 				}
 			}
 
-		} else if (!draggingComponent.onDrag(mouseX - draggingComponent.getX(), mouseY - draggingComponent.getY(),
+		} else if (!draggingComponent.onDragScreen(mouseX - draggingComponent.getX(), mouseY - draggingComponent.getY(),
 				moveX, moveY)) {
 			draggingComponent.onStopDrag();
 			draggingComponent = null;

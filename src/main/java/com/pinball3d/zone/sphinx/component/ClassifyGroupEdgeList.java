@@ -157,9 +157,6 @@ public class ClassifyGroupEdgeList extends Component {
 		if (super.onDrag(mouseX, mouseY, moveX, moveY)) {
 			return true;
 		}
-		if (!isEnable()) {
-			return false;
-		}
 		int maxScrollingDistance = list.size() * 15 + 15 - height;
 		if (maxScrollingDistance < 0) {
 			scrollingDistance = 0;
@@ -183,8 +180,9 @@ public class ClassifyGroupEdgeList extends Component {
 			event = onClick;
 		}
 
-		public void setData(Object data) {
+		public ListBar setData(Object data) {
 			this.data = data;
+			return this;
 		}
 
 		public Object getData() {

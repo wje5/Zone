@@ -40,7 +40,10 @@ public class DropDownList extends Component {
 				}
 			}
 			index = i;
-			list.get(i).event.run();
+			ListBar bar = list.get(i);
+			if (bar.event != null) {
+				bar.event.run();
+			}
 		}
 		setState(!isDrop);
 		return true;

@@ -258,6 +258,7 @@ sphinx.manage_queue=队列管理
 sphinx.infinite_queue=无限队列
 sphinx.pausing=暂停中
 sphinx.running=运行中
+sphinx.add_new_queue=新建队列
 
 log.send_pack=物流包<0>已于<1>处发出，经<2>，将于<3>后到达<4>。
 log.recv_pack=于<1>处发出的物流包<0>已到达<4>，途经<2>，共计用时<3>。

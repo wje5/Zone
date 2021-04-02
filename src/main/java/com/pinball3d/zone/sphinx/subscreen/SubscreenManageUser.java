@@ -159,10 +159,8 @@ public class SubscreenManageUser extends Subscreen {
 		if (ConnectHelperClient.getInstance().hasData()) {
 			List<UserData> l = ConnectHelperClient.getInstance().getUsers();
 			l.forEach(e -> {
-				ListBar bar = new ListBar(e.name, () -> {
-				});
-				bar.setData(e);
-				list.addBar(bar);
+				list.addBar(new ListBar(e.name, () -> {
+				}).setData(e));
 			});
 		}
 		if (list.list.size() != s) {

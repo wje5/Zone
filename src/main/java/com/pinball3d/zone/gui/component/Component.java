@@ -31,6 +31,9 @@ public class Component {
 	}
 
 	public boolean onClickScreen(int x, int y, boolean isLeft) {
+		if (!isEnable()) {
+			return false;
+		}
 		if (isLeft) {
 			return onLeftClick(x, y);
 		} else {
@@ -89,6 +92,13 @@ public class Component {
 		return false;
 	}
 
+	public boolean onDragScreen(int mouseX, int mouseY, int moveX, int moveY) {
+		if (!isEnable()) {
+			return false;
+		}
+		return onDrag(mouseX, mouseY, moveX, moveY);
+	}
+
 	public void onStopDrag() {
 
 	}
@@ -97,18 +107,18 @@ public class Component {
 		return false;
 	}
 
-	public void doRender(int mouseX, int mouseY, @Nonnegative int cutUp, @Nonnegative int cutDown) {
+	public void doRender(int mouseX, int mouseY, @Nonnegative int upCut, @Nonnegative int downCut) {
 
 	}
 
-	public void doRenderScreen(int mouseX, int mouseY, @Nonnegative int cutUp, @Nonnegative int cutDown) {
+	public void doRenderScreen(int mouseX, int mouseY, @Nonnegative int upCut, @Nonnegative int downCut) {
 		if (!isEnable()) {
 			return;
 		}
 		Util.resetOpenGl();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(getX(), getY(), 50F);
-		doRender(mouseX, mouseY, cutUp, cutDown);
+		doRender(mouseX, mouseY, upCut, downCut);
 		GlStateManager.popMatrix();
 	}
 

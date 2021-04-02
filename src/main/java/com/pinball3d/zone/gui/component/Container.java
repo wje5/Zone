@@ -33,7 +33,6 @@ public class Container extends Component implements IHasComponents {
 				}
 			}
 		}
-		System.out.println(this);
 		return false;
 	}
 

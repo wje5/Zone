@@ -102,7 +102,7 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 	public StorageWrapper getItems() {
 		StorageWrapper s;
 		if (ConnectHelperClient.getInstance().hasData()) {
-			s = Util.search(ConnectHelperClient.getInstance().getItems(), box.text);
+			s = ConnectHelperClient.getInstance().getItems().copy().search(box.text);
 		} else {
 			s = new StorageWrapper();
 		}

@@ -15,6 +15,7 @@ public class ScrollingEdgeList extends Component {
 	public List<ListBar> list = new ArrayList<ListBar>();
 	private int stretch;
 	public int index;
+	private boolean nullable;
 	private Predicate<Integer> onChange;
 
 	public ScrollingEdgeList(IHasComponents parent, int x, int y, int height) {
@@ -37,8 +38,14 @@ public class ScrollingEdgeList extends Component {
 		return list.isEmpty();
 	}
 
+	public ScrollingEdgeList setNullable(boolean nullable) {
+		this.nullable = nullable;
+		index = -1;
+		return this;
+	}
+
 	public ListBar get() {
-		return list.size() > index ? list.get(index) : null;
+		return list.size() > index && index >= 0 ? list.get(index) : null;
 	}
 
 	public ScrollingEdgeList setOnChange(Predicate<Integer> onChange) {
@@ -104,6 +111,11 @@ public class ScrollingEdgeList extends Component {
 						e.event.run();
 						this.index = index;
 					}
+				} else if (nullable) {
+					if (onChange == null || onChange.test(index)) {
+						e.event.run();
+						this.index = -1;
+					}
 				}
 				return true;
 			}
@@ -160,8 +172,9 @@ public class ScrollingEdgeList extends Component {
 			event = onClick;
 		}
 
-		public void setData(Object data) {
+		public ListBar setData(Object data) {
 			this.data = data;
+			return this;
 		}
 
 		public Object getData() {
