@@ -37,7 +37,7 @@ public class SubscreenViewStorage extends Subscreen {
 	}
 
 	public SubscreenViewStorage(IHasSubscreen parent, int x, int y) {
-		super(parent, x, y, 300, 200, true);
+		super(parent, x, y, 360, 200, true);
 		addComponent(box = new TextInputBox(this, 87, 27, 61, 15, 55, () -> {
 			box.isFocus = true;
 		}).setIsPixel(true));

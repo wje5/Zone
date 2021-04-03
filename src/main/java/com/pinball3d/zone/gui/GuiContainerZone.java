@@ -255,30 +255,36 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 		onDragScreen(mouseX, mouseY, moveX, moveY, clickedMouseButton);
 	}
 
+	protected boolean onMouseReleaseScreenPre(int mouseX, int mouseY, int button) {
+		return false;
+	}
+
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int button) {
-		boolean flag = false;
-		boolean isClick = (clickX == -1 || Math.abs(mouseX - clickX) < 5)
-				&& (clickY == -1 || Math.abs(mouseY - clickY) < 5);
-		if (subscreens.empty()) {
-			Iterator<Component> it = components.iterator();
-			while (it.hasNext()) {
-				Component c = it.next();
-				int x = mouseX - c.getX();
-				int y = mouseY - c.getY();
-				if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
-					if (c.onClickScreen(x, y, button != 1)) {
-						flag = true;
-						break;
+		if (!onMouseReleaseScreenPre(mouseX, mouseY, button)) {
+			boolean flag = false;
+			boolean isClick = (clickX == -1 || Math.abs(mouseX - clickX) < 5)
+					&& (clickY == -1 || Math.abs(mouseY - clickY) < 5);
+			if (subscreens.empty()) {
+				Iterator<Component> it = components.iterator();
+				while (it.hasNext()) {
+					Component c = it.next();
+					int x = mouseX - c.getX();
+					int y = mouseY - c.getY();
+					if (x >= 0 && x <= c.width && y >= 0 && y <= c.height) {
+						if (c.onClickScreen(x, y, button != 1)) {
+							flag = true;
+							break;
+						}
 					}
 				}
+			} else {
+				Subscreen screen = subscreens.peek();
+				screen.onClickScreen(mouseX, mouseY, button != 1, isClick);
+				flag = true;
 			}
-		} else {
-			Subscreen screen = subscreens.peek();
-			screen.onClickScreen(mouseX, mouseY, button != 1, isClick);
-			flag = true;
+			onMouseReleaseScreen(mouseX, mouseY, button, flag);
 		}
-		onMouseReleaseScreen(mouseX, mouseY, button, flag);
 		lastMouseX = -1;
 		lastMouseY = -1;
 		clickX = -1;

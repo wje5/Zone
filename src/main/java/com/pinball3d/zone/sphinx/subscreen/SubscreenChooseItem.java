@@ -15,7 +15,8 @@ import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
-import com.pinball3d.zone.util.HugeItemStack;
+import com.pinball3d.zone.util.ItemSample;
+import com.pinball3d.zone.util.ItemType;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;
 
@@ -27,19 +28,17 @@ import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
-public class SubscreenViewItems extends Subscreen {
+public class SubscreenChooseItem extends Subscreen {
 	public int page = 1, maxPage = 1;
 	private TextInputBox box;
-	private StorageWrapper wrapper;
 	private ScrollingEdgeList list;
 
-	public SubscreenViewItems(IHasSubscreen parent, StorageWrapper wrapper) {
-		this(parent, getDisplayWidth() / 2 - 172, getDisplayHeight() / 2 - 90, wrapper);
+	public SubscreenChooseItem(IHasSubscreen parent) {
+		this(parent, getDisplayWidth() / 2 - 172, getDisplayHeight() / 2 - 90);
 	}
 
-	public SubscreenViewItems(IHasSubscreen parent, int x, int y, StorageWrapper wrapper) {
-		super(parent, x, y, 284, 181, true);
-		this.wrapper = wrapper;
+	public SubscreenChooseItem(IHasSubscreen parent, int x, int y) {
+		super(parent, x, y, 224, 181, true);
 		addComponent(box = new TextInputBox(this, 87, 27, 61, 15, 55, () -> {
 			box.isFocus = true;
 		}).setIsPixel(true));
@@ -96,24 +95,38 @@ public class SubscreenViewItems extends Subscreen {
 		int slot = getHoveredSlot(mouseX, mouseY);
 		if (slot != -1) {
 			slot += (page - 1) * 54;
-			StorageWrapper w = getItems();
-			Iterator<HugeItemStack> i = w.storges.iterator();
-			while (i.hasNext()) {
-				HugeItemStack s = i.next();
+			Set<ItemType> l = getItems();
+			Iterator<ItemType> it = l.iterator();
+			while (it.hasNext()) {
+				ItemType s = it.next();
 				if (slot == 0) {
-					((GuiContainerSphinxAdvanced) parent).renderToolTip(s.stack, mouseX, mouseY);
+					((GuiContainerSphinxAdvanced) parent).renderToolTip(s.createStack(), mouseX, mouseY);
 					return;
 				}
 				slot--;
 			}
-			Iterator<ItemStack> j = w.other.iterator();
-			while (j.hasNext()) {
-				ItemStack s = j.next();
-				if (slot == 0) {
-					((GuiContainerSphinxAdvanced) parent).renderToolTip(s, mouseX, mouseY);
-					return;
+		}
+	}
+
+	@Override
+	public void onClick(int x, int y, boolean isLeft) {
+		super.onClick(x, y, isLeft);
+		if (isLeft) {
+			int index = getHoveredSlot(x, y);
+			if (index != -1) {
+				Set<ItemType> s = getItems();
+				Iterator<ItemType> it = s.iterator();
+				for (int offset = (page - 1) * 54 + index; offset > 0; offset--) {
+					if (it.hasNext()) {
+						it.next();
+					} else {
+						return;
+					}
 				}
-				slot--;
+				if (it.hasNext()) {
+					ItemType type = it.next();
+					System.out.println(type.createStack());
+				}
 			}
 		}
 	}
@@ -129,20 +142,21 @@ public class SubscreenViewItems extends Subscreen {
 		return -1;
 	}
 
-	public StorageWrapper getItems() {
-		StorageWrapper s = wrapper.copy().search(box.text);
+	public Set<ItemType> getItems() {
+		StorageWrapper s = Util.getItemList();
 		ListBar bar = list.get();
 		if (bar != null) {
 			s.search(((ClassifyGroup) bar.getData()).getItems());
 		}
-		maxPage = (s.getSize() - 1) / 54 + 1;
+		Set<ItemType> set = new ItemSample(s).get();
+		maxPage = (set.size() - 1) / 54 + 1;
 		if (page > maxPage) {
 			page = maxPage;
 		}
 		if (page < 1) {
 			page = 1;
 		}
-		return s;
+		return set;
 	}
 
 	public void updateList() {
@@ -168,15 +182,14 @@ public class SubscreenViewItems extends Subscreen {
 		Gui.drawRect(104, 155, 239, 181, 0x2F000000);
 		Util.renderGlowHorizonLine(70, 20, 204);
 		Gui.drawRect(76, 24, 268, 175, 0x651CC3B5);
+		Util.renderGlowString(I18n.format("sphinx.choose_item"), 75, 8);
+		Util.renderGlowBorder(75, 23, 194, 153);
 		RenderItem ir = mc.getRenderItem();
-		StorageWrapper w = getItems();
-		Iterator<HugeItemStack> it = w.storges.iterator();
-		Iterator<ItemStack> it2 = w.other.iterator();
+		Set<ItemType> w = getItems();
+		Iterator<ItemType> it = w.iterator();
 		for (int offset = (page - 1) * 54; offset > 0; offset--) {
 			if (it.hasNext()) {
 				it.next();
-			} else if (it2.hasNext()) {
-				it2.next();
 			}
 		}
 		for (int j = 0; j < 6; j++) {
@@ -185,8 +198,6 @@ public class SubscreenViewItems extends Subscreen {
 			}
 		}
 		FontRenderer fr = Util.getFontRenderer();
-		Util.renderGlowString(I18n.format("sphinx.view_items"), 75, 8);
-		Util.renderGlowBorder(75, 23, 194, 153);
 		String text = page + "/" + maxPage;
 		Util.renderGlowString(text, 172 - fr.getStringWidth(text) / 2, 162);
 		GlStateManager.enableLighting();
@@ -200,20 +211,13 @@ public class SubscreenViewItems extends Subscreen {
 		for (int j = 0; j < 6; j++) {
 			for (int i = 0; i < 9; i++) {
 				ItemStack stack = ItemStack.EMPTY;
-				int amount = 0;
 				if (it.hasNext()) {
-					HugeItemStack hugestack = it.next();
-					stack = hugestack.stack;
-					amount = hugestack.count;
-				} else if (it2.hasNext()) {
-					stack = it2.next();
-					amount = stack.getCount();
+					stack = it.next().createStack();
 				}
 				stack = stack.copy();
 				stack.setCount(1);
 				ir.renderItemAndEffectIntoGUI(stack, 88 + i * 19, 46 + j * 19);
-				text = amount <= 1 ? null : Util.transferString(amount);
-				ir.renderItemOverlayIntoGUI(fr, stack, 88 + i * 19, 46 + j * 19, text);
+				ir.renderItemOverlayIntoGUI(fr, stack, 88 + i * 19, 46 + j * 19, null);
 			}
 		}
 		int slot = getHoveredSlot(mouseX, mouseY);

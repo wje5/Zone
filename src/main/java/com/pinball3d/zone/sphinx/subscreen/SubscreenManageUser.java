@@ -179,7 +179,7 @@ public class SubscreenManageUser extends Subscreen {
 	@Override
 	public void onClick(int x, int y, boolean isLeft) {
 		super.onClick(x, y, isLeft);
-		if (x >= 83 && x <= 123 && y >= 28 && y <= 68) {
+		if (isLeft && x >= 83 && x <= 123 && y >= 28 && y <= 68) {
 			parent.putScreen(new SubscreenTextInputBox(parent, I18n.format("sphinx.set_gravatar"),
 					I18n.format("sphinx.set_gravatar_email"), s -> {
 						NetworkHandler.instance.sendToServer(

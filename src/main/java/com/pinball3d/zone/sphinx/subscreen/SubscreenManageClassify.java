@@ -181,6 +181,9 @@ public class SubscreenManageClassify extends Subscreen {
 	@Override
 	public void onClick(int x, int y, boolean isLeft) {
 		super.onClick(x, y, isLeft);
+		if (!isLeft) {
+			return;
+		}
 		int slot = getHoveredSlot(x, y);
 		if (slot != -1) {
 			Set<ItemType> l = getItems();
@@ -403,13 +406,11 @@ public class SubscreenManageClassify extends Subscreen {
 		int c = 0;
 		for (int j = 0; j < 7; j++) {
 			for (int i = 0; i < 9; i++) {
-				int amount = 0;
 				if (it.hasNext()) {
 					ItemType type = it.next();
 					ItemStack stack = type.createStack();
 					ir.renderItemAndEffectIntoGUI(stack, 164 + i * 19, 46 + j * 19);
-					text = amount <= 1 ? null : Util.transferString(amount);
-					ir.renderItemOverlayIntoGUI(fr, stack, 164 + i * 19, 46 + j * 19, text);
+					ir.renderItemOverlayIntoGUI(fr, stack, 164 + i * 19, 46 + j * 19, null);
 					if (group != null && group.contains(type)) {
 						GlStateManager.pushMatrix();
 						GlStateManager.translate(0, 0, 400F);

@@ -259,6 +259,8 @@ sphinx.infinite_queue=Infinite Queue
 sphinx.pausing=Pausing
 sphinx.running=Running
 sphinx.add_new_queue=Add New Queue
+sphinx.new_queue=New Queue
+sphinx.choose_item=Choose Item
 
 log.send_pack=Logistic pack <0> sent from <1>, via <2>, will delivery <4> in <3>.
 log.recv_pack=Logistic pack <0> sent from <1> has arrived at <4>, via <2>, total time is <3>.

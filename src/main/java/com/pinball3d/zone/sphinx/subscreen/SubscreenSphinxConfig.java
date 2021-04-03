@@ -19,7 +19,6 @@ public class SubscreenSphinxConfig extends Subscreen {
 		super(parent, x, y, 300, 200, true);
 		list = new ScrollingList(this, 16, 24, 268, 170);
 		list.addListBar(I18n.format("sphinx.change_sphinx_name"), () -> {
-			parent.removeScreen(SubscreenSphinxConfig.this);
 			parent.putScreen(new SubscreenChangeName(parent));
 		}, 0, 172, 16, 15, 1.0F);
 		addComponent(list);

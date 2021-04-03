@@ -1,7 +1,5 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
-import java.util.Iterator;
-
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.gui.component.HyperTextButton;
@@ -27,13 +25,6 @@ public class SubscreenCheckConnectedNetwork extends Subscreen {
 		super(parent, x, y, 165, 35, false);
 		this.name = name;
 		addComponent(new HyperTextButton(this, 35, 24, I18n.format("sphinx.info"), () -> {
-			Iterator<Subscreen> it = parent.getSubscreens().iterator();
-			while (it.hasNext()) {
-				Subscreen s = it.next();
-				if (s instanceof SubscreenNetworkConfig) {
-					it.remove();
-				}
-			}
 			parent.removeScreen(SubscreenCheckConnectedNetwork.this);
 			parent.putScreen(new SubscreenNetworkInfo(parent));
 		}));

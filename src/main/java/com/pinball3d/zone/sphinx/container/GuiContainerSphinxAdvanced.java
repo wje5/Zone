@@ -67,18 +67,28 @@ public abstract class GuiContainerSphinxAdvanced extends GuiContainerSphinxBase 
 	}
 
 	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
-		super.mouseReleased(mouseX, mouseY, mouseButton);
-		if (mouseButton == 0) {
-			if (dragBoxX != dragBoxX2 || dragBoxY != dragBoxY2) {
-				MapHandler.onReleaseDragBox(width, height, dragBoxX, dragBoxY, dragBoxX2, dragBoxY2);
-			} else {
-				MapHandler.onClick(width, height, mouseX, mouseY);
-			}
+	protected boolean onMouseReleaseScreenPre(int mouseX, int mouseY, int button) {
+		if (super.onMouseReleaseScreenPre(mouseX, mouseY, button)) {
+			return true;
+		}
+		if (button == 0 && (dragBoxX != dragBoxX2 || dragBoxY != dragBoxY2)) {
+			MapHandler.onReleaseDragBox(width, height, dragBoxX, dragBoxY, dragBoxX2, dragBoxY2);
 			dragBoxX = 0;
 			dragBoxY = 0;
 			dragBoxX2 = 0;
 			dragBoxY2 = 0;
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	protected void onMouseReleaseScreen(int mouseX, int mouseY, int button, boolean flag) {
+		super.onMouseReleaseScreen(mouseX, mouseY, button, flag);
+		if (button == 0) {
+			if (!flag) {
+				MapHandler.onClick(width, height, mouseX, mouseY);
+			}
 		}
 	}
 

@@ -44,7 +44,7 @@ public class SubscreenManageQueue extends Subscreen {
 		addComponent(list = new ScrollingContainer(this, 16, 45, 268, 149));
 		Container c = new Container(list, 0, 0, 268, 25);
 		c.addComponent(new Texture(c, 5, 5, ICONS_5, 180, 0, 64, 64, 0.25F));
-		c.addComponent(new Button(c, 0, 0, 268, 25, () -> System.out.println(11111)));
+		c.addComponent(new Button(c, 0, 0, 268, 25, () -> parent.putScreen(new SubscreenChooseItem(parent))));
 		c.addComponent(new Text(c, 23, 9, I18n.format("sphinx.add_new_queue")));
 		list.addComponent(c);
 	}
