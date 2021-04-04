@@ -2,6 +2,7 @@ package com.pinball3d.zone.sphinx.subscreen;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.lwjgl.input.Keyboard;
 
@@ -32,12 +33,13 @@ public class SubscreenChooseItem extends Subscreen {
 	public int page = 1, maxPage = 1;
 	private TextInputBox box;
 	private ScrollingEdgeList list;
+	private Consumer<ItemType> event;
 
-	public SubscreenChooseItem(IHasSubscreen parent) {
-		this(parent, getDisplayWidth() / 2 - 172, getDisplayHeight() / 2 - 90);
+	public SubscreenChooseItem(IHasSubscreen parent, Consumer<ItemType> event) {
+		this(parent, getDisplayWidth() / 2 - 172, getDisplayHeight() / 2 - 90, event);
 	}
 
-	public SubscreenChooseItem(IHasSubscreen parent, int x, int y) {
+	public SubscreenChooseItem(IHasSubscreen parent, int x, int y, Consumer<ItemType> event) {
 		super(parent, x, y, 224, 181, true);
 		addComponent(box = new TextInputBox(this, 87, 27, 61, 15, 55, () -> {
 			box.isFocus = true;
@@ -52,6 +54,7 @@ public class SubscreenChooseItem extends Subscreen {
 			page = page + 1 > maxPage ? 1 : page + 1;
 		}));
 		addComponent(list = new ScrollingEdgeList(this, 0, 9, 195).setNullable(true));
+		this.event = event;
 	}
 
 	@Override
@@ -125,7 +128,7 @@ public class SubscreenChooseItem extends Subscreen {
 				}
 				if (it.hasNext()) {
 					ItemType type = it.next();
-					System.out.println(type.createStack());
+					event.accept(type);
 				}
 			}
 		}
