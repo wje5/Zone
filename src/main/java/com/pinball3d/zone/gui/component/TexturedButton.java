@@ -32,8 +32,8 @@ public class TexturedButton extends Button {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		Util.drawTexture(texture, 0, 0, width, height, u, v, uWidth, vHeight);
 	}
 }

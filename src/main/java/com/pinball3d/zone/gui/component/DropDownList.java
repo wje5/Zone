@@ -65,8 +65,8 @@ public class DropDownList extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		FontRenderer renderer = Util.getFontRenderer();
 		Util.drawBorder(0, 0, width, 15, 1, 0xFF1ECCDE);
 		if (!list.isEmpty()) {

@@ -59,7 +59,7 @@ public class Subscreen implements IHasComponents {
 			if (!e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), 0, 0);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());
 				GlStateManager.popMatrix();
 			}
 		});
@@ -71,7 +71,7 @@ public class Subscreen implements IHasComponents {
 			if (e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), 0, 0);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());
 				GlStateManager.popMatrix();
 			}
 		});

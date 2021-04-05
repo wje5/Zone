@@ -142,7 +142,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 			if (!e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), 0, 0);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());
 				GlStateManager.popMatrix();
 			}
 		});
@@ -158,7 +158,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 			if (e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), 0, 0);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());
 				GlStateManager.popMatrix();
 			}
 		});

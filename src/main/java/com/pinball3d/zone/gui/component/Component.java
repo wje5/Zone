@@ -3,8 +3,6 @@ package com.pinball3d.zone.gui.component;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntSupplier;
 
-import javax.annotation.Nonnegative;
-
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
@@ -107,18 +105,18 @@ public class Component {
 		return false;
 	}
 
-	public void doRender(int mouseX, int mouseY, @Nonnegative int upCut, @Nonnegative int downCut) {
+	public void doRender(int mouseX, int mouseY) {
 
 	}
 
-	public void doRenderScreen(int mouseX, int mouseY, @Nonnegative int upCut, @Nonnegative int downCut) {
+	public void doRenderScreen(int mouseX, int mouseY) {
 		if (!isEnable()) {
 			return;
 		}
 		Util.resetOpenGl();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(getX(), getY(), 50F);
-		doRender(mouseX, mouseY, upCut, downCut);
+		doRender(mouseX, mouseY);
 		GlStateManager.popMatrix();
 	}
 

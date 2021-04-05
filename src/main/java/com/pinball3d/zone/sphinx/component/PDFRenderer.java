@@ -70,8 +70,8 @@ public class PDFRenderer extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		float yOffset = 0;
 		if (pdf != null) {
 			int max = pdf.doc.getNumberOfPages();

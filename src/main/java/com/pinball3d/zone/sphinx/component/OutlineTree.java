@@ -35,8 +35,8 @@ public class OutlineTree extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		if (outline == null) {
 			return;
 		}

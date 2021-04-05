@@ -14,8 +14,8 @@ public class Slider extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		Gui.drawRect(2, -1, width - 2, getY(), 0xFF1ECCDE);
 		Util.drawTexture(ICONS, scrollingDistance, 1, 102, 32, 5, 5, 1.0F);
 	}

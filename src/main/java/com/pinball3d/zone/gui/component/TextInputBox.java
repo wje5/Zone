@@ -109,8 +109,8 @@ public class TextInputBox extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		Util.drawBorder(0, 0, width, height, 1, 0xFF1ECCDE);
 		FontRenderer renderer = Util.getFontRenderer();
 		if (isFocus && mc.world.getTotalWorldTime() % 20 < 10) {

@@ -17,8 +17,9 @@ public class ButtonPage extends Button {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		if (isHover(mouseX, mouseY)) {// TODO
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
+		if (isHover(mouseX, mouseY)) {
 			Util.drawTexture(flag ? TEXTURE : TEXTURE2, 0, 0, 146, 0, 10, 13, 1.0F);
 		}
 	}

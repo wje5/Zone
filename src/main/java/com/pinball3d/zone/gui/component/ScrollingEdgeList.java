@@ -63,8 +63,8 @@ public class ScrollingEdgeList extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		Iterator<ListBar> it = list.iterator();
 		FontRenderer fr = Util.getFontRenderer();
 		int index = 0;

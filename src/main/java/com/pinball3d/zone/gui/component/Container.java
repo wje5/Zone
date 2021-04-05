@@ -92,14 +92,13 @@ public class Container extends Component implements IHasComponents {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		components.forEach(e -> {
 			if (!e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), upCut - e.getY() < 0 ? 0 : upCut,
-						downCut - e.getY() + e.height < 0 ? 0 : downCut);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());
 				GlStateManager.popMatrix();
 			}
 		});
@@ -107,8 +106,7 @@ public class Container extends Component implements IHasComponents {
 			if (e.getRenderLast()) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
-				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY(), upCut - e.getY() < 0 ? 0 : upCut,
-						downCut - e.getY() + e.height < 0 ? 0 : downCut);
+				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());
 				GlStateManager.popMatrix();
 			}
 		});

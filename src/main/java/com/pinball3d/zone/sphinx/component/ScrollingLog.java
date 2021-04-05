@@ -37,8 +37,8 @@ public class ScrollingLog extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		Iterator<LogBar> it = list.iterator();
 		int yOffset = 0;
 		while (it.hasNext()) {

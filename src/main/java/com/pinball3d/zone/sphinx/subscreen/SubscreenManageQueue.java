@@ -48,6 +48,9 @@ public class SubscreenManageQueue extends Subscreen {
 				.putScreen(new SubscreenChooseItem(parent, e -> parent.putScreen(new SubscreenNewQueue(parent, e))))));
 		c.addComponent(new Text(c, 23, 9, I18n.format("sphinx.add_new_queue")));
 		list.addComponent(c);
+		for (int i = 0; i < 10; i++) {
+			genQueueBar();
+		}
 	}
 
 	private Container genQueueBar() {
@@ -67,7 +70,7 @@ public class SubscreenManageQueue extends Subscreen {
 		Gui.drawRect(0, 44, 300, 155, 0x2F000000);
 		Gui.drawRect(44, 155, 255, 200, 0x2F000000);
 		Util.renderGlowHorizonLine(10, 20, 280);
-		Gui.drawRect(16, 24, 284, 194, 0x651CC3B5);
+		Gui.drawRect(16, 24, 284, 45, 0x651CC3B5);
 		Util.renderGlowString(I18n.format("sphinx.manage_queue"), 15, 8);
 		Util.renderGlowBorder(15, 23, 270, 172);
 		Util.renderGlowString(I18n.format("sphinx.infinite_queue"), 110, 31);

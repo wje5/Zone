@@ -31,10 +31,8 @@ public class Texture extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);
-		float scale = vHeight * 1.0F / height;
-		Util.drawTexture(texture, 0, upCut, width, height - upCut - downCut, u, v + (int) (scale * upCut), uWidth,
-				vHeight - (int) (scale * (upCut + downCut)));
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
+		Util.drawTexture(texture, 0, 0, width, height, u, v, uWidth, vHeight);
 	}
 }

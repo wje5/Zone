@@ -28,8 +28,8 @@ public class TextButton extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);// TODO
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
 		Util.drawTexture(ICONS, -4, -4, 117, 138, 38, 49, 0.375F);
 		Util.drawTexture(ICONS, width - 7, -4, 155, 138, 38, 49, 0.375F);
 		if (width > 15) {

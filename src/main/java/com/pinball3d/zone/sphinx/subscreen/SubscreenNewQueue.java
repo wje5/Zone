@@ -14,7 +14,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
 
 public class SubscreenNewQueue extends Subscreen {
-	private ItemType target;
+	private QueueChart chart;
 
 	public SubscreenNewQueue(IHasSubscreen parent, ItemType target) {
 		this(parent, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100, target);
@@ -28,8 +28,7 @@ public class SubscreenNewQueue extends Subscreen {
 		addComponent(new TextButton(this, 235, 175, I18n.format("sphinx.cancel"), () -> {
 			parent.removeScreen(SubscreenNewQueue.this);
 		}));
-		addComponent(new QueueChart(this, 21, 29, 183, 108));
-		this.target = target;
+		addComponent(chart = new QueueChart(this, 21, 29, 183, 108, target));
 	}
 
 	@Override

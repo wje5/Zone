@@ -17,7 +17,8 @@ public class BlockShow extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		Util.renderItem(stack, 0, 0, scale);// TODO
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
+		Util.renderItem(stack, 0, 0, scale);
 	}
 }

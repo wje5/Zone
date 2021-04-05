@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.lwjgl.opengl.GL11;
+
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
@@ -43,8 +45,16 @@ public class ScrollingContainer extends Component implements IHasComponents {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0, 0, -800F);
+		GlStateManager.enableDepth();
+		GlStateManager.depthFunc(GL11.GL_GEQUAL);
+		Gui.drawRect(0, 0, width, height, 0x651CC3B5);
+		GlStateManager.depthFunc(GL11.GL_LEQUAL);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
 		Iterator<Container> it = list.iterator();
 		int yOffset = 0;
 		for (int i = 0; i < 2; i++) {
@@ -52,16 +62,14 @@ public class ScrollingContainer extends Component implements IHasComponents {
 				Container c = it.next();
 				int renderY = yOffset - scrollingDistance;
 				if (renderY <= height && renderY + c.height >= 0) {
-					int renderUpCut = renderY < upCut ? -renderY + upCut : upCut;
-					int renderDownCut = renderY + c.height - height + downCut > 0
-							? renderY + c.height - height + downCut
-							: 0;
+					int renderUpCut = renderY < 0 ? -renderY : 0;
+					int renderDownCut = renderY + c.height - height > 0 ? renderY + c.height - height : 0;
 					boolean flag = mouseX >= 0 && mouseX <= c.width && mouseY > renderY
 							&& mouseY <= renderY + c.height - renderDownCut;
-					if (i == 1 == c.getRenderLast() && upCut + downCut < c.height) {
+					if (i == 1 == c.getRenderLast() && renderUpCut + renderDownCut < c.height) {
 						Util.resetOpenGl();
 						GlStateManager.pushMatrix();
-						c.doRenderScreen(mouseX - c.getX(), mouseY - c.getY(), renderUpCut, renderDownCut);
+						c.doRenderScreen(mouseX - c.getX(), mouseY - c.getY());
 						if (flag) {
 							Gui.drawRect(c.getX(), c.getY() + renderUpCut, c.getX() + c.width,
 									c.getY() + c.height - renderDownCut, 0x4FFFFFFF);
@@ -72,6 +80,9 @@ public class ScrollingContainer extends Component implements IHasComponents {
 				yOffset += c.height;
 			}
 		}
+		GlStateManager.popMatrix();
+		GlStateManager.depthFunc(515);
+		GlStateManager.disableDepth();
 	}
 
 	@Override

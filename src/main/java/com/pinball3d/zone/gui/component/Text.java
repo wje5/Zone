@@ -12,10 +12,8 @@ public class Text extends Component {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY, int upCut, int downCut) {
-		super.doRender(mouseX, mouseY, upCut, downCut);
-		if (upCut == 0 && downCut == 0) {
-			Util.renderGlowString(text, 0, 0);
-		}
+	public void doRender(int mouseX, int mouseY) {
+		super.doRender(mouseX, mouseY);
+		Util.renderGlowString(text, 0, 0);
 	}
 }
