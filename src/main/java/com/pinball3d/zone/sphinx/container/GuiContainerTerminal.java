@@ -2,10 +2,10 @@ package com.pinball3d.zone.sphinx.container;
 
 import java.util.Set;
 
+import com.pinball3d.zone.gui.component.Button;
 import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.component.ButtonNetworkConfig;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenBrowseLog;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageClassify;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageQueue;
@@ -15,6 +15,7 @@ import com.pinball3d.zone.sphinx.subscreen.SubscreenShutdownSphinx;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenSphinxConfig;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenSynodLibrary;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenViewStorage;
+import com.pinball3d.zone.util.Util;
 
 public class GuiContainerTerminal extends GuiContainerSphinxAdvanced {
 	public GuiContainerTerminal(ContainerSphinxTerminal container) {
@@ -32,9 +33,16 @@ public class GuiContainerTerminal extends GuiContainerSphinxAdvanced {
 	@Override
 	public void addComponents() {
 		super.addComponents();
-		addComponent(new ButtonNetworkConfig(this, width - 17, 2, () -> {
+		addComponent(new Button(this, width - 17, 2, 15, 15, () -> {
 			subscreens.push(new SubscreenNetworkConfig(GuiContainerTerminal.this));
-		}, () -> ConnectHelperClient.getInstance().isConnected()));
+		}) {
+			@Override
+			public void doRender(int mouseX, int mouseY) {
+				super.doRender(mouseX, mouseY);
+				Util.drawTexture(TEXTURE_4, 0, 0, ConnectHelperClient.getInstance().isConnected() ? 120 : 180, 60, 60,
+						60, 0.25F);
+			}
+		});
 		addComponent(new TexturedButton(this, width - 34, 2, ICONS_4, 0, 120, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenViewStorage(GuiContainerTerminal.this));
 		}).setEnable(() -> ConnectHelperClient.getInstance().isConnected()));

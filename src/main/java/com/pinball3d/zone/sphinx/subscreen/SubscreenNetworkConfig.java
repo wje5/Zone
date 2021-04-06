@@ -44,7 +44,6 @@ public class SubscreenNetworkConfig extends Subscreen {
 		Gui.drawRect(0, 44, 300, 155, 0x2F000000);
 		Gui.drawRect(44, 155, 255, 200, 0x2F000000);
 		Util.renderGlowHorizonLine(10, 20, 280);
-		Gui.drawRect(16, 24, 284, 194, 0x651CC3B5);
 		Util.renderGlowString(I18n.format("sphinx.network_config"), 15, 8);
 		Util.renderGlowBorder(15, 23, 270, 172);
 	}

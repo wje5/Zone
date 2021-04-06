@@ -2,6 +2,8 @@ package com.pinball3d.zone.sphinx.component;
 
 import java.util.Iterator;
 
+import org.lwjgl.opengl.GL11;
+
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
@@ -9,6 +11,8 @@ import com.pinball3d.zone.sphinx.log.LogComponent;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class ScrollingViewLog extends Component {
 	protected int length, scrollingDistance;
@@ -46,6 +50,12 @@ public class ScrollingViewLog extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
+		GlStateManager.pushMatrix();
+		GlStateManager.enableDepth();
+		GlStateManager.translate(0, 0, -400F);
+		GlStateManager.depthFunc(GL11.GL_GEQUAL);
+		Gui.drawRect(0, 0, width, height, 0x651CC3B5);
+		GlStateManager.depthFunc(GL11.GL_LEQUAL);
 		Iterator<LogComponent> it = log.getComponents().iterator();
 		int xOffset = 0;
 		int yOffset = 3;
@@ -57,7 +67,7 @@ public class ScrollingViewLog extends Component {
 			if (w > width - xOffset) {
 				do {
 					String s = Util.cutStringToWidth(text, width - xOffset);
-					if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
+					if (yOffset + fr.FONT_HEIGHT >= scrollingDistance && yOffset - scrollingDistance <= height) {
 						fr.drawString(s, xOffset, yOffset - scrollingDistance, c.getColor());
 					}
 					xOffset = 0;
@@ -65,18 +75,19 @@ public class ScrollingViewLog extends Component {
 					text = text.substring(s.length());
 				} while (fr.getStringWidth(text) > width - xOffset);
 				if (!text.isEmpty()) {
-					if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
+					if (yOffset + fr.FONT_HEIGHT >= scrollingDistance && yOffset - scrollingDistance <= height) {
 						fr.drawString(text, xOffset, yOffset - scrollingDistance, c.getColor());
 					}
 					xOffset += fr.getStringWidth(text);
 				}
 			} else {
-				if (yOffset >= scrollingDistance && yOffset - scrollingDistance + fr.FONT_HEIGHT <= height) {
+				if (yOffset + fr.FONT_HEIGHT >= scrollingDistance && yOffset - scrollingDistance <= height) {
 					fr.drawString(text, xOffset, yOffset - scrollingDistance, c.getColor());
 				}
 				xOffset += w;
 			}
 		}
+		GlStateManager.popMatrix();
 	}
 
 	@Override

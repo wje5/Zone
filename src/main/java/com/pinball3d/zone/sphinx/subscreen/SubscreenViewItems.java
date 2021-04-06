@@ -73,8 +73,8 @@ public class SubscreenViewItems extends Subscreen {
 		GlStateManager.disableDepth();
 		int slotX = slot % 9;
 		int slotY = slot / 9;
-		int j1 = slotX * 19 + 1 + 87;
-		int k1 = slotY * 19 + 1 + 45;
+		int j1 = slotX * 19 + 88;
+		int k1 = slotY * 19 + 46;
 		Gui.drawRect(j1, k1, j1 + 16, k1 + 16, 0x80FFFFFF);
 		GlStateManager.enableLighting();
 		GlStateManager.enableDepth();
@@ -121,7 +121,7 @@ public class SubscreenViewItems extends Subscreen {
 	public int getHoveredSlot(int mouseX, int mouseY) {
 		int mX = mouseX - 87;
 		int mY = mouseY - 45;
-		if (mX >= 0 && mX <= 170 && mY >= 0 && mY <= 114 && mX % 19 < 18 && mY % 19 < 18) {
+		if (mX >= 0 && mX <= 170 && mY >= 0 && mY <= 113 && mX % 19 < 18 && mY % 19 < 18) {
 			int slotX = mX / 19;
 			int slotY = mY / 19;
 			return slotY * 9 + slotX;
