@@ -5,15 +5,18 @@ import java.util.Set;
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.gui.component.TextButton;
+import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.component.QueueChart;
 import com.pinball3d.zone.util.ItemType;
 import com.pinball3d.zone.util.Util;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.resources.I18n;
 
 public class SubscreenNewQueue extends Subscreen {
+	public int productPage = 1, maxProductPage = 1, consumePage = 1, maxConsumePage = 1;
 	private QueueChart chart;
 
 	public SubscreenNewQueue(IHasSubscreen parent, ItemType target) {
@@ -29,6 +32,18 @@ public class SubscreenNewQueue extends Subscreen {
 			parent.removeScreen(SubscreenNewQueue.this);
 		}));
 		addComponent(chart = new QueueChart(this, 21, 29, 183, 108, target));
+		addComponent(new TexturedButton(this, 214, 79, ICONS, 92, 32, 5, 9, 1.0F, () -> {
+			productPage = productPage - 1 < 1 ? maxProductPage : productPage - 1;
+		}));
+		addComponent(new TexturedButton(this, 269, 79, ICONS, 97, 32, 5, 9, 1.0F, () -> {
+			productPage = productPage + 1 > maxProductPage ? 1 : productPage + 1;
+		}));
+		addComponent(new TexturedButton(this, 214, 141, ICONS, 92, 32, 5, 9, 1.0F, () -> {
+			consumePage = consumePage - 1 < 1 ? maxConsumePage : consumePage - 1;
+		}));
+		addComponent(new TexturedButton(this, 269, 141, ICONS, 97, 32, 5, 9, 1.0F, () -> {
+			consumePage = consumePage + 1 > maxConsumePage ? 1 : consumePage + 1;
+		}));
 	}
 
 	@Override
@@ -49,19 +64,28 @@ public class SubscreenNewQueue extends Subscreen {
 		Gui.drawRect(0, 44, 300, 155, 0x2F000000);
 		Gui.drawRect(44, 155, 255, 200, 0x2F000000);
 		Util.renderGlowHorizonLine(10, 20, 280);
-		Gui.drawRect(16, 24, 284, 194, 0x651CC3B5);
 		Util.renderGlowBorder(15, 23, 270, 172);
 		Util.renderGlowString(I18n.format("sphinx.new_queue"), 15, 8);
 		Util.drawBorder(20, 28, 185, 110, 1, 0xFF1ECCDE);
+		Gui.drawRect(16, 24, 284, 28, 0x651CC3B5);
+		Gui.drawRect(16, 28, 20, 194, 0x651CC3B5);
+		Gui.drawRect(205, 28, 284, 194, 0x651CC3B5);
+		Gui.drawRect(20, 138, 205, 194, 0x651CC3B5);
 		Gui.drawRect(16, 24, 284, 28, 0x30000000);
 		Gui.drawRect(16, 28, 20, 194, 0x30000000);
 		Gui.drawRect(205, 28, 284, 194, 0x30000000);
 		Gui.drawRect(20, 138, 205, 194, 0x30000000);
-//		Util.renderGlowString(I18n.format("sphinx.total_product"), 210, 28);
-		Util.renderGlowString("Aluminium Ingot * 32", 210, 28);
+		Util.renderGlowString(I18n.format("sphinx.total_product"), 210, 28);
+		Util.renderGlowString(I18n.format("sphinx.total_consume"), 210, 90);
+		String text = productPage + "/" + maxProductPage;
+		FontRenderer fr = Util.getFontRenderer();
+		Util.renderGlowString(text, 244 - fr.getStringWidth(text) / 2, 80);
+		text = consumePage + "/" + maxConsumePage;
+		Util.renderGlowString(text, 244 - fr.getStringWidth(text) / 2, 142);
 		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 3; j++) {
+			for (int j = 0; j < 2; j++) {
 				Util.drawBorder(207 + i * 19, 39 + j * 19, 18, 18, 1, 0xFF1ECCDE);
+				Util.drawBorder(207 + i * 19, 101 + j * 19, 18, 18, 1, 0xFF1ECCDE);
 			}
 		}
 	}

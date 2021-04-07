@@ -48,9 +48,6 @@ public class SubscreenManageQueue extends Subscreen {
 				.putScreen(new SubscreenChooseItem(parent, e -> parent.putScreen(new SubscreenNewQueue(parent, e))))));
 		c.addComponent(new Text(c, 23, 9, I18n.format("sphinx.add_new_queue")));
 		list.addComponent(c);
-		for (int i = 0; i < 10; i++) {
-			genQueueBar();
-		}
 	}
 
 	private Container genQueueBar() {
