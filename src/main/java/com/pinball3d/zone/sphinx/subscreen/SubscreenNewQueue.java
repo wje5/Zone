@@ -43,6 +43,7 @@ public class SubscreenNewQueue extends Subscreen {
 		}));
 		addComponent(new TexturedButton(this, 269, 141, ICONS, 97, 32, 5, 9, 1.0F, () -> {
 			consumePage = consumePage + 1 > maxConsumePage ? 1 : consumePage + 1;
+			chart.exportCurve();
 		}));
 	}
 

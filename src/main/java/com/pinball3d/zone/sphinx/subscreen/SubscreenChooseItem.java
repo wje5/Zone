@@ -146,7 +146,7 @@ public class SubscreenChooseItem extends Subscreen {
 	}
 
 	public Set<ItemType> getItems() {
-		StorageWrapper s = Util.getItemList();
+		StorageWrapper s = Util.getItemList().search(box.text);
 		ListBar bar = list.get();
 		if (bar != null) {
 			s.search(((ClassifyGroup) bar.getData()).getItems());

@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
+
+import com.pinball3d.zone.Zone;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
@@ -19,7 +19,6 @@ import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 
 public class PDFHelper {
-	private static final Logger LOGGER = LogManager.getLogger();
 	public static final ResourceLocation RESOURCE_LOCATION_EMPTY = new ResourceLocation("");
 	public static final PDF PDF_EMPTY = new PDF(RESOURCE_LOCATION_EMPTY);
 	public final IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
@@ -59,7 +58,7 @@ public class PDFHelper {
 			}
 		} catch (IOException e) {
 			if (pdf.location != RESOURCE_LOCATION_EMPTY) {
-				LOGGER.warn("Failed to load pdf: {}", pdf.location, e);
+				Zone.logger.warn("Failed to load pdf: {}", pdf.location, e);
 			}
 			flag = false;
 		} catch (Throwable throwable) {

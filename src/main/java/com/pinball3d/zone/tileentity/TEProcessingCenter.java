@@ -15,12 +15,10 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.pinball3d.zone.ChunkHandler;
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
 import com.pinball3d.zone.ConfigLoader;
+import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
@@ -90,7 +88,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 																	: o1.getPos().getZ() > o2.getPos().getZ() ? 1 : 0;
 		}
 	};
-	private static Logger LOGGER = LogManager.getLogger();
 	private Set<SerialNumber> nodes = new TreeSet<SerialNumber>(SerialNumber.serialNumberComparator);
 	private Set<SerialNumber> storages = new TreeSet<SerialNumber>(SerialNumber.serialNumberComparator);
 	private Set<SerialNumber> devices = new TreeSet<SerialNumber>(SerialNumber.serialNumberComparator);
@@ -1231,7 +1228,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				classifyGroups.put(((NBTTagCompound) e).getInteger("id"),
 						new ClassifyGroup(((NBTTagCompound) e).getCompoundTag("group")));
 			} catch (Exception ex) {
-				LOGGER.error("Classify Group " + Util.DATA_CORRUPTION
+				Zone.logger.error("Classify Group " + Util.DATA_CORRUPTION
 						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
 						ex);
 			}
@@ -1243,7 +1240,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				UserData user = new UserData((NBTTagCompound) e);
 				users.put(user.uuid, user);
 			} catch (Exception ex) {
-				LOGGER.error("User " + Util.DATA_CORRUPTION
+				Zone.logger.error("User " + Util.DATA_CORRUPTION
 						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
 						ex);
 			}
@@ -1254,7 +1251,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			try {
 				logCache.add(Log.readLogFromNBT((NBTTagCompound) e));
 			} catch (Exception ex) {
-				LOGGER.error("Log " + Util.DATA_CORRUPTION
+				Zone.logger.error("Log " + Util.DATA_CORRUPTION
 						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
 						ex);
 			}
@@ -1334,7 +1331,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				} catch (Exception ex2) {
 
 				}
-				LOGGER.error(
+				Zone.logger.error(
 						"Classify Group {} has throw an exception trying to write state. It's network data will be removed.",
 						name, ex);
 			}
@@ -1351,7 +1348,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				} catch (Exception ex2) {
 
 				}
-				LOGGER.error("User {} has throw an exception trying to write state. It's network data will be removed.",
+				Zone.logger.error(
+						"User {} has throw an exception trying to write state. It's network data will be removed.",
 						name, ex);
 			}
 		});
@@ -1367,8 +1365,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				} catch (Exception ex2) {
 
 				}
-				LOGGER.error("Log {} has throw an exception trying to write state. It's network data will be removed.",
-						name, ex);
+				Zone.logger.error(
+						"Log {} has throw an exception trying to write state. It's network data will be removed.", name,
+						ex);
 			}
 		});
 		compound.setTag("logs", logsList);

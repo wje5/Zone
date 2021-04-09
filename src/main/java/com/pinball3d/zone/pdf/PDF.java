@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -16,12 +14,13 @@ import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.rendering.RenderDestination;
 
+import com.pinball3d.zone.Zone;
+
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
 public class PDF {
-	private static final Logger LOGGER = LogManager.getLogger();
 	protected final ResourceLocation location;
 	public PDDocument doc;
 	protected PDFRenderer renderer;
@@ -77,10 +76,10 @@ public class PDF {
 							BufferedImage image = renderer.renderImage(i, 1, ImageType.RGB, RenderDestination.VIEW);
 							images.set(i, new PDFImage(image, image.getWidth(), image.getHeight()));
 						} catch (Throwable e) {
-							LOGGER.error("Rendering PDF:");
-							LOGGER.error(e);
-							LOGGER.error("PDF being rendered");
-							LOGGER.error("Resource location:" + location);
+							Zone.logger.error("Rendering PDF:");
+							Zone.logger.error(e);
+							Zone.logger.error("PDF being rendered");
+							Zone.logger.error("Resource location:" + location);
 						}
 					}
 				}
@@ -99,10 +98,10 @@ public class PDF {
 				BufferedImage img = renderer.renderImage(page, 1, ImageType.RGB, RenderDestination.VIEW);
 				image = new PDFImage(img, img.getWidth(), img.getHeight());
 			} catch (Throwable e) {
-				LOGGER.error("Rendering PDF:");
+				Zone.logger.error("Rendering PDF:");
 				e.printStackTrace();
-				LOGGER.error(e);
-				LOGGER.error("Resource location:" + location);
+				Zone.logger.error(e);
+				Zone.logger.error("Resource location:" + location);
 			}
 		}
 		if (image != null) {

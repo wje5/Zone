@@ -2,6 +2,7 @@ package com.pinball3d.zone.util;
 
 import java.util.Comparator;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,6 +37,18 @@ public class ItemType {
 	public ItemType(Item item, int meta) {
 		this.item = item;
 		this.meta = meta;
+	}
+
+	public ItemType(Item item) {
+		this(item, 0);
+	}
+
+	public ItemType(Block block, int meta) {
+		this(Item.getItemFromBlock(block), meta);
+	}
+
+	public ItemType(Block block) {
+		this(block, 0);
 	}
 
 	public ItemType(ItemStack stack) {
