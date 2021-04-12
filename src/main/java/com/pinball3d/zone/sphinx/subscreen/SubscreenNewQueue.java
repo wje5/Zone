@@ -4,7 +4,10 @@ import java.util.Set;
 
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.gui.component.DropDownList;
+import com.pinball3d.zone.gui.component.HyperTextButton;
 import com.pinball3d.zone.gui.component.TextButton;
+import com.pinball3d.zone.gui.component.TextInputBox;
 import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.component.QueueChart;
@@ -18,6 +21,8 @@ import net.minecraft.client.resources.I18n;
 public class SubscreenNewQueue extends Subscreen {
 	public int productPage = 1, maxProductPage = 1, consumePage = 1, maxConsumePage = 1;
 	private QueueChart chart;
+	private TextInputBox box;
+	private DropDownList list;
 
 	public SubscreenNewQueue(IHasSubscreen parent, ItemType target) {
 		this(parent, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100, target);
@@ -43,14 +48,23 @@ public class SubscreenNewQueue extends Subscreen {
 		}));
 		addComponent(new TexturedButton(this, 269, 141, ICONS, 97, 32, 5, 9, 1.0F, () -> {
 			consumePage = consumePage + 1 > maxConsumePage ? 1 : consumePage + 1;
-			chart.exportCurve();
 		}));
+		addComponent(new TexturedButton(this, 189, 142, ICONS_5, 0, 60, 60, 60, 0.25F, () -> {
+			// TODO
+		}));
+		addComponent(new TexturedButton(this, 108, 162, ICONS_5, 0, 241, 70, 15, 1.0F, () -> {
+			// TODO
+		}));
+		addComponent(new HyperTextButton(this, 21, 140, I18n.format("sphinx.export"), () -> chart.exportCurve()));
+//		addComponent(box = new TextInputBox(this, 130, 142, 60, 14, 13, () -> box.isFocus = true, 4));
+		addComponent(box = new TextInputBox(this, 130, 142, 60, 15, 13, () -> box.isFocus = true, 4));
+		box.text = "1";
+		box.isFocus = true;
 	}
 
 	@Override
 	public Set<Type> getDataTypes() {
 		Set<Type> s = super.getDataTypes();
-		s.add(Type.NAME);
 		return s;
 	}
 
@@ -89,6 +103,10 @@ public class SubscreenNewQueue extends Subscreen {
 				Util.drawBorder(207 + i * 19, 101 + j * 19, 18, 18, 1, 0xFF1ECCDE);
 			}
 		}
+		Util.drawBorder(80, 140, 18, 18, 1, 0xFF1ECCDE);
+		Util.renderItem(chart.getRoot().getType().createStack(), 81, 141, 1.0F);
+		Util.renderGlowString(I18n.format("sphinx.amount"), 102, 145);
+		Util.renderGlowString(I18n.format("sphinx.recipe"), 80, 165);
 	}
 
 	@Override

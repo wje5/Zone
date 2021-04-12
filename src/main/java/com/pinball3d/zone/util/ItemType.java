@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ItemType {
 	public final Item item;
-	public final int meta;
+	public final int damage;
 
 	public static Comparator<ItemType> comparator = new Comparator<ItemType>() {
 		@Override
@@ -22,29 +22,25 @@ public class ItemType {
 			if (i > i2) {
 				return 1;
 			}
-			return o1.item.getHasSubtypes() && o2.item.getHasSubtypes() ? o1.meta - o2.meta : 0;
+			return o1.item.getHasSubtypes() && o2.item.getHasSubtypes() ? o1.damage - o2.damage : 0;
 		}
 	};
 
 	public ItemType(NBTTagCompound tag) {
-		this(tag.getInteger("item"), tag.getInteger("meta"));
+		this(Item.getByNameOrId(tag.getString("id")), tag.getInteger("damage"));
 	}
 
-	public ItemType(int item, int meta) {
-		this(Item.getItemById(item), meta);
-	}
-
-	public ItemType(Item item, int meta) {
+	public ItemType(Item item, int damage) {
 		this.item = item;
-		this.meta = meta;
+		this.damage = damage;
 	}
 
 	public ItemType(Item item) {
 		this(item, 0);
 	}
 
-	public ItemType(Block block, int meta) {
-		this(Item.getItemFromBlock(block), meta);
+	public ItemType(Block block, int damage) {
+		this(Item.getItemFromBlock(block), damage);
 	}
 
 	public ItemType(Block block) {
@@ -56,22 +52,22 @@ public class ItemType {
 	}
 
 	public ItemStack createStack() {
-		return new ItemStack(item, 1, meta);
+		return new ItemStack(item, 1, damage);
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setInteger("item", Item.getIdFromItem(item));
-		tag.setInteger("meta", meta);
+		tag.setInteger("damage", damage);
 		return tag;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof ItemType && item.equals(((ItemType) obj).item) && meta == ((ItemType) obj).meta;
+		return obj instanceof ItemType && item.equals(((ItemType) obj).item) && damage == ((ItemType) obj).damage;
 	}
 
 	@Override
 	public int hashCode() {
-		return item.hashCode() * 31 + meta;
+		return item.hashCode() * 31 + damage;
 	}
 }

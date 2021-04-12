@@ -48,7 +48,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 	}
 
 	protected void init() {
-		refreshComponents();
+
 	}
 
 	public void onMouseScrolling(int mouseX, int mouseY, boolean isUp, boolean flag) {
@@ -80,6 +80,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 	public void initGui() {
 		setSize();
 		super.initGui();
+		refreshComponents();
 		if (!inited) {
 			init();
 			inited = true;

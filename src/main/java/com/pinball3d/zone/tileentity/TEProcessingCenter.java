@@ -30,6 +30,7 @@ import com.pinball3d.zone.sphinx.IProduction;
 import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.LogisticPack;
 import com.pinball3d.zone.sphinx.LogisticPack.Path;
+import com.pinball3d.zone.sphinx.RecipeType;
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.SerialNumber.Type;
 import com.pinball3d.zone.sphinx.log.Log;
@@ -54,6 +55,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
@@ -98,11 +101,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	private UUID uuid;
 	private double[][] map;
 	private Map<Integer, ClassifyGroup> classifyGroups = new TreeMap<Integer, ClassifyGroup>();
+	private Map<Integer, RecipeType> recipeTypes = new TreeMap<Integer, RecipeType>();
 	private boolean mapDirty;
 	private Map<WorldPos, List<Path>> dijkstraCache = new HashMap<WorldPos, List<Path>>();
 	private Map<UUID, UserData> users = new HashMap<UUID, UserData>();
 	private Queue<Log> logCache = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);
-	private int logId, nodeId, storageId, deviceId, productionId, packId, classifyGroupId, warningStorageFullCD;
+	private int logId, nodeId, storageId, deviceId, productionId, packId, classifyGroupId, warningStorageFullCD,
+			recipeTypeId = 100;
 
 	public TEProcessingCenter() {
 
@@ -110,6 +115,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public void initSphinx() {
 		genSerialNumber(new WorldPos(this), Type.NODE);
+		initRecipeType();
 	}
 
 	public boolean isOn() {
@@ -1089,6 +1095,24 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return logId++;
 	}
 
+	public void rescanRecipes() {
+		initRecipeType();
+		Iterator<IRecipe> it = CraftingManager.REGISTRY.iterator();
+		while (it.hasNext()) {
+			IRecipe i = it.next();
+
+		}
+	}
+
+	public void initRecipeType() {
+		recipeTypes.clear();
+		recipeTypes.put(RecipeType.BasicType.MINECRAFT_WORKBENCH.ordinal(), new RecipeType(
+				RecipeType.BasicType.MINECRAFT_WORKBENCH.ordinal(), "tile.workbench.name", true, 1, new int[] { 10 }));
+		recipeTypes.put(RecipeType.BasicType.MINECRAFT_FURNACE.ordinal(), new RecipeType(
+				RecipeType.BasicType.MINECRAFT_FURNACE.ordinal(), "tile.furnace.name", true, 1, new int[] { 3 }));
+		System.out.println(recipeTypes);
+	}
+
 	public void load() {
 		if (!loaded) {
 			ChunkHandler.instance.loadChunks(new WorldPos(this));
@@ -1187,6 +1211,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		classifyGroupId = compound.getInteger("classifyGroupId");
 		inited = compound.getBoolean("inited");
 		warningStorageFullCD = compound.getInteger("warningStorageFullCD");
+		recipeTypeId = compound.getInteger("recipeTypeId");
 		nodes.clear();
 		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
@@ -1256,6 +1281,18 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 						ex);
 			}
 		});
+		recipeTypes.clear();
+		list = compound.getTagList("recipeTypes", 10);
+		list.forEach(e -> {
+			try {
+				recipeTypes.put(((NBTTagCompound) e).getInteger("id"),
+						new RecipeType(((NBTTagCompound) e).getCompoundTag("data")));
+			} catch (Exception ex) {
+				Zone.logger.error("Recipe Type " + Util.DATA_CORRUPTION
+						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
+						ex);
+			}
+		});
 		super.readFromNBT(compound);
 	}
 
@@ -1276,6 +1313,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		compound.setInteger("classifyGroupId", classifyGroupId);
 		compound.setBoolean("inited", inited);
 		compound.setInteger("warningStorageFullCD", warningStorageFullCD);
+		compound.setInteger("recipeTypeId", recipeTypeId);
 		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {
 			e.check(this);
@@ -1371,6 +1409,26 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 		});
 		compound.setTag("logs", logsList);
+		NBTTagList recipeTypeList = new NBTTagList();
+		recipeTypes.forEach((k, v) -> {
+			try {
+				NBTTagCompound t = new NBTTagCompound();
+				t.setInteger("id", k);
+				t.setTag("data", v.writeToNBT(new NBTTagCompound()));
+				recipeTypeList.appendTag(t);
+			} catch (Exception ex) {
+				String name = Util.DATA_CORRUPTION;
+				try {
+					name = v.isI18N() ? I18n.format(v.getName()) : v.getName();
+				} catch (Exception ex2) {
+
+				}
+				Zone.logger.error(
+						"Recipe Type {} has throw an exception trying to write state. It's network data will be removed.",
+						name, ex);
+			}
+		});
+		compound.setTag("recipeTypes", recipeTypeList);
 		return super.writeToNBT(compound);
 	}
 

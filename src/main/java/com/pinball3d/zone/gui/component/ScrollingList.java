@@ -11,6 +11,7 @@ import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 
 public class ScrollingList extends Component {
 	protected int length, lineHeight, scrollingDistance;
@@ -22,8 +23,9 @@ public class ScrollingList extends Component {
 		this.lineHeight = 25;
 	}
 
-	public void addListBar(String name, Runnable onClick, int u, int v, int uWidth, int vHeight, float scale) {
-		list.add(new ListBar(width, lineHeight, name, onClick, u, v, uWidth, vHeight, scale));
+	public void addListBar(String name, ResourceLocation texture, Runnable onClick, int u, int v, int uWidth,
+			int vHeight, float scale) {
+		list.add(new ListBar(width, lineHeight, name, onClick, texture, u, v, uWidth, vHeight, scale));
 		length += lineHeight;
 	}
 
@@ -108,9 +110,10 @@ public class ScrollingList extends Component {
 		protected Runnable event;
 		protected int u, v, uWidth, vHeight;
 		protected float scale;
+		protected ResourceLocation texture;
 
-		public ListBar(int width, int height, String name, Runnable onClick, int u, int v, int uWidth, int vHeight,
-				float scale) {
+		public ListBar(int width, int height, String name, Runnable onClick, ResourceLocation texture, int u, int v,
+				int uWidth, int vHeight, float scale) {
 			this.width = width;
 			this.height = height;
 			this.name = name;
@@ -120,6 +123,7 @@ public class ScrollingList extends Component {
 			this.uWidth = uWidth;
 			this.vHeight = vHeight;
 			this.scale = scale;
+			this.texture = texture;
 		}
 
 		public void doRender(int x, int y, int upCut, int downCut, boolean flag) {
@@ -135,8 +139,8 @@ public class ScrollingList extends Component {
 			y += d;
 			upCut = upCut - d > 0 ? upCut - d : 0;
 			downCut = downCut - d > 0 ? downCut - d : 0;
-			Util.drawTexture(ICONS, x + 7, y + upCut, u, v + upCut * 2, uWidth, vHeight - (upCut + downCut) * 2, scale);
-
+			Util.drawTexture(texture, x + 7, y + upCut, u, v + upCut * 2, uWidth, vHeight - (upCut + downCut) * 2,
+					scale);
 		}
 	}
 }

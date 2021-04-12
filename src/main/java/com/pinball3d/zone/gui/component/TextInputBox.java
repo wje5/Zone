@@ -11,10 +11,9 @@ import net.minecraft.client.gui.GuiScreen;
 
 public class TextInputBox extends Component {
 	public String text = "";
-	public int maxLength;
+	public int maxLength, flag, maxNumber = Integer.MAX_VALUE;
 	protected Runnable event, onInput;
 	public boolean isFocus;
-	public int flag;
 	public boolean isPixel;
 
 	public TextInputBox(IHasComponents parent, int x, int y, int width, int maxLength, Runnable onClick) {
@@ -40,6 +39,11 @@ public class TextInputBox extends Component {
 
 	public TextInputBox setIsPixel(boolean flag) {
 		isPixel = flag;
+		return this;
+	}
+
+	public TextInputBox setMaxNumber(int max) {
+		maxNumber = max;
 		return this;
 	}
 
@@ -77,6 +81,11 @@ public class TextInputBox extends Component {
 				if (text.length() > maxLength) {
 					text = text.substring(0, maxLength);
 				}
+				if (flag == 4 && !text.isEmpty()) {
+					int number = Integer.valueOf(text);
+					number = maxNumber < number ? maxNumber : number;
+					text = String.valueOf(number);
+				}
 				if (onInput != null) {
 					onInput.run();
 				}
@@ -91,6 +100,11 @@ public class TextInputBox extends Component {
 				if (isPixel) {
 					if (Util.getFontRenderer().getStringWidth(text + typedChar) <= maxLength) {
 						text += typedChar;
+						if (flag == 4 && !text.isEmpty()) {
+							int number = Integer.valueOf(text);
+							number = maxNumber < number ? maxNumber : number;
+							text = String.valueOf(number);
+						}
 						if (onInput != null) {
 							onInput.run();
 						}
@@ -98,6 +112,15 @@ public class TextInputBox extends Component {
 					}
 				} else if (text.length() < maxLength) {
 					text += typedChar;
+					if (flag == 4 && !text.isEmpty()) {
+						try {
+							int number = Integer.valueOf(text);
+							number = maxNumber < number ? maxNumber : number;
+							text = String.valueOf(number);
+						} catch (NumberFormatException e) {
+							text = String.valueOf(maxNumber);
+						}
+					}
 					if (onInput != null) {
 						onInput.run();
 					}

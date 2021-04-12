@@ -143,6 +143,9 @@ public class QueueChart extends Component {
 			Gui.drawRect(0, 0, width, height, 0x651CC3B5);
 			GlStateManager.depthFunc(GL11.GL_LEQUAL);
 			GlStateManager.translate(xOffset, yOffset, 0);
+			if (mouseX < 0 || mouseX > height || mouseY < 0 || mouseY > height) {
+				mouseX = Integer.MIN_VALUE;
+			}
 			GlStateManager.scale(scale, scale, 1.0F);
 		}
 		root.doRender(0, 0, 0, 0, (int) ((mouseX - xOffset) / scale), (int) ((mouseY - yOffset) / scale));
@@ -289,6 +292,10 @@ public class QueueChart extends Component {
 	@Override
 	public boolean getRenderLast() {
 		return true;
+	}
+
+	public ChartNode getRoot() {
+		return root;
 	}
 
 	public static class ChartNode {

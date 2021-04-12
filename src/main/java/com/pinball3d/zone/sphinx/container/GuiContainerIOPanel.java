@@ -69,9 +69,8 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 	@Override
 	public void addComponents() {
 		super.addComponents();
-		components.add(box = new TextInputBox(this, panelX + 7, panelY + 7, 61, 15, 55, () -> {
-			box.isFocus = true;
-		}).setIsPixel(true));
+		components.add(box = new TextInputBox(this, panelX + 7, panelY + 7, 61, 15, 55, () -> box.isFocus = true)
+				.setIsPixel(true));
 		components.add(new TexturedButton(this, panelX + 15, panelY + 201, ICONS, 92, 32, 5, 9, 1.0F, () -> {
 			page = page - 1 < 1 ? maxPage : page - 1;
 		}));

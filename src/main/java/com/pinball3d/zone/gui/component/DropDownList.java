@@ -9,6 +9,7 @@ import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class DropDownList extends Component {
 	public int index = 0;
@@ -67,6 +68,8 @@ public class DropDownList extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0, 0, 400F);
 		FontRenderer renderer = Util.getFontRenderer();
 		Util.drawBorder(0, 0, width, 15, 1, 0xFF1ECCDE);
 		if (!list.isEmpty()) {
@@ -82,6 +85,7 @@ public class DropDownList extends Component {
 			}
 		}
 		Util.drawTexture(ICONS, width - 11, 0, 196, 41, 11, 15, 1.0F);
+		GlStateManager.popMatrix();
 	}
 
 	public class ListBar {

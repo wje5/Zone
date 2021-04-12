@@ -133,7 +133,6 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
 		RenderItem ir = ((GuiContainerIOPanel) parent).getItemRenderer();
-		ir.zLevel = 400.0F;
 		RenderHelper.enableGUIStandardItemLighting();
 		GlStateManager.disableLighting();
 		GlStateManager.enableRescaleNormal();
@@ -163,6 +162,14 @@ public class SubscreenIOPanelRequest extends Subscreen {
 		GlStateManager.enableBlend();
 		GlStateManager.popMatrix();
 		super.doRenderForeground(mouseX, mouseY);
+	}
+
+	@Override
+	public void doRender(int mouseX, int mouseY) {
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0, 0, 400F);
+		super.doRender(mouseX, mouseY);
+		GlStateManager.popMatrix();
 	}
 
 	@Override

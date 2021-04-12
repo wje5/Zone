@@ -46,6 +46,7 @@ public class NetworkHandler {
 		registerMessage(MessageDeleteUser.Handler.class, MessageDeleteUser.class, Side.SERVER);
 		registerMessage(MessageReviewUser.Handler.class, MessageReviewUser.class, Side.SERVER);
 		registerMessage(MessageTransferAdmin.Handler.class, MessageTransferAdmin.class, Side.SERVER);
+		registerMessage(MessageRescanRecipes.Handler.class, MessageRescanRecipes.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(
