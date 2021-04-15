@@ -1,4 +1,4 @@
-package com.pinball3d.zone.manual.component;
+package com.pinball3d.zone.manual;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

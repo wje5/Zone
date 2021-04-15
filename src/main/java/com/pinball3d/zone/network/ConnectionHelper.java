@@ -158,7 +158,8 @@ public class ConnectionHelper {
 		public WorldPos needNetwork;
 		public Set<Type> reqDataType;
 		public ConnectType connectType;
-		public int mapRefreshColddown, packRefreshColddown, itemRefreshColddown, classifyRefreshColddown, logUpdateRate;
+		public int mapRefreshColddown, packRefreshColddown, itemRefreshColddown, classifyRefreshColddown,
+				logRefreshColddown, oreDictionaryRefreshColddown;
 
 		private Connect(EntityPlayer player, UUID network, WorldPos needNetwork, ConnectType connectType,
 				Type... types) {
@@ -248,7 +249,7 @@ public class ConnectionHelper {
 	public static enum Type {
 		NETWORKUUID, ITEMS, NETWORKPOS, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
 		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY, USERS, LOGS,
-		NEEDNETWORKSERIAL, ENERGY;
+		NEEDNETWORKSERIAL, ENERGY, OREDICTIONARY;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
 			WorldPos pos = WorldPos.ORIGIN;
@@ -272,13 +273,11 @@ public class ConnectionHelper {
 								: new UUID(0, 0));
 				break;
 			case ITEMS:
-				if (te != null) {
-					if (connect.itemRefreshColddown <= 0) {
-						tag.setTag(name(), te.getNetworkUseableItems().writeToNBT(new NBTTagCompound()));
-						connect.itemRefreshColddown += ConfigLoader.itemUpdateRate;
-					}
-					connect.itemRefreshColddown--;
+				if (te != null && connect.itemRefreshColddown <= 0) {
+					tag.setTag(name(), te.getNetworkUseableItems().writeToNBT(new NBTTagCompound()));
+					connect.itemRefreshColddown += ConfigLoader.itemUpdateRate;
 				}
+				connect.itemRefreshColddown = connect.itemRefreshColddown - 1 < 0 ? 0 : connect.itemRefreshColddown - 1;
 				break;
 			case NETWORKPOS:
 				tag.setTag(name(), pos.writeToNBT(new NBTTagCompound()));
@@ -287,22 +286,18 @@ public class ConnectionHelper {
 				tag.setTag(name(), SphinxUtil.getValidNetworkData(new WorldPos(player), player, true));
 				break;
 			case MAP:
-				if (te != null) {
-					if (connect.mapRefreshColddown <= 0) {
-						tag.setTag(name(), te.genMapData(player, new NBTTagCompound()));
-						connect.mapRefreshColddown += ConfigLoader.mapUpdateRate;
-					}
-					connect.mapRefreshColddown--;
+				if (te != null && connect.mapRefreshColddown <= 0) {
+					tag.setTag(name(), te.genMapData(player, new NBTTagCompound()));
+					connect.mapRefreshColddown += ConfigLoader.mapUpdateRate;
 				}
+				connect.mapRefreshColddown = connect.mapRefreshColddown - 1 < 0 ? 0 : connect.mapRefreshColddown - 1;
 				break;
 			case PACK:
-				if (te != null) {
-					if (connect.packRefreshColddown <= 0) {
-						tag.setTag(name(), te.genPackData(player, new NBTTagCompound()));
-						connect.packRefreshColddown += ConfigLoader.packUpdateRate;
-					}
-					connect.packRefreshColddown--;
+				if (te != null && connect.packRefreshColddown <= 0) {
+					tag.setTag(name(), te.genPackData(player, new NBTTagCompound()));
+					connect.packRefreshColddown += ConfigLoader.packUpdateRate;
 				}
+				connect.packRefreshColddown = connect.packRefreshColddown - 1 < 0 ? 0 : connect.packRefreshColddown - 1;
 				break;
 			case NEEDNETWORKVALIDNETWORK:
 				if (needNetwork != null) {
@@ -352,20 +347,19 @@ public class ConnectionHelper {
 				}
 				break;
 			case CLASSIFY:
-				if (te != null) {
-					if (connect.classifyRefreshColddown <= 0) {
-						NBTTagList list = new NBTTagList();
-						te.getClassifyGroups().forEach((k, v) -> {
-							NBTTagCompound t = new NBTTagCompound();
-							t.setInteger("id", k);
-							t.setTag("group", v.writeToNBT(new NBTTagCompound()));
-							list.appendTag(t);
-						});
-						tag.setTag(name(), list);
-						connect.classifyRefreshColddown += ConfigLoader.classifyUpdateRate;
-					}
-					connect.classifyRefreshColddown--;
+				if (te != null && connect.classifyRefreshColddown <= 0) {
+					NBTTagList list = new NBTTagList();
+					te.getClassifyGroups().forEach((k, v) -> {
+						NBTTagCompound t = new NBTTagCompound();
+						t.setInteger("id", k);
+						t.setTag("group", v.writeToNBT(new NBTTagCompound()));
+						list.appendTag(t);
+					});
+					tag.setTag(name(), list);
+					connect.classifyRefreshColddown += ConfigLoader.classifyUpdateRate;
 				}
+				connect.classifyRefreshColddown = connect.classifyRefreshColddown - 1 < 0 ? 0
+						: connect.classifyRefreshColddown;
 				break;
 			case USERS:
 				if (te != null) {
@@ -378,18 +372,16 @@ public class ConnectionHelper {
 				}
 				break;
 			case LOGS:
-				if (te != null) {
-					if (connect.logUpdateRate <= 0) {
-						NBTTagList list = new NBTTagList();
-						for (Log e : te.getLogCache()) {
-							e.check(te);
-							list.appendTag(e.writeToNBT(new NBTTagCompound()));
-						}
-						tag.setTag(name(), list);
-						connect.logUpdateRate += ConfigLoader.logUpdateRate;
+				if (te != null && connect.logRefreshColddown <= 0) {
+					NBTTagList list = new NBTTagList();
+					for (Log e : te.getLogCache()) {
+						e.check(te);
+						list.appendTag(e.writeToNBT(new NBTTagCompound()));
 					}
-					connect.logUpdateRate--;
+					tag.setTag(name(), list);
+					connect.logRefreshColddown += ConfigLoader.logUpdateRate;
 				}
+				connect.logRefreshColddown = connect.logRefreshColddown - 1 < 0 ? 0 : connect.logRefreshColddown;
 				break;
 			case NEEDNETWORKSERIAL:
 				if (te != null && needNetwork != null) {
@@ -404,6 +396,22 @@ public class ConnectionHelper {
 				if (te != null) {
 					tag.setInteger(name(), te.getEnergy());
 				}
+				break;
+			case OREDICTIONARY:
+				if (te != null && connect.oreDictionaryRefreshColddown <= 0) {
+					NBTTagList oreDictionaryList = new NBTTagList();
+					te.getOreDictionarys().forEach((k, v) -> {
+						NBTTagCompound t = new NBTTagCompound();
+						t.setInteger("id", k);
+						t.setTag("data", v.writeToNBT(new NBTTagCompound()));
+						oreDictionaryList.appendTag(t);
+					});
+					tag.setTag(name(), oreDictionaryList);
+					connect.oreDictionaryRefreshColddown += ConfigLoader.oreDictionaryUpdateRate;
+				}
+				connect.oreDictionaryRefreshColddown = connect.oreDictionaryRefreshColddown - 1 < 0 ? 0
+						: connect.oreDictionaryRefreshColddown;
+				break;
 			}
 		}
 	}

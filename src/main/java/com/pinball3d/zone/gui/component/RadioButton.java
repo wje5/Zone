@@ -36,6 +36,6 @@ public class RadioButton extends Component {
 	@Override
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
-		Util.drawTexture(TEXTURE_4, 0, 0, isChoosed ? 120 : 60, 180, 60, 60, 0.13F);
+		Util.drawTexture(ICONS_4, 0, 0, isChoosed ? 120 : 60, 180, 60, 60, 0.13F);
 	}
 }

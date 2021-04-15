@@ -14,6 +14,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.pinball3d.zone.ChunkHandler;
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
@@ -30,9 +31,13 @@ import com.pinball3d.zone.sphinx.IProduction;
 import com.pinball3d.zone.sphinx.IStorable;
 import com.pinball3d.zone.sphinx.LogisticPack;
 import com.pinball3d.zone.sphinx.LogisticPack.Path;
-import com.pinball3d.zone.sphinx.RecipeType;
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.SerialNumber.Type;
+import com.pinball3d.zone.sphinx.crafting.CraftingIngredent;
+import com.pinball3d.zone.sphinx.crafting.CraftingIngredentItem;
+import com.pinball3d.zone.sphinx.crafting.OreDictionaryData;
+import com.pinball3d.zone.sphinx.crafting.RecipeType;
+import com.pinball3d.zone.sphinx.crafting.SphinxRecipe;
 import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.sphinx.log.LogConnectToNetwork;
 import com.pinball3d.zone.sphinx.log.LogDisconnectFromNetwork;
@@ -57,6 +62,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
@@ -65,11 +71,14 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.OreIngredient;
 
 public class TEProcessingCenter extends TileEntity implements ITickable, IChunkLoader {
 	private boolean on, inited;
@@ -102,12 +111,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	private double[][] map;
 	private Map<Integer, ClassifyGroup> classifyGroups = new TreeMap<Integer, ClassifyGroup>();
 	private Map<Integer, RecipeType> recipeTypes = new TreeMap<Integer, RecipeType>();
+	private Map<Integer, SphinxRecipe> recipes = new TreeMap<Integer, SphinxRecipe>();
+	private Map<Integer, OreDictionaryData> oreDictionarys = new TreeMap<Integer, OreDictionaryData>();
 	private boolean mapDirty;
 	private Map<WorldPos, List<Path>> dijkstraCache = new HashMap<WorldPos, List<Path>>();
 	private Map<UUID, UserData> users = new HashMap<UUID, UserData>();
 	private Queue<Log> logCache = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);
 	private int logId, nodeId, storageId, deviceId, productionId, packId, classifyGroupId, warningStorageFullCD,
-			recipeTypeId = 100;
+			recipeTypeId = 100, recipeId, oreDictionaryId;
 
 	public TEProcessingCenter() {
 
@@ -1097,20 +1108,82 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public void rescanRecipes() {
 		initRecipeType();
+		initOreDictionary();
 		Iterator<IRecipe> it = CraftingManager.REGISTRY.iterator();
 		while (it.hasNext()) {
 			IRecipe i = it.next();
-
+			CraftingIngredent[] data = new CraftingIngredent[10];
+			NonNullList<Ingredient> list = i.getIngredients();
+			if (!list.isEmpty()) {
+				for (int j = 0; j < list.size(); j++) {
+					Ingredient in = list.get(j);
+					ItemStack[] s = in.getMatchingStacks();
+					if (s.length > 1) {
+						if (!(in instanceof OreIngredient)) {
+							addOreDictionary(
+									new OreDictionaryData(null, Stream.of(s).map(e -> new CraftingIngredentItem(e))
+											.collect(Collectors.toList()).toArray(new CraftingIngredentItem[] {})));
+						}
+					} else if (s.length == 1) {
+						ItemStack stack = s[0];
+						data[j] = new CraftingIngredentItem(stack);
+					}
+				}
+				data[9] = new CraftingIngredentItem(i.getRecipeOutput());
+				SphinxRecipe r = new SphinxRecipe(RecipeType.BasicType.MINECRAFT_WORKBENCH.ordinal(), data);
+				addRecipe(r);
+			}
 		}
+	}
+
+	public void addRecipe(SphinxRecipe recipe) {
+		Iterator<SphinxRecipe> it = recipes.values().iterator();
+		while (it.hasNext()) {
+			SphinxRecipe i = it.next();
+			if (i.equals(recipe)) {
+				return;
+			}
+		}
+		recipes.put(recipeId++, recipe);
 	}
 
 	public void initRecipeType() {
 		recipeTypes.clear();
+		recipeTypeId = 100;
 		recipeTypes.put(RecipeType.BasicType.MINECRAFT_WORKBENCH.ordinal(), new RecipeType(
 				RecipeType.BasicType.MINECRAFT_WORKBENCH.ordinal(), "tile.workbench.name", true, 1, new int[] { 10 }));
 		recipeTypes.put(RecipeType.BasicType.MINECRAFT_FURNACE.ordinal(), new RecipeType(
 				RecipeType.BasicType.MINECRAFT_FURNACE.ordinal(), "tile.furnace.name", true, 1, new int[] { 3 }));
-		System.out.println(recipeTypes);
+	}
+
+	public void initOreDictionary() {
+		oreDictionarys.clear();
+		oreDictionaryId = 0;
+		String[] names = OreDictionary.getOreNames();
+		for (String name : names) {
+			NonNullList<ItemStack> list = OreDictionary.getOres(name);
+			addOreDictionary(new OreDictionaryData(name, list.stream().map(e -> new CraftingIngredentItem(e))
+					.collect(Collectors.toList()).toArray(new CraftingIngredentItem[] {})));
+		}
+	}
+
+	public void addOreDictionary(OreDictionaryData data) {
+		Iterator<Entry<Integer, OreDictionaryData>> it = oreDictionarys.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<Integer, OreDictionaryData> i = it.next();
+			if (data.getName() != null && data.getName().equals(i.getValue().getName())) {
+				oreDictionarys.put(i.getKey(), data);
+				return;
+			}
+			if (i.getValue().equals(data)) {
+				return;
+			}
+		}
+		oreDictionarys.put(oreDictionaryId++, data);
+	}
+
+	public Map<Integer, OreDictionaryData> getOreDictionarys() {
+		return oreDictionarys;
 	}
 
 	public void load() {
@@ -1212,6 +1285,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		inited = compound.getBoolean("inited");
 		warningStorageFullCD = compound.getInteger("warningStorageFullCD");
 		recipeTypeId = compound.getInteger("recipeTypeId");
+		oreDictionaryId = compound.getInteger("oreDictionaryId");
 		nodes.clear();
 		NBTTagList list = compound.getTagList("nodes", 10);
 		list.forEach(e -> {
@@ -1293,6 +1367,30 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 						ex);
 			}
 		});
+		recipes.clear();
+		list = compound.getTagList("recipes", 10);
+		list.forEach(e -> {
+			try {
+				recipes.put(((NBTTagCompound) e).getInteger("id"),
+						new SphinxRecipe(((NBTTagCompound) e).getCompoundTag("data")));
+			} catch (Exception ex) {
+				Zone.logger.error("Recipe " + Util.DATA_CORRUPTION
+						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
+						ex);
+			}
+		});
+		oreDictionarys.clear();
+		list = compound.getTagList("oreDictionarys", 10);
+		list.forEach(e -> {
+			try {
+				oreDictionarys.put(((NBTTagCompound) e).getInteger("id"),
+						new OreDictionaryData(((NBTTagCompound) e).getCompoundTag("data")));
+			} catch (Exception ex) {
+				Zone.logger.error("Ore Dictionary Data " + Util.DATA_CORRUPTION
+						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
+						ex);
+			}
+		});
 		super.readFromNBT(compound);
 	}
 
@@ -1314,6 +1412,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		compound.setBoolean("inited", inited);
 		compound.setInteger("warningStorageFullCD", warningStorageFullCD);
 		compound.setInteger("recipeTypeId", recipeTypeId);
+		compound.setInteger("recipeId", recipeId);
+		compound.setInteger("oreDictionaryId", oreDictionaryId);
 		NBTTagList nodeList = new NBTTagList();
 		nodes.forEach(e -> {
 			e.check(this);
@@ -1429,6 +1529,41 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 		});
 		compound.setTag("recipeTypes", recipeTypeList);
+		NBTTagList recipeList = new NBTTagList();
+		recipes.forEach((k, v) -> {
+			try {
+				NBTTagCompound t = new NBTTagCompound();
+				t.setInteger("id", k);
+				t.setTag("data", v.writeToNBT(new NBTTagCompound()));
+				recipeList.appendTag(t);
+			} catch (Exception ex) {
+				String name = Util.DATA_CORRUPTION;
+				Zone.logger.error(
+						"Recipe {} has throw an exception trying to write state. It's network data will be removed.",
+						name, ex);
+			}
+		});
+		compound.setTag("recipes", recipeList);
+		NBTTagList oreDictionaryList = new NBTTagList();
+		oreDictionarys.forEach((k, v) -> {
+			try {
+				NBTTagCompound t = new NBTTagCompound();
+				t.setInteger("id", k);
+				t.setTag("data", v.writeToNBT(new NBTTagCompound()));
+				oreDictionaryList.appendTag(t);
+			} catch (Exception ex) {
+				String name = Util.DATA_CORRUPTION;
+				try {
+					name = v.getName() == null ? Util.DATA_CORRUPTION : v.getName();
+				} catch (Exception ex2) {
+
+				}
+				Zone.logger.error(
+						"Recipe {} has throw an exception trying to write state. It's network data will be removed.",
+						name, ex);
+			}
+		});
+		compound.setTag("oreDictionarys", oreDictionaryList);
 		return super.writeToNBT(compound);
 	}
 

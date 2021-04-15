@@ -1,7 +1,6 @@
 package com.pinball3d.zone.manual;
 
 import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.manual.component.SlotItemFrame;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

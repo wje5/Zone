@@ -8,22 +8,22 @@ import java.util.function.Predicate;
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
 
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.ResourceLocation;
 
-public class ScrollingEdgeList extends Component {
+public class ScrollingEdgeTextureList extends Component {
 	public int scrollingDistance;
 	public List<ListBar> list = new ArrayList<ListBar>();
-	private int stretch;
 	public int index;
 	private boolean nullable;
 	private Predicate<Integer> onChange;
 
-	public ScrollingEdgeList(IHasComponents parent, int x, int y, int height) {
-		super(parent, x, y, 56, height);
+	public ScrollingEdgeTextureList(IHasComponents parent, int x, int y, int height) {
+		super(parent, x, y, 20, height);
 	}
 
-	public void addBar(String title, Runnable onClick) {
-		list.add(new ListBar(title, onClick));
+	public void addBar(ResourceLocation texture, int width, int height, int u, int v, int uWidth, int vHeight,
+			Runnable onClick) {
+		list.add(new ListBar(texture, width, height, u, v, uWidth, vHeight, onClick));
 	}
 
 	public void addBar(ListBar bar) {
@@ -38,7 +38,7 @@ public class ScrollingEdgeList extends Component {
 		return list.isEmpty();
 	}
 
-	public ScrollingEdgeList setNullable(boolean nullable) {
+	public ScrollingEdgeTextureList setNullable(boolean nullable) {
 		this.nullable = nullable;
 		index = -1;
 		return this;
@@ -48,7 +48,7 @@ public class ScrollingEdgeList extends Component {
 		return list.size() > index && index >= 0 ? list.get(index) : null;
 	}
 
-	public ScrollingEdgeList setOnChange(Predicate<Integer> onChange) {
+	public ScrollingEdgeTextureList setOnChange(Predicate<Integer> onChange) {
 		this.onChange = onChange;
 		return this;
 	}
@@ -66,29 +66,19 @@ public class ScrollingEdgeList extends Component {
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
 		Iterator<ListBar> it = list.iterator();
-		FontRenderer fr = Util.getFontRenderer();
 		int index = 0;
 		while (it.hasNext()) {
 			ListBar e = it.next();
-			int posY = index * 15 - scrollingDistance;
+			int posY = index * 25 - scrollingDistance;
 			int cutUp = posY < 0 ? -posY : 0;
 			int cutDown = posY + 13 - height > 0 ? posY + 13 - height : 0;
 			if (cutUp < 13 && cutDown < 13) {
-				Util.drawTexture(ICONS, (this.index == index ? 0 : 43 - stretch) - 3, posY + cutUp - 3, 0,
-						187 + cutUp * 4, (this.index == index ? 225 : stretch * 4 + 52) + 19,
-						(50 - cutUp * 4 - cutDown * 4) + 19, 0.25F);
-				if (cutUp <= 3 && cutDown <= 3 && (this.index == index || stretch > 7)) {
-					String text = Util.formatString(e.title);
-					text = Util.formatStringToWidth(fr, text, this.index == index ? 36 : stretch - 7);
-					Util.renderGlowString(text, this.index == index ? 20 : 63 - stretch, 3 + posY);
-				}
+				Util.drawTexture(ICONS_5, (this.index == index ? 0 : 4) - 4, posY + cutUp - 3, 180, 60 + cutUp * 2,
+						(this.index == index ? 52 : 39), (40 - cutUp * 4 - cutDown * 4) + 11, 0.5F);
+				Util.drawTexture(e.texture, this.index == index ? 5 : 9, posY + 5, e.width, e.height, e.u, e.v,
+						e.uWidth, e.vHeight);
 			}
 			index++;
-		}
-		if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-			stretch = stretch + 5 >= 28 ? 28 : stretch + 5;
-		} else {
-			stretch = 0;
 		}
 	}
 
@@ -105,7 +95,7 @@ public class ScrollingEdgeList extends Component {
 		y += scrollingDistance;
 		while (it.hasNext()) {
 			ListBar e = it.next();
-			if (y >= index * 15 && y <= index * 15 + 13) {
+			if (y >= index * 25 && y <= index * 25 + 20) {
 				if (index != this.index) {
 					if (onChange == null || onChange.test(index)) {
 						e.event.run();
@@ -163,12 +153,20 @@ public class ScrollingEdgeList extends Component {
 	}
 
 	public static class ListBar {
-		public String title;
+		protected ResourceLocation texture;
+		protected int width, height, u, v, uWidth, vHeight;
 		private Runnable event;
 		private Object data;
 
-		public ListBar(String name, Runnable onClick) {
-			title = name;
+		public ListBar(ResourceLocation texture, int width, int height, int u, int v, int uWidth, int vHeight,
+				Runnable onClick) {
+			this.texture = texture;
+			this.width = width;
+			this.height = height;
+			this.u = u;
+			this.v = v;
+			this.uWidth = uWidth;
+			this.vHeight = vHeight;
 			event = onClick;
 		}
 

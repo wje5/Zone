@@ -16,6 +16,7 @@ import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.crafting.OreDictionaryData;
 import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.sphinx.map.MapHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
@@ -51,6 +52,7 @@ public class ConnectHelperClient {
 	private List<UserData> users = new ArrayList<UserData>();
 	private Queue<Log> logs = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);
 	private SerialNumber needNetworkSerial;
+	private Map<Integer, OreDictionaryData> oreDictionarys = new TreeMap<Integer, OreDictionaryData>();
 
 	public void setData(UUID network, NBTTagCompound data, Set<Type> types) {
 		if (!this.types.equals(types)) {
@@ -155,6 +157,15 @@ public class ConnectHelperClient {
 				case ENERGY:
 					energy = data.getInteger(e.name());
 					break;
+				case OREDICTIONARY:
+					if (data.hasKey(e.name())) {
+						oreDictionarys.clear();
+						NBTTagList oreDictionarysList = data.getTagList(e.name(), 10);
+						oreDictionarysList.forEach(l -> {
+							NBTTagCompound t = (NBTTagCompound) l;
+							oreDictionarys.put(t.getInteger("id"), new OreDictionaryData(t.getCompoundTag("data")));
+						});
+					}
 				}
 			}
 		}
@@ -184,6 +195,7 @@ public class ConnectHelperClient {
 		MapHandler.clear();
 		classify.clear();
 		logs.clear();
+		oreDictionarys.clear();
 	}
 
 	public void disconnect() {
@@ -339,5 +351,9 @@ public class ConnectHelperClient {
 
 	public int getEnergy() {
 		return energy;
+	}
+
+	public Map<Integer, OreDictionaryData> getOreDictionarys() {
+		return oreDictionarys;
 	}
 }

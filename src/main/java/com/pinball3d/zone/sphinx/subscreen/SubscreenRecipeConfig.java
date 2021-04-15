@@ -21,6 +21,9 @@ public class SubscreenRecipeConfig extends Subscreen {
 	public SubscreenRecipeConfig(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 300, 200, true);
 		list = new ScrollingList(this, 16, 24, 268, 170);
+		list.addListBar(I18n.format("sphinx.manage_ore_dictionary"), ICONS_5, () -> {
+			parent.putScreen(new SubscreenManageOreDictionary(parent));
+		}, 60, 60, 60, 60, 0.25F);
 		list.addListBar(I18n.format("sphinx.rescan_recipes"), ICONS_5, () -> {
 			NetworkHandler.instance
 					.sendToServer(MessageRescanRecipes.newMessage(ConnectHelperClient.getInstance().getNetworkPos()));

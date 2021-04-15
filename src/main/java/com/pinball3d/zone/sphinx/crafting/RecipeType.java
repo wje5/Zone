@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx;
+package com.pinball3d.zone.sphinx.crafting;
 
 import net.minecraft.nbt.NBTTagCompound;
 

@@ -39,7 +39,7 @@ public class GuiContainerTerminal extends GuiContainerSphinxAdvanced {
 			@Override
 			public void doRender(int mouseX, int mouseY) {
 				super.doRender(mouseX, mouseY);
-				Util.drawTexture(TEXTURE_4, 0, 0, ConnectHelperClient.getInstance().isConnected() ? 120 : 180, 60, 60,
+				Util.drawTexture(ICONS_4, 0, 0, ConnectHelperClient.getInstance().isConnected() ? 120 : 180, 60, 60,
 						60, 0.25F);
 			}
 		});

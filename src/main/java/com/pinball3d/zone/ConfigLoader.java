@@ -7,7 +7,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class ConfigLoader {
 	private static Configuration config;
 	public static int chunkUpdateRate, mapUpdateRate, packUpdateRate, itemUpdateRate, classifyUpdateRate, logUpdateRate,
-			sphinxLogCache;
+			sphinxLogCache, oreDictionaryUpdateRate;
 	public static boolean disableMachineSound;
 
 	public ConfigLoader(FMLPreInitializationEvent event) {
@@ -31,6 +31,8 @@ public class ConfigLoader {
 		logUpdateRate = config.get(Configuration.CATEGORY_GENERAL, "logUpdateRate", 10, "").getInt();
 		sphinxLogCache = config.get(Configuration.CATEGORY_GENERAL, "sphinxLogCache", 100, "").getInt();
 		disableMachineSound = config.get(Configuration.CATEGORY_GENERAL, "disableMachineSound", false).getBoolean();
+		oreDictionaryUpdateRate = config.get(Configuration.CATEGORY_GENERAL, "oreDictionaryUpdateRate", 50, "")
+				.getInt();
 		config.save();
 		Zone.logger.info("Finished loading config.");
 	}

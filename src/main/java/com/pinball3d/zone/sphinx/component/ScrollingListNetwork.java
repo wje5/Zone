@@ -165,7 +165,7 @@ public class ScrollingListNetwork extends Component {
 			y += 7;
 			upCut = upCut - 7 > 0 ? upCut - 7 : 0;
 			downCut = downCut - 7 > 0 ? downCut - 7 : 0;
-			Util.drawTexture(TEXTURE_4, x + 7, y + upCut, 127, (int) (68 + upCut / 0.25F), 45,
+			Util.drawTexture(ICONS_4, x + 7, y + upCut, 127, (int) (68 + upCut / 0.25F), 45,
 					(int) (45 - (upCut + downCut) / 0.25F), 0.25F);
 			Util.renderGlowString(name, x + 30, y + 2);
 			if (selected) {

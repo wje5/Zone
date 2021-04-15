@@ -270,6 +270,7 @@ sphinx.auto=Auto
 sphinx.more=More...
 sphinx.recipe_config=Recipe Config
 sphinx.rescan_recipes=Rescan Recipes
+sphinx.manage_ore_dictionary=Manage Ore Dictionary
 
 log.send_pack=Logistic pack <0> sent from <1>, via <2>, will delivery <4> in <3>.
 log.recv_pack=Logistic pack <0> sent from <1> has arrived at <4>, via <2>, total time is <3>.

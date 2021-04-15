@@ -25,8 +25,8 @@ public class Container extends Component implements IHasComponents {
 		Iterator<Component> it = components.iterator();
 		while (it.hasNext()) {
 			Component c = it.next();
-			int cX = mouseX - c.getX() + getX();
-			int cY = mouseY - c.getY() + getY();
+			int cX = mouseX - c.getX();
+			int cY = mouseY - c.getY();
 			if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
 				if (c.onClickScreen(cX, cY, isLeft)) {
 					return true;
@@ -45,8 +45,8 @@ public class Container extends Component implements IHasComponents {
 			Iterator<Component> it = components.iterator();
 			while (it.hasNext()) {
 				Component c = it.next();
-				int cX = mouseX - c.getX() + getX();
-				int cY = mouseY - c.getY() + getY();
+				int cX = mouseX - c.getX();
+				int cY = mouseY - c.getY();
 				if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
 					if (c.onDrag(mouseX - c.getX(), mouseY - c.getY(), moveX, moveY)) {
 						draggingComponent = c;
@@ -80,8 +80,8 @@ public class Container extends Component implements IHasComponents {
 		Iterator<Component> it = components.iterator();
 		while (it.hasNext()) {
 			Component c = it.next();
-			int cX = mouseX - c.getX() + getX();
-			int cY = mouseY - c.getY() + getY();
+			int cX = mouseX - c.getX();
+			int cY = mouseY - c.getY();
 			if (cX >= 0 && cX <= c.width && cY >= 0 && cY <= c.height) {
 				if (c.onMouseScroll(mouseX, mouseY, isUp)) {
 					return true;

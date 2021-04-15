@@ -29,8 +29,6 @@ public class ScrollingContainer extends Component implements IHasComponents {
 			return true;
 		}
 		Iterator<Container> it = list.iterator();
-		int yOffset = 0;
-		mouseY += scrollingDistance;
 		while (it.hasNext()) {
 			Container c = it.next();
 			int cX = mouseX - c.getX();
@@ -100,6 +98,20 @@ public class ScrollingContainer extends Component implements IHasComponents {
 	}
 
 	@Override
+	public boolean onMouseScroll(int mouseX, int mouseY, boolean isUp) {
+		if (super.onMouseScroll(mouseX, mouseY, isUp)) {
+			return true;
+		}
+		if (enable != null && !enable.getAsBoolean()) {
+			return false;
+		}
+		scrollingDistance += isUp ? 15 : -15;
+		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
+		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+		return true;
+	}
+
+	@Override
 	public boolean onKeyTyped(char typedChar, int keyCode) {
 		if (super.onKeyTyped(typedChar, keyCode)) {
 			return true;
@@ -136,5 +148,6 @@ public class ScrollingContainer extends Component implements IHasComponents {
 	@Override
 	public void removeComponents() {
 		list.clear();
+		length = 0;
 	}
 }
