@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx.log;
+package com.pinball3d.zone.sphinx.log.component;
 
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.util.Util;

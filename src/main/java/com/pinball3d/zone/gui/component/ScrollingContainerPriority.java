@@ -1,6 +1,7 @@
 package com.pinball3d.zone.gui.component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -14,11 +15,11 @@ import com.pinball3d.zone.util.Util;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 
-public class ScrollingContainer extends Component implements IHasComponents {
-	protected int length, scrollingDistance;
+public class ScrollingContainerPriority extends Component implements IHasComponents {
+	protected int length, scrollingDistance, draggingIndex = -1, dragDistance;
 	protected List<Container> list = new ArrayList<Container>();
 
-	public ScrollingContainer(IHasComponents parent, int x, int y, int width, int height) {
+	public ScrollingContainerPriority(IHasComponents parent, int x, int y, int width, int height) {
 		super(parent, x, y, width, height);
 		this.parent = parent;
 	}
@@ -61,17 +62,24 @@ public class ScrollingContainer extends Component implements IHasComponents {
 				if (renderY <= height && renderY + c.height >= 0) {
 					int renderUpCut = renderY < 0 ? -renderY : 0;
 					int renderDownCut = renderY + c.height - height > 0 ? renderY + c.height - height : 0;
-					boolean flag = mouseX >= 0 && mouseX <= c.width && mouseY > renderY
-							&& mouseY <= renderY + c.height - renderDownCut;
+					boolean flag = mouseX >= 0 && mouseX <= c.width && mouseY > c.getY()
+							&& mouseY <= c.getY() + c.height - renderDownCut;
 					if (i == 1 == c.getRenderLast() && renderUpCut + renderDownCut < c.height) {
 						Util.resetOpenGl();
 						GlStateManager.pushMatrix();
 						c.doRenderScreen(mouseX - c.getX(), mouseY - c.getY());
-						if (flag) {
+						if (flag && c.height >= 12) {
 							Gui.drawRect(c.getX(), c.getY() + renderUpCut, c.getX() + c.width,
 									c.getY() + c.height - renderDownCut, 0x4FFFFFFF);
 						}
 						GlStateManager.popMatrix();
+					}
+					if (i == 1 && c.height >= 12) {
+						int h = (c.height - 12) / 2;
+						Util.drawTexture(ICONS_5, c.getX() + c.width - h - 12,
+								c.getY() + (renderUpCut > h ? renderUpCut : h), 0,
+								120 + (renderUpCut > h ? renderUpCut - h : 0) * 4, 50,
+								50 - (renderUpCut > h ? renderUpCut - h : 0) * 4, 0.25F);
 					}
 				}
 				yOffset += c.height;
@@ -90,10 +98,68 @@ public class ScrollingContainer extends Component implements IHasComponents {
 		if (enable != null && !enable.getAsBoolean()) {
 			return false;
 		}
-		scrollingDistance -= moveY;
-		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
-		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+		if (draggingIndex == -1) {
+			Iterator<Container> it = list.iterator();
+			int index = 0;
+			while (it.hasNext()) {
+				Container c = it.next();
+				if (c.height >= 12) {
+					int cX = mouseX - c.getX();
+					int cY = mouseY - c.getY();
+					int h = (c.height - 12) / 2;
+					if (cX >= c.getX() + c.width - h - 12 && cX <= c.getX() + c.width - h && cY >= h
+							&& cY <= c.height - h) {
+						draggingIndex = index;
+						break;
+					}
+				}
+				index++;
+			}
+		}
+		if (draggingIndex != -1) {
+			dragDistance += moveY;
+			if (moveY < 0 && draggingIndex > 0) {
+				Container c = list.get(draggingIndex - 1);
+				Container d = list.get(draggingIndex);
+				if (c.getY() + c.height / 2 > d.getY() + d.height / 2) {
+					dragDistance = 0;
+					Collections.swap(list, draggingIndex - 1, draggingIndex);
+					int y = c.getY() + d.height + scrollingDistance;
+					c.setYSupplier(() -> y - scrollingDistance
+							+ (draggingIndex != -1 && list.indexOf(c) == draggingIndex ? dragDistance : 0));
+					int y2 = d.getY() - c.height + scrollingDistance;
+					d.setYSupplier(() -> y2 - scrollingDistance
+							+ (draggingIndex != -1 && list.indexOf(d) == draggingIndex ? dragDistance : 0));
+					draggingIndex--;
+				}
+			} else if (moveY > 0 && draggingIndex < list.size() - 1) {
+				Container c = list.get(draggingIndex + 1);
+				Container d = list.get(draggingIndex);
+				if (c.getY() + c.height / 2 < d.getY() + d.height / 2) {
+					dragDistance = 0;
+					Collections.swap(list, draggingIndex, draggingIndex + 1);
+					int y = c.getY() - d.height + scrollingDistance;
+					c.setYSupplier(() -> y - scrollingDistance
+							+ (draggingIndex != -1 && list.indexOf(c) == draggingIndex ? dragDistance : 0));
+					int y2 = d.getY() + c.height + scrollingDistance;
+					d.setYSupplier(() -> y2 - scrollingDistance
+							+ (draggingIndex != -1 && list.indexOf(d) == draggingIndex ? dragDistance : 0));
+					draggingIndex++;
+				}
+			}
+		} else {
+			scrollingDistance -= moveY;
+			scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
+			scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+		}
 		return true;
+	}
+
+	@Override
+	public void onStopDrag() {
+		super.onStopDrag();
+		dragDistance = 0;
+		draggingIndex = -1;
 	}
 
 	@Override
@@ -125,6 +191,10 @@ public class ScrollingContainer extends Component implements IHasComponents {
 		return false;
 	}
 
+	public List<Container> getList() {
+		return list;
+	}
+
 	@Deprecated
 	@Override
 	public Set<Component> getComponents() {
@@ -137,7 +207,8 @@ public class ScrollingContainer extends Component implements IHasComponents {
 			list.add((Container) c);
 			c.setX(0);
 			int a = length;
-			c.setYSupplier(() -> a - scrollingDistance);
+			c.setYSupplier(() -> a - scrollingDistance
+					+ (draggingIndex != -1 && list.indexOf(c) == draggingIndex ? dragDistance : 0));
 			length += c.height;
 		} else {
 			throw new IllegalArgumentException();

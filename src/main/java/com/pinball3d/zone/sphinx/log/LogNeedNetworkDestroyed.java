@@ -1,6 +1,8 @@
 package com.pinball3d.zone.sphinx.log;
 
 import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.log.component.LogComponentNeedNetwork;
+import com.pinball3d.zone.sphinx.log.component.LogComponentPos;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 

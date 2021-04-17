@@ -3,6 +3,9 @@ package com.pinball3d.zone.sphinx.log;
 import java.util.UUID;
 
 import com.pinball3d.zone.sphinx.ClassifyGroup;
+import com.pinball3d.zone.sphinx.log.component.LogComponentClassify;
+import com.pinball3d.zone.sphinx.log.component.LogComponentPlayer;
+import com.pinball3d.zone.sphinx.log.component.LogComponentString;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.entity.player.EntityPlayer;

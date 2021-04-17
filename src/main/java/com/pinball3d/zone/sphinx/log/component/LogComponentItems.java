@@ -1,17 +1,17 @@
-package com.pinball3d.zone.sphinx.log;
+package com.pinball3d.zone.sphinx.log.component;
 
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenViewItems;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;
 
-public class LogComponentPack extends LogComponent {
-	private int id;
+import net.minecraft.client.resources.I18n;
+
+public class LogComponentItems extends LogComponent {
 	private StorageWrapper items;
 
-	public LogComponentPack(int id, StorageWrapper items) {
-		super(Type.PACK);
-		this.id = id;
+	public LogComponentItems(StorageWrapper items) {
+		super(Type.ITEMS);
 		this.items = items;
 	}
 
@@ -24,6 +24,6 @@ public class LogComponentPack extends LogComponent {
 
 	@Override
 	public String toString() {
-		return "P" + id;
+		return I18n.format("log.items", items.getCount());
 	}
 }

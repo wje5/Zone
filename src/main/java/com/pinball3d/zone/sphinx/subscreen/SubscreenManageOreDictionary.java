@@ -1,5 +1,7 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,13 +56,19 @@ public class SubscreenManageOreDictionary extends Subscreen {
 
 	private Container genBar(int id, OreDictionaryData data) {
 		Container c = new Container(list, 0, 0, 268, 25);
-		CraftingIngredentItem[] items = data.getItems();
-		for (int i = 0; i < 7 && i < items.length; i++) {
-			c.addComponent(new ItemShow(c, 4 + i * 20, 4, items[i].createStack(), items[i].getCount()));
+		List<CraftingIngredentItem> allItems = new ArrayList<CraftingIngredentItem>();
+		for (CraftingIngredentItem i : data.getItems()) {
+			allItems.add(i);
+		}
+		for (CraftingIngredentItem i : data.getDisableItems()) {
+			allItems.add(i);
+		}
+		for (int i = 0; i < 7 && i < allItems.size(); i++) {
+			c.addComponent(new ItemShow(c, 4 + i * 20, 4, allItems.get(i).createStack(), allItems.get(i).getCount()));
 		}
 		c.addComponent(new Text(c, 146, 9, data.getName()));
 		c.addComponent(new Button(c, 0, 0, 268, 25,
-				() -> parent.putScreen(new SubscreenManageOreDictionaryPriority(parent, data))));
+				() -> parent.putScreen(new SubscreenManageOreDictionaryPriority(parent, data, id))));
 		list.addComponent(c);
 		return c;
 	}
@@ -70,7 +78,9 @@ public class SubscreenManageOreDictionary extends Subscreen {
 		if (ConnectHelperClient.getInstance().hasData()) {
 			Map<Integer, OreDictionaryData> map = ConnectHelperClient.getInstance().getOreDictionarys();
 			map.forEach((k, v) -> {
-				genBar(k, v);
+				if (v.getName() == null == (edgeList.index == 0)) {
+					genBar(k, v);
+				}
 			});
 		}
 	}

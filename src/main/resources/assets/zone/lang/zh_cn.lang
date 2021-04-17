@@ -295,6 +295,7 @@ log.sphinx_shutdown_energy=<0>非正常关闭，原因：能量不足。
 log.sphinx_shutdown_structure=<0>非正常关闭，原因：结构遭到破坏。
 log.pack_lost=于<1>处发出的物流包<0>经<2>在<3>处丢失。
 log.recv_pack_full=于<1>处发出的物流包<0>已到达<4>，途经<2>，共计用时<3>，其中的<5>无法存入网络。
+log.change_name=系统名称已被更改为<0>，操作者：<1>。
 log.items=%1$s个物品
 
 manual.preface=   欢迎使用Zone!\n\n目前这个Mod带来了：\n*一个能增产矿物的坩埚\n*一个能更换头部的钻头\n*将矿石粉碎成32份的打粉机\n*更多的增产（7倍！）\n*能在各种意义上把人打成筛子\n的射钉枪\n*一艘可爱的潜水艇\n*伟大的史芬斯©系统\n*还有更多...

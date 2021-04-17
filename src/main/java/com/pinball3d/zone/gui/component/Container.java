@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 public class Container extends Component implements IHasComponents {
 	protected Set<Component> components = new HashSet<Component>();
 	protected Component draggingComponent;
+	protected Object data;
 
 	public Container(IHasComponents parent, int x, int y, int width, int height) {
 		super(parent, x, y, width, height);
@@ -125,6 +126,14 @@ public class Container extends Component implements IHasComponents {
 			}
 		}
 		return false;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
+	}
+
+	public Object getData() {
+		return data;
 	}
 
 	@Override

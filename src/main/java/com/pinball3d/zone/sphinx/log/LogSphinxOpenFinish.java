@@ -1,5 +1,7 @@
 package com.pinball3d.zone.sphinx.log;
 
+import com.pinball3d.zone.sphinx.log.component.LogComponentNetwork;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public class LogSphinxOpenFinish extends Log {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.log.component.LogComponentItems;
+import com.pinball3d.zone.sphinx.log.component.LogComponentPack;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;

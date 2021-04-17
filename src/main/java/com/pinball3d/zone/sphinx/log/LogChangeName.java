@@ -3,30 +3,34 @@ package com.pinball3d.zone.sphinx.log;
 import java.util.UUID;
 
 import com.pinball3d.zone.sphinx.log.component.LogComponentPlayer;
+import com.pinball3d.zone.sphinx.log.component.LogComponentString;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class LogApprovePermission extends Log {
-	private UUID uuid, uuid2;
-	private String name, name2;
-	private boolean playerDead, playerDead2;
+public class LogChangeName extends Log {
+	private UUID uuid;
+	private String sphinxName, name;
+	private boolean playerDead;
 
-	public LogApprovePermission(int id, EntityPlayer player, UUID uuid2, String name2) {
-		super(Level.IMPORTANT, Type.APPROVEPERMISSION, id);
+	public LogChangeName(int id, String sphinxName, EntityPlayer player) {
+		super(Level.INFO, Type.CHANGENAME, id);
 		uuid = player.getUniqueID();
+		this.sphinxName = sphinxName;
 		name = player.getName();
-		this.uuid2 = uuid2;
-		this.name2 = name2;
 	}
 
-	public LogApprovePermission(NBTTagCompound tag) {
+	public LogChangeName(NBTTagCompound tag) {
 		super(tag);
 	}
 
 	public UUID getUuid() {
 		return uuid;
+	}
+
+	public String getSphinxName() {
+		return sphinxName;
 	}
 
 	public String getName() {
@@ -37,51 +41,34 @@ public class LogApprovePermission extends Log {
 		return playerDead;
 	}
 
-	public UUID getUUID2() {
-		return uuid2;
-	}
-
-	public String getName2() {
-		return name2;
-	}
-
-	public boolean isPlayerDead2() {
-		return playerDead2;
-	}
-
 	@Override
 	public void check(TEProcessingCenter te) {
 		super.check(te);
 		playerDead = !te.hasUser(uuid);
-		playerDead2 = !te.hasUser(uuid2);
 	}
 
 	@Override
 	public FormattedLog format() {
-		return new FormattedLog(getTime(), getLevel(), "log.approve_permission",
-				new LogComponentPlayer(uuid, name, playerDead), new LogComponentPlayer(uuid2, name2, playerDead2));
+		return new FormattedLog(getTime(), getLevel(), "log.change_name", new LogComponentString(sphinxName),
+				new LogComponentPlayer(uuid, name, playerDead));
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 		super.readFromNBT(tag);
 		uuid = tag.getUniqueId("uuid");
+		sphinxName = tag.getString("sphinxName");
 		name = tag.getString("name");
 		playerDead = tag.getBoolean("dead");
-		uuid2 = tag.getUniqueId("uuid2");
-		name2 = tag.getString("name2");
-		playerDead2 = tag.getBoolean("dead2");
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 		tag.setUniqueId("uuid", uuid);
+		tag.setString("sphinxName", sphinxName);
 		tag.setString("name", name);
 		tag.setBoolean("dead", playerDead);
-		tag.setUniqueId("uuid2", uuid2);
-		tag.setString("name2", name2);
-		tag.setBoolean("dead2", playerDead2);
 		return tag;
 	}
 }

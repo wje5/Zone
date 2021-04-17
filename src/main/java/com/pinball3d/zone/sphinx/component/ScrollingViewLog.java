@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.sphinx.log.FormattedLog;
-import com.pinball3d.zone.sphinx.log.LogComponent;
+import com.pinball3d.zone.sphinx.log.component.LogComponent;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.FontRenderer;

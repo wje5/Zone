@@ -359,7 +359,7 @@ public class ConnectionHelper {
 					connect.classifyRefreshColddown += ConfigLoader.classifyUpdateRate;
 				}
 				connect.classifyRefreshColddown = connect.classifyRefreshColddown - 1 < 0 ? 0
-						: connect.classifyRefreshColddown;
+						: connect.classifyRefreshColddown - 1;
 				break;
 			case USERS:
 				if (te != null) {
@@ -381,7 +381,7 @@ public class ConnectionHelper {
 					tag.setTag(name(), list);
 					connect.logRefreshColddown += ConfigLoader.logUpdateRate;
 				}
-				connect.logRefreshColddown = connect.logRefreshColddown - 1 < 0 ? 0 : connect.logRefreshColddown;
+				connect.logRefreshColddown = connect.logRefreshColddown - 1 < 0 ? 0 : connect.logRefreshColddown - 1;
 				break;
 			case NEEDNETWORKSERIAL:
 				if (te != null && needNetwork != null) {
@@ -410,7 +410,7 @@ public class ConnectionHelper {
 					connect.oreDictionaryRefreshColddown += ConfigLoader.oreDictionaryUpdateRate;
 				}
 				connect.oreDictionaryRefreshColddown = connect.oreDictionaryRefreshColddown - 1 < 0 ? 0
-						: connect.oreDictionaryRefreshColddown;
+						: connect.oreDictionaryRefreshColddown - 1;
 				break;
 			}
 		}

@@ -1120,9 +1120,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 					ItemStack[] s = in.getMatchingStacks();
 					if (s.length > 1) {
 						if (!(in instanceof OreIngredient)) {
-							addOreDictionary(
-									new OreDictionaryData(null, Stream.of(s).map(e -> new CraftingIngredentItem(e))
-											.collect(Collectors.toList()).toArray(new CraftingIngredentItem[] {})));
+							addOreDictionary(new OreDictionaryData(
+									null, Stream.of(s).map(e -> new CraftingIngredentItem(e))
+											.collect(Collectors.toList()).toArray(new CraftingIngredentItem[] {}),
+									new CraftingIngredentItem[] {}));
 						}
 					} else if (s.length == 1) {
 						ItemStack stack = s[0];
@@ -1157,13 +1158,42 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public void initOreDictionary() {
-		oreDictionarys.clear();
-		oreDictionaryId = 0;
 		String[] names = OreDictionary.getOreNames();
 		for (String name : names) {
 			NonNullList<ItemStack> list = OreDictionary.getOres(name);
-			addOreDictionary(new OreDictionaryData(name, list.stream().map(e -> new CraftingIngredentItem(e))
-					.collect(Collectors.toList()).toArray(new CraftingIngredentItem[] {})));
+			if (name.equals("plateIron")) {
+				System.out.println(list);
+			}
+			NonNullList<ItemStack> list2 = NonNullList.create();
+			for (ItemStack stack : list) {
+				if (stack.isEmpty()) {
+					continue;
+				}
+				if (stack.getMetadata() == net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE) {
+					stack.getItem().getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, list2);
+				} else {
+					list2.add(stack);
+				}
+			}
+			List<CraftingIngredentItem> l = list2.stream().map(e -> new CraftingIngredentItem(e))
+					.collect(Collectors.toList());
+			for (Entry<Integer, OreDictionaryData> entry : oreDictionarys.entrySet()) {
+				OreDictionaryData data = entry.getValue();
+				if (name.equals(data.getName())) {
+					List<CraftingIngredentItem> l1 = Stream.of(data.getItems()).filter(e -> l.contains(e))
+							.collect(Collectors.toList());
+					List<CraftingIngredentItem> l2 = Stream.of(data.getDisableItems()).filter(e -> l.contains(e))
+							.collect(Collectors.toList());
+					l.forEach(e -> {
+						if (!l1.contains(e) && !l2.contains(e)) {
+							l1.add(e);
+						}
+					});
+					addOreDictionary(new OreDictionaryData(name, l1.toArray(new CraftingIngredentItem[] {}),
+							l2.toArray(new CraftingIngredentItem[] {})));
+					break;
+				}
+			}
 		}
 	}
 

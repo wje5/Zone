@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx.log;
+package com.pinball3d.zone.sphinx.log.component;
 
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.network.ConnectHelperClient;

@@ -3,6 +3,9 @@ package com.pinball3d.zone.sphinx.log;
 import java.util.UUID;
 
 import com.pinball3d.zone.sphinx.SerialNumber;
+import com.pinball3d.zone.sphinx.log.component.LogComponentItems;
+import com.pinball3d.zone.sphinx.log.component.LogComponentNeedNetwork;
+import com.pinball3d.zone.sphinx.log.component.LogComponentPlayer;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.StorageWrapper;
 

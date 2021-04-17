@@ -32,7 +32,6 @@ public class MessageConnectionUpdate implements IMessage {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-//		System.out.println(buf.readableBytes());
 		long l = buf.readLong();
 		long l2 = buf.readLong();
 		if (l == 0 && l2 == 0) {

@@ -1,5 +1,6 @@
 package com.pinball3d.zone.item;
 
+import com.pinball3d.zone.OreDictionaryLoader;
 import com.pinball3d.zone.psp.ItemFC;
 
 import net.minecraft.block.Block;
@@ -207,6 +208,7 @@ public class ItemLoader {
 				return 20000;
 			}
 		});
+		OreDictionaryLoader.init();
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {

@@ -8,6 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.pinball3d.zone.sphinx.log.Log.Level;
+import com.pinball3d.zone.sphinx.log.component.LogComponent;
+import com.pinball3d.zone.sphinx.log.component.LogComponentString;
 
 import net.minecraft.client.resources.I18n;
 

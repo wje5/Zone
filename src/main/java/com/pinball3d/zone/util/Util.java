@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.util.Comparator;
+import java.util.Map;
 
 import javax.annotation.Nonnegative;
 
@@ -33,13 +34,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Util {
 	private static final ResourceLocation BORDER_2 = new ResourceLocation("zone:textures/gui/sphinx/ui_border_2.png");
-
+	private static Map<String, ModContainer> mods = null;
 	public static Comparator<ItemStack> itemStackComparator = new Comparator<ItemStack>() {
 		@Override
 		public int compare(ItemStack o1, ItemStack o2) {
@@ -529,5 +532,16 @@ public class Util {
 		NumberFormat format = NumberFormat.getInstance();
 		format.setMinimumIntegerDigits(2);
 		return "[" + format.format(h) + ":" + format.format(m) + ":" + format.format(s) + "]";
+	}
+
+	public static String transferModIdToName(String modId) {
+		if (mods == null) {
+			mods = Loader.instance().getIndexedModList();
+		}
+		ModContainer modContainer = mods.get(modId);
+		if (modContainer == null) {
+			return modId;
+		}
+		return modContainer.getName();
 	}
 }
