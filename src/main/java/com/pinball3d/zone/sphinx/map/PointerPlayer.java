@@ -17,7 +17,7 @@ public class PointerPlayer extends Pointer {
 
 	@Override
 	public void doRender(int offsetX, int offsetZ) {
-		Minecraft.getMinecraft().getTextureManager().bindTexture(ICONS);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(SPHINX_ICONS);
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(box.x + 3 - offsetX, box.y + 8 - offsetZ, 0);
 		GlStateManager.rotate(angle + 180F, 0, 0, 1);

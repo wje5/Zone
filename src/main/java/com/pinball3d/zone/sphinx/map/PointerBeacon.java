@@ -14,7 +14,7 @@ public class PointerBeacon extends PointerNode {
 
 	@Override
 	public void render(int offsetX, int offsetZ) {
-		Util.drawTexture(ICONS, pos.getPos().getX() - offsetX - 3, pos.getPos().getZ() - offsetZ - 3, 195, 0, 18, 20,
+		Util.drawTexture(SPHINX_ICONS, pos.getPos().getX() - offsetX - 3, pos.getPos().getZ() - offsetZ - 3, 195, 0, 18, 20,
 				0.5F);
 	}
 }

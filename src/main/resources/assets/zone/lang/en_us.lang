@@ -296,6 +296,9 @@ log.sphinx_shutdown_structure=<0> abnormal shutdown, cause: structure has been d
 log.pack_lost=Logistic pack <0> sent from <1>, via <2>, lost at <3>.
 log.recv_pack_full=Logistic pack <0> sent from <1> has arrived at <4>, via <2>, total time is <3>, and <5> can't be stored in sphinx.
 log.change_name=Sphinx name has been changed to <0>, operator: <1>.
+log.change_ore_dictionary_priority=<0> has been changed, operator: <1>.
+log.rescan_recipes=Recipes scan in process, operator: <0>.
+log.rescan_recipes_finish=Recipes scan finished, <0> item(s) added, <1> item(s) changed.
 log.items=%1$s item(s)
 
 manual.preface=   Welcome to Zone!!\n\nCurrently it introduced\n*An ore multiplying Cricible\n*A kind of Drill with replaceable\nhead\n*The Grinder crushing ores to\n32 pieces\n*Even more ore-multiplying ways\n(up to 7x!)\n*The Nail Gun making holes all\nover your enemies\n*An adorable submarine\n*All-Mighty Sphinx© System\n*and more...

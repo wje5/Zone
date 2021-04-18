@@ -44,6 +44,10 @@ public class LogManageClassify extends Log {
 		return playerDead;
 	}
 
+	public boolean isClassifyDead() {
+		return classifyDead;
+	}
+
 	public int getClassifyId() {
 		return classifyId;
 	}

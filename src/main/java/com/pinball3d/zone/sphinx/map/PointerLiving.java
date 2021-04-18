@@ -12,7 +12,7 @@ public class PointerLiving extends Pointer {
 
 	@Override
 	public void doRender(int offsetX, int offsetZ) {
-		Util.drawTexture(ICONS, box.x - offsetX, box.y - offsetZ, isMob ? 0 : 16, 0, 16, 16, 0.5F);
+		Util.drawTexture(SPHINX_ICONS, box.x - offsetX, box.y - offsetZ, isMob ? 0 : 16, 0, 16, 16, 0.5F);
 	}
 
 	public void moveTo(int x, int z) {

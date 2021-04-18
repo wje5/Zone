@@ -98,12 +98,17 @@ public class ScrollingEdgeTextureList extends Component {
 			if (y >= index * 25 && y <= index * 25 + 20) {
 				if (index != this.index) {
 					if (onChange == null || onChange.test(index)) {
-						e.event.run();
+						if (e.event != null) {
+							e.event.run();
+						}
+
 						this.index = index;
 					}
 				} else if (nullable) {
 					if (onChange == null || onChange.test(index)) {
-						e.event.run();
+						if (e.event != null) {
+							e.event.run();
+						}
 						this.index = -1;
 					}
 				}

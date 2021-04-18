@@ -106,7 +106,9 @@ public class Log {
 		SPHINXOPEN(LogSphinxOpen::new), SPHINXOPENFINISH(LogSphinxOpenFinish::new),
 		SPHINXSHUTDOWN(LogSphinxShutdown::new), SPHINXSHUTDOWNENERGY(LogSphinxShutdownEnergy::new),
 		SPHINXSHUTDOWNSTRUCTURE(LogSphinxShutdownStructure::new), PACKLOST(LogPackLost::new),
-		RECVPACKFULL(LogRecvPackFull::new), CHANGENAME(LogChangeName::new);
+		RECVPACKFULL(LogRecvPackFull::new), CHANGENAME(LogChangeName::new),
+		CHANGEOREDICTIONARYPRIORITY(LogChangeOreDictionaryPriority::new), RESCANRECIPES(LogRescanRecipes::new),
+		RESCANRECIPESFINISH(LogRescanRecipesFinish::new);
 
 		private Function<NBTTagCompound, Log> cons;
 

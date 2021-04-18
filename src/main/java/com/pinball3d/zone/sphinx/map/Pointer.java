@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 
 public abstract class Pointer extends Gui {
 	public BoundingBox box;
-	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
+	public static final ResourceLocation SPHINX_ICONS = new ResourceLocation("zone:textures/gui/sphinx/icons.png");
 
 	public abstract void doRender(int offsetX, int offsetZ);
 

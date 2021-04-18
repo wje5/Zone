@@ -13,6 +13,6 @@ public class PointerPack extends Pointer {
 
 	@Override
 	public void doRender(int offsetX, int offsetZ) {
-		Util.drawTexture(ICONS, box.x - offsetX, box.y - offsetZ, 107, 32, 5, 5, 0.5F);
+		Util.drawTexture(SPHINX_ICONS, box.x - offsetX, box.y - offsetZ, 107, 32, 5, 5, 0.5F);
 	}
 }

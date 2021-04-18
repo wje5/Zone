@@ -1,6 +1,7 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.sphinx.crafting.OreDictionaryData;
+import com.pinball3d.zone.sphinx.log.LogChangeOreDictionaryPriority;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -30,7 +31,7 @@ public class MessageManageOreDictionaryPriority extends MessageSphinx {
 		TEProcessingCenter te = getProcessingCenter();
 		OreDictionaryData data = new OreDictionaryData(tag.getCompoundTag("data"));
 		int id = tag.getInteger("id");
-//		te.fireLog(new LogManageClassify(te.getNextLogId(), getPlayer(ctx), id, data.getName(), removed, added));
+		te.fireLog(new LogChangeOreDictionaryPriority(te.getNextLogId(), getPlayer(ctx), id, data.getName()));
 		te.getOreDictionarys().put(id, data);
 	}
 

@@ -18,7 +18,7 @@ public class PointerProcessingCenter extends PointerNeedNetwork {
 
 	@Override
 	public void render(int offsetX, int offsetZ) {
-		Util.drawTexture(ICONS, pos.getPos().getX() - offsetX - 5, pos.getPos().getZ() - offsetZ - 5, 116, 0, 20, 22,
+		Util.drawTexture(SPHINX_ICONS, pos.getPos().getX() - offsetX - 5, pos.getPos().getZ() - offsetZ - 5, 116, 0, 20, 22,
 				0.5F);
 	}
 }

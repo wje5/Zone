@@ -47,7 +47,7 @@ public abstract class PointerNeedNetwork extends Pointer {
 		if (state != WorkingState.WORKING) {
 			int width = box.x2 - box.x;
 			int height = box.y2 - box.y;
-			Util.drawTexture(ICONS, box.x - offsetX + width - 4, box.y - offsetZ + height - 4, 116, 21, 9, 9, 0.5F);
+			Util.drawTexture(SPHINX_ICONS, box.x - offsetX + width - 4, box.y - offsetZ + height - 4, 116, 21, 9, 9, 0.5F);
 		}
 	}
 
@@ -58,7 +58,7 @@ public abstract class PointerNeedNetwork extends Pointer {
 		if (state == WorkingState.DISCONNECTED) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(0, 0, 400);
-			Util.drawTexture(ICONS, x + 6, z + 6, 116, 21, 9, 9, 0.5F);
+			Util.drawTexture(SPHINX_ICONS, x + 6, z + 6, 116, 21, 9, 9, 0.5F);
 			GlStateManager.popMatrix();
 		}
 	}
@@ -70,7 +70,7 @@ public abstract class PointerNeedNetwork extends Pointer {
 		if (state == WorkingState.DISCONNECTED) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(0, 0, 400);
-			Util.drawTexture(ICONS, x + 14, z + 14, 116, 21, 9, 9, 1.0F);
+			Util.drawTexture(SPHINX_ICONS, x + 14, z + 14, 116, 21, 9, 9, 1.0F);
 			GlStateManager.popMatrix();
 		}
 	}

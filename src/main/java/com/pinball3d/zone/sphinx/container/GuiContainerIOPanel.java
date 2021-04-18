@@ -71,25 +71,25 @@ public class GuiContainerIOPanel extends GuiContainerNetworkBase {
 		super.addComponents();
 		components.add(box = new TextInputBox(this, panelX + 7, panelY + 7, 61, 15, 55, () -> box.isFocus = true)
 				.setIsPixel(true));
-		components.add(new TexturedButton(this, panelX + 15, panelY + 201, ICONS, 92, 32, 5, 9, 1.0F, () -> {
+		components.add(new TexturedButton(this, panelX + 15, panelY + 201, SPHINX_ICONS, 92, 32, 5, 9, 1.0F, () -> {
 			page = page - 1 < 1 ? maxPage : page - 1;
 		}));
-		components.add(new TexturedButton(this, panelX + 70, panelY + 201, ICONS, 97, 32, 5, 9, 1.0F, () -> {
+		components.add(new TexturedButton(this, panelX + 70, panelY + 201, SPHINX_ICONS, 97, 32, 5, 9, 1.0F, () -> {
 			page = page + 1 > maxPage ? 1 : page + 1;
 		}));
-		components.add(new TexturedButton(this, panelX + 67, panelY + 7, ICONS, 92, 41, 15, 15, 1.0F, () -> {
+		components.add(new TexturedButton(this, panelX + 67, panelY + 7, SPHINX_ICONS, 92, 41, 15, 15, 1.0F, () -> {
 			box.isFocus = false;
 		}));
-		components.add(new TexturedButton(this, panelX + 285, panelY + 5, ICONS, 64, 68, 30, 28, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 5, SPHINX_ICONS, 64, 68, 30, 28, 0.5F, () -> {
 			NetworkHandler.instance.sendToServer(MessageIOPanelSendItemToStorage.newMessage(mc.player, pos));
 		}));
-		components.add(new TexturedButton(this, panelX + 285, panelY + 24, ICONS, 0, 68, 32, 32, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 24, SPHINX_ICONS, 0, 68, 32, 32, 0.5F, () -> {
 			System.out.println("config");
 		}));
-		components.add(new TexturedButton(this, panelX + 285, panelY + 43, ICONS, 180, 68, 31, 32, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 43, SPHINX_ICONS, 180, 68, 31, 32, 0.5F, () -> {
 			NetworkHandler.instance.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, true));
 		}));
-		components.add(new TexturedButton(this, panelX + 285, panelY + 62, ICONS, 211, 68, 31, 32, 0.5F, () -> {
+		components.add(new TexturedButton(this, panelX + 285, panelY + 62, SPHINX_ICONS, 211, 68, 31, 32, 0.5F, () -> {
 			NetworkHandler.instance.sendToServer(new MessageIOPanelTransferPlayerInventory(mc.player, false));
 		}));
 	}

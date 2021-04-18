@@ -4,7 +4,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnegative;
@@ -543,5 +545,28 @@ public class Util {
 			return modId;
 		}
 		return modContainer.getName();
+	}
+
+	public static boolean search(String search, ItemStack stack) {
+		search = search.toLowerCase();
+		List<String[]> l = new ArrayList<String[]>();
+		for (String s : search.split("\\s+")) {
+			l.add(s.split("\\|+"));
+		}
+		String name = stack.getDisplayName().toLowerCase();
+		tag3: for (String[] e : l) {
+			for (String s : e) {
+				if (s.startsWith("@")) {
+					if (stack.getItem().getRegistryName().getResourceDomain().contains(s.substring(1))) {
+						continue tag3;
+					}
+				}
+				if (name.contains(s)) {
+					continue tag3;
+				}
+			}
+			return false;
+		}
+		return true;
 	}
 }

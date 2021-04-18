@@ -126,7 +126,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public void initSphinx() {
 		genSerialNumber(new WorldPos(this), Type.NODE);
-		initRecipeType();
+		rescanRecipes();
 	}
 
 	public boolean isOn() {
@@ -1107,7 +1107,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public void rescanRecipes() {
-		initRecipeType();
 		initOreDictionary();
 		Iterator<IRecipe> it = CraftingManager.REGISTRY.iterator();
 		while (it.hasNext()) {
@@ -1135,6 +1134,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				addRecipe(r);
 			}
 		}
+
 	}
 
 	public void addRecipe(SphinxRecipe recipe) {
@@ -1158,12 +1158,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public void initOreDictionary() {
+		int add = 0, change = 0;// TODO
 		String[] names = OreDictionary.getOreNames();
 		for (String name : names) {
 			NonNullList<ItemStack> list = OreDictionary.getOres(name);
-			if (name.equals("plateIron")) {
-				System.out.println(list);
-			}
 			NonNullList<ItemStack> list2 = NonNullList.create();
 			for (ItemStack stack : list) {
 				if (stack.isEmpty()) {
@@ -1177,6 +1175,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 			List<CraftingIngredentItem> l = list2.stream().map(e -> new CraftingIngredentItem(e))
 					.collect(Collectors.toList());
+			boolean flag = true;
 			for (Entry<Integer, OreDictionaryData> entry : oreDictionarys.entrySet()) {
 				OreDictionaryData data = entry.getValue();
 				if (name.equals(data.getName())) {
@@ -1191,8 +1190,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 					});
 					addOreDictionary(new OreDictionaryData(name, l1.toArray(new CraftingIngredentItem[] {}),
 							l2.toArray(new CraftingIngredentItem[] {})));
+					flag = false;
 					break;
 				}
+			}
+			if (flag) {
+				addOreDictionary(new OreDictionaryData(name, l.toArray(new CraftingIngredentItem[] {}),
+						new CraftingIngredentItem[] {}));
 			}
 		}
 	}

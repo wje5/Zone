@@ -2,6 +2,7 @@ package com.pinball3d.zone.sphinx.subscreen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.pinball3d.zone.gui.IHasSubscreen;
@@ -11,6 +12,7 @@ import com.pinball3d.zone.gui.component.ItemShow;
 import com.pinball3d.zone.gui.component.ScrollingContainerPriority;
 import com.pinball3d.zone.gui.component.Text;
 import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.network.MessageManageOreDictionaryPriority;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.crafting.CraftingIngredentItem;
@@ -35,20 +37,31 @@ public class SubscreenManageOreDictionaryPriority extends Subscreen {
 		this.data = data;
 		this.id = id;
 		addComponent(list = new ScrollingContainerPriority(this, 16, 24, 268, 170));
-		for (CraftingIngredentItem item : data.getItems()) {
-			genBar(item);
-		}
-		Container c = new Container(list, 0, 0, 268, 2) {
-			@Override
-			public void doRender(int mouseX, int mouseY) {
-				super.doRender(mouseX, mouseY);
-				Gui.drawRect(0, 0, width, height, 0xFFFC3D3D);
+		if (data != null) {
+			for (CraftingIngredentItem item : data.getItems()) {
+				genBar(item);
 			}
-		};
-		list.addComponent(c);
-		for (CraftingIngredentItem item : data.getDisableItems()) {
-			genBar(item);
+			Container c = new Container(list, 0, 0, 268, 2) {
+				@Override
+				public void doRender(int mouseX, int mouseY) {
+					super.doRender(mouseX, mouseY);
+					Gui.drawRect(0, 0, width, height, 0xFFFC3D3D);
+				}
+			};
+			list.addComponent(c);
+			for (CraftingIngredentItem item : data.getDisableItems()) {
+				genBar(item);
+			}
 		}
+	}
+
+	@Override
+	public Set<Type> getDataTypes() {
+		Set<Type> s = super.getDataTypes();
+		if (data == null) {
+			s.add(Type.OREDICTIONARY);
+		}
+		return s;
 	}
 
 	private Container genBar(CraftingIngredentItem item) {
@@ -65,6 +78,25 @@ public class SubscreenManageOreDictionaryPriority extends Subscreen {
 	@Override
 	public void doRenderBackground(int mouseX, int mouseY) {
 		super.doRenderBackground(mouseX, mouseY);
+		if (data == null && ConnectHelperClient.getInstance().hasData()) {
+			data = ConnectHelperClient.getInstance().getOreDictionarys().get(id);
+			if (data != null) {
+				for (CraftingIngredentItem item : data.getItems()) {
+					genBar(item);
+				}
+				Container c = new Container(list, 0, 0, 268, 2) {
+					@Override
+					public void doRender(int mouseX, int mouseY) {
+						super.doRender(mouseX, mouseY);
+						Gui.drawRect(0, 0, width, height, 0xFFFC3D3D);
+					}
+				};
+				list.addComponent(c);
+				for (CraftingIngredentItem item : data.getDisableItems()) {
+					genBar(item);
+				}
+			}
+		}
 		Util.drawTexture(UI_BORDER, -5, -5, 0, 0, 99, 99, 0.5F);
 		Util.drawTexture(UI_BORDER, 255, -5, 99, 0, 99, 99, 0.5F);
 		Util.drawTexture(UI_BORDER, -5, 155, 0, 99, 99, 99, 0.5F);
@@ -80,22 +112,24 @@ public class SubscreenManageOreDictionaryPriority extends Subscreen {
 	@Override
 	public boolean onQuit() {
 		if (super.onQuit()) {
-			List<Object> l = list.getList().stream().map(e -> e.getData()).collect(Collectors.toList());
-			List<CraftingIngredentItem> l1 = new ArrayList<CraftingIngredentItem>();
-			List<CraftingIngredentItem> l2 = new ArrayList<CraftingIngredentItem>();
-			boolean flag = false;
-			for (Object o : l) {
-				if (o == null) {
-					flag = true;
-				} else {
-					(flag ? l2 : l1).add((CraftingIngredentItem) o);
+			if (data != null) {
+				List<Object> l = list.getList().stream().map(e -> e.getData()).collect(Collectors.toList());
+				List<CraftingIngredentItem> l1 = new ArrayList<CraftingIngredentItem>();
+				List<CraftingIngredentItem> l2 = new ArrayList<CraftingIngredentItem>();
+				boolean flag = false;
+				for (Object o : l) {
+					if (o == null) {
+						flag = true;
+					} else {
+						(flag ? l2 : l1).add((CraftingIngredentItem) o);
+					}
 				}
-			}
-			OreDictionaryData data = new OreDictionaryData(this.data.getName(),
-					l1.toArray(new CraftingIngredentItem[] {}), l2.toArray(new CraftingIngredentItem[] {}));
-			if (!data.equals(this.data)) {
-				NetworkHandler.instance.sendToServer(MessageManageOreDictionaryPriority
-						.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), id, data));
+				OreDictionaryData data = new OreDictionaryData(this.data.getName(),
+						l1.toArray(new CraftingIngredentItem[] {}), l2.toArray(new CraftingIngredentItem[] {}));
+				if (!data.equals(this.data)) {
+					NetworkHandler.instance.sendToServer(MessageManageOreDictionaryPriority
+							.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), id, data));
+				}
 			}
 			return true;
 		}

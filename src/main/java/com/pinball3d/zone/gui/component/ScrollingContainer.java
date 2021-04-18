@@ -125,6 +125,10 @@ public class ScrollingContainer extends Component implements IHasComponents {
 		return false;
 	}
 
+	public void setScrollingDistance(int scrollingDistance) {
+		this.scrollingDistance = scrollingDistance;
+	}
+
 	@Deprecated
 	@Override
 	public Set<Component> getComponents() {

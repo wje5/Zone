@@ -1,5 +1,6 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.sphinx.log.LogRescanRecipes;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -25,6 +26,7 @@ public class MessageRescanRecipes extends MessageSphinx {
 	@Override
 	public void run(MessageContext ctx) {
 		TEProcessingCenter te = getProcessingCenter();
+		te.fireLog(new LogRescanRecipes(te.getNextLogId(), getPlayer(ctx)));
 		te.rescanRecipes();
 	}
 

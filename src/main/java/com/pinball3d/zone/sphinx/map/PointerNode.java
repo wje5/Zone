@@ -25,7 +25,7 @@ public class PointerNode extends PointerNeedNetwork {
 
 	@Override
 	public void render(int offsetX, int offsetZ) {
-		Util.drawTexture(ICONS, pos.getPos().getX() - offsetX - 3, pos.getPos().getZ() - offsetZ - 3, 136, 0, 13, 13,
+		Util.drawTexture(SPHINX_ICONS, pos.getPos().getX() - offsetX - 3, pos.getPos().getZ() - offsetZ - 3, 136, 0, 13, 13,
 				0.5F);
 	}
 }

@@ -36,8 +36,12 @@ public class SubscreenManageOreDictionary extends Subscreen {
 	public SubscreenManageOreDictionary(IHasSubscreen parent, int x, int y) {
 		super(parent, x, y, 320, 200, true);
 		addComponent(edgeList = new ScrollingEdgeTextureList(this, 0, 9, 195));
-		edgeList.addBar(ICONS, 9, 8, 32, 130, 19, 15, () -> System.out.println(1));
-		edgeList.addBar(ICONS, 10, 8, 51, 130, 20, 15, () -> System.out.println(2));
+		edgeList.addBar(ICONS, 9, 8, 32, 130, 19, 15, null);
+		edgeList.addBar(ICONS, 10, 8, 51, 130, 20, 15, null);
+		edgeList.setOnChange(e -> {
+			list.setScrollingDistance(0);
+			return true;
+		});
 		addComponent(list = new ScrollingContainer(this, 36, 44, 268, 150));
 		addComponent(box = new TextInputBox(this, 40, 27, 61, 15, 55, () -> {
 			box.isFocus = true;
@@ -62,6 +66,18 @@ public class SubscreenManageOreDictionary extends Subscreen {
 		}
 		for (CraftingIngredentItem i : data.getDisableItems()) {
 			allItems.add(i);
+		}
+		if (!box.text.isEmpty()) {
+			boolean flag = true;
+			for (CraftingIngredentItem i : allItems) {
+				if (Util.search(box.text, i.createStack())) {
+					flag = false;
+					break;
+				}
+			}
+			if (flag) {
+				return null;
+			}
 		}
 		for (int i = 0; i < 7 && i < allItems.size(); i++) {
 			c.addComponent(new ItemShow(c, 4 + i * 20, 4, allItems.get(i).createStack(), allItems.get(i).getCount()));

@@ -1,6 +1,5 @@
 package com.pinball3d.zone.item;
 
-import com.pinball3d.zone.OreDictionaryLoader;
 import com.pinball3d.zone.psp.ItemFC;
 
 import net.minecraft.block.Block;
@@ -17,6 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber
@@ -208,7 +208,44 @@ public class ItemLoader {
 				return 20000;
 			}
 		});
-		OreDictionaryLoader.init();
+		OreDictionary.registerOre("plateIron", iron_plate);
+		OreDictionary.registerOre("plateGold", gold_plate);
+		OreDictionary.registerOre("dustIron", iron_dust);
+		OreDictionary.registerOre("dustGold", gold_dust);
+		OreDictionary.registerOre("dustEmerald", emerald_dust);
+		OreDictionary.registerOre("dustCoal", coal_dust);
+		OreDictionary.registerOre("dustLapis", lapis_dust);
+		OreDictionary.registerOre("dustQuartz", quartz_dust);
+		OreDictionary.registerOre("dustStone", stone_dust);
+		OreDictionary.registerOre("dustNetherrack", netherrack_dust);
+		OreDictionary.registerOre("dustClay", clay_dust);
+		OreDictionary.registerOre("dustFlint", flint_dust);
+		OreDictionary.registerOre("dustSmallIron", small_pile_iron_dust);
+		OreDictionary.registerOre("dustSmallGold", small_pile_gold_dust);
+		OreDictionary.registerOre("dustSmallEmerald", small_pile_emerald_dust);
+		OreDictionary.registerOre("dustSmallRedstone", small_pile_redstone_dust);
+		OreDictionary.registerOre("dustSmallCoal", small_pile_coal_dust);
+		OreDictionary.registerOre("dustSmallLapis", small_pile_lapis_dust);
+		OreDictionary.registerOre("dustSmallQuartz", small_pile_quartz_dust);
+		OreDictionary.registerOre("dustSmallStone", small_pile_stone_dust);
+		OreDictionary.registerOre("dustSmallNetherrack", small_pile_netherrack_dust);
+		OreDictionary.registerOre("dustSmallClay", small_pile_clay_dust);
+		OreDictionary.registerOre("dustSmallFlint", small_pile_flint_dust);
+		OreDictionary.registerOre("dustSmallGlowstone", small_pile_glowstone_dust);
+		OreDictionary.registerOre("dustSmallBlaze", small_pile_blaze_powder);
+		OreDictionary.registerOre("dustTinyIron", tiny_pile_iron_dust);
+		OreDictionary.registerOre("dustTinyGold", tiny_pile_gold_dust);
+		OreDictionary.registerOre("dustTinyEmerald", tiny_pile_emerald_dust);
+		OreDictionary.registerOre("dustTinyRedstone", tiny_pile_redstone_dust);
+		OreDictionary.registerOre("dustTinyCoal", tiny_pile_coal_dust);
+		OreDictionary.registerOre("dustTinyLapis", tiny_pile_lapis_dust);
+		OreDictionary.registerOre("dustTinyQuartz", tiny_pile_quartz_dust);
+		OreDictionary.registerOre("dustTinyStone", tiny_pile_stone_dust);
+		OreDictionary.registerOre("dustTinyNetherrack", tiny_pile_netherrack_dust);
+		OreDictionary.registerOre("dustTinyClay", tiny_pile_clay_dust);
+		OreDictionary.registerOre("dustTinyFlint", tiny_pile_flint_dust);
+		OreDictionary.registerOre("dustTinyGlowstone", tiny_pile_glowstone_dust);
+		OreDictionary.registerOre("dustTinyBlaze", tiny_pile_blaze_powder);
 	}
 
 	private static void register(IForgeRegistry<Item> registry, Item item) {
