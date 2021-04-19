@@ -41,6 +41,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class Util {
 	private static final ResourceLocation BORDER_2 = new ResourceLocation("zone:textures/gui/sphinx/ui_border_2.png");
@@ -554,15 +555,22 @@ public class Util {
 			l.add(s.split("\\|+"));
 		}
 		String name = stack.getDisplayName().toLowerCase();
-		tag3: for (String[] e : l) {
+		tag: for (String[] e : l) {
 			for (String s : e) {
 				if (s.startsWith("@")) {
-					if (stack.getItem().getRegistryName().getResourceDomain().contains(s.substring(1))) {
-						continue tag3;
+					if (stack.getItem().getRegistryName().getResourceDomain().toLowerCase().contains(s.substring(1))) {
+						continue tag;
+					}
+				}
+				if (s.startsWith("$")) {
+					for (int i : OreDictionary.getOreIDs(stack)) {
+						if (OreDictionary.getOreName(i).toLowerCase().contains(s.substring(1))) {
+							continue tag;
+						}
 					}
 				}
 				if (name.contains(s)) {
-					continue tag3;
+					continue tag;
 				}
 			}
 			return false;

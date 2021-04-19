@@ -56,7 +56,7 @@ public class Subscreen implements IHasComponents {
 		GlStateManager.pushMatrix();
 		doRenderBackground(mouseX, mouseY);
 		components.forEach(e -> {
-			if (!e.getRenderLast()) {
+			if (!e.getRenderLast(mouseX - e.getX(), mouseY - e.getY())) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
 				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());
@@ -68,7 +68,7 @@ public class Subscreen implements IHasComponents {
 		doRenderForeground(mouseX, mouseY);
 		GlStateManager.popMatrix();
 		components.forEach(e -> {
-			if (e.getRenderLast()) {
+			if (e.getRenderLast(mouseX - e.getX(), mouseY - e.getY())) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
 				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());

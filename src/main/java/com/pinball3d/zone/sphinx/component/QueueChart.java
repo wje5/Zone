@@ -290,7 +290,7 @@ public class QueueChart extends Component {
 	}
 
 	@Override
-	public boolean getRenderLast() {
+	public boolean getRenderLast(int mouseX, int mouseY) {
 		return true;
 	}
 
@@ -364,8 +364,6 @@ public class QueueChart extends Component {
 				GlStateManager.translate(0, 0, 400F);
 				Gui.drawRect(x, y, x + 16, y + 16, 0x80FFFFFF);
 				GlStateManager.popMatrix();
-				GlStateManager.enableLighting();
-				GlStateManager.enableDepth();
 				GlStateManager.pushMatrix();
 				if (mouseY < 16) {
 					int yOffset = 16 - mouseY;

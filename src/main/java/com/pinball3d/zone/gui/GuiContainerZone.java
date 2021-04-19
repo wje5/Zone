@@ -140,7 +140,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(-guiLeft, -guiTop, 0);
 		components.forEach(e -> {
-			if (!e.getRenderLast()) {
+			if (!e.getRenderLast(mouseX - e.getX(), mouseY - e.getY())) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
 				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());
@@ -156,7 +156,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(-guiLeft, -guiTop, 0);
 		components.forEach(e -> {
-			if (e.getRenderLast()) {
+			if (e.getRenderLast(mouseX - e.getX(), mouseY - e.getY())) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
 				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());

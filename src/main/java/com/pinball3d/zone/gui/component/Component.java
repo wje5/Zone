@@ -125,7 +125,7 @@ public class Component {
 		return false;
 	}
 
-	public boolean getRenderLast() {
+	public boolean getRenderLast(int mouseX, int mouseY) {
 		return false;
 	}
 }

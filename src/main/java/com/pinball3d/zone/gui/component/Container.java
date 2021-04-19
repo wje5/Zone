@@ -96,7 +96,7 @@ public class Container extends Component implements IHasComponents {
 	public void doRender(int mouseX, int mouseY) {
 		super.doRender(mouseX, mouseY);
 		components.forEach(e -> {
-			if (!e.getRenderLast()) {
+			if (!e.getRenderLast(mouseX - e.getX(), mouseY - e.getY())) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
 				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());
@@ -104,7 +104,7 @@ public class Container extends Component implements IHasComponents {
 			}
 		});
 		components.forEach(e -> {
-			if (e.getRenderLast()) {
+			if (e.getRenderLast(mouseX - e.getX(), mouseY - e.getY())) {
 				Util.resetOpenGl();
 				GlStateManager.pushMatrix();
 				e.doRenderScreen(mouseX - e.getX(), mouseY - e.getY());
@@ -149,5 +149,18 @@ public class Container extends Component implements IHasComponents {
 	@Override
 	public void removeComponents() {
 		components.clear();
+	}
+
+	@Override
+	public boolean getRenderLast(int mouseX, int mouseY) {
+		if (super.getRenderLast(mouseX, mouseY)) {
+			return true;
+		}
+		for (Component c : components) {
+			if (c.getRenderLast(mouseX - c.getX(), mouseY - c.getY())) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

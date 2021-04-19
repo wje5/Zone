@@ -30,7 +30,7 @@ public class SubscreenManageOreDictionary extends Subscreen {
 	private TextInputBox box;
 
 	public SubscreenManageOreDictionary(IHasSubscreen parent) {
-		this(parent, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
+		this(parent, getDisplayWidth() / 2 - 170, getDisplayHeight() / 2 - 100);
 	}
 
 	public SubscreenManageOreDictionary(IHasSubscreen parent, int x, int y) {

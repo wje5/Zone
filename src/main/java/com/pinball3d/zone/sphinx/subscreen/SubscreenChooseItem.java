@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import org.lwjgl.input.Keyboard;
 
+import com.pinball3d.zone.gui.GuiContainerZone;
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.gui.component.ScrollingEdgeList;
@@ -15,7 +16,6 @@ import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
-import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
 import com.pinball3d.zone.util.ItemSample;
 import com.pinball3d.zone.util.ItemType;
 import com.pinball3d.zone.util.StorageWrapper;
@@ -103,7 +103,7 @@ public class SubscreenChooseItem extends Subscreen {
 			while (it.hasNext()) {
 				ItemType s = it.next();
 				if (slot == 0) {
-					((GuiContainerSphinxAdvanced) parent).renderToolTip(s.createStack(), mouseX, mouseY);
+					((GuiContainerZone) parent).renderToolTip(s.createStack(), mouseX, mouseY);
 					return;
 				}
 				slot--;

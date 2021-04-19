@@ -64,15 +64,17 @@ public class ScrollingContainerPriority extends Component implements IHasCompone
 					int renderDownCut = renderY + c.height - height > 0 ? renderY + c.height - height : 0;
 					boolean flag = mouseX >= 0 && mouseX <= c.width && mouseY > c.getY()
 							&& mouseY <= c.getY() + c.height - renderDownCut;
-					if (i == 1 == c.getRenderLast() && renderUpCut + renderDownCut < c.height) {
+					if (i == 1 == c.getRenderLast(mouseX - c.getX(), mouseY - c.getY())
+							&& renderUpCut + renderDownCut < c.height) {
 						Util.resetOpenGl();
 						GlStateManager.pushMatrix();
 						c.doRenderScreen(mouseX - c.getX(), mouseY - c.getY());
-						if (flag && c.height >= 12) {
-							Gui.drawRect(c.getX(), c.getY() + renderUpCut, c.getX() + c.width,
-									c.getY() + c.height - renderDownCut, 0x4FFFFFFF);
-						}
 						GlStateManager.popMatrix();
+					}
+					if (i == 0 && flag) {
+						Util.resetOpenGl();
+						Gui.drawRect(c.getX(), c.getY() + renderUpCut, c.getX() + c.width,
+								c.getY() + c.height - renderDownCut, 0x4FFFFFFF);
 					}
 					if (i == 1 && c.height >= 12) {
 						int h = (c.height - 12) / 2;

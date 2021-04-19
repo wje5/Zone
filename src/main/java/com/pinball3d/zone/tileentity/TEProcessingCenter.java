@@ -45,6 +45,7 @@ import com.pinball3d.zone.sphinx.log.LogNeedNetworkDestroyed;
 import com.pinball3d.zone.sphinx.log.LogPackLost;
 import com.pinball3d.zone.sphinx.log.LogRecvPack;
 import com.pinball3d.zone.sphinx.log.LogRecvPackFull;
+import com.pinball3d.zone.sphinx.log.LogRescanRecipesFinish;
 import com.pinball3d.zone.sphinx.log.LogSendPack;
 import com.pinball3d.zone.sphinx.log.LogSphinxOpenFinish;
 import com.pinball3d.zone.sphinx.log.LogSphinxShutdownEnergy;
@@ -1158,7 +1159,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public void initOreDictionary() {
-		int add = 0, change = 0;// TODO
+		int add = 0, change = 0;
 		String[] names = OreDictionary.getOreNames();
 		for (String name : names) {
 			NonNullList<ItemStack> list = OreDictionary.getOres(name);
@@ -1188,8 +1189,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 							l1.add(e);
 						}
 					});
-					addOreDictionary(new OreDictionaryData(name, l1.toArray(new CraftingIngredentItem[] {}),
-							l2.toArray(new CraftingIngredentItem[] {})));
+					OreDictionaryData o = new OreDictionaryData(name, l1.toArray(new CraftingIngredentItem[] {}),
+							l2.toArray(new CraftingIngredentItem[] {}));
+					if (!o.equals(data)) {
+						addOreDictionary(o);
+						change++;
+					}
 					flag = false;
 					break;
 				}
@@ -1197,8 +1202,10 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			if (flag) {
 				addOreDictionary(new OreDictionaryData(name, l.toArray(new CraftingIngredentItem[] {}),
 						new CraftingIngredentItem[] {}));
+				add++;
 			}
 		}
+		fireLog(new LogRescanRecipesFinish(getNextLogId(), add, change));
 	}
 
 	public void addOreDictionary(OreDictionaryData data) {

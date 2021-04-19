@@ -61,7 +61,7 @@ public class DropDownList extends Component {
 	}
 
 	@Override
-	public boolean getRenderLast() {
+	public boolean getRenderLast(int mouseX, int mouseY) {
 		return true;
 	}
 
