@@ -98,6 +98,7 @@ public class SubscreenManageOreDictionary extends Subscreen {
 					genBar(k, v);
 				}
 			});
+			Container c = new Container(list, 0, 0, 268, 25);
 		}
 	}
 

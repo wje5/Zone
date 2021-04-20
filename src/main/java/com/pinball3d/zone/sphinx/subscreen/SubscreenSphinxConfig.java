@@ -3,6 +3,9 @@ package com.pinball3d.zone.sphinx.subscreen;
 import com.pinball3d.zone.gui.IHasSubscreen;
 import com.pinball3d.zone.gui.Subscreen;
 import com.pinball3d.zone.gui.component.ScrollingList;
+import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.MessageRescanRecipes;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.Gui;
@@ -21,9 +24,13 @@ public class SubscreenSphinxConfig extends Subscreen {
 		list.addListBar(I18n.format("sphinx.change_sphinx_name"), ICONS_5, () -> {
 			parent.putScreen(new SubscreenChangeName(parent));
 		}, 60, 60, 60, 60, 0.25F);
-		list.addListBar(I18n.format("sphinx.recipe_config"), ICONS_5, () -> {
-			parent.putScreen(new SubscreenRecipeConfig(parent));
-		}, 60, 60, 60, 60, 0.25F);
+//		list.addListBar(I18n.format("sphinx.recipe_config"), ICONS_5, () -> {
+//			parent.putScreen(new SubscreenRecipeConfig(parent));
+//		}, 60, 60, 60, 60, 0.25F);
+		list.addListBar(I18n.format("sphinx.rescan_recipes"), ICONS_5, () -> {
+			NetworkHandler.instance
+					.sendToServer(MessageRescanRecipes.newMessage(ConnectHelperClient.getInstance().getNetworkPos()));
+		}, 120, 60, 60, 60, 0.25F);
 		addComponent(list);
 	}
 

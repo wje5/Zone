@@ -8,6 +8,7 @@ import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenBrowseLog;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageClassify;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenManageOreDictionary;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageQueue;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageUser;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenNetworkConfig;
@@ -39,8 +40,8 @@ public class GuiContainerTerminal extends GuiContainerSphinxAdvanced {
 			@Override
 			public void doRender(int mouseX, int mouseY) {
 				super.doRender(mouseX, mouseY);
-				Util.drawTexture(ICONS_4, 0, 0, ConnectHelperClient.getInstance().isConnected() ? 120 : 180, 60, 60,
-						60, 0.25F);
+				Util.drawTexture(ICONS_4, 0, 0, ConnectHelperClient.getInstance().isConnected() ? 120 : 180, 60, 60, 60,
+						0.25F);
 			}
 		});
 		addComponent(new TexturedButton(this, width - 34, 2, ICONS_4, 0, 120, 60, 60, 0.25F, () -> {
@@ -61,11 +62,14 @@ public class GuiContainerTerminal extends GuiContainerSphinxAdvanced {
 		addComponent(new TexturedButton(this, width - 119, 2, ICONS_5, 120, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenManageQueue(GuiContainerTerminal.this));
 		}).setEnable(() -> ConnectHelperClient.getInstance().isConnected()));
-		addComponent(new TexturedButton(this, width - 136, 2, ICONS_4, 60, 0, 60, 60, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 136, 2, ICONS_5, 120, 120, 60, 60, 0.25F, () -> {
+			subscreens.push(new SubscreenManageOreDictionary(GuiContainerTerminal.this));
+		}).setEnable(() -> ConnectHelperClient.getInstance().isConnected()));
+		addComponent(new TexturedButton(this, width - 153, 2, ICONS_4, 60, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenShutdownSphinx(GuiContainerTerminal.this));
 		}).setEnable(
 				() -> ConnectHelperClient.getInstance().isConnected() && ConnectHelperClient.getInstance().isAdmin()));
-		addComponent(new TexturedButton(this, width - 153, 2, ICONS_4, 0, 0, 60, 60, 0.25F, () -> {
+		addComponent(new TexturedButton(this, width - 170, 2, ICONS_4, 0, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenSphinxConfig(GuiContainerTerminal.this));
 		}).setEnable(
 				() -> ConnectHelperClient.getInstance().isConnected() && ConnectHelperClient.getInstance().isAdmin()));

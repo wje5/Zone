@@ -1,9 +1,9 @@
 package com.pinball3d.zone.sphinx.component;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
 
 import org.lwjgl.opengl.GL11;
 
@@ -33,10 +33,16 @@ public class ScrollingLog extends Component {
 		length += lineHeight;
 	}
 
-	public void setLogs(Queue<Log> logs) {
+	public void setLogs(Collection<Log> logs) {
 		list.clear();
 		length = 0;
 		logs.forEach(e -> addLogBar(e));
+		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
+		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+	}
+
+	public List<LogBar> getList() {
+		return list;
 	}
 
 	@Override
@@ -89,6 +95,11 @@ public class ScrollingLog extends Component {
 		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 		return true;
+	}
+
+	public void dragToButtom() {
+		scrollingDistance = length - height;
+		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 	}
 
 	@Override

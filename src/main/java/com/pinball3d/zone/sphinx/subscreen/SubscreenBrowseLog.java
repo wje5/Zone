@@ -1,6 +1,8 @@
 package com.pinball3d.zone.sphinx.subscreen;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
@@ -19,6 +21,7 @@ import net.minecraft.client.resources.I18n;
 public class SubscreenBrowseLog extends Subscreen {
 	public RadioButton button1, button2, button3, button4;
 	public ScrollingLog list;
+	private boolean flag;
 
 	public SubscreenBrowseLog(IHasSubscreen parent) {
 		this(parent, getDisplayWidth() / 2 - 150, getDisplayHeight() / 2 - 100);
@@ -28,15 +31,19 @@ public class SubscreenBrowseLog extends Subscreen {
 		super(parent, x, y, 300, 200, true);
 		addComponent(button1 = new RadioButton(this, 40, 26, () -> {
 			button1.setState(!button1.getState());
+			flag = false;
 		}).setState(true));
 		addComponent(button2 = new RadioButton(this, 100, 26, () -> {
 			button2.setState(!button2.getState());
+			flag = false;
 		}).setState(true));
 		addComponent(button3 = new RadioButton(this, 160, 26, () -> {
 			button3.setState(!button3.getState());
+			flag = false;
 		}));
 		addComponent(button4 = new RadioButton(this, 220, 26, () -> {
 			button4.setState(!button4.getState());
+			flag = false;
 		}).setState(true));
 		addComponent(list = new ScrollingLog(this, 16, 34, 268, 160));
 	}
@@ -54,7 +61,8 @@ public class SubscreenBrowseLog extends Subscreen {
 		super.update();
 		if (ConnectHelperClient.getInstance().hasData()) {
 			Queue<Log> q = ConnectHelperClient.getInstance().getLogs();
-			Iterator<Log> it = q.iterator();
+			List<Log> l = new ArrayList<Log>(q);
+			Iterator<Log> it = l.iterator();
 			while (it.hasNext()) {
 				switch (it.next().getLevel()) {
 				case IMPORTANT:
@@ -79,7 +87,11 @@ public class SubscreenBrowseLog extends Subscreen {
 					break;
 				}
 			}
-			list.setLogs(q);
+			list.setLogs(l);
+			if (!flag) {
+				list.dragToButtom();
+				flag = true;
+			}
 		}
 	}
 

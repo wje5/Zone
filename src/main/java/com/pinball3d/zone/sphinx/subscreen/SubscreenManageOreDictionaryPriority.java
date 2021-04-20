@@ -11,6 +11,7 @@ import com.pinball3d.zone.gui.component.Container;
 import com.pinball3d.zone.gui.component.ItemShow;
 import com.pinball3d.zone.gui.component.ScrollingContainerPriority;
 import com.pinball3d.zone.gui.component.Text;
+import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.network.MessageManageOreDictionaryPriority;
@@ -51,6 +52,9 @@ public class SubscreenManageOreDictionaryPriority extends Subscreen {
 			list.addComponent(c);
 			for (CraftingIngredentItem item : data.getDisableItems()) {
 				genBar(item);
+			}
+			if (data.getName() == null) {
+				addComponent(new TexturedButton(this, 300, 6, ICONS_5, 60, 120, 51, 51, 0.5F, null));
 			}
 		}
 	}

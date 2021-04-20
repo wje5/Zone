@@ -7,6 +7,7 @@ import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenBrowseLog;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageClassify;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenManageOreDictionary;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageQueue;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenManageUser;
 import com.pinball3d.zone.sphinx.subscreen.SubscreenShutdownSphinx;
@@ -45,6 +46,9 @@ public class GuiContainerSphinxController extends GuiContainerSphinxAdvanced {
 		}));
 		addComponent(new TexturedButton(this, width - 136, 2, ICONS_5, 120, 0, 60, 60, 0.25F, () -> {
 			subscreens.push(new SubscreenManageQueue(GuiContainerSphinxController.this));
+		}));
+		addComponent(new TexturedButton(this, width - 153, 2, ICONS_5, 120, 120, 60, 60, 0.25F, () -> {
+			subscreens.push(new SubscreenManageOreDictionary(GuiContainerSphinxController.this));
 		}));
 	}
 

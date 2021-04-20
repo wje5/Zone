@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageRescanRecipes extends MessageSphinx {
+public class MessageRescanRecipes extends MessageSphinxAdmin {
 	public MessageRescanRecipes() {
 
 	}
