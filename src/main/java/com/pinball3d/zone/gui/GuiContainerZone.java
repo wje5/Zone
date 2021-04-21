@@ -1,10 +1,9 @@
 package com.pinball3d.zone.gui;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 import org.lwjgl.input.Keyboard;
@@ -28,7 +27,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 	private boolean inited;
 	private int lastMouseX, lastMouseY, clickX, clickY;
 	protected float partialMoveX, partialMoveY;
-	protected Set<Component> components = new HashSet<Component>();
+	protected List<Component> components = new ArrayList<Component>();
 	protected Stack<Subscreen> subscreens = new Stack<Subscreen>();
 
 	public GuiContainerZone(ContainerZone container) {
@@ -328,7 +327,7 @@ public abstract class GuiContainerZone extends GuiContainer implements IHasCompo
 	}
 
 	@Override
-	public Set<Component> getComponents() {
+	public List<Component> getComponents() {
 		return components;
 	}
 

@@ -271,6 +271,11 @@ sphinx.more=More...
 sphinx.recipe_config=Recipe Config
 sphinx.rescan_recipes=Rescan Recipes
 sphinx.manage_ore_dictionary=Manage Ore Dictionary
+sphinx.confirm_rescan_recipes=Are you sure you want to rescan recipes?\nThis operation cannot be undone.
+sphinx.rescan_recipes_finish=Recipes scan finished, recipe %1$s item(s) added, ore dictionary %2$s item(s) added, ore dictionary %3$s item(s) changed.
+sphinx.delete_ore_dictionary=Delete Ore Dictionary
+sphinx.confirm_delete_ore_dictionary=Are you sure you want to delete %1$s?\nThis operation cannot be undone.
+sphinx.export_success=Export Success
 
 log.send_pack=Logistic pack <0> sent from <1>, via <2>, will delivery <4> in <3>.
 log.recv_pack=Logistic pack <0> sent from <1> has arrived at <4>, via <2>, total time is <3>.
@@ -298,7 +303,7 @@ log.recv_pack_full=Logistic pack <0> sent from <1> has arrived at <4>, via <2>, 
 log.change_name=Sphinx name has been changed to <0>, operator: <1>.
 log.change_ore_dictionary_priority=<0> has been changed, operator: <1>.
 log.rescan_recipes=Recipes scan in process, operator: <0>.
-log.rescan_recipes_finish=Recipes scan finished, <0> item(s) added, <1> item(s) changed.
+log.rescan_recipes_finish=Recipes scan finished, recipe <0> item(s) added, ore dictionary <1> item(s) added, ore dictionary <2> item(s) changed.
 log.items=%1$s item(s)
 
 manual.preface=   Welcome to Zone!!\n\nCurrently it introduced\n*An ore multiplying Cricible\n*A kind of Drill with replaceable\nhead\n*The Grinder crushing ores to\n32 pieces\n*Even more ore-multiplying ways\n(up to 7x!)\n*The Nail Gun making holes all\nover your enemies\n*An adorable submarine\n*All-Mighty Sphinx© System\n*and more...

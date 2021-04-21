@@ -4,6 +4,7 @@ import com.pinball3d.zone.sphinx.log.LogRescanRecipes;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -27,7 +28,9 @@ public class MessageRescanRecipes extends MessageSphinxAdmin {
 	public void run(MessageContext ctx) {
 		TEProcessingCenter te = getProcessingCenter();
 		te.fireLog(new LogRescanRecipes(te.getNextLogId(), getPlayer(ctx)));
-		te.rescanRecipes();
+		int[] r = te.rescanRecipes();
+		NetworkHandler.instance.sendTo(new MessageRescanRecipesFinish(r[0], r[1], r[2]),
+				(EntityPlayerMP) getPlayer(ctx));
 	}
 
 	public static class Handler implements IMessageHandler<MessageRescanRecipes, IMessage> {

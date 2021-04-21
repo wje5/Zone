@@ -16,7 +16,10 @@ import org.lwjgl.opengl.GL11;
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
+import com.pinball3d.zone.gui.GuiContainerZone;
 import com.pinball3d.zone.gui.IHasSubscreen;
+import com.pinball3d.zone.gui.Subscreen;
+import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.pdf.PDFHelper;
 import com.pinball3d.zone.pdf.PDFImage;
 
@@ -377,6 +380,19 @@ public class Util {
 		int v = 256 - height - 1;
 		Util.drawTexture(BORDER_2, originX - 1, y, 0, v, 6, height, 0.5F);
 		Util.drawTexture(BORDER_2, x2 - 1, y, 251, v, 6, height - 3, 0.5F);
+	}
+
+	public static boolean isCovered(Component c) {
+		if (c.getParent() instanceof GuiContainerZone) {
+			return !((GuiContainerZone) c.getParent()).getSubscreens().empty();
+		}
+		if (c.getParent() instanceof Subscreen) {
+			return !((Subscreen) c.getParent()).getParent().getSubscreens().peek().equals(c.getParent());
+		}
+		if (c.getParent() instanceof Component) {
+			return isCovered((Component) c.getParent());
+		}
+		return false;
 	}
 
 	public static String trimStringNewline(String text) {

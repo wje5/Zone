@@ -17,7 +17,7 @@ public class Component {
 	public static final ResourceLocation ICONS_5 = new ResourceLocation("zone:textures/gui/sphinx/icons_5.png");
 	private int x, y;
 	public int width, height;
-	public IHasComponents parent;
+	protected IHasComponents parent;
 	protected BooleanSupplier enable;
 	protected IntSupplier xSupplier, ySupplier;
 
@@ -116,7 +116,7 @@ public class Component {
 		}
 		Util.resetOpenGl();
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(getX(), getY(), 50F);
+		GlStateManager.translate(getX(), getY(), 0.0F);
 		doRender(mouseX, mouseY);
 		GlStateManager.popMatrix();
 	}
@@ -127,5 +127,9 @@ public class Component {
 
 	public boolean getRenderLast(int mouseX, int mouseY) {
 		return false;
+	}
+
+	public IHasComponents getParent() {
+		return parent;
 	}
 }

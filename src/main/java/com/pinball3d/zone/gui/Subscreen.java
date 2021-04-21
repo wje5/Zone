@@ -1,7 +1,9 @@
 package com.pinball3d.zone.gui;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import com.pinball3d.zone.gui.component.Component;
@@ -24,7 +26,7 @@ public class Subscreen implements IHasComponents {
 	public int width, height;
 	public int x, y;
 	protected IHasSubscreen parent;
-	protected Set<Component> components = new HashSet<Component>();
+	protected List<Component> components = new ArrayList<Component>();
 	protected Component draggingComponent;
 	public boolean dead, inited;
 
@@ -54,6 +56,7 @@ public class Subscreen implements IHasComponents {
 	public void doRender(int mouseX, int mouseY) {
 		Util.resetOpenGl();
 		GlStateManager.pushMatrix();
+		GlStateManager.disableDepth();
 		doRenderBackground(mouseX, mouseY);
 		components.forEach(e -> {
 			if (!e.getRenderLast(mouseX - e.getX(), mouseY - e.getY())) {
@@ -221,6 +224,10 @@ public class Subscreen implements IHasComponents {
 		return false;
 	}
 
+	public IHasSubscreen getParent() {
+		return parent;
+	}
+
 	@Override
 	public int getX() {
 		return x;
@@ -232,7 +239,7 @@ public class Subscreen implements IHasComponents {
 	}
 
 	@Override
-	public Set<Component> getComponents() {
+	public List<Component> getComponents() {
 		return components;
 	}
 

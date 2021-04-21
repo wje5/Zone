@@ -74,7 +74,7 @@ public class SubscreenManageClassify extends Subscreen {
 					g.addItem(type);
 				} else {
 					parent.putScreen(new SubscreenMessageBox(parent, I18n.format("sphinx.error"),
-							I18n.format("sphinx.unselected_classify")));
+							Util.formatAndAntiEscape("sphinx.unselected_classify")));
 					return;
 				}
 			}
@@ -90,7 +90,7 @@ public class SubscreenManageClassify extends Subscreen {
 					g.removeItem(type);
 				} else {
 					parent.putScreen(new SubscreenMessageBox(parent, I18n.format("sphinx.error"),
-							I18n.format("sphinx.unselected_classify")));
+							Util.formatAndAntiEscape("sphinx.unselected_classify")));
 					return;
 				}
 			}
@@ -110,7 +110,7 @@ public class SubscreenManageClassify extends Subscreen {
 					}
 				} else {
 					parent.putScreen(new SubscreenMessageBox(parent, I18n.format("sphinx.error"),
-							I18n.format("sphinx.unselected_classify")));
+							Util.formatAndAntiEscape("sphinx.unselected_classify")));
 					return;
 				}
 			}
@@ -144,7 +144,7 @@ public class SubscreenManageClassify extends Subscreen {
 		addComponent(list = new ClassifyGroupEdgeList(this, 0, 9, 195).setOnChange((index) -> {
 			if (dirty) {
 				parent.putScreen(new SubscreenYNCBox(parent, I18n.format("sphinx.save"),
-						I18n.format("sphinx.save_change", local.getName()), () -> {
+						Util.formatAndAntiEscape("sphinx.save_change", local.getName()), () -> {
 							NetworkHandler.instance.sendToServer(MessageManageClassify.newMessage(
 									ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, local));
 							list.index = index;
@@ -207,7 +207,7 @@ public class SubscreenManageClassify extends Subscreen {
 					dirty = !g.equals(ConnectHelperClient.getInstance().getClassify().get(list.get().id));
 				} else {
 					parent.putScreen(new SubscreenMessageBox(parent, I18n.format("sphinx.error"),
-							I18n.format("sphinx.unselected_classify")));
+							Util.formatAndAntiEscape("sphinx.unselected_classify")));
 				}
 			}
 		}
@@ -393,7 +393,6 @@ public class SubscreenManageClassify extends Subscreen {
 		String text = page + "/" + maxPage;
 		Util.renderGlowString(text, 205 - fr.getStringWidth(text) / 2, 181);
 		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
 		GlStateManager.enableBlend();
 		RenderHelper.enableGUIStandardItemLighting();
 		GlStateManager.disableLighting();
@@ -444,7 +443,7 @@ public class SubscreenManageClassify extends Subscreen {
 		}
 		if (dirty) {
 			parent.putScreen(new SubscreenYNCBox(parent, I18n.format("sphinx.save"),
-					I18n.format("sphinx.save_change", local.getName()), () -> {
+					Util.formatAndAntiEscape("sphinx.save_change", local.getName()), () -> {
 						NetworkHandler.instance.sendToServer(MessageManageClassify
 								.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), list.get().id, local));
 						parent.removeScreen(SubscreenManageClassify.this);

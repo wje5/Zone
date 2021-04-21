@@ -49,6 +49,8 @@ public class NetworkHandler {
 		registerMessage(MessageRescanRecipes.Handler.class, MessageRescanRecipes.class, Side.SERVER);
 		registerMessage(MessageManageOreDictionaryPriority.Handler.class, MessageManageOreDictionaryPriority.class,
 				Side.SERVER);
+		registerMessage(MessageRescanRecipesFinish.Handler.class, MessageRescanRecipesFinish.class, Side.CLIENT);
+		registerMessage(MessageDeleteOreDictionary.Handler.class, MessageDeleteOreDictionary.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

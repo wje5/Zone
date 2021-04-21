@@ -20,6 +20,7 @@ import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.gui.component.Component;
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxAdvanced;
+import com.pinball3d.zone.sphinx.subscreen.SubscreenMessageBox;
 import com.pinball3d.zone.util.ItemType;
 import com.pinball3d.zone.util.Util;
 
@@ -33,6 +34,7 @@ import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -143,7 +145,7 @@ public class QueueChart extends Component {
 			Gui.drawRect(0, 0, width, height, 0x651CC3B5);
 			GlStateManager.depthFunc(GL11.GL_LEQUAL);
 			GlStateManager.translate(xOffset, yOffset, 0);
-			if (mouseX < 0 || mouseX > height || mouseY < 0 || mouseY > height) {
+			if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) {
 				mouseX = Integer.MIN_VALUE;
 			}
 			GlStateManager.scale(scale, scale, 1.0F);
@@ -204,6 +206,8 @@ public class QueueChart extends Component {
 			File file2 = new File(file1, root.type.createStack().getDisplayName() + ".png");
 			file2 = file2.getCanonicalFile();
 			ImageIO.write(bufferedimage, "png", file2);
+			Util.getRoot().putScreen(new SubscreenMessageBox(Util.getRoot(), I18n.format("sphinx.export_success"),
+					Util.formatAndAntiEscape("screenshot.success", file2.getName())));
 		} catch (Exception exception) {
 			Zone.logger.warn("Couldn't save screenshot", exception);
 		}

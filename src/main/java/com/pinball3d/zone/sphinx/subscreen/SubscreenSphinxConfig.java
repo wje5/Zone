@@ -28,8 +28,10 @@ public class SubscreenSphinxConfig extends Subscreen {
 //			parent.putScreen(new SubscreenRecipeConfig(parent));
 //		}, 60, 60, 60, 60, 0.25F);
 		list.addListBar(I18n.format("sphinx.rescan_recipes"), ICONS_5, () -> {
-			NetworkHandler.instance
-					.sendToServer(MessageRescanRecipes.newMessage(ConnectHelperClient.getInstance().getNetworkPos()));
+			parent.putScreen(new SubscreenConfirmBox(parent, I18n.format("sphinx.rescan_recipes"),
+					Util.formatAndAntiEscape("sphinx.confirm_rescan_recipes"),
+					() -> NetworkHandler.instance.sendToServer(
+							MessageRescanRecipes.newMessage(ConnectHelperClient.getInstance().getNetworkPos()))));
 		}, 120, 60, 60, 60, 0.25F);
 		addComponent(list);
 	}

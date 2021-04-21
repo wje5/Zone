@@ -1,11 +1,11 @@
 package com.pinball3d.zone.gui;
 
-import java.util.Set;
+import java.util.List;
 
 import com.pinball3d.zone.gui.component.Component;
 
 public interface IHasComponents {
-	public Set<Component> getComponents();
+	public List<Component> getComponents();
 
 	public void addComponent(Component c);
 

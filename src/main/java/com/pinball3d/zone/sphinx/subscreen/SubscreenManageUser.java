@@ -68,7 +68,7 @@ public class SubscreenManageUser extends Subscreen {
 		addComponent(
 				new TexturedButton(this, 100, 73, ICONS_4, 180, 120, 60, 60, 0.25F,
 						() -> parent.putScreen(new SubscreenConfirmBox(parent, I18n.format("sphinx.transfer_admin"),
-								I18n.format("sphinx.confirm_transfer_admin"),
+								Util.formatAndAntiEscape("sphinx.confirm_transfer_admin"),
 								() -> NetworkHandler.instance.sendToServer(MessageTransferAdmin.newMessage(
 										ConnectHelperClient.getInstance().getNetworkPos(),
 										((UserData) list.get().getData()).uuid))))).setEnable(() -> {

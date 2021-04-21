@@ -1,10 +1,8 @@
 package com.pinball3d.zone.gui.component;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
@@ -70,7 +68,7 @@ public class ScrollingContainer extends Component implements IHasComponents {
 						c.doRenderScreen(mouseX - c.getX(), mouseY - c.getY());
 						GlStateManager.popMatrix();
 					}
-					if (i == 0 && flag) {
+					if (i == 0 && flag && !Util.isCovered(this)) {
 						Util.resetOpenGl();
 						Gui.drawRect(c.getX(), c.getY() + renderUpCut, c.getX() + c.width,
 								c.getY() + c.height - renderDownCut, 0x4FFFFFFF);
@@ -133,8 +131,8 @@ public class ScrollingContainer extends Component implements IHasComponents {
 
 	@Deprecated
 	@Override
-	public Set<Component> getComponents() {
-		return new HashSet<Component>(list);
+	public List<Component> getComponents() {
+		return new ArrayList<Component>(list);
 	}
 
 	@Override

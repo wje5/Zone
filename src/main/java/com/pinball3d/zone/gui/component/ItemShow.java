@@ -39,7 +39,7 @@ public class ItemShow extends Component {
 			fr.drawStringWithShadow(text, 17 - fr.getStringWidth(text), 9, 0xFFFFFF);
 			GlStateManager.popMatrix();
 		}
-		if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= width) {
+		if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= width && !Util.isCovered(this)) {
 			GlStateManager.pushMatrix();
 			Util.resetOpenGl();
 			if (mouseY < 16) {

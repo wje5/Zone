@@ -13,30 +13,43 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class MessageErrorStorageFull implements IMessage {
-	public MessageErrorStorageFull() {
+public class MessageRescanRecipesFinish implements IMessage {
+	int recipeAdd, add, change;
 
+	public MessageRescanRecipesFinish() {
+
+	}
+
+	public MessageRescanRecipesFinish(int recipeAdd, int add, int change) {
+		this.recipeAdd = recipeAdd;
+		this.add = add;
+		this.change = change;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-
+		recipeAdd = buf.readInt();
+		add = buf.readInt();
+		change = buf.readInt();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-
+		buf.writeInt(recipeAdd);
+		buf.writeInt(add);
+		buf.writeInt(change);
 	}
 
-	public static class Handler implements IMessageHandler<MessageErrorStorageFull, IMessage> {
+	public static class Handler implements IMessageHandler<MessageRescanRecipesFinish, IMessage> {
 		@Override
-		public IMessage onMessage(MessageErrorStorageFull message, MessageContext ctx) {
+		public IMessage onMessage(MessageRescanRecipesFinish message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
 				GuiScreen screen = Minecraft.getMinecraft().currentScreen;
 				if (screen instanceof GuiContainerZone) {
 					GuiContainerZone s = (GuiContainerZone) screen;
-					s.putScreen(new SubscreenMessageBox(s, I18n.format("sphinx.warning"),
-							Util.formatAndAntiEscape("sphinx.storage_full")));
+					s.putScreen(
+							new SubscreenMessageBox(s, I18n.format("sphinx.rescan_recipes"), Util.formatAndAntiEscape(
+									"sphinx.rescan_recipes_finish", message.recipeAdd, message.add, message.change)));
 				}
 			});
 			return null;

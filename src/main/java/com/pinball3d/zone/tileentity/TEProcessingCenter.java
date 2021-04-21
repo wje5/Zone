@@ -1,6 +1,7 @@
 package com.pinball3d.zone.tileentity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Sets;
 import com.pinball3d.zone.ChunkHandler;
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
 import com.pinball3d.zone.ConfigLoader;
@@ -1107,23 +1109,36 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return logId++;
 	}
 
-	public void rescanRecipes() {
-		initOreDictionary();
+	public int[] rescanRecipes() {
+		int[] d = initOreDictionary();
+		int recipeAdd = 0;
 		Iterator<IRecipe> it = CraftingManager.REGISTRY.iterator();
 		while (it.hasNext()) {
 			IRecipe i = it.next();
 			CraftingIngredent[] data = new CraftingIngredent[10];
 			NonNullList<Ingredient> list = i.getIngredients();
 			if (!list.isEmpty()) {
-				for (int j = 0; j < list.size(); j++) {
+				tag: for (int j = 0; j < list.size(); j++) {
 					Ingredient in = list.get(j);
 					ItemStack[] s = in.getMatchingStacks();
 					if (s.length > 1) {
 						if (!(in instanceof OreIngredient)) {
+							Set<CraftingIngredentItem> set = Stream.of(s).map(e -> new CraftingIngredentItem(e))
+									.collect(Collectors.toSet());
+							Iterator<OreDictionaryData> it2 = getOreDictionarys().values().iterator();
+							while (it2.hasNext()) {
+								OreDictionaryData o = it2.next();
+								Set<CraftingIngredentItem> set2 = Sets.newHashSet(o.getItems());
+								Collections.addAll(set2, o.getDisableItems());
+								if (set2.equals(set)) {
+									continue tag;
+								}
+							}
 							addOreDictionary(new OreDictionaryData(
 									null, Stream.of(s).map(e -> new CraftingIngredentItem(e))
 											.collect(Collectors.toList()).toArray(new CraftingIngredentItem[] {}),
 									new CraftingIngredentItem[] {}));
+							d[0]++;
 						}
 					} else if (s.length == 1) {
 						ItemStack stack = s[0];
@@ -1132,21 +1147,25 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 				data[9] = new CraftingIngredentItem(i.getRecipeOutput());
 				SphinxRecipe r = new SphinxRecipe(RecipeType.BasicType.MINECRAFT_WORKBENCH.ordinal(), data);
-				addRecipe(r);
+				if (addRecipe(r)) {
+					recipeAdd++;
+				}
 			}
 		}
-
+		fireLog(new LogRescanRecipesFinish(getNextLogId(), recipeAdd, d[0], d[1]));
+		return new int[] { recipeAdd, d[0], d[1] };
 	}
 
-	public void addRecipe(SphinxRecipe recipe) {
+	public boolean addRecipe(SphinxRecipe recipe) {
 		Iterator<SphinxRecipe> it = recipes.values().iterator();
 		while (it.hasNext()) {
 			SphinxRecipe i = it.next();
 			if (i.equals(recipe)) {
-				return;
+				return false;
 			}
 		}
 		recipes.put(recipeId++, recipe);
+		return true;
 	}
 
 	public void initRecipeType() {
@@ -1158,7 +1177,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				RecipeType.BasicType.MINECRAFT_FURNACE.ordinal(), "tile.furnace.name", true, 1, new int[] { 3 }));
 	}
 
-	public void initOreDictionary() {
+	public int[] initOreDictionary() {
 		int add = 0, change = 0;
 		String[] names = OreDictionary.getOreNames();
 		for (String name : names) {
@@ -1205,7 +1224,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				add++;
 			}
 		}
-		fireLog(new LogRescanRecipesFinish(getNextLogId(), add, change));
+		return new int[] { add, change };
 	}
 
 	public void addOreDictionary(OreDictionaryData data) {

@@ -1,8 +1,8 @@
 package com.pinball3d.zone.gui.component;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import com.pinball3d.zone.gui.IHasComponents;
 import com.pinball3d.zone.util.Util;
@@ -10,7 +10,7 @@ import com.pinball3d.zone.util.Util;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class Container extends Component implements IHasComponents {
-	protected Set<Component> components = new HashSet<Component>();
+	protected List<Component> components = new ArrayList<Component>();
 	protected Component draggingComponent;
 	protected Object data;
 
@@ -137,7 +137,7 @@ public class Container extends Component implements IHasComponents {
 	}
 
 	@Override
-	public Set<Component> getComponents() {
+	public List<Component> getComponents() {
 		return components;
 	}
 

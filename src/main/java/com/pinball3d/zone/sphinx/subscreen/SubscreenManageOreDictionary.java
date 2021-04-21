@@ -17,6 +17,8 @@ import com.pinball3d.zone.gui.component.TextInputBox;
 import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.network.MessageDeleteOreDictionary;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.crafting.CraftingIngredentItem;
 import com.pinball3d.zone.sphinx.crafting.OreDictionaryData;
 import com.pinball3d.zone.util.Util;
@@ -83,6 +85,16 @@ public class SubscreenManageOreDictionary extends Subscreen {
 			c.addComponent(new ItemShow(c, 4 + i * 20, 4, allItems.get(i).createStack(), allItems.get(i).getCount()));
 		}
 		c.addComponent(new Text(c, 146, 9, data.getName()));
+		c.addComponent(
+				new TexturedButton(c, 261, 17, ICONS, 16, 172, 11, 15, 0.5F,
+						() -> parent.putScreen(new SubscreenConfirmBox(parent,
+								I18n.format("sphinx.delete_ore_dictionary"),
+								Util.formatAndAntiEscape("sphinx.confirm_delete_ore_dictionary",
+										"O" + id + (data.getName() != null ? " \"" + data.getName() + "\"" : "")),
+								() -> {
+									NetworkHandler.instance.sendToServer(MessageDeleteOreDictionary
+											.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), id));
+								}))));
 		c.addComponent(new Button(c, 0, 0, 268, 25,
 				() -> parent.putScreen(new SubscreenManageOreDictionaryPriority(parent, data, id))));
 		list.addComponent(c);
@@ -98,7 +110,6 @@ public class SubscreenManageOreDictionary extends Subscreen {
 					genBar(k, v);
 				}
 			});
-			Container c = new Container(list, 0, 0, 268, 25);
 		}
 	}
 
