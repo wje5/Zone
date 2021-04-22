@@ -108,7 +108,7 @@ public class Log {
 		SPHINXSHUTDOWNSTRUCTURE(LogSphinxShutdownStructure::new), PACKLOST(LogPackLost::new),
 		RECVPACKFULL(LogRecvPackFull::new), CHANGENAME(LogChangeName::new),
 		CHANGEOREDICTIONARYPRIORITY(LogChangeOreDictionaryPriority::new), RESCANRECIPES(LogRescanRecipes::new),
-		RESCANRECIPESFINISH(LogRescanRecipesFinish::new);
+		RESCANRECIPESFINISH(LogRescanRecipesFinish::new), NEWOREDICTIONARY(LogNewOreDictionary::new);
 
 		private Function<NBTTagCompound, Log> cons;
 

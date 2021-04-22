@@ -150,8 +150,7 @@ public class ScrollingContainerPriority extends Component implements IHasCompone
 			}
 		} else {
 			scrollingDistance -= moveY;
-			scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
-			scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+			checkScrollingDistance();
 		}
 		return true;
 	}
@@ -172,8 +171,7 @@ public class ScrollingContainerPriority extends Component implements IHasCompone
 			return false;
 		}
 		scrollingDistance += isUp ? 15 : -15;
-		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
-		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+		checkScrollingDistance();
 		return true;
 	}
 
@@ -194,6 +192,16 @@ public class ScrollingContainerPriority extends Component implements IHasCompone
 
 	public List<Container> getList() {
 		return list;
+	}
+
+	public void setScrollingDistance(int scrollingDistance) {
+		this.scrollingDistance = scrollingDistance;
+		checkScrollingDistance();
+	}
+
+	public void checkScrollingDistance() {
+		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
+		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 	}
 
 	@Deprecated

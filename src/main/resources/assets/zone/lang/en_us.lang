@@ -304,6 +304,7 @@ log.change_name=Sphinx name has been changed to <0>, operator: <1>.
 log.change_ore_dictionary_priority=<0> has been changed, operator: <1>.
 log.rescan_recipes=Recipes scan in process, operator: <0>.
 log.rescan_recipes_finish=Recipes scan finished, recipe <0> item(s) added, ore dictionary <1> item(s) added, ore dictionary <2> item(s) changed.
+log.new_ore_dictionary=New ore dictionary <0>, operator: <1>.
 log.items=%1$s item(s)
 
 manual.preface=   Welcome to Zone!!\n\nCurrently it introduced\n*An ore multiplying Cricible\n*A kind of Drill with replaceable\nhead\n*The Grinder crushing ores to\n32 pieces\n*Even more ore-multiplying ways\n(up to 7x!)\n*The Nail Gun making holes all\nover your enemies\n*An adorable submarine\n*All-Mighty Sphinx© System\n*and more...

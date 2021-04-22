@@ -91,8 +91,7 @@ public class ScrollingContainer extends Component implements IHasComponents {
 			return false;
 		}
 		scrollingDistance -= moveY;
-		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
-		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+		checkScrollingDistance();
 		return true;
 	}
 
@@ -105,8 +104,7 @@ public class ScrollingContainer extends Component implements IHasComponents {
 			return false;
 		}
 		scrollingDistance += isUp ? 15 : -15;
-		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
-		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+		checkScrollingDistance();
 		return true;
 	}
 
@@ -127,6 +125,12 @@ public class ScrollingContainer extends Component implements IHasComponents {
 
 	public void setScrollingDistance(int scrollingDistance) {
 		this.scrollingDistance = scrollingDistance;
+		checkScrollingDistance();
+	}
+
+	public void checkScrollingDistance() {
+		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
+		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 	}
 
 	@Deprecated

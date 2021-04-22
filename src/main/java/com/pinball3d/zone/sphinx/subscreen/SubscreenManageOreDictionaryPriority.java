@@ -34,7 +34,7 @@ public class SubscreenManageOreDictionaryPriority extends Subscreen {
 	}
 
 	public SubscreenManageOreDictionaryPriority(IHasSubscreen parent, OreDictionaryData data, int id, int x, int y) {
-		super(parent, x, y, 300, 200, true);
+		super(parent, x, y, 326, 200, true);
 		this.data = data;
 		this.id = id;
 		addComponent(list = new ScrollingContainerPriority(this, 16, 24, 268, 170));
@@ -54,7 +54,8 @@ public class SubscreenManageOreDictionaryPriority extends Subscreen {
 				genBar(item);
 			}
 			if (data.getName() == null) {
-				addComponent(new TexturedButton(this, 300, 6, ICONS_5, 60, 120, 51, 51, 0.5F, null));
+				addComponent(
+						new TexturedButton(this, 300, 6, ICONS_5, 60, 120, 51, 51, 0.5F, () -> System.out.println(1)));
 			}
 		}
 	}

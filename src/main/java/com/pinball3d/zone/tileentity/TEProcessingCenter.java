@@ -185,9 +185,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		case PRODUCTION:
 			id = productionId++;
 			break;
-		case PACK:
-			id = packId++;
-			break;
 		}
 		SerialNumber s = new SerialNumber(type, id);
 		serialNumberToPos.put(s, pos);
@@ -1128,10 +1125,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 							Iterator<OreDictionaryData> it2 = getOreDictionarys().values().iterator();
 							while (it2.hasNext()) {
 								OreDictionaryData o = it2.next();
-								Set<CraftingIngredentItem> set2 = Sets.newHashSet(o.getItems());
-								Collections.addAll(set2, o.getDisableItems());
-								if (set2.equals(set)) {
-									continue tag;
+								if (o.getName() == null) {
+									Set<CraftingIngredentItem> set2 = Sets.newHashSet(o.getItems());
+									Collections.addAll(set2, o.getDisableItems());
+									if (set2.equals(set)) {
+										continue tag;
+									}
 								}
 							}
 							addOreDictionary(new OreDictionaryData(
@@ -1235,11 +1234,14 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				oreDictionarys.put(i.getKey(), data);
 				return;
 			}
-			if (i.getValue().equals(data)) {
-				return;
-			}
 		}
 		oreDictionarys.put(oreDictionaryId++, data);
+	}
+
+	public int newOreDictionary() {
+		oreDictionarys.put(oreDictionaryId,
+				new OreDictionaryData(null, new CraftingIngredentItem[] {}, new CraftingIngredentItem[] {}));
+		return oreDictionaryId++;
 	}
 
 	public Map<Integer, OreDictionaryData> getOreDictionarys() {

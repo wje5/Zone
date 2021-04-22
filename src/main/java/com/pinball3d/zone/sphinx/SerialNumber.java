@@ -105,14 +105,11 @@ public class SerialNumber {
 		case PRODUCTION:
 			prefix = "P";
 			break;
-		case PACK:
-			prefix = "W";
-			break;
 		}
 		return prefix + number;
 	}
 
 	public static enum Type {
-		NODE, STORAGE, DEVICE, PRODUCTION, PACK
+		NODE, STORAGE, DEVICE, PRODUCTION
 	}
 }

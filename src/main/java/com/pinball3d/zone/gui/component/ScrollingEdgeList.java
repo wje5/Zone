@@ -136,14 +136,8 @@ public class ScrollingEdgeList extends Component {
 		if (enable != null && !enable.getAsBoolean()) {
 			return false;
 		}
-		int maxScrollingDistance = list.size() * 15 - height;
-		if (maxScrollingDistance < 0) {
-			scrollingDistance = 0;
-			return true;
-		}
 		scrollingDistance += isUp ? 15 : -15;
-		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
-		scrollingDistance = scrollingDistance > maxScrollingDistance ? maxScrollingDistance : scrollingDistance;
+		checkScrollingDistance();
 		return true;
 	}
 
@@ -155,15 +149,23 @@ public class ScrollingEdgeList extends Component {
 		if (enable != null && !enable.getAsBoolean()) {
 			return false;
 		}
+		scrollingDistance -= moveY;
+		checkScrollingDistance();
+		return true;
+	}
+
+	public void setScrollingDistance(int scrollingDistance) {
+		this.scrollingDistance = scrollingDistance;
+		checkScrollingDistance();
+	}
+
+	public void checkScrollingDistance() {
 		int maxScrollingDistance = list.size() * 15 - height;
 		if (maxScrollingDistance < 0) {
 			scrollingDistance = 0;
-			return true;
 		}
-		scrollingDistance -= moveY;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
 		scrollingDistance = scrollingDistance > maxScrollingDistance ? maxScrollingDistance : scrollingDistance;
-		return true;
 	}
 
 	public static class ListBar {

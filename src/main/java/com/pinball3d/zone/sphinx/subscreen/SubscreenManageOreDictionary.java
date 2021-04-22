@@ -18,6 +18,7 @@ import com.pinball3d.zone.gui.component.TexturedButton;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.network.MessageDeleteOreDictionary;
+import com.pinball3d.zone.network.MessageNewOreDictionary;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.crafting.CraftingIngredentItem;
 import com.pinball3d.zone.sphinx.crafting.OreDictionaryData;
@@ -36,7 +37,7 @@ public class SubscreenManageOreDictionary extends Subscreen {
 	}
 
 	public SubscreenManageOreDictionary(IHasSubscreen parent, int x, int y) {
-		super(parent, x, y, 320, 200, true);
+		super(parent, x, y, 346, 200, true);
 		addComponent(edgeList = new ScrollingEdgeTextureList(this, 0, 9, 195));
 		edgeList.addBar(ICONS, 9, 8, 32, 130, 19, 15, null);
 		edgeList.addBar(ICONS, 10, 8, 51, 130, 20, 15, null);
@@ -50,6 +51,10 @@ public class SubscreenManageOreDictionary extends Subscreen {
 		}).setIsPixel(true));
 		addComponent(new TexturedButton(this, 100, 27, ICONS, 92, 41, 15, 15, 1.0F, () -> {
 			box.isFocus = false;
+		}));
+		addComponent(new TexturedButton(this, 320, 6, ICONS_5, 60, 120, 51, 51, 0.5F, () -> {
+			NetworkHandler.instance.sendToServer(
+					MessageNewOreDictionary.newMessage(ConnectHelperClient.getInstance().getNetworkPos()));
 		}));
 	}
 
@@ -94,7 +99,7 @@ public class SubscreenManageOreDictionary extends Subscreen {
 								() -> {
 									NetworkHandler.instance.sendToServer(MessageDeleteOreDictionary
 											.newMessage(ConnectHelperClient.getInstance().getNetworkPos(), id));
-								}))));
+								}))).setEnable(() -> edgeList.index == 0));
 		c.addComponent(new Button(c, 0, 0, 268, 25,
 				() -> parent.putScreen(new SubscreenManageOreDictionaryPriority(parent, data, id))));
 		list.addComponent(c);
@@ -111,6 +116,7 @@ public class SubscreenManageOreDictionary extends Subscreen {
 				}
 			});
 		}
+		list.checkScrollingDistance();
 	}
 
 	@Override
