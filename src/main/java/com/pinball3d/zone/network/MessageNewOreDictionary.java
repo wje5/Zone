@@ -4,6 +4,7 @@ import com.pinball3d.zone.sphinx.log.LogNewOreDictionary;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -26,7 +27,9 @@ public class MessageNewOreDictionary extends MessageSphinx {
 	@Override
 	public void run(MessageContext ctx) {
 		TEProcessingCenter te = getProcessingCenter();
-		te.fireLog(new LogNewOreDictionary(te.getNextLogId(), getPlayer(ctx), te.newOreDictionary()));
+		int id = te.newOreDictionary();
+		te.fireLog(new LogNewOreDictionary(te.getNextLogId(), getPlayer(ctx), id));
+		NetworkHandler.instance.sendTo(new MessageNewOreDictionaryCallback(id), (EntityPlayerMP) getPlayer(ctx));
 	}
 
 	public static class Handler implements IMessageHandler<MessageNewOreDictionary, IMessage> {

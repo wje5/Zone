@@ -128,6 +128,7 @@ public class SubscreenChooseItem extends Subscreen {
 				}
 				if (it.hasNext()) {
 					ItemType type = it.next();
+					parent.removeScreen(this);
 					event.accept(type);
 				}
 			}

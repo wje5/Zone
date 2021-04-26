@@ -77,7 +77,7 @@ public class ScrollingContainerPriority extends Component implements IHasCompone
 					if (i == 1 && c.height >= 12) {
 						int h = (c.height - 12) / 2;
 						Util.resetOpenGl();
-						Util.drawTexture(ICONS_5, c.getX() + c.width - h - 12,
+						Util.drawTexture(ICONS_5, c.getX() + c.width - 18,
 								c.getY() + (renderUpCut > h ? renderUpCut : h), 0,
 								120 + (renderUpCut > h ? renderUpCut - h : 0) * 4, 50,
 								50 - (renderUpCut > h ? renderUpCut - h : 0) * 4, 0.25F);
@@ -108,7 +108,7 @@ public class ScrollingContainerPriority extends Component implements IHasCompone
 					int cX = mouseX - c.getX();
 					int cY = mouseY - c.getY();
 					int h = (c.height - 12) / 2;
-					if (cX >= c.getX() + c.width - h - 12 && cX <= c.getX() + c.width - h && cY >= h
+					if (cX >= c.getX() + c.width - 18 && cX <= c.getX() + c.width - 6 && cY >= h
 							&& cY <= c.height - h) {
 						draggingIndex = index;
 						break;
@@ -202,6 +202,14 @@ public class ScrollingContainerPriority extends Component implements IHasCompone
 	public void checkScrollingDistance() {
 		scrollingDistance = scrollingDistance > length - height ? length - height : scrollingDistance;
 		scrollingDistance = scrollingDistance < 0 ? 0 : scrollingDistance;
+	}
+
+	public void addContainer(int index, Container c) {
+		list.add(index, c);
+		c.setX(0);
+		c.setYSupplier(() -> list.subList(0, index).stream().mapToInt(e -> e.height).sum() - scrollingDistance
+				+ (draggingIndex != -1 && list.indexOf(c) == draggingIndex ? dragDistance : 0));
+		length += c.height;
 	}
 
 	@Deprecated

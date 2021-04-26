@@ -276,6 +276,8 @@ sphinx.rescan_recipes_finish=Recipes scan finished, recipe %1$s item(s) added, o
 sphinx.delete_ore_dictionary=Delete Ore Dictionary
 sphinx.confirm_delete_ore_dictionary=Are you sure you want to delete %1$s?\nThis operation cannot be undone.
 sphinx.export_success=Export Success
+sphinx.delete_item=Delete Item
+sphinx.confirm_delete_item=Are you sure you want to delete this item?\nThis operation cannot be undone.
 
 log.send_pack=Logistic pack <0> sent from <1>, via <2>, will delivery <4> in <3>.
 log.recv_pack=Logistic pack <0> sent from <1> has arrived at <4>, via <2>, total time is <3>.

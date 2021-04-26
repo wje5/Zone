@@ -34,6 +34,8 @@ import com.pinball3d.zone.sphinx.container.GuiContainerNeedNetworkIOPanel;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxController;
 import com.pinball3d.zone.sphinx.container.GuiContainerSphinxLoad;
 import com.pinball3d.zone.sphinx.container.GuiContainerTerminal;
+import com.pinball3d.zone.sphinx.elite.EliteContainer;
+import com.pinball3d.zone.sphinx.elite.EliteGuiContainer;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,6 +64,7 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int SPHINX_NEED_NETWORK_IO_PANEL = 17;
 	public static final int SPHINX_IO_PANEL = 18;
 	public static final int SPHINX_LOAD = 19;
+	public static final int ELITE = 20;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -123,6 +126,8 @@ public class GuiElementLoader implements IGuiHandler {
 			return new ContainerIOPanel(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case SPHINX_LOAD:
 			return new ContainerSphinxLoad(player, new WorldPos(x, y, z, world));
+		case ELITE:
+			return new EliteContainer();
 		}
 		return null;
 	}
@@ -211,6 +216,8 @@ public class GuiElementLoader implements IGuiHandler {
 					new WorldPos(x, y, z, world));
 		case SPHINX_LOAD:
 			return new GuiContainerSphinxLoad(new ContainerSphinxLoad(player, new WorldPos(x, y, z, world)));
+		case ELITE:
+			return new EliteGuiContainer(new EliteContainer());
 		}
 		return null;
 	}

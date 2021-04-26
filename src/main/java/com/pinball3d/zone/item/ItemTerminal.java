@@ -36,8 +36,8 @@ public class ItemTerminal extends ZoneItem {
 		if (playerIn.isSneaking()) {
 			stack.setItemDamage(stack.getItemDamage() == 0 ? 1 : 0);
 		} else if (!worldIn.isRemote && stack.getItemDamage() == 0) {
-			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_TERMINAL, worldIn, (int) playerIn.posX,
-					(int) playerIn.posY, (int) playerIn.posZ);
+			playerIn.openGui(Zone.instance, GuiElementLoader.ELITE, worldIn, (int) playerIn.posX, (int) playerIn.posY,
+					(int) playerIn.posZ);
 		}
 		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 	}

@@ -276,6 +276,8 @@ sphinx.rescan_recipes_finish=配方扫描已完成，新增配方%1$s项，矿�
 sphinx.delete_ore_dictionary=删除矿物词典
 sphinx.confirm_delete_ore_dictionary=您确定要删除 %1$s 吗？\n此操作不能撤销。
 sphinx.export_success=导出成功
+sphinx.delete_item=删除物品
+sphinx.confirm_delete_item=您确定要删除此物品吗？\n此操作不能撤销。
 
 log.send_pack=物流包<0>已于<1>处发出，经<2>，将于<3>后到达<4>。
 log.recv_pack=于<1>处发出的物流包<0>已到达<4>，途经<2>，共计用时<3>。
