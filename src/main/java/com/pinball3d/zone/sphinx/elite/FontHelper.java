@@ -3,6 +3,8 @@ package com.pinball3d.zone.sphinx.elite;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
@@ -11,18 +13,23 @@ import com.pvporbit.freetype.Bitmap;
 import com.pvporbit.freetype.Face;
 import com.pvporbit.freetype.FreeType;
 import com.pvporbit.freetype.FreeTypeConstants;
+import com.pvporbit.freetype.GlyphMetrics;
 import com.pvporbit.freetype.GlyphSlot;
 import com.pvporbit.freetype.Library;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 
 public class FontHelper {
-	private static ResourceLocation FONT_LOCATION = new ResourceLocation("zone:fonts/sphinx/elite/droidsans.ttf");
+	private static ResourceLocation FONT_LOCATION = new ResourceLocation("zone:fonts/elite/droidsans.ttf");
 	private static Library library;
 	private static Face face;
+	private static Map<Character, Float> widths = new HashMap<Character, Float>();
 
 	public static void init() {
 		library = FreeType.newLibrary();
@@ -41,52 +48,75 @@ public class FontHelper {
 		}
 	}
 
-	public static void renderChar(float x, float y, char c) {
-		long nano = System.nanoTime();
+	private static float renderChar(float x, float y, char c, int color) {
+		face.setPixelSizes(0, 14);
+		face.loadChar(c, FreeTypeConstants.FT_LOAD_RENDER);
+		GlyphSlot gss = face.getGlyphSlot();
+		Bitmap bmp = gss.getBitmap();
+		ByteBuffer buf = bmp.getBuffer();
+		int width = bmp.getWidth();
+		int height = bmp.getRows();
+		double s = 0.25F;
+		GlyphMetrics metric = gss.getMetrics();
+		float yOffset = metric.getHoriBearingY() * 1.0F / metric.getHeight() * height;
+		y -= yOffset * s - 3;
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder bufferbuilder = tessellator.getBuffer();
+		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+		int a = (color >> 24 & 255);
+		int r = (color >> 16 & 255);
+		int g = (color >> 8 & 255);
+		int b = (color & 255);
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				short t = (short) (buf.get() & 0xFF);
+				short alpha = (short) ((t / 255F) * a);
+
+				bufferbuilder.pos(x + j * s, y + i * s + s, 0).color(r, g, b, alpha).endVertex();
+				bufferbuilder.pos(x + j * s + s, y + i * s + s, 0).color(r, g, b, alpha).endVertex();
+				bufferbuilder.pos(x + j * s + s, y + i * s, 0).color(r, g, b, alpha).endVertex();
+				bufferbuilder.pos(x + j * s, y + i * s, 0).color(r, g, b, alpha).endVertex();
+			}
+		}
+		tessellator.draw();
+		return width * 0.25F;
+	}
+
+	public static void renderText(float x, float y, String s, int color) {
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
 				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
 				GlStateManager.DestFactor.ZERO);
-		face.selectSize(1);
-		face.setPixelSizes(0, 28);
-		face.loadChar(c, FreeTypeConstants.FT_LOAD_RENDER);
-		GlyphSlot gss = face.getGlyphSlot();
-		Bitmap bmp = gss.getBitmap();
-		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-		GL11.glRasterPos2i(72, 36);
-		ByteBuffer buf = bmp.getBuffer();
-//		int d = bmp.getWidth() / 8 + (bmp.getWidth() % 8 > 0 ? 1 : 0);
-//		byte[] bytes = new byte[d * bmp.getRows()];
-//		int k = bytes.length - d, m = 0;
-//		byte t = 0;
-//		for (int i = 0; i < bmp.getRows(); i++) {
-//			for (int j = 0; j < bmp.getWidth(); j++) {
-//				int f = buf.get() != -1 ? 0 : 1;
-//				t |= f << (7 - m);
-//				if (m == 7) {
-//					bytes[k++] = t;
-//					t = 0;
-//					m = 0;
-//				} else {
-//					m++;
-//				}
-//			}
-//			if (m != 0) {
-//				bytes[k++] = t;
-//			}
-//			t = 0;
-//			m = 0;
-//			k -= d * 2;
-//		}
-//		buf = BufferUtils.createByteBuffer(bytes.length);
-//		buf.put(bytes);
-//		buf.position(0);
-//		GL11.glBitmap(bmp.getWidth(), bmp.getRows(), 0, 0, 0, 0, buf);
-		GL11.glDrawPixels(bmp.getWidth(), bmp.getRows(), GL11.GL_LUMINANCE, GL11.GL_UNSIGNED_BYTE, buf);
+		for (char c : s.toCharArray()) {
+			float w = renderChar(x, y, c, color);
+			x += w + 0.2F;
+		}
 		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
-		System.out.println(System.nanoTime() - nano);
+	}
+
+	public static float getStringWidth(String s) {
+		if (s.isEmpty()) {
+			return 0;
+		}
+		float w = 0;
+		for (char c : s.toCharArray()) {
+			w += getCharWidth(c) + 0.2F;
+		}
+		return w - 0.2F;
+	}
+
+	public static float getCharWidth(char c) {
+		if (widths.containsKey(c)) {
+			return widths.get(c);
+		}
+		face.setPixelSizes(0, 14);
+		face.loadChar(c, FreeTypeConstants.FT_LOAD_RENDER);
+		float w = face.getGlyphSlot().getBitmap().getWidth() * 0.25F;
+		widths.put(c, w);
+		return w;
 	}
 }
