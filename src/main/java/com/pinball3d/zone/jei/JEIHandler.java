@@ -17,14 +17,19 @@ import com.pinball3d.zone.recipe.RecipeHandler.Type;
 import com.pinball3d.zone.recipe.RecipeLathe;
 
 import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
+import mezz.jei.api.recipe.IFocus.Mode;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
+import mezz.jei.gui.Focus;
 import net.minecraft.item.ItemStack;
 
 @JEIPlugin
 public class JEIHandler implements IModPlugin {
+	private static IJeiRuntime runtime;
+
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
 		IGuiHelper helper = registry.getJeiHelpers().getGuiHelper();
@@ -66,5 +71,14 @@ public class JEIHandler implements IModPlugin {
 				"zone:forming_press");
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.forming_press), "zone:forming_press");
 		registry.addRecipeClickArea(GuiContainerFormingPress.class, 80, 35, 22, 15, "zone:forming_press");
+	}
+
+	@Override
+	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+		runtime = jeiRuntime;
+	}
+
+	public static void showJEI(ItemStack stack, boolean isInput) {
+		runtime.getRecipesGui().show(new Focus<ItemStack>(isInput ? Mode.INPUT : Mode.OUTPUT, stack));
 	}
 }

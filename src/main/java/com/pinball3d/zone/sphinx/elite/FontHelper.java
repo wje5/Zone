@@ -49,7 +49,7 @@ public class FontHelper {
 	}
 
 	private static float renderChar(float x, float y, char c, int color) {
-		face.setPixelSizes(0, 14);
+		face.setPixelSizes(0, 12);
 		face.loadChar(c, FreeTypeConstants.FT_LOAD_RENDER);
 		GlyphSlot gss = face.getGlyphSlot();
 		Bitmap bmp = gss.getBitmap();
@@ -82,20 +82,22 @@ public class FontHelper {
 		return width * 0.25F;
 	}
 
-	public static void renderText(float x, float y, String s, int color) {
+	public static float renderText(float x, float y, String s, int color) {
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
 				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
 				GlStateManager.DestFactor.ZERO);
+		float t = 0;
 		for (char c : s.toCharArray()) {
-			float w = renderChar(x, y, c, color);
-			x += w + 0.2F;
+			float w = renderChar(t + x, y, c, color);
+			t += w + 0.25F;
 		}
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
+		return t;
 	}
 
 	public static float getStringWidth(String s) {
@@ -104,16 +106,16 @@ public class FontHelper {
 		}
 		float w = 0;
 		for (char c : s.toCharArray()) {
-			w += getCharWidth(c) + 0.2F;
+			w += getCharWidth(c) + 0.25F;
 		}
-		return w - 0.2F;
+		return w;
 	}
 
 	public static float getCharWidth(char c) {
 		if (widths.containsKey(c)) {
 			return widths.get(c);
 		}
-		face.setPixelSizes(0, 14);
+		face.setPixelSizes(0, 12);
 		face.loadChar(c, FreeTypeConstants.FT_LOAD_RENDER);
 		float w = face.getGlyphSlot().getBitmap().getWidth() * 0.25F;
 		widths.put(c, w);
