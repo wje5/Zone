@@ -29,7 +29,7 @@ public class EliteRenderHelper {
 				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
 				GlStateManager.DestFactor.ZERO);
 		GlStateManager.color(r, g, b, a);
-		bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
+		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 		bufferbuilder.pos(x, (double) y + height, 0.0D).endVertex();
 		bufferbuilder.pos((double) x + width, (double) y + height, 0.0D).endVertex();
 		bufferbuilder.pos((double) x + width, y, 0.0D).endVertex();

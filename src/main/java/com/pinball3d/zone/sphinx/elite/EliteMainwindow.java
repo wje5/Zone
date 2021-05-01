@@ -51,4 +51,9 @@ public class EliteMainwindow extends GuiScreen {
 	private void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 
 	}
+
+	@Override
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+
+	}
 }

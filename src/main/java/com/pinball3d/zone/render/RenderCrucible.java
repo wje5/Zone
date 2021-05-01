@@ -47,6 +47,7 @@ public class RenderCrucible extends TileEntitySpecialRenderer<TECrucible> {
 			GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
 			Minecraft.getMinecraft().getRenderItem().renderItem(new ItemStack(Blocks.IRON_ORE), TransformType.FIXED);
 		}
+		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.popMatrix();
 	}
 

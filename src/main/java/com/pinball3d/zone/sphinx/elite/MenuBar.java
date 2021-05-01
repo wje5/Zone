@@ -6,6 +6,7 @@ import java.util.List;
 public class MenuBar {
 	private EliteMainwindow parent;
 	private List<Menu> list = new ArrayList<Menu>();
+	private int chosenIndex = -1;
 
 	public MenuBar(EliteMainwindow parent) {
 		this.parent = parent;
@@ -26,6 +27,10 @@ public class MenuBar {
 
 	public EliteMainwindow getParent() {
 		return parent;
+	}
+
+	public void setChosenIndex(int chosenIndex) {
+		this.chosenIndex = chosenIndex < list.size() ? chosenIndex : list.size();
 	}
 
 	public static class Menu {

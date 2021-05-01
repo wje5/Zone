@@ -71,7 +71,6 @@ public class FontHelper {
 			for (int j = 0; j < width; j++) {
 				short t = (short) (buf.get() & 0xFF);
 				short alpha = (short) ((t / 255F) * a);
-
 				bufferbuilder.pos(x + j * s, y + i * s + s, 0).color(r, g, b, alpha).endVertex();
 				bufferbuilder.pos(x + j * s + s, y + i * s + s, 0).color(r, g, b, alpha).endVertex();
 				bufferbuilder.pos(x + j * s + s, y + i * s, 0).color(r, g, b, alpha).endVertex();
