@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EliteRenderHelper {
 	public static void init() {
@@ -39,18 +37,15 @@ public class EliteRenderHelper {
 		GlStateManager.disableBlend();
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void drawTexture(ResourceLocation texture, float x, float y, int u, int v, int uWidth, int vHeight) {
 		drawTexture(texture, x, y, u, v, uWidth, vHeight, 1.0F);
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void drawTexture(ResourceLocation texture, float x, float y, int u, int v, int uWidth, int vHeight,
 			float scale) {
 		drawTexture(texture, x, y, scale * uWidth, scale * vHeight, u, v, uWidth, vHeight);
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void drawTexture(ResourceLocation texture, float x, float y, float width, float height, int u, int v,
 			int uWidth, int vHeight) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
@@ -70,5 +65,12 @@ public class EliteRenderHelper {
 		bufferbuilder.pos(x, y, 0).tex(u * f, v * f).endVertex();
 		tessellator.draw();
 		GlStateManager.popMatrix();
+	}
+
+	public static void drawBorder(float x, float y, float width, float height, float lineWidth, int color) {
+		drawRect(x, y, width, lineWidth, color);
+		drawRect(x, y + height - lineWidth, width, lineWidth, color);
+		drawRect(x, y + lineWidth, lineWidth, height - lineWidth, color);
+		drawRect(x + width - lineWidth, y + lineWidth, lineWidth, height - lineWidth, color);
 	}
 }

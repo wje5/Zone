@@ -30,6 +30,7 @@ public class FontHelper {
 	private static Library library;
 	private static Face face;
 	private static Map<Character, Float> widths = new HashMap<Character, Float>();
+	public static final int SIZE = 12;
 
 	public static void init() {
 		library = FreeType.newLibrary();
@@ -49,7 +50,7 @@ public class FontHelper {
 	}
 
 	private static float renderChar(float x, float y, char c, int color) {
-		face.setPixelSizes(0, 12);
+		face.setPixelSizes(0, SIZE);
 		face.loadChar(c, FreeTypeConstants.FT_LOAD_RENDER);
 		GlyphSlot gss = face.getGlyphSlot();
 		Bitmap bmp = gss.getBitmap();
@@ -89,8 +90,34 @@ public class FontHelper {
 				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
 				GlStateManager.DestFactor.ZERO);
 		float t = 0;
-		for (char c : s.toCharArray()) {
+		boolean underLine = false;
+		char[] a = s.toCharArray();
+		for (int i = 0; i < a.length; i++) {
+			char c = a[i];
+			if (c == '¡ì') {
+				if (a.length > i + 1) {
+					char d = a[i + 1];
+					if (d == 'n') {
+						underLine = true;
+						i++;
+						continue;
+					} else if (d == 'r') {
+						underLine = false;
+						i++;
+						continue;
+					}
+				}
+			}
+
 			float w = renderChar(t + x, y, c, color);
+			if (underLine) {
+				EliteRenderHelper.drawRect(t + x - 0.25F, y + SIZE * 0.25F + 0.25F, w + 0.25F, 0.25F, color);
+				GlStateManager.enableBlend();
+				GlStateManager.disableTexture2D();
+				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+						GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+						GlStateManager.DestFactor.ZERO);
+			}
 			t += w + 0.25F;
 		}
 		GlStateManager.enableTexture2D();
@@ -104,7 +131,21 @@ public class FontHelper {
 			return 0;
 		}
 		float w = 0;
-		for (char c : s.toCharArray()) {
+		char[] a = s.toCharArray();
+		for (int i = 0; i < a.length; i++) {
+			char c = a[i];
+			if (c == '¡ì') {
+				if (a.length > i + 1) {
+					char d = a[i + 1];
+					if (d == 'n') {
+						i++;
+						continue;
+					} else if (d == 'r') {
+						i++;
+						continue;
+					}
+				}
+			}
 			w += getCharWidth(c) + 0.25F;
 		}
 		return w;

@@ -337,6 +337,10 @@ manual.sphinx_system_7=-第五层-\n\n\n\n\n\n\n\n\n\n结构方块或桁架错�
 manual.sphinx_system_8=\n在束能器下方放置输导模块，\n以为系统提供足够的能量。\n\n然后在第一层的任一侧面中心\n放置控制器主机，完成搭建。\n\n右击控制器主机以开机，\n初始密码为空。\n\n开机时将在约13秒内，\n消耗约4组能量。\n当主机保持开启时，\n每10tick将消耗一个能量。\n\n§o玩得愉快！§r
 manual.sphinx_system_9=null
 
+elite.menu.view=视图(V)
+elite.menu.window=窗口(W)
+elite.menu.help=帮助(H)
+
 sound.grinder=磨粉机：工作
 sound.drainer=收集器：工作
 sound.alloy_smelter=合金炉：工作
