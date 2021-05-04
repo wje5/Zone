@@ -6,6 +6,8 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
+import com.pinball3d.zone.sphinx.elite.DropDownList.DividerBar;
+import com.pinball3d.zone.sphinx.elite.DropDownList.FolderBar;;
 
 public class MenuBar {
 	private EliteMainwindow parent;
@@ -33,7 +35,7 @@ public class MenuBar {
 
 	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		if (computeChosenIndex(mouseX, mouseY) && isClicked) {
-			openDropDownList();
+			openDropDownList(false);
 		}
 	}
 
@@ -67,7 +69,7 @@ public class MenuBar {
 				isClicked = true;
 				parent.setFocus(this::onMenuShortCut);
 				isKeyBoard = true;
-				openDropDownList();
+				openDropDownList(false);
 			}
 		} else {
 			if (!(mouseButton == 1 && chosenIndex >= 0 && chosenIndex < list.size())) {
@@ -89,37 +91,38 @@ public class MenuBar {
 		}
 	}
 
-	private void openDropDownList() {
+	private void openDropDownList(boolean flag) {
 		float x = 1;
 		for (int i = 0; i < chosenIndex; i++) {
 			Menu m = list.get(i);
-			float w = m.getWidth();
 			x += m.getWidth();
 		}
 		DropDownList l = new DropDownList(parent, null, x, 5.75F);
-		l.addBar(new ButtonBar(l, "¼×ÒÒ±û¶¡Îì¼º¸ýAbCdEf", null));
+		l.addBar(new ButtonBar(l, "¼×ÒÒ±û¶¡Îì¼º¸ýAbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+		l.addBar(new ButtonBar(l, "¼×ÒÒ±û¶¡Îì¼º¸ýAb", "Ctrl+Shift+R"));
+		l.addBar(new ButtonBar(l, "¼×ÒÒ±û¶¡Îì¼º¸ýAbCdEfGhi", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+		l.addBar(new DividerBar(l));
+		l.addBar(new ButtonBar(l, "¼×", ""));
+		l.addBar(new FolderBar(l, "sf"));
+		l.addBar(new ButtonBar(l, "¼×ÒÒ±û¶¡Îì¼º¸ýAbCdEfGhi", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+		if (flag) {
+			l.setChosenIndex(0);
+		}
 		parent.setDropDownList(l);
 	}
 
 	public void onMenuShortCut(char c, int keyCode) {
 		if (isKeyBoard) {
-			int old = chosenIndex;
 			switch (keyCode) {
 			case Keyboard.KEY_RETURN:
 				isClicked = true;
-				openDropDownList();
+				openDropDownList(true);
 				return;
 			case Keyboard.KEY_LEFT:
-				chosenIndex = chosenIndex <= 0 ? list.size() - 1 : chosenIndex - 1;
-				if (old != chosenIndex) {
-					openDropDownList();
-				}
+				move(true);
 				return;
 			case Keyboard.KEY_RIGHT:
-				chosenIndex = chosenIndex >= list.size() - 1 ? 0 : chosenIndex + 1;
-				if (old != chosenIndex) {
-					openDropDownList();
-				}
+				move(false);
 				return;
 			}
 			if (c >= 'a' && c <= 'z') {
@@ -128,7 +131,7 @@ public class MenuBar {
 					if (c == s) {
 						chosenIndex = i;
 						isClicked = true;
-						openDropDownList();
+						openDropDownList(true);
 						return;
 					}
 				}
@@ -147,6 +150,18 @@ public class MenuBar {
 		return true;
 	}
 
+	public void move(boolean isLeft) {
+		int old = chosenIndex;
+		if (isLeft) {
+			chosenIndex = chosenIndex <= 0 ? list.size() - 1 : chosenIndex - 1;
+		} else {
+			chosenIndex = chosenIndex >= list.size() - 1 ? 0 : chosenIndex + 1;
+		}
+		if (old != chosenIndex && isClicked) {
+			openDropDownList(true);
+		}
+	}
+
 	public EliteMainwindow getParent() {
 		return parent;
 	}
@@ -161,6 +176,12 @@ public class MenuBar {
 
 	public boolean isClicked() {
 		return isClicked;
+	}
+
+	public void onListClosed() {
+		isKeyBoard = false;
+		isClicked = false;
+		chosenIndex = -1;
 	}
 
 	public static class Menu {

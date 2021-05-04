@@ -50,17 +50,6 @@ public class EliteMainwindow extends GuiScreen {
 
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
-		if (keyCode == Keyboard.KEY_LMENU) {
-			menuBar.onPressAlt();
-		}
-		if (Loader.isModLoaded("jei")) {
-			if (typedChar == 'a') {
-//				JEIHandler.showJEI(new ItemStack(ItemLoader.advenced_circuit_board), true);
-			}
-		}
-		if (focus != null) {
-			focus.keyTyped(typedChar, keyCode);
-		}
 		if (keyCode == Keyboard.KEY_ESCAPE) {
 			if (dropDownList != null) {
 				if (dropDownList.onQuit()) {
@@ -69,6 +58,23 @@ public class EliteMainwindow extends GuiScreen {
 			} else if (menuBar.onQuit()) {
 				super.keyTyped(typedChar, keyCode);
 			}
+		} else if (keyCode == Keyboard.KEY_LMENU) {
+			menuBar.onPressAlt();
+			if (dropDownList != null) {
+				dropDownList = null;
+			}
+		} else if (dropDownList != null) {
+			dropDownList.keyTyped(typedChar, keyCode);
+		} else {
+			if (Loader.isModLoaded("jei")) {
+				if (typedChar == 'a') {
+//					JEIHandler.showJEI(new ItemStack(ItemLoader.advenced_circuit_board), true);
+				}
+			}
+			if (focus != null) {
+				focus.keyTyped(typedChar, keyCode);
+			}
+
 		}
 	}
 
@@ -80,12 +86,20 @@ public class EliteMainwindow extends GuiScreen {
 		this.dropDownList = dropDownList;
 	}
 
+	public void quitMenuBar() {
+		this.dropDownList = null;
+		menuBar.onQuit();
+	}
+
 	public MenuBar getMenuBar() {
 		return menuBar;
 	}
 
 	private void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		menuBar.onMouseMoved(mouseX, mouseY, moveX, moveY);
+		if (dropDownList != null) {
+			dropDownList.onMouseMoved(mouseX, mouseY, moveX, moveY);
+		}
 	}
 
 	@Override
@@ -94,9 +108,13 @@ public class EliteMainwindow extends GuiScreen {
 			return;
 		}
 		if (dropDownList != null) {
-			dropDownList = null;
+			if (!dropDownList.mouseClicked(mouseX, mouseY, mouseButton)) {
+				dropDownList = null;
+				menuBar.onListClosed();
+			}
+		} else {
+			menuBar.mouseClicked(mouseX, mouseY, mouseButton);
 		}
-		menuBar.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
 	@Override

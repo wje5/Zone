@@ -127,7 +127,7 @@ public class FontHelper {
 	}
 
 	public static float getStringWidth(String s) {
-		if (s.isEmpty()) {
+		if (s == null || s.isEmpty()) {
 			return 0;
 		}
 		float w = 0;
