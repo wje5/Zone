@@ -4,6 +4,9 @@ import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
 
+import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
+import com.pinball3d.zone.sphinx.elite.DropDownList.DividerBar;
+import com.pinball3d.zone.sphinx.elite.DropDownList.FolderBar;
 import com.pinball3d.zone.sphinx.elite.MenuBar.Menu;
 
 import net.minecraft.client.gui.GuiScreen;
@@ -26,9 +29,12 @@ public class EliteMainwindow extends GuiScreen {
 
 	private void applyMenu() {
 		menuBar = new MenuBar(this);
-		menuBar.addMenu(new Menu(I18n.format("elite.menu.view"), 'v'));
-		menuBar.addMenu(new Menu(I18n.format("elite.menu.window"), 'w'));
-		menuBar.addMenu(new Menu(I18n.format("elite.menu.help"), 'h'));
+		menuBar.addMenu(new Menu(this, I18n.format("elite.menu.view"), 'v')
+				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
+		menuBar.addMenu(new Menu(this, I18n.format("elite.menu.window"), 'w').addBar(new FolderBar("KKK")
+				.addBar(new ButtonBar("aB", "Shift+Z")).addBar(new DividerBar()).addBar(new ButtonBar("AA", "AA"))));
+		menuBar.addMenu(new Menu(this, I18n.format("elite.menu.help"), 'h')
+				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
 	}
 
 	@Override
@@ -111,9 +117,25 @@ public class EliteMainwindow extends GuiScreen {
 			if (!dropDownList.mouseClicked(mouseX, mouseY, mouseButton)) {
 				dropDownList = null;
 				menuBar.onListClosed();
+			} else {
+				return;
 			}
 		} else {
 			menuBar.mouseClicked(mouseX, mouseY, mouseButton);
+		}
+	}
+
+	@Override
+	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+		if (!menuBar.mouseReleased(mouseX, mouseY, mouseButton)) {
+			if (dropDownList != null) {
+				if (!dropDownList.mouseReleased(mouseX, mouseY, mouseButton)) {
+					dropDownList = null;
+					menuBar.onListClosed();
+				} else {
+					return;
+				}
+			}
 		}
 	}
 

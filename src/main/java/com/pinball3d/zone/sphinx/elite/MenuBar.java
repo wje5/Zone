@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
-import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
-import com.pinball3d.zone.sphinx.elite.DropDownList.DividerBar;
-import com.pinball3d.zone.sphinx.elite.DropDownList.FolderBar;;
+import com.pinball3d.zone.sphinx.elite.DropDownList.ListBar;;
 
 public class MenuBar {
 	private EliteMainwindow parent;
@@ -59,25 +57,47 @@ public class MenuBar {
 		return old != chosenIndex;
 	}
 
+	private int checkChosenIndex(int mouseX, int mouseY) {
+		if (mouseY <= 7) {
+			float x = 1;
+			for (int i = 0; i < list.size(); i++) {
+				Menu m = list.get(i);
+				float w = m.getWidth();
+				if (mouseX >= x && mouseX <= x + w) {
+					return i;
+				}
+				x += m.getWidth();
+			}
+		}
+		return -1;
+	}
+
 	public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		if (mouseButton != 0) {
+			return;
+		}
 		if (!isClicked) {
 			if (isKeyBoard) {
 				isKeyBoard = false;
-				computeChosenIndex(mouseX, mouseY);
 			}
-			if (mouseButton == 0 && chosenIndex >= 0 && chosenIndex < list.size()) {
+			computeChosenIndex(mouseX, mouseY);
+			if (chosenIndex >= 0 && chosenIndex < list.size()) {
 				isClicked = true;
 				parent.setFocus(this::onMenuShortCut);
 				isKeyBoard = true;
 				openDropDownList(false);
 			}
 		} else {
-			if (!(mouseButton == 1 && chosenIndex >= 0 && chosenIndex < list.size())) {
+			if (!(chosenIndex >= 0 && chosenIndex < list.size())) {
 				isClicked = false;
 				isKeyBoard = false;
 				computeChosenIndex(mouseX, mouseY);
 			}
 		}
+	}
+
+	public boolean mouseReleased(int mouseX, int mouseY, int mouseButton) {
+		return checkChosenIndex(mouseX, mouseY) >= 0;
 	}
 
 	public void onPressAlt() {
@@ -97,16 +117,10 @@ public class MenuBar {
 			Menu m = list.get(i);
 			x += m.getWidth();
 		}
-		DropDownList l = new DropDownList(parent, null, x, 5.75F);
-		l.addBar(new ButtonBar(l, "¼×ÒÒ±û¶¡Îì¼º¸ýAbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
-		l.addBar(new ButtonBar(l, "¼×ÒÒ±û¶¡Îì¼º¸ýAb", "Ctrl+Shift+R"));
-		l.addBar(new ButtonBar(l, "¼×ÒÒ±û¶¡Îì¼º¸ýAbCdEfGhi", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
-		l.addBar(new DividerBar(l));
-		l.addBar(new ButtonBar(l, "¼×", ""));
-		l.addBar(new FolderBar(l, "sf"));
-		l.addBar(new ButtonBar(l, "¼×ÒÒ±û¶¡Îì¼º¸ýAbCdEfGhi", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+		DropDownList l = list.get(chosenIndex).openList(x, 5.75F);
 		if (flag) {
 			l.setChosenIndex(0);
+			l.setKeyBoard(true);
 		}
 		parent.setDropDownList(l);
 	}
@@ -145,6 +159,7 @@ public class MenuBar {
 		if (isKeyBoard) {
 			isKeyBoard = false;
 			chosenIndex = -1;
+			isClicked = false;
 			return false;
 		}
 		return true;
@@ -185,10 +200,13 @@ public class MenuBar {
 	}
 
 	public static class Menu {
+		private EliteMainwindow parent;
 		private String name;
 		private char shortCut;
+		private List<ListBar> list = new ArrayList<ListBar>();
 
-		public Menu(String name, char shortCut) {
+		public Menu(EliteMainwindow parent, String name, char shortCut) {
+			this.parent = parent;
 			this.name = name;
 			this.shortCut = shortCut;
 		}
@@ -216,6 +234,18 @@ public class MenuBar {
 
 		public char getShortCut() {
 			return shortCut;
+		}
+
+		public DropDownList openList(float x, float y) {
+			DropDownList l = new DropDownList(parent, null, x, y);
+			list.forEach(e -> l.addBar(e.setParentList(l)));
+			return l;
+		}
+
+		public Menu addBar(ListBar bar) {
+			list.add(bar);
+			bar.setParent(parent);
+			return this;
 		}
 	}
 }

@@ -37,6 +37,33 @@ public class DropDownList {
 	}
 
 	public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		if (mouseButton != 0) {
+			return true;
+		}
+		computeChosenIndex(mouseX, mouseY);
+		if (childList != null) {
+			if (childList.mouseClicked(mouseX, mouseY, mouseButton)) {
+				return true;
+			}
+			return checkChosenIndex(mouseX, mouseY) >= 0;
+		}
+		if (chosenIndex >= 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean mouseReleased(int mouseX, int mouseY, int mouseButton) {
+		if (mouseButton != 0) {
+			return true;
+		}
+		computeChosenIndex(mouseX, mouseY);
+		if (childList != null) {
+			if (childList.mouseReleased(mouseX, mouseY, mouseButton)) {
+				return true;
+			}
+			return checkChosenIndex(mouseX, mouseY) >= 0;
+		}
 		if (chosenIndex >= 0) {
 			list.get(chosenIndex).onClick();
 			return true;
@@ -46,27 +73,75 @@ public class DropDownList {
 
 	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		computeChosenIndex(mouseX, mouseY);
+		if (childList != null) {
+			childList.onMouseMoved(mouseX, mouseY, moveX, moveY);
+		}
 	}
 
 	public void keyTyped(char typedChar, int keyCode) {
+		if (childList != null) {
+			childList.keyTyped(typedChar, keyCode);
+			return;
+		}
 		switch (keyCode) {
 		case Keyboard.KEY_UP:
-			chosenIndex = chosenIndex <= 0 ? list.size() - 1 : chosenIndex - 1;
+			int old = chosenIndex;
+			do {
+				chosenIndex = chosenIndex <= 0 ? list.size() - 1 : chosenIndex - 1;
+			} while (list.get(chosenIndex) instanceof DividerBar && chosenIndex != old);
+			isKeyBoard = true;
 			break;
 		case Keyboard.KEY_DOWN:
-			chosenIndex = chosenIndex >= list.size() - 1 ? 0 : chosenIndex + 1;
+			old = chosenIndex;
+			do {
+				chosenIndex = chosenIndex >= list.size() - 1 ? 0 : chosenIndex + 1;
+			} while (list.get(chosenIndex) instanceof DividerBar && chosenIndex != old);
+			isKeyBoard = true;
 			break;
 		case Keyboard.KEY_LEFT:
+			if (parentList != null) {
+				parentList.childList = null;
+				break;
+			}
 			parent.getMenuBar().move(true);
 			break;
 		case Keyboard.KEY_RIGHT:
+			if (chosenIndex >= 0) {
+				ListBar bar = list.get(chosenIndex);
+				if (bar instanceof FolderBar) {
+					float yOffset = y + 0.75F;
+					for (int i = 0; i < chosenIndex; i++) {
+						ListBar b = list.get(i);
+						yOffset += b.height;
+					}
+					childList = ((FolderBar) bar).openList(parent, x + getWidth() - 1.5F, yOffset - 0.75F);
+					childList.setChosenIndex(0);
+					childList.setKeyBoard(true);
+					break;
+				}
+			}
 			parent.getMenuBar().move(false);
 			break;
 		case Keyboard.KEY_RETURN:
 			if (chosenIndex >= 0) {
-				list.get(chosenIndex).onClick();
+				ListBar bar = list.get(chosenIndex);
+				if (bar instanceof FolderBar) {
+					float yOffset = y + 0.75F;
+					for (int i = 0; i < chosenIndex; i++) {
+						ListBar b = list.get(i);
+						yOffset += b.height;
+					}
+					childList = ((FolderBar) bar).openList(parent, x + getWidth() - 1.5F, yOffset - 0.75F);
+					childList.setChosenIndex(0);
+					childList.setKeyBoard(true);
+					break;
+				}
+				bar.onClick();
+				isKeyBoard = true;
 			}
+			break;
 		}
+
 	}
 
 	private boolean computeChosenIndex(int mouseX, int mouseY) {
@@ -82,21 +157,40 @@ public class DropDownList {
 					if (mouseY >= yOffset && mouseY <= yOffset + bh) {
 						chosenIndex = i;
 						if (bar instanceof FolderBar) {
-							childList = new DropDownList(parent, this, x + w - 1.5F, yOffset - 0.75F);
-							childList.addBar(new ButtonBar(childList, "ABC", "DEF"));
+							childList = ((FolderBar) bar).openList(parent, x + w - 1.5F, yOffset - 0.75F);
 						} else {
 							childList = null;
 						}
+						isKeyBoard = false;
 						return old != chosenIndex;
 					}
 					yOffset += bh;
 				}
 			}
 		}
-		if (!isKeyBoard) {
+		if (!isKeyBoard && childList == null) {
 			chosenIndex = -1;
 		}
 		return old != chosenIndex;
+	}
+
+	private int checkChosenIndex(int mouseX, int mouseY) {
+		float w = getWidth();
+		float h = getHeight();
+		if (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h) {
+			if (mouseX >= x + 0.75F && mouseX <= x + w - 1.5F && mouseY >= y + 0.75F && mouseY <= y + h - 1.5F) {
+				float yOffset = y + 0.75F;
+				for (int i = 0; i < list.size(); i++) {
+					ListBar bar = list.get(i);
+					float bh = bar.getHeight();
+					if (mouseY >= yOffset && mouseY <= yOffset + bh) {
+						return i;
+					}
+					yOffset += bh;
+				}
+			}
+		}
+		return -1;
 	}
 
 	public void setChosenIndex(int chosenIndex) {
@@ -111,12 +205,23 @@ public class DropDownList {
 		return (float) (list.stream().mapToDouble(ListBar::getHeight).sum() + 1.5F);
 	}
 
-	public void addBar(ListBar bar) {
+	public void setKeyBoard(boolean isKeyBoard) {
+		this.isKeyBoard = isKeyBoard;
+	}
+
+	public DropDownList addBar(ListBar bar) {
 		list.add(bar);
+		return this;
 	}
 
 	public boolean onQuit() {
-		if (parent.getMenuBar().isClicked()) {
+		if (childList != null) {
+			if (childList.onQuit()) {
+				childList = null;
+			}
+			return false;
+		}
+		if (parentList == null) {
 			parent.getMenuBar().onQuitList();
 		}
 		return true;
@@ -124,12 +229,17 @@ public class DropDownList {
 
 	public static class ListBar {
 		protected float width, height;
-		protected DropDownList parent;
+		protected DropDownList parentList;
+		protected EliteMainwindow parent;
 
-		public ListBar(DropDownList parent, float width, float height) {
-			this.parent = parent;
+		public ListBar(float width, float height) {
 			this.width = width;
 			this.height = height;
+		}
+
+		public ListBar setParent(EliteMainwindow parent) {
+			this.parent = parent;
+			return this;
 		}
 
 		public void doRender(float x, float y, float width, boolean isHovered) {
@@ -148,16 +258,18 @@ public class DropDownList {
 			return height;
 		}
 
-		public DropDownList getParent() {
-			return parent;
+		public ListBar setParentList(DropDownList parentList) {
+			this.parentList = parentList;
+			return this;
 		}
+
 	}
 
 	public static class ButtonBar extends ListBar {
 		private String textL, textR;
 
-		public ButtonBar(DropDownList parent, String textL, String textR) {
-			super(parent, FontHelper.getStringWidth(textL) + FontHelper.getStringWidth(textR) + 18.75F, 5.25F);
+		public ButtonBar(String textL, String textR) {
+			super(FontHelper.getStringWidth(textL) + FontHelper.getStringWidth(textR) + 18.75F, 5.25F);
 			this.textL = textL;
 			this.textR = textR;
 		}
@@ -179,13 +291,13 @@ public class DropDownList {
 		public void onClick() {
 			super.onClick();
 			System.out.println(textL);
-			parent.parent.quitMenuBar();
+			parent.quitMenuBar();
 		}
 	}
 
 	public static class DividerBar extends ListBar {
-		public DividerBar(DropDownList parent) {
-			super(parent, 2, 2.25F);
+		public DividerBar() {
+			super(2, 2.25F);
 		}
 
 		@Override
@@ -198,9 +310,10 @@ public class DropDownList {
 
 	public static class FolderBar extends ListBar {
 		private String text;
+		private List<ListBar> list = new ArrayList<ListBar>();
 
-		public FolderBar(DropDownList parent, String text) {
-			super(parent, FontHelper.getStringWidth(text) + 12.5F, 5.25F);
+		public FolderBar(String text) {
+			super(FontHelper.getStringWidth(text) + 12.5F, 5.25F);
 			this.text = text;
 		}
 
@@ -216,6 +329,18 @@ public class DropDownList {
 			if (text != null) {
 				FontHelper.renderText(x + 4.75F, y + 1.25F, text, isHovered ? 0xFFFFFFFF : 0xFF000000);
 			}
+		}
+
+		public DropDownList openList(EliteMainwindow parent, float x, float y) {
+			DropDownList l = new DropDownList(parent, this.parentList, x, y);
+			list.forEach(e -> l.addBar(e));
+			return l;
+		}
+
+		public FolderBar addBar(ListBar bar) {
+			list.add(bar);
+			bar.setParent(parent);
+			return this;
 		}
 	}
 }
