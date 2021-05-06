@@ -1,6 +1,8 @@
 package com.pinball3d.zone.sphinx.elite;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
@@ -22,6 +24,8 @@ public class EliteMainwindow extends GuiScreen {
 	private MenuBar menuBar;
 	private DropDownList dropDownList;
 	private IFocus focus;
+	private List<PanelGroup> panels = new ArrayList<PanelGroup>();
+	private Drag drag;
 
 	public EliteMainwindow() {
 		applyMenu();
@@ -35,6 +39,10 @@ public class EliteMainwindow extends GuiScreen {
 				.addBar(new ButtonBar("aB", "Shift+Z")).addBar(new DividerBar()).addBar(new ButtonBar("AA", "AA"))));
 		menuBar.addMenu(new Menu(this, I18n.format("elite.menu.help"), 'h')
 				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
+		PanelGroup g = new PanelGroup(this, 100, 100, 100, 100);
+		g.addPanel(new Panel(this, g, "EliteMainWindow"));
+		panels.add(g);
+		panels.add(new PanelGroup(this, 300, 100, 100, 100));
 	}
 
 	@Override
@@ -48,6 +56,9 @@ public class EliteMainwindow extends GuiScreen {
 		GlStateManager.translate(0, 0, 50F);
 		EliteRenderHelper.drawRect(0, 0, width, height, 0xFF282828);
 		menuBar.doRender(mouseX, mouseY);
+		panels.forEach(e -> e.doRenderPre(mouseX, mouseY));
+		panels.forEach(e -> e.doRender(mouseX, mouseY));
+		panels.forEach(e -> e.doRenderPost(mouseX, mouseY));
 		if (dropDownList != null) {
 			dropDownList.doRender(mouseX, mouseY);
 		}
@@ -101,10 +112,17 @@ public class EliteMainwindow extends GuiScreen {
 		return menuBar;
 	}
 
+	public List<PanelGroup> getPanels() {
+		return panels;
+	}
+
 	private void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		menuBar.onMouseMoved(mouseX, mouseY, moveX, moveY);
 		if (dropDownList != null) {
 			dropDownList.onMouseMoved(mouseX, mouseY, moveX, moveY);
+		}
+		if (drag != null) {
+			drag.drag(mouseX, mouseY, moveX, moveY);
 		}
 	}
 
@@ -122,6 +140,13 @@ public class EliteMainwindow extends GuiScreen {
 			}
 		} else {
 			menuBar.mouseClicked(mouseX, mouseY, mouseButton);
+			for (PanelGroup g : panels) {
+				Drag d = g.onMouseClicked(mouseX, mouseY, mouseButton);
+				if (mouseButton == 0 && d != null) {
+					drag = d;
+					break;
+				}
+			}
 		}
 	}
 
@@ -134,6 +159,16 @@ public class EliteMainwindow extends GuiScreen {
 					menuBar.onListClosed();
 				} else {
 					return;
+				}
+			} else {
+				for (PanelGroup g : panels) {
+					g.onMouseReleased(mouseX, mouseY, mouseButton);
+				}
+				if (mouseButton == 0) {
+					if (drag != null) {
+						drag.stop();
+					}
+					drag = null;
 				}
 			}
 		}
