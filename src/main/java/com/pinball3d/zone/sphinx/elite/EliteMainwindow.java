@@ -41,6 +41,8 @@ public class EliteMainwindow extends GuiScreen {
 				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
 		PanelGroup g = new PanelGroup(this, 100, 100, 100, 100);
 		g.addPanel(new Panel(this, g, "EliteMainWindow"));
+		g.addPanel(new Panel(this, g, "PanelGroup"));
+		g.addPanel(new Panel(this, g, "DropDownList"));
 		panels.add(g);
 		panels.add(new PanelGroup(this, 300, 100, 100, 100));
 	}
@@ -121,6 +123,7 @@ public class EliteMainwindow extends GuiScreen {
 		if (dropDownList != null) {
 			dropDownList.onMouseMoved(mouseX, mouseY, moveX, moveY);
 		}
+		panels.forEach(e -> e.onMouseMoved(mouseX, mouseY, moveX, moveY));
 		if (drag != null) {
 			drag.drag(mouseX, mouseY, moveX, moveY);
 		}

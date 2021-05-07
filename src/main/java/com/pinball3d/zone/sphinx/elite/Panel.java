@@ -17,7 +17,7 @@ public class Panel {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
-		EliteRenderHelper.drawRect(0, 0, width, height, 0xFFFF0000);
+//		EliteRenderHelper.drawRect(0, 0, width, height, 0xFF4402D5);
 	}
 
 	public void doRenderPost(int mouseX, int mouseY) {
