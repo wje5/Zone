@@ -1,9 +1,19 @@
 {
-    "parent": "block/orientable",
+    "parent": "block/cube",
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [ 0, 135, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 0.40, 0.40, 0.40 ]
+        }
+    },
     "textures": {
-        "top": "zone:blocks/etherium_hull",
-        "front": "zone:blocks/lathe",
-        "side": "zone:blocks/etherium_hull",
-        "down": "zone:blocks/etherium_hull"
+        "particle": "zone:blocks/centrifuge_front_off_1",
+        "down": "zone:blocks/machine_buttom_1",
+        "up": "zone:blocks/centrifuge_top_1",
+        "north": "zone:blocks/centrifuge_front_off_1",
+        "east": "zone:blocks/centrifuge_left_off_1",
+        "south": "zone:blocks/centrifuge_back_1",
+        "west": "zone:blocks/centrifuge_right_off_1"
     }
 }

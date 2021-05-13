@@ -33,6 +33,7 @@ public class FontHelper {
 	public static final int SIZE = 12;
 
 	public static void init() {
+		System.load("D:\\work\\Zone\\natives\\freetype26MT_x64.dll");
 		library = FreeType.newLibrary();
 		if (library == null) {
 			throw new RuntimeException("Error initializing FreeType.");
@@ -94,7 +95,7 @@ public class FontHelper {
 		char[] a = s.toCharArray();
 		for (int i = 0; i < a.length; i++) {
 			char c = a[i];
-			if (c == '¡ì') {
+			if (c == 'Â§') {
 				if (a.length > i + 1) {
 					char d = a[i + 1];
 					if (d == 'n') {
@@ -134,7 +135,7 @@ public class FontHelper {
 		char[] a = s.toCharArray();
 		for (int i = 0; i < a.length; i++) {
 			char c = a[i];
-			if (c == '¡ì') {
+			if (c == 'Â§') {
 				if (a.length > i + 1) {
 					char d = a[i + 1];
 					if (d == 'n') {

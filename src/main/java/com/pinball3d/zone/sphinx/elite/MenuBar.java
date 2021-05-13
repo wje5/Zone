@@ -244,7 +244,6 @@ public class MenuBar {
 
 		public Menu addBar(ListBar bar) {
 			list.add(bar);
-			bar.setParent(parent);
 			return this;
 		}
 	}

@@ -211,6 +211,7 @@ public class DropDownList {
 
 	public DropDownList addBar(ListBar bar) {
 		list.add(bar);
+		bar.setParentList(this);
 		return this;
 	}
 
@@ -230,16 +231,10 @@ public class DropDownList {
 	public static class ListBar {
 		protected float width, height;
 		protected DropDownList parentList;
-		protected EliteMainwindow parent;
 
 		public ListBar(float width, float height) {
 			this.width = width;
 			this.height = height;
-		}
-
-		public ListBar setParent(EliteMainwindow parent) {
-			this.parent = parent;
-			return this;
 		}
 
 		public void doRender(float x, float y, float width, boolean isHovered) {
@@ -290,8 +285,7 @@ public class DropDownList {
 		@Override
 		public void onClick() {
 			super.onClick();
-			System.out.println(textL);
-			parent.quitMenuBar();
+			EliteMainwindow.getWindow().quitMenuBar();
 		}
 	}
 
@@ -339,7 +333,6 @@ public class DropDownList {
 
 		public FolderBar addBar(ListBar bar) {
 			list.add(bar);
-			bar.setParent(parent);
 			return this;
 		}
 	}

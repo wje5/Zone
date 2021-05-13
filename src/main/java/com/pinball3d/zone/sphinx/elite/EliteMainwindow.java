@@ -11,6 +11,7 @@ import com.pinball3d.zone.sphinx.elite.DropDownList.DividerBar;
 import com.pinball3d.zone.sphinx.elite.DropDownList.FolderBar;
 import com.pinball3d.zone.sphinx.elite.MenuBar.Menu;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -26,9 +27,14 @@ public class EliteMainwindow extends GuiScreen {
 	private IFocus focus;
 	private List<PanelGroup> panels = new ArrayList<PanelGroup>();
 	private Drag drag;
+	private boolean inited;
 
-	public EliteMainwindow() {
-		applyMenu();
+	public static EliteMainwindow getWindow() {
+		GuiScreen s = Minecraft.getMinecraft().currentScreen;
+		if (s instanceof EliteMainwindow) {
+			return (EliteMainwindow) s;
+		}
+		return null;
 	}
 
 	private void applyMenu() {
@@ -39,12 +45,25 @@ public class EliteMainwindow extends GuiScreen {
 				.addBar(new ButtonBar("aB", "Shift+Z")).addBar(new DividerBar()).addBar(new ButtonBar("AA", "AA"))));
 		menuBar.addMenu(new Menu(this, I18n.format("elite.menu.help"), 'h')
 				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
-		PanelGroup g = new PanelGroup(this, 100, 100, 100, 100);
+	}
+
+	private void applyPanels() {
+		PanelGroup g = new PanelGroup(this, 0, 7, width, height - 7);
 		g.addPanel(new Panel(this, g, "EliteMainWindow"));
 		g.addPanel(new Panel(this, g, "PanelGroup"));
 		g.addPanel(new Panel(this, g, "DropDownList"));
+		g.addPanel(new Panel(this, g, "Panel"));
+		g.addPanel(new Panel(this, g, "FontHelper"));
 		panels.add(g);
-		panels.add(new PanelGroup(this, 300, 100, 100, 100));
+	}
+
+	@Override
+	public void initGui() {
+		if (!inited) {
+			applyMenu();
+			applyPanels();
+			inited = true;
+		}
 	}
 
 	@Override
@@ -155,7 +174,12 @@ public class EliteMainwindow extends GuiScreen {
 
 	@Override
 	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
-		if (!menuBar.mouseReleased(mouseX, mouseY, mouseButton)) {
+		if (mouseButton == 0) {
+			if (drag != null) {
+				drag.stop();
+			}
+			drag = null;
+		} else if (!menuBar.mouseReleased(mouseX, mouseY, mouseButton)) {
 			if (dropDownList != null) {
 				if (!dropDownList.mouseReleased(mouseX, mouseY, mouseButton)) {
 					dropDownList = null;
@@ -166,12 +190,6 @@ public class EliteMainwindow extends GuiScreen {
 			} else {
 				for (PanelGroup g : panels) {
 					g.onMouseReleased(mouseX, mouseY, mouseButton);
-				}
-				if (mouseButton == 0) {
-					if (drag != null) {
-						drag.stop();
-					}
-					drag = null;
 				}
 			}
 		}
