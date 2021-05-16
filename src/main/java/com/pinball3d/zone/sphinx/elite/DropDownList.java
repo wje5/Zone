@@ -47,7 +47,7 @@ public class DropDownList {
 			}
 			return checkChosenIndex(mouseX, mouseY) >= 0;
 		}
-		if (chosenIndex >= 0) {
+		if (mouseX >= x && mouseX <= x + getWidth() && mouseY >= y && mouseY <= y + getHeight()) {
 			return true;
 		}
 		return false;

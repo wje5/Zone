@@ -8,14 +8,14 @@ import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
 
+import com.mlomb.freetypejni.Bitmap;
+import com.mlomb.freetypejni.Face;
+import com.mlomb.freetypejni.FreeType;
+import com.mlomb.freetypejni.FreeTypeConstants;
+import com.mlomb.freetypejni.GlyphMetrics;
+import com.mlomb.freetypejni.GlyphSlot;
+import com.mlomb.freetypejni.Library;
 import com.pinball3d.zone.Zone;
-import com.pvporbit.freetype.Bitmap;
-import com.pvporbit.freetype.Face;
-import com.pvporbit.freetype.FreeType;
-import com.pvporbit.freetype.FreeTypeConstants;
-import com.pvporbit.freetype.GlyphMetrics;
-import com.pvporbit.freetype.GlyphSlot;
-import com.pvporbit.freetype.Library;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -33,11 +33,13 @@ public class FontHelper {
 	public static final int SIZE = 12;
 
 	public static void init() {
-		System.load("D:\\work\\Zone\\natives\\freetype26MT_x64.dll");
+		System.load("D:/work/Zone/natives/freetype_64.dll");
+//		NativeHandler.loadNative("/freetype");
 		library = FreeType.newLibrary();
 		if (library == null) {
 			throw new RuntimeException("Error initializing FreeType.");
 		}
+		Zone.logger.error(library.getVersion());
 		try {
 			IResource res = Minecraft.getMinecraft().getResourceManager().getResource(FONT_LOCATION);
 			InputStream stream = res.getInputStream();

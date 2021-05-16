@@ -8,12 +8,12 @@
         }
     },
     "textures": {
-        "particle": "zone:blocks/centrifuge_front_off_1",
+        "particle": "zone:blocks/extruder_front_off_1",
         "down": "zone:blocks/machine_buttom_1",
-        "up": "zone:blocks/centrifuge_top_1",
-        "north": "zone:blocks/centrifuge_front_off_1",
-        "east": "zone:blocks/centrifuge_left_off_1",
-        "south": "zone:blocks/centrifuge_back_1",
-        "west": "zone:blocks/centrifuge_right_off_1"
+        "up": "zone:blocks/extruder_top_1",
+        "north": "zone:blocks/extruder_front_off_1",
+        "east": "zone:blocks/extruder_left_off_1",
+        "south": "zone:blocks/extruder_back_1",
+        "west": "zone:blocks/extruder_right_off_1"
     }
 }

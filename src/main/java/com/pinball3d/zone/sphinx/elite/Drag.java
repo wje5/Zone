@@ -1,15 +1,17 @@
 package com.pinball3d.zone.sphinx.elite;
 
+import java.util.function.Consumer;
+
 public class Drag {
 	private OnDrag onDrag;
-	private Runnable onStop;
+	private Consumer<Boolean> onStop;
 
-	public Drag(OnDrag onDrag, Runnable onStop) {
+	public Drag(OnDrag onDrag, Consumer<Boolean> onStop) {
 		this.onDrag = onDrag;
 		this.onStop = onStop;
 	}
 
-	public void setOnStop(Runnable onStop) {
+	public void setOnStop(Consumer<Boolean> onStop) {
 		this.onStop = onStop;
 	}
 
@@ -17,8 +19,8 @@ public class Drag {
 		onDrag.drag(x, y, moveX, moveY);
 	}
 
-	public void stop() {
-		onStop.run();
+	public void stop(boolean cancel) {
+		onStop.accept(cancel);
 	}
 
 	@FunctionalInterface

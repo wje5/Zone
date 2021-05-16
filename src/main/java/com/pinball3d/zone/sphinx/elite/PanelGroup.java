@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 
 public class PanelGroup {
 	private EliteMainwindow parent;
-	private int dragX, dragY, chosenIndex, hoverIndex, dragIndex, dragToIndex;
+	private int dragX, dragY, chosenIndex, hoverIndex, dragIndex, dragToIndex, hoverPanelIndex;
 	private float x, y, width, height;
 	private boolean pressing, dragging;
 	private List<Panel> panels = new ArrayList<Panel>();
@@ -21,12 +21,10 @@ public class PanelGroup {
 	}
 
 	public void doRenderPre(int mouseX, int mouseY) {
-		panels.forEach(e -> {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(e.getX(), e.getY(), 0.0F);
-			e.doRenderPre(mouseX, mouseY);
-			GlStateManager.popMatrix();
-		});
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y + 7, 0.0F);
+		panels.get(0).doRenderPre(mouseX, mouseY);
+		GlStateManager.popMatrix();
 	}
 
 	public void doRender(int mouseX, int mouseY) {
@@ -49,22 +47,20 @@ public class PanelGroup {
 			EliteRenderHelper.drawBorder(x + xOffset, y, w + 0.5F, 7.5F, 0.25F, 0xFF383838);
 			FontHelper.renderText(x + xOffset + 2.75F, y + 1.75F, name, chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0);
 			xOffset += w + 0.25F;
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(e.getX(), e.getY(), 0.0F);
-			e.doRender(mouseX, mouseY);
-			GlStateManager.popMatrix();
 		}
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y + 7, 0.0F);
+		panels.get(0).doRender(mouseX, mouseY);
+		GlStateManager.popMatrix();
 		EliteRenderHelper.drawBorder(x, y, width, height, 0.25F, 0xFF383838);
 		EliteRenderHelper.drawRect(x, y + 7.25F, width, 0.25F, 0xFF383838);
 	}
 
 	public void doRenderPost(int mouseX, int mouseY) {
-		panels.forEach(e -> {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(e.getX(), e.getY(), 0.0F);
-			e.doRenderPost(mouseX, mouseY);
-			GlStateManager.popMatrix();
-		});
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y + 7, 0.0F);
+		panels.get(0).doRenderPost(mouseX, mouseY);
+		GlStateManager.popMatrix();
 		if (dragging) {
 			if (dragToIndex >= 0) {
 				float xOffset = 0;
@@ -193,25 +189,27 @@ public class PanelGroup {
 				if (Math.abs(mouseX - dragX) + Math.abs(mouseY - dragY) > 3) {
 					dragging = true;
 				}
-			}, () -> {
-				if (dragging) {
-					if (dragToIndex >= 0) {
-						if (dragToIndex > dragIndex) {
-							dragToIndex--;
+			}, cancel -> {
+				if (!cancel) {
+					if (dragging) {
+						if (dragToIndex >= 0) {
+							if (dragToIndex > dragIndex) {
+								dragToIndex--;
+							}
+							if (dragToIndex != dragIndex) {
+								Panel p = panels.get(dragIndex);
+								panels.remove(dragIndex);
+								panels.add(dragToIndex, p);
+							}
+							chosenIndex = dragToIndex;
+						} else {
+							adhere(dragX, dragY, dragIndex);
 						}
-						if (dragToIndex != dragIndex) {
-							Panel p = panels.get(dragIndex);
-							panels.remove(dragIndex);
-							panels.add(dragToIndex, p);
-						}
-						chosenIndex = dragToIndex;
-					} else {
-						adhere(dragX, dragY, dragIndex);
+						dragX = 0;
+						dragY = 0;
+					} else if (hoverIndex >= 0) {
+						chosenIndex = hoverIndex;
 					}
-					dragX = 0;
-					dragY = 0;
-				} else if (hoverIndex >= 0) {
-					chosenIndex = hoverIndex;
 				}
 				pressing = false;
 				dragging = false;
@@ -229,31 +227,37 @@ public class PanelGroup {
 	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		hoverIndex = -1;
 		dragToIndex = -1;
-		if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + 7) {
-			float xOffset = 0;
-			for (int i = 0; i < panels.size(); i++) {
-				Panel e = panels.get(i);
-				String name = e.getName();
-				float w = FontHelper.getStringWidth(name) + 9;
-				if (mouseX >= x + xOffset && mouseX <= x + xOffset + w) {
-					hoverIndex = i;
-					if (dragIndex >= 0) {
-						dragToIndex = hoverIndex;
-						if (dragToIndex < panels.size() - 1 && mouseX >= x + xOffset + w / 2) {
-							dragToIndex++;
+		hoverPanelIndex = -1;
+		List<PanelGroup> l = parent.getPanels();
+		for (int index = 0; index < l.size(); index++) {
+			PanelGroup p = l.get(index);
+			if (mouseX >= p.getX() && mouseX <= p.getX() + p.getWidth() && mouseY >= p.getY()
+					&& mouseY <= p.getY() + 7) {
+				hoverPanelIndex = index;
+				float xOffset = 0;
+				List<Panel> pl = p.getPanels();
+				for (int i = 0; i < pl.size(); i++) {
+					Panel e = pl.get(i);
+					String name = e.getName();
+					float w = FontHelper.getStringWidth(name) + 9;
+					if (mouseX >= x + xOffset && mouseX <= x + xOffset + w) {
+						hoverIndex = i;
+						if (dragIndex >= 0) {
+							dragToIndex = hoverIndex;
+							if (dragToIndex < pl.size() - 1 && mouseX >= x + xOffset + w / 2) {
+								dragToIndex++;
+							}
 						}
+						return;
 					}
-					break;
+					xOffset += w;
 				}
-				xOffset += w;
 			}
 		}
 	}
 
 	public PanelGroup addPanel(Panel panel) {
 		panel.setParentGroup(this);
-		panel.setPos(x + 0.25F, y + 7.5F);
-		panel.setSize(width - 0.5F, height - 7.75F);
 		panels.add(panel);
 		return this;
 	}
@@ -272,6 +276,10 @@ public class PanelGroup {
 
 	public float getHeight() {
 		return height;
+	}
+
+	public List<Panel> getPanels() {
+		return panels;
 	}
 
 	public Rect getRect() {

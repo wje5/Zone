@@ -1,9 +1,12 @@
 package com.pinball3d.zone.sphinx.elite;
 
+import com.pinball3d.zone.util.Util;
+
+import net.minecraft.client.renderer.GlStateManager;
+
 public class Panel {
 	private EliteMainwindow parent;
 	private PanelGroup parentGroup;
-	private float x, y, width, height;
 	private String name;
 
 	public Panel(EliteMainwindow parent, PanelGroup parentGroup, String name) {
@@ -17,7 +20,12 @@ public class Panel {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
-//		EliteRenderHelper.drawRect(0, 0, width, height, 0xFF4402D5);
+		String s = getName();
+		GlStateManager.pushMatrix();
+		GlStateManager.scale(0.5F, 0.5F, 1.0F);
+		Util.getFontRenderer().drawString(s, 10, 10, 0xFFA0A0A0);
+		GlStateManager.popMatrix();
+		FontHelper.renderText(10, 20, s, 0xFFF0F0F0);
 	}
 
 	public void doRenderPost(int mouseX, int mouseY) {
@@ -32,33 +40,11 @@ public class Panel {
 		return parentGroup;
 	}
 
-	public void setPos(float x, float y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	public void setSize(float width, float height) {
-		this.width = width;
-		this.height = height;
-	}
-
-	public float getX() {
-		return x;
-	}
-
-	public float getY() {
-		return y;
-	}
-
-	public float getWidth() {
-		return width;
-	}
-
-	public float getHeight() {
-		return height;
-	}
-
 	public String getName() {
 		return name;
+	}
+
+	public EliteMainwindow getParent() {
+		return parent;
 	}
 }

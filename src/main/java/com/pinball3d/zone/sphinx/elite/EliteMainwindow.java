@@ -49,7 +49,7 @@ public class EliteMainwindow extends GuiScreen {
 
 	private void applyPanels() {
 		PanelGroup g = new PanelGroup(this, 0, 7, width, height - 7);
-		g.addPanel(new Panel(this, g, "EliteMainWindow"));
+		g.addPanel(new Panel(this, g, "EliteMainWindow我能吞下玻璃而不伤身体"));
 		g.addPanel(new Panel(this, g, "PanelGroup"));
 		g.addPanel(new Panel(this, g, "DropDownList"));
 		g.addPanel(new Panel(this, g, "Panel"));
@@ -97,7 +97,12 @@ public class EliteMainwindow extends GuiScreen {
 				super.keyTyped(typedChar, keyCode);
 			}
 		} else if (keyCode == Keyboard.KEY_LMENU) {
-			menuBar.onPressAlt();
+			if (drag != null) {
+				drag.stop(true);
+				drag = null;
+			} else {
+				menuBar.onPressAlt();
+			}
 			if (dropDownList != null) {
 				dropDownList = null;
 			}
@@ -160,14 +165,13 @@ public class EliteMainwindow extends GuiScreen {
 			} else {
 				return;
 			}
-		} else {
-			menuBar.mouseClicked(mouseX, mouseY, mouseButton);
-			for (PanelGroup g : panels) {
-				Drag d = g.onMouseClicked(mouseX, mouseY, mouseButton);
-				if (mouseButton == 0 && d != null) {
-					drag = d;
-					break;
-				}
+		}
+		menuBar.mouseClicked(mouseX, mouseY, mouseButton);
+		for (PanelGroup g : panels) {
+			Drag d = g.onMouseClicked(mouseX, mouseY, mouseButton);
+			if (mouseButton == 0 && d != null) {
+				drag = d;
+				break;
 			}
 		}
 	}
@@ -176,20 +180,20 @@ public class EliteMainwindow extends GuiScreen {
 	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
 		if (mouseButton == 0) {
 			if (drag != null) {
-				drag.stop();
-			}
-			drag = null;
-		} else if (!menuBar.mouseReleased(mouseX, mouseY, mouseButton)) {
-			if (dropDownList != null) {
-				if (!dropDownList.mouseReleased(mouseX, mouseY, mouseButton)) {
-					dropDownList = null;
-					menuBar.onListClosed();
+				drag.stop(false);
+				drag = null;
+			} else if (!menuBar.mouseReleased(mouseX, mouseY, mouseButton)) {
+				if (dropDownList != null) {
+					if (!dropDownList.mouseReleased(mouseX, mouseY, mouseButton)) {
+						dropDownList = null;
+						menuBar.onListClosed();
+					} else {
+						return;
+					}
 				} else {
-					return;
-				}
-			} else {
-				for (PanelGroup g : panels) {
-					g.onMouseReleased(mouseX, mouseY, mouseButton);
+					for (PanelGroup g : panels) {
+						g.onMouseReleased(mouseX, mouseY, mouseButton);
+					}
 				}
 			}
 		}
