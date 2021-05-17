@@ -26,7 +26,7 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 
 public class FontHelper {
-	private static ResourceLocation FONT_LOCATION = new ResourceLocation("zone:fonts/elite/droidsans.ttf");
+	private static ResourceLocation FONT_LOCATION = new ResourceLocation("zone:fonts/droidsans.ttf");
 	private static Library library;
 	private static Face face;
 	private static Map<Character, Float> widths = new HashMap<Character, Float>();

@@ -11,7 +11,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class EliteRenderHelper {
 	public static void init() {
-		FontHelper.init();
+//		FontHelper.init();
+		FontHandler.init();
 	}
 
 	public static void drawRect(float x, float y, float width, float height, int color) {

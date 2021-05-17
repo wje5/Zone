@@ -1,5 +1,7 @@
 package com.pinball3d.zone.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -592,5 +594,28 @@ public class Util {
 			return false;
 		}
 		return true;
+	}
+
+	public static int readInt(InputStream stream) throws IOException {
+		byte[] bytes = new byte[4];
+		stream.read(bytes);
+		int t = 0;
+		for (int i = 0; i < 3; i++) {
+			t |= bytes[i] & 0xFF;
+			t <<= 8;
+		}
+		t |= bytes[3] & 0xFF;
+		return t;
+	}
+
+	public static boolean[] readBooleans(InputStream stream) throws IOException {
+		boolean[] bools = new boolean[8];
+		byte b = (byte) stream.read();
+		for (int i = 0; i < 7; i++) {
+			bools[i] = (b & 0x80) == 0x80;
+			b <<= 1;
+		}
+		bools[7] = (b & 1) == 1;
+		return bools;
 	}
 }
