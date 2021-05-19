@@ -32,7 +32,7 @@ public class PanelGroup {
 		for (int i = 0; i < panels.size(); i++) {
 			Panel e = panels.get(i);
 			String name = e.getName();
-			float w = FontHelper.getStringWidth(name) + 9;
+			float w = FontHandler.getStringWidth(name) + 9;
 			int color = 0xFF424242;
 			if (chosenIndex == i) {
 				color = 0xFF535353;
@@ -45,7 +45,7 @@ public class PanelGroup {
 			}
 			EliteRenderHelper.drawRect(x + xOffset + 0.25F, y + 0.25F, w, 7, color);
 			EliteRenderHelper.drawBorder(x + xOffset, y, w + 0.5F, 7.5F, 0.25F, 0xFF383838);
-			FontHelper.renderText(x + xOffset + 2.75F, y + 1.75F, name, chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0);
+			FontHandler.renderText(x + xOffset + 2.75F, y + 1.75F, name, chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0);
 			xOffset += w + 0.25F;
 		}
 		GlStateManager.pushMatrix();
@@ -69,7 +69,7 @@ public class PanelGroup {
 					if (i == dragToIndex) {
 						EliteRenderHelper.drawRect(x + xOffset, y, 0.5F, 7.5F, 0xFF6F6F6F);
 					}
-					xOffset += FontHelper.getStringWidth(e.getName()) + 9.25F;
+					xOffset += FontHandler.getStringWidth(e.getName()) + 9.25F;
 				}
 			} else {
 				List<PanelGroup> list = parent.getPanels();
@@ -239,7 +239,7 @@ public class PanelGroup {
 				for (int i = 0; i < pl.size(); i++) {
 					Panel e = pl.get(i);
 					String name = e.getName();
-					float w = FontHelper.getStringWidth(name) + 9;
+					float w = FontHandler.getStringWidth(name) + 9;
 					if (mouseX >= x + xOffset && mouseX <= x + xOffset + w) {
 						hoverIndex = i;
 						if (dragIndex >= 0) {

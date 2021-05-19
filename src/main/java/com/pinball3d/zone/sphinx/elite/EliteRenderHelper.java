@@ -38,17 +38,18 @@ public class EliteRenderHelper {
 		GlStateManager.disableBlend();
 	}
 
-	public static void drawTexture(ResourceLocation texture, float x, float y, int u, int v, int uWidth, int vHeight) {
+	public static void drawTexture(ResourceLocation texture, float x, float y, float u, float v, float uWidth,
+			float vHeight) {
 		drawTexture(texture, x, y, u, v, uWidth, vHeight, 1.0F);
 	}
 
-	public static void drawTexture(ResourceLocation texture, float x, float y, int u, int v, int uWidth, int vHeight,
-			float scale) {
+	public static void drawTexture(ResourceLocation texture, float x, float y, float u, float v, float uWidth,
+			float vHeight, float scale) {
 		drawTexture(texture, x, y, scale * uWidth, scale * vHeight, u, v, uWidth, vHeight);
 	}
 
-	public static void drawTexture(ResourceLocation texture, float x, float y, float width, float height, int u, int v,
-			int uWidth, int vHeight) {
+	public static void drawTexture(ResourceLocation texture, float x, float y, float width, float height, float u,
+			float v, float uWidth, float vHeight) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 		GlStateManager.pushMatrix();
 		Tessellator tessellator = Tessellator.getInstance();

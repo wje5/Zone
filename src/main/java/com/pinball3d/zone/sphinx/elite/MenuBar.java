@@ -220,12 +220,12 @@ public class MenuBar {
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, 1, 0, 0, (int) (w * 4 - 3), 20, 0.25F);
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + w - 0.75F, 1, 253, 0, 3, 20, 0.25F);
 			}
-			FontHelper.renderText(x + 2, 1.5F, name, 0xFFC7C7C7);
+			FontHandler.renderText(x + 2, 1.5F, name, 0xFFC7C7C7);
 			return w;
 		}
 
 		public float getWidth() {
-			return FontHelper.getStringWidth(name) + 3.25F;
+			return FontHandler.getStringWidth(name) + 3.25F;
 		}
 
 		public String getName() {
