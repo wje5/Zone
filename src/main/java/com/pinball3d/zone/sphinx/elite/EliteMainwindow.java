@@ -129,6 +129,10 @@ public class EliteMainwindow extends GuiScreen {
 		this.dropDownList = dropDownList;
 	}
 
+	public DropDownList getDropDownList() {
+		return dropDownList;
+	}
+
 	public void quitMenuBar() {
 		this.dropDownList = null;
 		menuBar.onQuit();
@@ -165,8 +169,9 @@ public class EliteMainwindow extends GuiScreen {
 			} else {
 				return;
 			}
+		} else {
+			menuBar.mouseClicked(mouseX, mouseY, mouseButton);
 		}
-		menuBar.mouseClicked(mouseX, mouseY, mouseButton);
 		for (PanelGroup g : panels) {
 			Drag d = g.onMouseClicked(mouseX, mouseY, mouseButton);
 			if (mouseButton == 0 && d != null) {

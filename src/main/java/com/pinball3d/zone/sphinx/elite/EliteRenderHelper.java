@@ -50,6 +50,15 @@ public class EliteRenderHelper {
 
 	public static void drawTexture(ResourceLocation texture, float x, float y, float width, float height, float u,
 			float v, float uWidth, float vHeight) {
+		drawTexture(texture, x, y, width, height, u, v, uWidth, vHeight, 0xFFFFFFFF);
+	}
+
+	public static void drawTexture(ResourceLocation texture, float x, float y, float width, float height, float u,
+			float v, float uWidth, float vHeight, int color) {
+		float a = (color >> 24 & 255) / 255.0F;
+		float r = (color >> 16 & 255) / 255.0F;
+		float g = (color >> 8 & 255) / 255.0F;
+		float b = (color & 255) / 255.0F;
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 		GlStateManager.pushMatrix();
 		Tessellator tessellator = Tessellator.getInstance();
@@ -58,7 +67,7 @@ public class EliteRenderHelper {
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
 				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
 				GlStateManager.DestFactor.ZERO);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color(r, g, b, a);
 		float f = 0.00390625F;
 		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		bufferbuilder.pos(x, y + height, 0).tex(u * f, (v + vHeight) * f).endVertex();

@@ -40,9 +40,13 @@ public class DropDownList {
 		if (mouseButton != 0) {
 			return true;
 		}
+		return isMouseInList(mouseX, mouseY);
+	}
+
+	public boolean isMouseInList(int mouseX, int mouseY) {
 		computeChosenIndex(mouseX, mouseY);
 		if (childList != null) {
-			if (childList.mouseClicked(mouseX, mouseY, mouseButton)) {
+			if (childList.isMouseInList(mouseX, mouseY)) {
 				return true;
 			}
 			return checkChosenIndex(mouseX, mouseY) >= 0;
@@ -264,7 +268,8 @@ public class DropDownList {
 		private String textL, textR;
 
 		public ButtonBar(String textL, String textR) {
-			super(FontHandler.getStringWidth(textL) + FontHandler.getStringWidth(textR) + 18.75F, 5.25F);
+			super(FontHandler.getStringWidth(textL, FontHandler.NORMAL)
+					+ FontHandler.getStringWidth(textR, FontHandler.NORMAL) + 18.75F, 5.25F);
 			this.textL = textL;
 			this.textR = textR;
 		}
@@ -276,9 +281,10 @@ public class DropDownList {
 				EliteRenderHelper.drawRect(x, y, width, height, 0xFF0078D7);
 			}
 			if (textL != null) {
-				FontHandler.renderText(x + 4.75F, y + 1.25F, textL, isHovered ? 0xFFFFFFFF : 0xFF000000);
-				FontHandler.renderText(x + width - FontHandler.getStringWidth(textR) - 4, y + 1.25F, textR,
-						isHovered ? 0xFFFFFFFF : 0xFF000000);
+				FontHandler.renderText(x + 4.75F, y + 1.25F, textL, isHovered ? 0xFFFFFFFF : 0xFF000000,
+						FontHandler.NORMAL);
+				FontHandler.renderText(x + width - FontHandler.getStringWidth(textR, FontHandler.NORMAL) - 4, y + 1.25F,
+						textR, isHovered ? 0xFFFFFFFF : 0xFF000000, FontHandler.NORMAL);
 			}
 		}
 
@@ -307,7 +313,7 @@ public class DropDownList {
 		private List<ListBar> list = new ArrayList<ListBar>();
 
 		public FolderBar(String text) {
-			super(FontHandler.getStringWidth(text) + 12.5F, 5.25F);
+			super(FontHandler.getStringWidth(text, FontHandler.NORMAL) + 12.5F, 5.25F);
 			this.text = text;
 		}
 
@@ -321,7 +327,8 @@ public class DropDownList {
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + width - 2.5F, y + 1.25F, 0, 40, 4, 7, 0.25F);
 			}
 			if (text != null) {
-				FontHandler.renderText(x + 4.75F, y + 1.25F, text, isHovered ? 0xFFFFFFFF : 0xFF000000);
+				FontHandler.renderText(x + 4.75F, y + 1.25F, text, isHovered ? 0xFFFFFFFF : 0xFF000000,
+						FontHandler.NORMAL);
 			}
 		}
 

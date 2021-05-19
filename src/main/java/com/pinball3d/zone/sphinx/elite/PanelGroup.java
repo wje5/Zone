@@ -23,7 +23,7 @@ public class PanelGroup {
 	public void doRenderPre(int mouseX, int mouseY) {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y + 7, 0.0F);
-		panels.get(0).doRenderPre(mouseX, mouseY);
+		panels.get(chosenIndex).doRenderPre(mouseX, mouseY);
 		GlStateManager.popMatrix();
 	}
 
@@ -32,7 +32,7 @@ public class PanelGroup {
 		for (int i = 0; i < panels.size(); i++) {
 			Panel e = panels.get(i);
 			String name = e.getName();
-			float w = FontHandler.getStringWidth(name) + 9;
+			float w = FontHandler.getStringWidth(name, FontHandler.NORMAL) + 9;
 			int color = 0xFF424242;
 			if (chosenIndex == i) {
 				color = 0xFF535353;
@@ -45,12 +45,13 @@ public class PanelGroup {
 			}
 			EliteRenderHelper.drawRect(x + xOffset + 0.25F, y + 0.25F, w, 7, color);
 			EliteRenderHelper.drawBorder(x + xOffset, y, w + 0.5F, 7.5F, 0.25F, 0xFF383838);
-			FontHandler.renderText(x + xOffset + 2.75F, y + 1.75F, name, chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0);
+			FontHandler.renderText(x + xOffset + 2.75F, y + 1.75F, name, chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0,
+					FontHandler.NORMAL);
 			xOffset += w + 0.25F;
 		}
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y + 7, 0.0F);
-		panels.get(0).doRender(mouseX, mouseY);
+		panels.get(chosenIndex).doRender(mouseX, mouseY);
 		GlStateManager.popMatrix();
 		EliteRenderHelper.drawBorder(x, y, width, height, 0.25F, 0xFF383838);
 		EliteRenderHelper.drawRect(x, y + 7.25F, width, 0.25F, 0xFF383838);
@@ -59,17 +60,21 @@ public class PanelGroup {
 	public void doRenderPost(int mouseX, int mouseY) {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y + 7, 0.0F);
-		panels.get(0).doRenderPost(mouseX, mouseY);
+		panels.get(chosenIndex).doRenderPost(mouseX, mouseY);
 		GlStateManager.popMatrix();
 		if (dragging) {
 			if (dragToIndex >= 0) {
 				float xOffset = 0;
-				for (int i = 0; i < panels.size(); i++) {
-					Panel e = panels.get(i);
+				PanelGroup p = parent.getPanels().get(hoverPanelIndex);
+				for (int i = 0; i < p.panels.size(); i++) {
+					Panel e = p.panels.get(i);
 					if (i == dragToIndex) {
-						EliteRenderHelper.drawRect(x + xOffset, y, 0.5F, 7.5F, 0xFF6F6F6F);
+						EliteRenderHelper.drawRect(p.x + xOffset, p.y, 0.5F, 7.5F, 0xFF6F6F6F);
 					}
-					xOffset += FontHandler.getStringWidth(e.getName()) + 9.25F;
+					xOffset += FontHandler.getStringWidth(e.getName(), FontHandler.NORMAL) + 9.25F;
+				}
+				if (dragToIndex == p.panels.size()) {
+					EliteRenderHelper.drawRect(p.x + xOffset, p.y, 0.5F, 7.5F, 0xFF6F6F6F);
 				}
 			} else {
 				List<PanelGroup> list = parent.getPanels();
@@ -90,6 +95,49 @@ public class PanelGroup {
 					}
 				}
 			}
+		}
+	}
+
+	public void expandToRect(Rect rect) {
+		List<PanelGroup> l = new ArrayList<PanelGroup>();
+		Side side = null;
+		for (Side s : Side.values()) {
+			Edge edge = rect.getEdge(s);
+			float total = 0;
+			for (PanelGroup group : parent.getPanels()) {
+				Rect r = group.getRect();
+				if (rect.isAdjoin(r) == s) {
+					Edge e = r.getEdge(s.opposite());
+					if (e.getMin() >= edge.getMin() && e.getMax() <= edge.getMax()) {
+						l.add(group);
+						total += e.getLength();
+					}
+				}
+			}
+			if (total == edge.getLength()) {
+				side = s;
+				break;
+			}
+		}
+		switch (side) {
+		case UP:
+			l.forEach(e -> e.height += rect.height);
+			break;
+		case DOWN:
+			l.forEach(e -> {
+				e.y -= rect.height;
+				e.height += rect.height;
+			});
+			break;
+		case LEFT:
+			l.forEach(e -> e.width += rect.width);
+			break;
+		case RIGHT:
+			l.forEach(e -> {
+				e.x -= rect.width;
+				e.width += rect.width;
+			});
+			break;
 		}
 	}
 
@@ -129,47 +177,7 @@ public class PanelGroup {
 				}
 				if (panels.isEmpty()) {
 					parent.getPanels().remove(this);
-					List<PanelGroup> l = new ArrayList<PanelGroup>();
-					Rect rect = getRect();
-					Side side = null;
-					for (Side s : Side.values()) {
-						Edge edge = rect.getEdge(s);
-						float total = 0;
-						for (PanelGroup group : parent.getPanels()) {
-							Rect r = group.getRect();
-							if (rect.isAdjoin(r) == s) {
-								Edge e = r.getEdge(s.opposite());
-								if (e.getMin() >= edge.getMin() && e.getMax() <= edge.getMax()) {
-									l.add(group);
-									total += e.getLength();
-								}
-							}
-						}
-						if (total == edge.getLength()) {
-							side = s;
-							break;
-						}
-					}
-					switch (side) {
-					case UP:
-						l.forEach(e -> e.height += rect.height);
-						break;
-					case DOWN:
-						l.forEach(e -> {
-							e.y -= rect.height;
-							e.height += rect.height;
-						});
-						break;
-					case LEFT:
-						l.forEach(e -> e.width += rect.width);
-						break;
-					case RIGHT:
-						l.forEach(e -> {
-							e.x -= rect.width;
-							e.width += rect.width;
-						});
-						break;
-					}
+					expandToRect(getRect());
 				}
 				break;
 			}
@@ -180,7 +188,7 @@ public class PanelGroup {
 		if (mouseButton != 0) {
 			return null;
 		}
-		if (hoverIndex >= 0) {
+		if (hoverIndex >= 0 && parent.getPanels().get(hoverPanelIndex) == this) {
 			pressing = true;
 			dragIndex = hoverIndex;
 			return new Drag((x, y, mX, mY) -> {
@@ -193,15 +201,28 @@ public class PanelGroup {
 				if (!cancel) {
 					if (dragging) {
 						if (dragToIndex >= 0) {
-							if (dragToIndex > dragIndex) {
-								dragToIndex--;
-							}
-							if (dragToIndex != dragIndex) {
-								Panel p = panels.get(dragIndex);
+							PanelGroup p = parent.getPanels().get(hoverPanelIndex);
+							if (p == this) {
+								if (dragToIndex > dragIndex) {
+									dragToIndex--;
+								}
+								if (dragToIndex != dragIndex) {
+									Panel e = panels.get(dragIndex);
+									panels.remove(dragIndex);
+									panels.add(dragToIndex, e);
+								}
+								chosenIndex = dragToIndex;
+							} else {
+								Panel e = panels.get(dragIndex);
 								panels.remove(dragIndex);
-								panels.add(dragToIndex, p);
+								p.panels.add(dragToIndex, e);
+								if (panels.isEmpty()) {
+									parent.getPanels().remove(this);
+									expandToRect(getRect());
+								} else {
+									chosenIndex = panels.size() - 1;
+								}
 							}
-							chosenIndex = dragToIndex;
 						} else {
 							adhere(dragX, dragY, dragIndex);
 						}
@@ -239,12 +260,12 @@ public class PanelGroup {
 				for (int i = 0; i < pl.size(); i++) {
 					Panel e = pl.get(i);
 					String name = e.getName();
-					float w = FontHandler.getStringWidth(name) + 9;
-					if (mouseX >= x + xOffset && mouseX <= x + xOffset + w) {
+					float w = FontHandler.getStringWidth(name, FontHandler.NORMAL) + 9;
+					if (mouseX >= p.x + xOffset && mouseX <= p.x + xOffset + w) {
 						hoverIndex = i;
 						if (dragIndex >= 0) {
 							dragToIndex = hoverIndex;
-							if (dragToIndex < pl.size() - 1 && mouseX >= x + xOffset + w / 2) {
+							if (dragToIndex < pl.size() && mouseX >= p.x + xOffset + w / 2) {
 								dragToIndex++;
 							}
 						}
@@ -252,6 +273,7 @@ public class PanelGroup {
 					}
 					xOffset += w;
 				}
+				dragToIndex = pl.size();
 			}
 		}
 	}

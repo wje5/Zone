@@ -22,12 +22,10 @@ public class Panel {
 	public void doRender(int mouseX, int mouseY) {
 		String s = getName();
 		GlStateManager.pushMatrix();
-		long l = System.nanoTime();
 		GlStateManager.scale(0.5F, 0.5F, 1.0F);
 		Util.getFontRenderer().drawString(s, 10, 10, 0xFFA0A0A0);
 		GlStateManager.popMatrix();
-		l = System.nanoTime();
-		float f = FontHandler.renderText(10, 20, s, 0xFFF0F0F0);
+		FontHandler.renderText(10, 20, s, 0xFFF0F0F0, FontHandler.NORMAL);
 	}
 
 	public void doRenderPost(int mouseX, int mouseY) {

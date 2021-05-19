@@ -38,6 +38,9 @@ public class MenuBar {
 	}
 
 	private boolean computeChosenIndex(int mouseX, int mouseY) {
+		if (parent.getDropDownList() != null && parent.getDropDownList().isMouseInList(mouseX, mouseY)) {
+			return false;
+		}
 		int old = chosenIndex;
 		if (mouseY <= 7) {
 			float x = 1;
@@ -76,23 +79,22 @@ public class MenuBar {
 		if (mouseButton != 0) {
 			return;
 		}
+		computeChosenIndex(mouseX, mouseY);
 		if (!isClicked) {
 			if (isKeyBoard) {
 				isKeyBoard = false;
 			}
-			computeChosenIndex(mouseX, mouseY);
 			if (chosenIndex >= 0 && chosenIndex < list.size()) {
 				isClicked = true;
 				parent.setFocus(this::onMenuShortCut);
 				isKeyBoard = true;
 				openDropDownList(false);
 			}
-		} else {
-			if (!(chosenIndex >= 0 && chosenIndex < list.size())) {
-				isClicked = false;
-				isKeyBoard = false;
-				computeChosenIndex(mouseX, mouseY);
-			}
+		} else if (!(chosenIndex >= 0 && chosenIndex < list.size())) {
+			isClicked = false;
+			isKeyBoard = false;
+			computeChosenIndex(mouseX, mouseY);
+			parent.setDropDownList(null);
 		}
 	}
 
@@ -220,12 +222,12 @@ public class MenuBar {
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, 1, 0, 0, (int) (w * 4 - 3), 20, 0.25F);
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + w - 0.75F, 1, 253, 0, 3, 20, 0.25F);
 			}
-			FontHandler.renderText(x + 2, 1.5F, name, 0xFFC7C7C7);
+			FontHandler.renderText(x + 2, 1.5F, name, 0xFFC7C7C7, FontHandler.NORMAL);
 			return w;
 		}
 
 		public float getWidth() {
-			return FontHandler.getStringWidth(name) + 3.25F;
+			return FontHandler.getStringWidth(name, FontHandler.NORMAL) + 3.25F;
 		}
 
 		public String getName() {
