@@ -5,23 +5,24 @@ public class FontHandler {
 
 	public static void init() {
 		NORMAL = new Font("droidsans/normal/font");
+		BOLD = new Font("droidsans/bold/font");
+		ITALIC = new Font("droidsans/italic/font");
+		BOLD_ITALIC = new Font("droidsans/bold_italic/font");
 	}
 
-	private static float renderChar(float x, float y, char c, int color, Font font) {
+	private static int renderChar(int x, int y, char c, int color, Font font) {
 		Integer[] a = font.getChars().get((int) c);
 		if (a != null) {
-			EliteRenderHelper.drawTexture(font.getTextures().get(a[7]), x + a[4] * 0.25F, y + a[5] * 0.25F,
-					a[2] * 0.25F, a[3] * 0.25F, a[0], a[1], a[2], a[3], color);
-			return a[6] * 0.25F;
-		} else {
-//			System.out.println((int) c);
-			return 0;
+			EliteRenderHelper.drawTexture(font.getTextures().get(a[7]), x + a[4], y + a[5], a[2], a[3], a[0], a[1],
+					a[2], a[3], color);
+			return a[6];
 		}
+		return 0;
 	}
 
-	public static float renderText(float x, float y, String s, int color, Font font) {
-		float t = 0;
-		boolean underLine = false;
+	public static float renderText(int x, int y, String s, int color) {
+		int t = 0;
+		boolean underLine = false, italic = false, bold = false;
 		char[] a = s.toCharArray();
 		for (int i = 0; i < a.length; i++) {
 			char c = a[i];
@@ -32,28 +33,37 @@ public class FontHandler {
 						underLine = true;
 						i++;
 						continue;
+					} else if (d == 'o') {
+						italic = true;
+						i++;
+						continue;
+					} else if (d == 'l') {
+						bold = true;
+						i++;
+						continue;
 					} else if (d == 'r') {
+						italic = false;
+						bold = false;
 						underLine = false;
 						i++;
 						continue;
 					}
 				}
 			}
-
-			float w = renderChar(t + x, y, c, color, font);
+			Font font = italic ? bold ? FontHandler.BOLD_ITALIC : FontHandler.ITALIC
+					: bold ? FontHandler.BOLD : FontHandler.NORMAL;
+			int w = renderChar(t + x, y, c, color, font);
 			if (underLine) {
-				EliteRenderHelper.drawRect(t + x - 0.25F, y + font.getLineHeight() * 0.25F - 0.25F, w, 0.25F, color);
+				EliteRenderHelper.drawRect(t + x - 1, y + font.getLineHeight() - 1, w, 1, color);
 			}
 			t += w;
 		}
 		return t;
 	}
 
-	public static float getStringWidth(String s, Font font) {
-		if (s == null || s.isEmpty()) {
-			return 0;
-		}
-		float w = 0;
+	public static int getStringWidth(String s) {
+		int t = 0;
+		boolean italic = false, bold = false;
 		char[] a = s.toCharArray();
 		for (int i = 0; i < a.length; i++) {
 			char c = a[i];
@@ -63,21 +73,34 @@ public class FontHandler {
 					if (d == 'n') {
 						i++;
 						continue;
+					} else if (d == 'o') {
+						italic = true;
+						i++;
+						continue;
+					} else if (d == 'l') {
+						bold = true;
+						i++;
+						continue;
 					} else if (d == 'r') {
+						italic = false;
+						bold = false;
 						i++;
 						continue;
 					}
 				}
 			}
-			w += getCharWidth(c, font);
+			Font font = italic ? bold ? FontHandler.BOLD_ITALIC : FontHandler.ITALIC
+					: bold ? FontHandler.BOLD : FontHandler.NORMAL;
+			float w = getCharWidth(c, font);
+			t += w;
 		}
-		return w;
+		return t;
 	}
 
-	public static float getCharWidth(char c, Font font) {
+	public static int getCharWidth(char c, Font font) {
 		Integer[] a = font.getChars().get((int) c);
 		if (a != null) {
-			return a[6] * 0.25F;
+			return a[6];
 		}
 		return 0;
 	}

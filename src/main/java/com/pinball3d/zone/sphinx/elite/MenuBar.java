@@ -23,8 +23,8 @@ public class MenuBar {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
-		float x = 1;
-		EliteRenderHelper.drawRect(0, 0, parent.width, 7, 0xFF535353);
+		int x = 4;
+		EliteRenderHelper.drawRect(0, 0, parent.getWidth(), 28, 0xFF535353);
 		for (int i = 0; i < list.size(); i++) {
 			Menu m = list.get(i);
 			x += m.doRender(x, chosenIndex == i ? isClicked ? 2 : 1 : 0);
@@ -42,11 +42,11 @@ public class MenuBar {
 			return false;
 		}
 		int old = chosenIndex;
-		if (mouseY <= 7) {
-			float x = 1;
+		if (mouseY <= 28) {
+			int x = 4;
 			for (int i = 0; i < list.size(); i++) {
 				Menu m = list.get(i);
-				float w = m.getWidth();
+				int w = m.getWidth();
 				if (mouseX >= x && mouseX <= x + w) {
 					chosenIndex = i;
 					return old != chosenIndex;
@@ -61,11 +61,11 @@ public class MenuBar {
 	}
 
 	private int checkChosenIndex(int mouseX, int mouseY) {
-		if (mouseY <= 7) {
-			float x = 1;
+		if (mouseY <= 28) {
+			int x = 4;
 			for (int i = 0; i < list.size(); i++) {
 				Menu m = list.get(i);
-				float w = m.getWidth();
+				int w = m.getWidth();
 				if (mouseX >= x && mouseX <= x + w) {
 					return i;
 				}
@@ -114,12 +114,12 @@ public class MenuBar {
 	}
 
 	private void openDropDownList(boolean flag) {
-		float x = 1;
+		int x = 4;
 		for (int i = 0; i < chosenIndex; i++) {
 			Menu m = list.get(i);
 			x += m.getWidth();
 		}
-		DropDownList l = list.get(chosenIndex).openList(x, 5.75F);
+		DropDownList l = list.get(chosenIndex).openList(x, 23);
 		if (flag) {
 			l.setChosenIndex(0);
 			l.setKeyBoard(true);
@@ -213,21 +213,21 @@ public class MenuBar {
 			this.shortCut = shortCut;
 		}
 
-		public float doRender(float x, int flag) {
-			float w = getWidth();
+		public int doRender(int x, int flag) {
+			int w = getWidth();
 			if (flag == 1) {
-				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, 1, 0, 20, (int) (w * 4 - 3), 20, 0.25F);
-				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + w - 0.75F, 1, 253, 20, 3, 20, 0.25F);
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, 4, 0, 20, w - 3, 20);
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + w - 3, 4, 253, 20, 3, 20);
 			} else if (flag == 2) {
-				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, 1, 0, 0, (int) (w * 4 - 3), 20, 0.25F);
-				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + w - 0.75F, 1, 253, 0, 3, 20, 0.25F);
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, 4, 0, 0, w - 3, 20);
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + w - 3, 4, 253, 0, 3, 20);
 			}
-			FontHandler.renderText(x + 2, 1.5F, name, 0xFFC7C7C7, FontHandler.NORMAL);
+			FontHandler.renderText(x + 8, 6, name, 0xFFC7C7C7);
 			return w;
 		}
 
-		public float getWidth() {
-			return FontHandler.getStringWidth(name, FontHandler.NORMAL) + 3.25F;
+		public int getWidth() {
+			return FontHandler.getStringWidth(name) + 13;
 		}
 
 		public String getName() {
@@ -238,7 +238,7 @@ public class MenuBar {
 			return shortCut;
 		}
 
-		public DropDownList openList(float x, float y) {
+		public DropDownList openList(int x, int y) {
 			DropDownList l = new DropDownList(parent, null, x, y);
 			list.forEach(e -> l.addBar(e.setParentList(l)));
 			return l;

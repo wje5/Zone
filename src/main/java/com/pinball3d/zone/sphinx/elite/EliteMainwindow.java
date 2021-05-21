@@ -10,6 +10,7 @@ import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
 import com.pinball3d.zone.sphinx.elite.DropDownList.DividerBar;
 import com.pinball3d.zone.sphinx.elite.DropDownList.FolderBar;
 import com.pinball3d.zone.sphinx.elite.MenuBar.Menu;
+import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -21,7 +22,7 @@ import net.minecraftforge.fml.common.Loader;
 public class EliteMainwindow extends GuiScreen {
 	public static final ResourceLocation ELITE = new ResourceLocation("zone:textures/gui/elite/elite.png");
 
-	private int mouseX, mouseY;
+	private int lastX, lastY;
 	private MenuBar menuBar;
 	private DropDownList dropDownList;
 	private IFocus focus;
@@ -40,6 +41,11 @@ public class EliteMainwindow extends GuiScreen {
 	private void applyMenu() {
 		menuBar = new MenuBar(this);
 		menuBar.addMenu(new Menu(this, I18n.format("elite.menu.view"), 'v')
+				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
+				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
+				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
+				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
+				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
 				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
 		menuBar.addMenu(new Menu(this, I18n.format("elite.menu.window"), 'w').addBar(new FolderBar("KKK")
 				.addBar(new ButtonBar("aB", "Shift+Z")).addBar(new DividerBar()).addBar(new ButtonBar("AA", "AA"))));
@@ -48,12 +54,8 @@ public class EliteMainwindow extends GuiScreen {
 	}
 
 	private void applyPanels() {
-		PanelGroup g = new PanelGroup(this, 0, 7, width, height - 7);
-		g.addPanel(new Panel(this, g, "EliteMainWindow我能吞下玻璃而不伤身体"));
-		g.addPanel(new Panel(this, g, "PanelGroup"));
-		g.addPanel(new Panel(this, g, "DropDownList"));
-		g.addPanel(new Panel(this, g, "Panel"));
-		g.addPanel(new Panel(this, g, "FontHelper"));
+		PanelGroup g = new PanelGroup(this, 0, 28, getWidth(), getHeight() - 28);
+		g.addPanel(new PanelMap(this, g));
 		panels.add(g);
 	}
 
@@ -67,15 +69,20 @@ public class EliteMainwindow extends GuiScreen {
 	}
 
 	@Override
-	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		if (mouseX != this.mouseX || mouseY != this.mouseY) {
-			int moveX = mouseX - this.mouseX;
-			int moveY = mouseY - this.mouseY;
-			onMouseMoved(this.mouseX = mouseX, this.mouseY = mouseY, moveX, moveY);
+	public void drawScreen(int mX, int mY, float partialTicks) {
+		float xScale = width * 1.0F / getWidth();
+		float yScale = height * 1.0F / getHeight();
+		int mouseX = MouseHandler.getX();
+		int mouseY = MouseHandler.getY();
+		if (mouseX != this.lastX || mouseY != this.lastY) {
+			int moveX = mouseX - this.lastX;
+			int moveY = mouseY - this.lastY;
+			onMouseMoved(this.lastX = mouseX, this.lastY = mouseY, moveX, moveY);
 		}
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0, 0, 50F);
-		EliteRenderHelper.drawRect(0, 0, width, height, 0xFF282828);
+		GlStateManager.scale(xScale, yScale, 1.0F);
+		EliteRenderHelper.drawRect(0, 0, getWidth(), getHeight(), 0xFF282828);
 		menuBar.doRender(mouseX, mouseY);
 		panels.forEach(e -> e.doRenderPre(mouseX, mouseY));
 		panels.forEach(e -> e.doRender(mouseX, mouseY));
@@ -83,6 +90,7 @@ public class EliteMainwindow extends GuiScreen {
 		if (dropDownList != null) {
 			dropDownList.doRender(mouseX, mouseY);
 		}
+		MouseHandler.renderMouse();
 		GlStateManager.popMatrix();
 	}
 
@@ -146,6 +154,14 @@ public class EliteMainwindow extends GuiScreen {
 		return panels;
 	}
 
+	public int getWidth() {
+		return mc.displayWidth;
+	}
+
+	public int getHeight() {
+		return mc.displayHeight;
+	}
+
 	private void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		menuBar.onMouseMoved(mouseX, mouseY, moveX, moveY);
 		if (dropDownList != null) {
@@ -158,10 +174,12 @@ public class EliteMainwindow extends GuiScreen {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+	protected void mouseClicked(int mX, int mY, int mouseButton) throws IOException {
 		if (mouseButton != 0 && mouseButton != 1) {
 			return;
 		}
+		int mouseX = MouseHandler.getX();
+		int mouseY = MouseHandler.getY();
 		if (dropDownList != null) {
 			if (!dropDownList.mouseClicked(mouseX, mouseY, mouseButton)) {
 				dropDownList = null;
@@ -182,7 +200,12 @@ public class EliteMainwindow extends GuiScreen {
 	}
 
 	@Override
-	protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+	protected void mouseReleased(int mX, int mY, int mouseButton) {
+		if (mouseButton != 0 && mouseButton != 1) {
+			return;
+		}
+		int mouseX = MouseHandler.getX();
+		int mouseY = MouseHandler.getY();
 		if (mouseButton == 0) {
 			if (drag != null) {
 				drag.stop(false);

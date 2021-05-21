@@ -6,14 +6,14 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 
 public class DropDownList {
-	private float x, y;
+	private int x, y;
 	private DropDownList parentList, childList;
 	private EliteMainwindow parent;
 	private List<ListBar> list = new ArrayList<ListBar>();
 	private int chosenIndex = -1;
 	private boolean isKeyBoard;
 
-	public DropDownList(EliteMainwindow parent, DropDownList parentList, float x, float y) {
+	public DropDownList(EliteMainwindow parent, DropDownList parentList, int x, int y) {
 		this.parent = parent;
 		this.parentList = parentList;
 		this.x = x;
@@ -21,14 +21,14 @@ public class DropDownList {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
-		float width = getWidth();
-		float height = getHeight();
-		EliteRenderHelper.drawBorder(x, y, width, height, 0.25F, 0xFFA0A0A0);
-		EliteRenderHelper.drawRect(x + 0.25F, y + 0.25F, width - 0.5F, height - 0.5F, 0xFFF0F0F0);
-		float yOffset = 0.75F;
+		int width = getWidth();
+		int height = getHeight();
+		EliteRenderHelper.drawBorder(x, y, width, height, 1, 0xFFA0A0A0);
+		EliteRenderHelper.drawRect(x + 1, y + 1, width - 2, height - 2, 0xFFF0F0F0);
+		int yOffset = 3;
 		for (int i = 0; i < list.size(); i++) {
 			ListBar bar = list.get(i);
-			bar.doRender(x + 0.75F, y + yOffset, width - 1.5F, i == chosenIndex);
+			bar.doRender(x + 3, y + yOffset, width - 6, i == chosenIndex);
 			yOffset += bar.getHeight();
 		}
 		if (childList != null) {
@@ -113,12 +113,12 @@ public class DropDownList {
 			if (chosenIndex >= 0) {
 				ListBar bar = list.get(chosenIndex);
 				if (bar instanceof FolderBar) {
-					float yOffset = y + 0.75F;
+					int yOffset = y + 3;
 					for (int i = 0; i < chosenIndex; i++) {
 						ListBar b = list.get(i);
 						yOffset += b.height;
 					}
-					childList = ((FolderBar) bar).openList(parent, x + getWidth() - 1.5F, yOffset - 0.75F);
+					childList = ((FolderBar) bar).openList(parent, x + getWidth() - 6, yOffset - 3);
 					childList.setChosenIndex(0);
 					childList.setKeyBoard(true);
 					break;
@@ -130,12 +130,12 @@ public class DropDownList {
 			if (chosenIndex >= 0) {
 				ListBar bar = list.get(chosenIndex);
 				if (bar instanceof FolderBar) {
-					float yOffset = y + 0.75F;
+					int yOffset = y + 3;
 					for (int i = 0; i < chosenIndex; i++) {
 						ListBar b = list.get(i);
 						yOffset += b.height;
 					}
-					childList = ((FolderBar) bar).openList(parent, x + getWidth() - 1.5F, yOffset - 0.75F);
+					childList = ((FolderBar) bar).openList(parent, x + getWidth() - 6, yOffset - 3);
 					childList.setChosenIndex(0);
 					childList.setKeyBoard(true);
 					break;
@@ -150,18 +150,18 @@ public class DropDownList {
 
 	private boolean computeChosenIndex(int mouseX, int mouseY) {
 		int old = chosenIndex;
-		float w = getWidth();
-		float h = getHeight();
+		int w = getWidth();
+		int h = getHeight();
 		if (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h) {
-			if (mouseX >= x + 0.75F && mouseX <= x + w - 1.5F && mouseY >= y + 0.75F && mouseY <= y + h - 1.5F) {
-				float yOffset = y + 0.75F;
+			if (mouseX >= x + 3 && mouseX <= x + w - 3 && mouseY >= y + 3 && mouseY <= y + h - 3) {
+				int yOffset = y + 3;
 				for (int i = 0; i < list.size(); i++) {
 					ListBar bar = list.get(i);
-					float bh = bar.getHeight();
+					int bh = bar.getHeight();
 					if (mouseY >= yOffset && mouseY <= yOffset + bh) {
 						chosenIndex = i;
 						if (bar instanceof FolderBar) {
-							childList = ((FolderBar) bar).openList(parent, x + w - 1.5F, yOffset - 0.75F);
+							childList = ((FolderBar) bar).openList(parent, x + w - 6, yOffset - 3);
 						} else {
 							childList = null;
 						}
@@ -179,14 +179,14 @@ public class DropDownList {
 	}
 
 	private int checkChosenIndex(int mouseX, int mouseY) {
-		float w = getWidth();
-		float h = getHeight();
+		int w = getWidth();
+		int h = getHeight();
 		if (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h) {
-			if (mouseX >= x + 0.75F && mouseX <= x + w - 1.5F && mouseY >= y + 0.75F && mouseY <= y + h - 1.5F) {
-				float yOffset = y + 0.75F;
+			if (mouseX >= x + 3 && mouseX <= x + w - 3 && mouseY >= y + 3 && mouseY <= y + h - 3) {
+				int yOffset = y + 3;
 				for (int i = 0; i < list.size(); i++) {
 					ListBar bar = list.get(i);
-					float bh = bar.getHeight();
+					int bh = bar.getHeight();
 					if (mouseY >= yOffset && mouseY <= yOffset + bh) {
 						return i;
 					}
@@ -201,12 +201,12 @@ public class DropDownList {
 		this.chosenIndex = chosenIndex;
 	}
 
-	public float getWidth() {
-		return (float) list.stream().mapToDouble(ListBar::getWidth).max().getAsDouble() + 1.5F;
+	public int getWidth() {
+		return list.stream().mapToInt(ListBar::getWidth).max().getAsInt() + 6;
 	}
 
-	public float getHeight() {
-		return (float) (list.stream().mapToDouble(ListBar::getHeight).sum() + 1.5F);
+	public int getHeight() {
+		return list.stream().mapToInt(ListBar::getHeight).sum() + 6;
 	}
 
 	public void setKeyBoard(boolean isKeyBoard) {
@@ -233,15 +233,15 @@ public class DropDownList {
 	}
 
 	public static class ListBar {
-		protected float width, height;
+		protected int width, height;
 		protected DropDownList parentList;
 
-		public ListBar(float width, float height) {
+		public ListBar(int width, int height) {
 			this.width = width;
 			this.height = height;
 		}
 
-		public void doRender(float x, float y, float width, boolean isHovered) {
+		public void doRender(int x, int y, int width, boolean isHovered) {
 
 		}
 
@@ -249,11 +249,11 @@ public class DropDownList {
 
 		}
 
-		public float getWidth() {
+		public int getWidth() {
 			return width;
 		}
 
-		public float getHeight() {
+		public int getHeight() {
 			return height;
 		}
 
@@ -268,23 +268,21 @@ public class DropDownList {
 		private String textL, textR;
 
 		public ButtonBar(String textL, String textR) {
-			super(FontHandler.getStringWidth(textL, FontHandler.NORMAL)
-					+ FontHandler.getStringWidth(textR, FontHandler.NORMAL) + 18.75F, 5.25F);
+			super(FontHandler.getStringWidth(textL) + FontHandler.getStringWidth(textR) + 75, 21);
 			this.textL = textL;
 			this.textR = textR;
 		}
 
 		@Override
-		public void doRender(float x, float y, float width, boolean isHovered) {
+		public void doRender(int x, int y, int width, boolean isHovered) {
 			super.doRender(x, y, width, isHovered);
 			if (isHovered) {
 				EliteRenderHelper.drawRect(x, y, width, height, 0xFF0078D7);
 			}
 			if (textL != null) {
-				FontHandler.renderText(x + 4.75F, y + 1.25F, textL, isHovered ? 0xFFFFFFFF : 0xFF000000,
-						FontHandler.NORMAL);
-				FontHandler.renderText(x + width - FontHandler.getStringWidth(textR, FontHandler.NORMAL) - 4, y + 1.25F,
-						textR, isHovered ? 0xFFFFFFFF : 0xFF000000, FontHandler.NORMAL);
+				FontHandler.renderText(x + 19, y + 5, textL, isHovered ? 0xFFFFFFFF : 0xFF000000);
+				FontHandler.renderText(x + width - FontHandler.getStringWidth(textR) - 16, y + 5, textR,
+						isHovered ? 0xFFFFFFFF : 0xFF000000);
 			}
 		}
 
@@ -297,14 +295,14 @@ public class DropDownList {
 
 	public static class DividerBar extends ListBar {
 		public DividerBar() {
-			super(2, 2.25F);
+			super(8, 9);
 		}
 
 		@Override
-		public void doRender(float x, float y, float width, boolean isHovered) {
+		public void doRender(int x, int y, int width, boolean isHovered) {
 			super.doRender(x, y, width, isHovered);
-			EliteRenderHelper.drawRect(x + 0.25F, y + 0.75F, width - 0.5F, 0.25F, 0xFFA0A0A0);
-			EliteRenderHelper.drawRect(x + 0.25F, y + 1, width - 0.5F, 0.25F, 0xFFFFFFFF);
+			EliteRenderHelper.drawRect(x + 1, y + 3, width - 2, 1, 0xFFA0A0A0);
+			EliteRenderHelper.drawRect(x + 1, y + 4, width - 2, 1, 0xFFFFFFFF);
 		}
 	}
 
@@ -313,26 +311,25 @@ public class DropDownList {
 		private List<ListBar> list = new ArrayList<ListBar>();
 
 		public FolderBar(String text) {
-			super(FontHandler.getStringWidth(text, FontHandler.NORMAL) + 12.5F, 5.25F);
+			super(FontHandler.getStringWidth(text) + 50, 21);
 			this.text = text;
 		}
 
 		@Override
-		public void doRender(float x, float y, float width, boolean isHovered) {
+		public void doRender(int x, int y, int width, boolean isHovered) {
 			super.doRender(x, y, width, isHovered);
 			if (isHovered) {
 				EliteRenderHelper.drawRect(x, y, width, height, 0xFF0078D7);
-				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + width - 2.5F, y + 1.25F, 4, 40, 4, 7, 0.25F);
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + width - 10, y + 5, 4, 40, 4, 7);
 			} else {
-				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + width - 2.5F, y + 1.25F, 0, 40, 4, 7, 0.25F);
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + width - 10, y + 5, 0, 40, 4, 7);
 			}
 			if (text != null) {
-				FontHandler.renderText(x + 4.75F, y + 1.25F, text, isHovered ? 0xFFFFFFFF : 0xFF000000,
-						FontHandler.NORMAL);
+				FontHandler.renderText(x + 19, y + 5, text, isHovered ? 0xFFFFFFFF : 0xFF000000);
 			}
 		}
 
-		public DropDownList openList(EliteMainwindow parent, float x, float y) {
+		public DropDownList openList(EliteMainwindow parent, int x, int y) {
 			DropDownList l = new DropDownList(parent, this.parentList, x, y);
 			list.forEach(e -> l.addBar(e));
 			return l;

@@ -3,16 +3,18 @@ package com.pinball3d.zone.sphinx.elite;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pinball3d.zone.sphinx.elite.panels.Panel;
+
 import net.minecraft.client.renderer.GlStateManager;
 
 public class PanelGroup {
 	private EliteMainwindow parent;
 	private int dragX, dragY, chosenIndex, hoverIndex, dragIndex, dragToIndex, hoverPanelIndex;
-	private float x, y, width, height;
+	private int x, y, width, height;
 	private boolean pressing, dragging;
 	private List<Panel> panels = new ArrayList<Panel>();
 
-	public PanelGroup(EliteMainwindow parent, float x, float y, float width, float height) {
+	public PanelGroup(EliteMainwindow parent, int x, int y, int width, int height) {
 		this.parent = parent;
 		this.x = x;
 		this.y = y;
@@ -22,17 +24,17 @@ public class PanelGroup {
 
 	public void doRenderPre(int mouseX, int mouseY) {
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x, y + 7, 0.0F);
+		GlStateManager.translate(x, y + 28, 0.0F);
 		panels.get(chosenIndex).doRenderPre(mouseX, mouseY);
 		GlStateManager.popMatrix();
 	}
 
 	public void doRender(int mouseX, int mouseY) {
-		float xOffset = 0;
+		int xOffset = 0;
 		for (int i = 0; i < panels.size(); i++) {
 			Panel e = panels.get(i);
 			String name = e.getName();
-			float w = FontHandler.getStringWidth(name, FontHandler.NORMAL) + 9;
+			int w = FontHandler.getStringWidth(name) + 36;
 			int color = 0xFF424242;
 			if (chosenIndex == i) {
 				color = 0xFF535353;
@@ -43,38 +45,38 @@ public class PanelGroup {
 			} else if (hoverIndex == i) {
 				color = 0xFF4F4F4F;
 			}
-			EliteRenderHelper.drawRect(x + xOffset + 0.25F, y + 0.25F, w, 7, color);
-			EliteRenderHelper.drawBorder(x + xOffset, y, w + 0.5F, 7.5F, 0.25F, 0xFF383838);
-			FontHandler.renderText(x + xOffset + 2.75F, y + 1.75F, name, chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0,
-					FontHandler.NORMAL);
-			xOffset += w + 0.25F;
+			EliteRenderHelper.drawRect(x + xOffset + 1, y + 1, w, 28, color);
+			EliteRenderHelper.drawBorder(x + xOffset, y, w + 2, 30, 1, 0xFF383838);
+			FontHandler.renderText(x + xOffset + 11, y + 7, name, chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0);
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + xOffset + w - 22, y + 9, 8, 40, 14, 11);
+			xOffset += w + 1;
 		}
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x, y + 7, 0.0F);
+		GlStateManager.translate(x, y + 28, 0.0F);
 		panels.get(chosenIndex).doRender(mouseX, mouseY);
 		GlStateManager.popMatrix();
-		EliteRenderHelper.drawBorder(x, y, width, height, 0.25F, 0xFF383838);
-		EliteRenderHelper.drawRect(x, y + 7.25F, width, 0.25F, 0xFF383838);
+		EliteRenderHelper.drawBorder(x, y, width, height, 1, 0xFF383838);
+		EliteRenderHelper.drawRect(x, y + 29, width, 1, 0xFF383838);
 	}
 
 	public void doRenderPost(int mouseX, int mouseY) {
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x, y + 7, 0.0F);
+		GlStateManager.translate(x, y + 28, 0.0F);
 		panels.get(chosenIndex).doRenderPost(mouseX, mouseY);
 		GlStateManager.popMatrix();
 		if (dragging) {
 			if (dragToIndex >= 0) {
-				float xOffset = 0;
+				int xOffset = 0;
 				PanelGroup p = parent.getPanels().get(hoverPanelIndex);
 				for (int i = 0; i < p.panels.size(); i++) {
 					Panel e = p.panels.get(i);
 					if (i == dragToIndex) {
-						EliteRenderHelper.drawRect(p.x + xOffset, p.y, 0.5F, 7.5F, 0xFF6F6F6F);
+						EliteRenderHelper.drawRect(p.x + xOffset, p.y, 2, 30, 0xFF6F6F6F);
 					}
-					xOffset += FontHandler.getStringWidth(e.getName(), FontHandler.NORMAL) + 9.25F;
+					xOffset += FontHandler.getStringWidth(e.getName()) + 37;
 				}
 				if (dragToIndex == p.panels.size()) {
-					EliteRenderHelper.drawRect(p.x + xOffset, p.y, 0.5F, 7.5F, 0xFF6F6F6F);
+					EliteRenderHelper.drawRect(p.x + xOffset, p.y, 2, 30, 0xFF6F6F6F);
 				}
 			} else {
 				List<PanelGroup> list = parent.getPanels();
@@ -82,15 +84,15 @@ public class PanelGroup {
 					if (g == this && g.panels.size() == 1) {
 						continue;
 					}
-					float gX = g.getX(), gY = g.getY(), gW = g.getWidth(), gH = g.getHeight();
+					int gX = g.getX(), gY = g.getY(), gW = g.getWidth(), gH = g.getHeight();
 					if (dragX >= gX && dragX <= gX + gW && dragY >= gY && dragY <= gY + gH) {
 						boolean isRow = dragX >= gX + gW / 3.0F && dragX <= gX + gW / 1.5F;
 						if (isRow) {
-							EliteRenderHelper.drawBorder(gX, gY, gW, gH / 2 - 0.25F, 0.5F, 0xFFA0A0A0);
-							EliteRenderHelper.drawBorder(gX, gY + gH / 2 + 0.25F, gW, gH / 2 - 0.25F, 0.5F, 0xFFA0A0A0);
+							EliteRenderHelper.drawBorder(gX, gY, gW, gH / 2 - 1, 2, 0xFFA0A0A0);
+							EliteRenderHelper.drawBorder(gX, gY + gH / 2 + 1, gW, gH / 2 - 1, 2, 0xFFA0A0A0);
 						} else {
-							EliteRenderHelper.drawBorder(gX, gY, gW / 2 - 0.25F, gH, 0.5F, 0xFFA0A0A0);
-							EliteRenderHelper.drawBorder(gX + gW / 2 + 0.25F, gY, gW / 2 - 0.25F, gH, 0.5F, 0xFFA0A0A0);
+							EliteRenderHelper.drawBorder(gX, gY, gW / 2 - 1, gH, 2, 0xFFA0A0A0);
+							EliteRenderHelper.drawBorder(gX + gW / 2 + 1, gY, gW / 2 - 1, gH, 2, 0xFFA0A0A0);
 						}
 					}
 				}
@@ -103,7 +105,7 @@ public class PanelGroup {
 		Side side = null;
 		for (Side s : Side.values()) {
 			Edge edge = rect.getEdge(s);
-			float total = 0;
+			int total = 0;
 			for (PanelGroup group : parent.getPanels()) {
 				Rect r = group.getRect();
 				if (rect.isAdjoin(r) == s) {
@@ -143,7 +145,7 @@ public class PanelGroup {
 
 	public void adhere(int mouseX, int mouseY, int dragIndex) {
 		for (PanelGroup g : parent.getPanels()) {
-			float gX = g.getX(), gY = g.getY(), gW = g.getWidth(), gH = g.getHeight();
+			int gX = g.getX(), gY = g.getY(), gW = g.getWidth(), gH = g.getHeight();
 			if (dragX >= gX && dragX <= gX + gW && dragY >= gY && dragY <= gY + gH) {
 				boolean isRow = dragX >= gX + gW / 3.0F && dragX <= gX + gW / 1.5F;
 				if (isRow) {
@@ -253,14 +255,14 @@ public class PanelGroup {
 		for (int index = 0; index < l.size(); index++) {
 			PanelGroup p = l.get(index);
 			if (mouseX >= p.getX() && mouseX <= p.getX() + p.getWidth() && mouseY >= p.getY()
-					&& mouseY <= p.getY() + 7) {
+					&& mouseY <= p.getY() + 28) {
 				hoverPanelIndex = index;
-				float xOffset = 0;
+				int xOffset = 0;
 				List<Panel> pl = p.getPanels();
 				for (int i = 0; i < pl.size(); i++) {
 					Panel e = pl.get(i);
 					String name = e.getName();
-					float w = FontHandler.getStringWidth(name, FontHandler.NORMAL) + 9;
+					int w = FontHandler.getStringWidth(name) + 36;
 					if (mouseX >= p.x + xOffset && mouseX <= p.x + xOffset + w) {
 						hoverIndex = i;
 						if (dragIndex >= 0) {
@@ -284,19 +286,19 @@ public class PanelGroup {
 		return this;
 	}
 
-	public float getX() {
+	public int getX() {
 		return x;
 	}
 
-	public float getY() {
+	public int getY() {
 		return y;
 	}
 
-	public float getWidth() {
+	public int getWidth() {
 		return width;
 	}
 
-	public float getHeight() {
+	public int getHeight() {
 		return height;
 	}
 
@@ -309,9 +311,9 @@ public class PanelGroup {
 	}
 
 	public static class Rect {
-		private float x, y, width, height;
+		private int x, y, width, height;
 
-		public Rect(float x, float y, float width, float height) {
+		public Rect(int x, int y, int width, int height) {
 			this.x = x;
 			this.y = y;
 			this.width = width;
@@ -360,19 +362,19 @@ public class PanelGroup {
 			return null;
 		}
 
-		public float getX() {
+		public int getX() {
 			return x;
 		}
 
-		public float getY() {
+		public int getY() {
 			return y;
 		}
 
-		public float getWidth() {
+		public int getWidth() {
 			return width;
 		}
 
-		public float getHeight() {
+		public int getHeight() {
 			return height;
 		}
 
@@ -384,9 +386,9 @@ public class PanelGroup {
 
 	public static class Edge {
 		private Side side;
-		private float x1, y1, x2, y2;
+		private int x1, y1, x2, y2;
 
-		public Edge(Side side, float x1, float y1, float x2, float y2) {
+		public Edge(Side side, int x1, int y1, int x2, int y2) {
 			this.side = side;
 			this.x1 = x1;
 			this.y1 = y1;
@@ -394,19 +396,19 @@ public class PanelGroup {
 			this.y2 = y2;
 		}
 
-		public float getX1() {
+		public int getX1() {
 			return x1;
 		}
 
-		public float getX2() {
+		public int getX2() {
 			return x2;
 		}
 
-		public float getY1() {
+		public int getY1() {
 			return y1;
 		}
 
-		public float getY2() {
+		public int getY2() {
 			return y2;
 		}
 
@@ -414,7 +416,7 @@ public class PanelGroup {
 			return side;
 		}
 
-		public float getMin() {
+		public int getMin() {
 			switch (side) {
 			case UP:
 			case DOWN:
@@ -426,7 +428,7 @@ public class PanelGroup {
 			return 0;
 		}
 
-		public float getMax() {
+		public int getMax() {
 			switch (side) {
 			case UP:
 			case DOWN:
@@ -438,7 +440,7 @@ public class PanelGroup {
 			return 0;
 		}
 
-		public float getLength() {
+		public int getLength() {
 			return getMax() - getMin();
 		}
 	}

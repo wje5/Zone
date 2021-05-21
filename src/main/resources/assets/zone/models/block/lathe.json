@@ -8,12 +8,12 @@
         }
     },
     "textures": {
-        "particle": "zone:blocks/boiler_front_off_1",
-        "down": "zone:blocks/machine_buttom_1",
-        "up": "zone:blocks/boiler_top_1",
-        "north": "zone:blocks/boiler_front_off_1",
-        "east": "zone:blocks/boiler_left_off_1",
-        "south": "zone:blocks/boiler_back_off_1",
-        "west": "zone:blocks/boiler_right_off_1"
+        "particle": "zone:blocks/crystallizer_front_off_1",
+        "down": "zone:blocks/crystallizer_buttom_off_1",
+        "up": "zone:blocks/crystallizer_top_off_1",
+        "north": "zone:blocks/crystallizer_front_off_1",
+        "east": "zone:blocks/crystallizer_left_off_1",
+        "south": "zone:blocks/crystallizer_back_off_1",
+        "west": "zone:blocks/crystallizer_right_off_1"
     }
 }

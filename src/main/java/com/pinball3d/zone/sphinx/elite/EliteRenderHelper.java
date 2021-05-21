@@ -11,11 +11,10 @@ import net.minecraft.util.ResourceLocation;
 
 public class EliteRenderHelper {
 	public static void init() {
-//		FontHelper.init();
 		FontHandler.init();
 	}
 
-	public static void drawRect(float x, float y, float width, float height, int color) {
+	public static void drawRect(int x, int y, int width, int height, int color) {
 		float a = (color >> 24 & 255) / 255.0F;
 		float r = (color >> 16 & 255) / 255.0F;
 		float g = (color >> 8 & 255) / 255.0F;
@@ -38,18 +37,18 @@ public class EliteRenderHelper {
 		GlStateManager.disableBlend();
 	}
 
-	public static void drawTexture(ResourceLocation texture, float x, float y, float u, float v, float uWidth,
+	public static void drawTexture(ResourceLocation texture, int x, int y, float u, float v, float uWidth,
 			float vHeight) {
 		drawTexture(texture, x, y, u, v, uWidth, vHeight, 1.0F);
 	}
 
-	public static void drawTexture(ResourceLocation texture, float x, float y, float u, float v, float uWidth,
+	public static void drawTexture(ResourceLocation texture, int x, int y, float u, float v, float uWidth,
 			float vHeight, float scale) {
 		drawTexture(texture, x, y, scale * uWidth, scale * vHeight, u, v, uWidth, vHeight);
 	}
 
-	public static void drawTexture(ResourceLocation texture, float x, float y, float width, float height, float u,
-			float v, float uWidth, float vHeight) {
+	public static void drawTexture(ResourceLocation texture, int x, int y, float width, float height, float u, float v,
+			float uWidth, float vHeight) {
 		drawTexture(texture, x, y, width, height, u, v, uWidth, vHeight, 0xFFFFFFFF);
 	}
 
@@ -78,7 +77,7 @@ public class EliteRenderHelper {
 		GlStateManager.popMatrix();
 	}
 
-	public static void drawBorder(float x, float y, float width, float height, float lineWidth, int color) {
+	public static void drawBorder(int x, int y, int width, int height, int lineWidth, int color) {
 		drawRect(x, y, width, lineWidth, color);
 		drawRect(x, y + height - lineWidth, width, lineWidth, color);
 		drawRect(x, y + lineWidth, lineWidth, height - lineWidth, color);
