@@ -14,28 +14,27 @@ public class MouseHandler {
 	private static MouseType type;
 
 	public static void changeMouse(MouseType type) {
-//		try {
-//			Mouse.setNativeCursor(type == null ? null : type.createCursor());
-//		} catch (LWJGLException e) {
-//			e.printStackTrace();
-//		}
 
-		try {
-			if (type != null) {
-				Mouse.setNativeCursor(new Cursor(1, 1, 0, 0, 1, IntBuffer.wrap(new int[] { 0x00FFFFFF }), null));
-			} else {
-				Mouse.setNativeCursor(null);
+		if (type != MouseHandler.type) {
+			try {
+				if (type != null) {
+					Mouse.setNativeCursor(new Cursor(1, 1, 0, 0, 1, IntBuffer.wrap(new int[] { 0xFFFFFFFF }), null));
+				} else {
+					Mouse.setNativeCursor(null);
+				}
+			} catch (LWJGLException e) {
+				e.printStackTrace();
 			}
-		} catch (LWJGLException e) {
-			e.printStackTrace();
+			MouseHandler.type = type;
 		}
-		MouseHandler.type = type;
 	}
 
 	public static void renderMouse() {
 		if (type != null) {
-			float x = getX();
-			float y = getY();
+			int x = getX();
+			int y = getY();
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - type.xHotspot, y - type.yHotspot, type.u, type.v,
+					type.width, type.height, 1.0F);
 		}
 	}
 
@@ -48,34 +47,17 @@ public class MouseHandler {
 	}
 
 	public static enum MouseType {
-		RESIZE_S(24, 12, 11, 8, new int[] { A, A, A, A, B, B, A, A, A, A, A, A, A, A, A, A, A, B, B, A, A, A, A, A, A,
-				A, A, B, W, B, A, A, A, A, A, A, A, A, A, A, A, B, W, B, A, A, A, A, A, A, B, W, W, B, A, A, A, A, A, A,
-				A, A, A, A, A, B, W, W, B, A, A, A, A, B, W, W, W, B, B, B, B, B, B, B, B, B, B, B, B, B, W, W, W, B, A,
-				A, B, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, B, A, A, B, W, W, W, B, B, B, B, B,
-				B, B, B, B, B, B, B, B, W, W, W, B, A, A, A, A, B, W, W, B, A, A, A, A, A, A, A, A, A, A, A, B, W, W, B,
-				A, A, A, A, A, A, B, W, B, A, A, A, A, A, A, A, A, A, A, A, B, W, B, A, A, A, A, A, A, A, A, B, B, A, A,
-				A, A, A, A, A, A, A, A, A, B, B, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-				A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-				A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A }, null);
+		RESIZE_W(23, 9, 11, 4, 9, 51), RESIZE_S(9, 23, 4, 11, 0, 51);
 
-		private final int width, height, xHotspot, yHotspot;
-		private IntBuffer image, delays;
-		private static Cursor c;
+		public final int width, height, xHotspot, yHotspot, u, v;
 
-		private MouseType(int width, int height, int xHotspot, int yHotspot, int[] image, int[] delays) {
+		private MouseType(int width, int height, int xHotspot, int yHotspot, int u, int v) {
 			this.width = width;
 			this.height = height;
 			this.xHotspot = xHotspot;
 			this.yHotspot = yHotspot;
-			this.image = IntBuffer.wrap(image);
-			this.delays = delays == null ? null : IntBuffer.wrap(delays);
-		}
-
-		public Cursor createCursor() throws LWJGLException {
-			if (c == null) {
-				c = new Cursor(width, height, xHotspot, yHotspot, delays == null ? 1 : delays.limit(), image, delays);
-			}
-			return c;
+			this.u = u;
+			this.v = v;
 		}
 	}
 }

@@ -461,5 +461,9 @@ public class PanelGroup {
 			}
 			return null;
 		}
+
+		public boolean isRow() {
+			return this == UP || this == DOWN;
+		}
 	}
 }

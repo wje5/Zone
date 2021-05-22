@@ -10,6 +10,10 @@ import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
 import com.pinball3d.zone.sphinx.elite.DropDownList.DividerBar;
 import com.pinball3d.zone.sphinx.elite.DropDownList.FolderBar;
 import com.pinball3d.zone.sphinx.elite.MenuBar.Menu;
+import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
+import com.pinball3d.zone.sphinx.elite.PanelGroup.Edge;
+import com.pinball3d.zone.sphinx.elite.PanelGroup.Rect;
+import com.pinball3d.zone.sphinx.elite.PanelGroup.Side;
 import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 
 import net.minecraft.client.Minecraft;
@@ -56,6 +60,11 @@ public class EliteMainwindow extends GuiScreen {
 	private void applyPanels() {
 		PanelGroup g = new PanelGroup(this, 0, 28, getWidth(), getHeight() - 28);
 		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new PanelMap(this, g));
 		panels.add(g);
 	}
 
@@ -90,8 +99,32 @@ public class EliteMainwindow extends GuiScreen {
 		if (dropDownList != null) {
 			dropDownList.doRender(mouseX, mouseY);
 		}
+		updateMouse(mouseX, mouseY);
 		MouseHandler.renderMouse();
 		GlStateManager.popMatrix();
+	}
+
+	public void updateMouse(int mouseX, int mouseY) {
+		MouseType type = null;
+		for (PanelGroup p : panels) {
+			Rect rect = p.getRect();
+			for (Side s : Side.values()) {
+				Edge edge = rect.getEdge(s);
+				if (s.isRow()) {
+					if (edge.getY1() == getHeight()) {
+						continue;
+					} else {
+
+					}
+					if (mouseX >= edge.getX1() && mouseX <= edge.getX2() && mouseY >= edge.getY1() - 2
+							&& mouseY <= edge.getY1() + 2) {
+						type = MouseType.RESIZE_S;
+						System.out.println(edge.getY1() + "|" + getHeight());
+					}
+				}
+			}
+		}
+		MouseHandler.changeMouse(type);
 	}
 
 	@Override
@@ -230,5 +263,11 @@ public class EliteMainwindow extends GuiScreen {
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;
+	}
+
+	@Override
+	public void onGuiClosed() {
+		MouseHandler.changeMouse(null);
+		super.onGuiClosed();
 	}
 }

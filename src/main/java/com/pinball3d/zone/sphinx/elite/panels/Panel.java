@@ -1,7 +1,6 @@
 package com.pinball3d.zone.sphinx.elite.panels;
 
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
-import com.pinball3d.zone.sphinx.elite.FontHandler;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
 
 public class Panel {
@@ -20,8 +19,7 @@ public class Panel {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
-		FontHandler.renderText(10, 20, getName(), 0xFFF0F0F0);
-		FontHandler.renderText(10, 40, "§o我§n能吞§l下玻璃而§r不伤身§l体", 0xFFF0F0F0);
+
 	}
 
 	public void doRenderPost(int mouseX, int mouseY) {
