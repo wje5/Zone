@@ -9,8 +9,6 @@ import org.lwjgl.input.Mouse;
 import net.minecraft.client.Minecraft;
 
 public class MouseHandler {
-	private static final int W = 0xFFFFFFFF, U = 0xFF0000FF, B = 0xFF000000, R = 0xFFFF0000, G = 0xFF00FF00,
-			A = 0x00FF0000;
 	private static MouseType type;
 
 	public static void changeMouse(MouseType type) {
@@ -18,7 +16,11 @@ public class MouseHandler {
 		if (type != MouseHandler.type) {
 			try {
 				if (type != null) {
-					Mouse.setNativeCursor(new Cursor(1, 1, 0, 0, 1, IntBuffer.wrap(new int[] { 0xFFFFFFFF }), null));
+					Mouse.setNativeCursor(new Cursor(1, 1, 0, 0, 1,
+							IntBuffer.wrap(new int[] { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+									0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+									0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF }),
+							null));
 				} else {
 					Mouse.setNativeCursor(null);
 				}
@@ -47,7 +49,7 @@ public class MouseHandler {
 	}
 
 	public static enum MouseType {
-		RESIZE_W(23, 9, 11, 4, 9, 51), RESIZE_S(9, 23, 4, 11, 0, 51);
+		RESIZE_W(23, 9, 11, 4, 9, 51), RESIZE_S(9, 23, 4, 11, 0, 51), MOVE(23, 23, 11, 11, 0, 77);
 
 		public final int width, height, xHotspot, yHotspot, u, v;
 

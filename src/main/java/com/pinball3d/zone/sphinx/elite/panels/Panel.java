@@ -41,4 +41,9 @@ public class Panel {
 	public EliteMainwindow getParent() {
 		return parent;
 	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
 }

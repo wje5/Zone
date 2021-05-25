@@ -10,11 +10,11 @@ import net.minecraft.client.renderer.GlStateManager;
 public class PanelGroup {
 	private EliteMainwindow parent;
 	private int dragX, dragY, chosenIndex, hoverIndex, dragIndex, dragToIndex, hoverPanelIndex;
-	private int x, y, width, height;
+	private float x, y, width, height;
 	private boolean pressing, dragging;
 	private List<Panel> panels = new ArrayList<Panel>();
 
-	public PanelGroup(EliteMainwindow parent, int x, int y, int width, int height) {
+	public PanelGroup(EliteMainwindow parent, float x, float y, float width, float height) {
 		this.parent = parent;
 		this.x = x;
 		this.y = y;
@@ -24,7 +24,7 @@ public class PanelGroup {
 
 	public void doRenderPre(int mouseX, int mouseY) {
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x, y + 28, 0.0F);
+		GlStateManager.translate(getX(), getY() + 28, 0.0F);
 		panels.get(chosenIndex).doRenderPre(mouseX, mouseY);
 		GlStateManager.popMatrix();
 	}
@@ -45,23 +45,23 @@ public class PanelGroup {
 			} else if (hoverIndex == i) {
 				color = 0xFF4F4F4F;
 			}
-			EliteRenderHelper.drawRect(x + xOffset + 1, y + 1, w, 28, color);
-			EliteRenderHelper.drawBorder(x + xOffset, y, w + 2, 30, 1, 0xFF383838);
-			FontHandler.renderText(x + xOffset + 11, y + 7, name, chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0);
-			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + xOffset + w - 22, y + 9, 8, 40, 14, 11);
+			EliteRenderHelper.drawRect(getX() + xOffset + 1, getY() + 1, w, 28, color);
+			EliteRenderHelper.drawBorder(getX() + xOffset, getY(), w + 2, 30, 1, 0xFF383838);
+			FontHandler.renderText(getX() + xOffset + 11, getY() + 7, name, chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0);
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + w - 22, getY() + 9, 8, 40, 14, 11);
 			xOffset += w + 1;
 		}
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x, y + 28, 0.0F);
+		GlStateManager.translate(getX(), getY() + 28, 0.0F);
 		panels.get(chosenIndex).doRender(mouseX, mouseY);
 		GlStateManager.popMatrix();
-		EliteRenderHelper.drawBorder(x, y, width, height, 1, 0xFF383838);
-		EliteRenderHelper.drawRect(x, y + 29, width, 1, 0xFF383838);
+		EliteRenderHelper.drawBorder(getX(), getY(), getWidth(), getHeight(), 1, 0xFF383838);
+		EliteRenderHelper.drawRect(getX(), getY() + 29, getWidth(), 1, 0xFF383838);
 	}
 
 	public void doRenderPost(int mouseX, int mouseY) {
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x, y + 28, 0.0F);
+		GlStateManager.translate(getX(), getY() + 28, 0.0F);
 		panels.get(chosenIndex).doRenderPost(mouseX, mouseY);
 		GlStateManager.popMatrix();
 		if (dragging) {
@@ -71,12 +71,12 @@ public class PanelGroup {
 				for (int i = 0; i < p.panels.size(); i++) {
 					Panel e = p.panels.get(i);
 					if (i == dragToIndex) {
-						EliteRenderHelper.drawRect(p.x + xOffset, p.y, 2, 30, 0xFF6F6F6F);
+						EliteRenderHelper.drawRect(p.getX() + xOffset, p.getY(), 2, 30, 0xFF6F6F6F);
 					}
 					xOffset += FontHandler.getStringWidth(e.getName()) + 37;
 				}
 				if (dragToIndex == p.panels.size()) {
-					EliteRenderHelper.drawRect(p.x + xOffset, p.y, 2, 30, 0xFF6F6F6F);
+					EliteRenderHelper.drawRect(p.getX() + xOffset, p.getY(), 2, 30, 0xFF6F6F6F);
 				}
 			} else {
 				List<PanelGroup> list = parent.getPanels();
@@ -120,6 +120,9 @@ public class PanelGroup {
 				side = s;
 				break;
 			}
+		}
+		if (side == null) {
+			System.out.println(side);
 		}
 		switch (side) {
 		case UP:
@@ -228,8 +231,6 @@ public class PanelGroup {
 						} else {
 							adhere(dragX, dragY, dragIndex);
 						}
-						dragX = 0;
-						dragY = 0;
 					} else if (hoverIndex >= 0) {
 						chosenIndex = hoverIndex;
 					}
@@ -238,6 +239,8 @@ public class PanelGroup {
 				dragging = false;
 				dragIndex = -1;
 				dragToIndex = -1;
+				dragX = 0;
+				dragY = 0;
 			});
 		}
 		return null;
@@ -287,19 +290,51 @@ public class PanelGroup {
 	}
 
 	public int getX() {
-		return x;
+		return (int) x;
 	}
 
 	public int getY() {
-		return y;
+		return (int) y;
 	}
 
 	public int getWidth() {
-		return width;
+		return (int) width;
 	}
 
 	public int getHeight() {
+		return (int) height;
+	}
+
+	public float getXF() {
+		return x;
+	}
+
+	public float getYF() {
+		return y;
+	}
+
+	public float getWidthF() {
+		return width;
+	}
+
+	public float getHeightF() {
 		return height;
+	}
+
+	public void setXF(float xF) {
+		x = xF;
+	}
+
+	public void setYF(float yF) {
+		y = yF;
+	}
+
+	public void setWidthF(float widthF) {
+		width = widthF;
+	}
+
+	public void setHeightF(float heightF) {
+		height = heightF;
 	}
 
 	public List<Panel> getPanels() {
@@ -310,10 +345,24 @@ public class PanelGroup {
 		return new Rect(x, y, width, height);
 	}
 
-	public static class Rect {
-		private int x, y, width, height;
+	@Override
+	public String toString() {
+		String s = "{";
+		for (int i = 0; i < panels.size(); i++) {
+			s += panels.get(i);
+			if (i < panels.size() - 1) {
+				s += " ,";
+			} else {
+				s += "}";
+			}
+		}
+		return s;
+	}
 
-		public Rect(int x, int y, int width, int height) {
+	public static class Rect {
+		private float x, y, width, height;
+
+		public Rect(float x, float y, float width, float height) {
 			this.x = x;
 			this.y = y;
 			this.width = width;
@@ -351,30 +400,30 @@ public class PanelGroup {
 		public Edge getEdge(Side side) {
 			switch (side) {
 			case UP:
-				return new Edge(side, x, y, x + width, y);
+				return new Edge(x, y, x + width, y);
 			case DOWN:
-				return new Edge(side, x, y + height, x + width, y + height);
+				return new Edge(x, y + height, x + width, y + height);
 			case LEFT:
-				return new Edge(side, x, y, x, y + height);
+				return new Edge(x, y, x, y + height);
 			case RIGHT:
-				return new Edge(side, x + width, y, x + width, y + height);
+				return new Edge(x + width, y, x + width, y + height);
 			}
 			return null;
 		}
 
-		public int getX() {
+		public float getX() {
 			return x;
 		}
 
-		public int getY() {
+		public float getY() {
 			return y;
 		}
 
-		public int getWidth() {
+		public float getWidth() {
 			return width;
 		}
 
-		public int getHeight() {
+		public float getHeight() {
 			return height;
 		}
 
@@ -385,63 +434,94 @@ public class PanelGroup {
 	}
 
 	public static class Edge {
-		private Side side;
-		private int x1, y1, x2, y2;
+		private float x1, y1, x2, y2;
 
-		public Edge(Side side, int x1, int y1, int x2, int y2) {
-			this.side = side;
+		public Edge(float x1, float y1, float x2, float y2) {
 			this.x1 = x1;
 			this.y1 = y1;
 			this.x2 = x2;
 			this.y2 = y2;
 		}
 
-		public int getX1() {
+		public float getX1() {
 			return x1;
 		}
 
-		public int getX2() {
+		public float getX2() {
 			return x2;
 		}
 
-		public int getY1() {
+		public float getY1() {
 			return y1;
 		}
 
-		public int getY2() {
+		public float getY2() {
 			return y2;
 		}
 
-		public Side getSide() {
-			return side;
+		public boolean isRow() {
+			return y1 == y2;
 		}
 
-		public int getMin() {
-			switch (side) {
-			case UP:
-			case DOWN:
-				return x1;
-			case LEFT:
-			case RIGHT:
-				return y1;
-			}
-			return 0;
+		public float getMin() {
+			return isRow() ? x1 : y1;
 		}
 
-		public int getMax() {
-			switch (side) {
-			case UP:
-			case DOWN:
-				return x2;
-			case LEFT:
-			case RIGHT:
-				return y2;
-			}
-			return 0;
+		public float getMax() {
+			return isRow() ? x2 : y2;
 		}
 
-		public int getLength() {
+		public float getLength() {
 			return getMax() - getMin();
+		}
+
+		public Edge connect(Edge edge) {
+			if (isRow() == edge.isRow()) {
+				if (isRow()) {
+					if (y1 == edge.y1
+							&& Math.abs((x1 + x2) / 2 - (edge.x1 + edge.x2) / 2) <= (x2 - x1 + edge.x2 - edge.x1) / 2) {
+						return new Edge(Math.min(x1, edge.x1), y1, Math.max(x2, edge.x2), y2);
+					}
+				} else {
+					if (x1 == edge.x1
+							&& Math.abs((y1 + y2) / 2 - (edge.y1 + edge.y2) / 2) <= (y2 - y1 + edge.y2 - edge.y1) / 2) {
+						return new Edge(x1, Math.min(y1, edge.y1), x2, Math.max(y2, edge.y2));
+					}
+				}
+			}
+			return null;
+		}
+
+		public boolean isCross(Edge edge) {
+			if (isRow() != edge.isRow()) {
+				Edge r = null, c = null;
+				if (isRow()) {
+					r = this;
+					c = edge;
+				} else {
+					r = edge;
+					c = this;
+				}
+				return r.x1 <= c.x1 && r.x2 >= c.x1 && c.y1 <= r.y1 && c.y2 >= r.y1;
+			}
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			return "{x1:" + x1 + " y1:" + y1 + " x2:" + x2 + " y2:" + y2 + "}";
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			return o instanceof Edge && ((Edge) o).x1 == x1 && ((Edge) o).y1 == y1 && ((Edge) o).x2 == x2
+					&& ((Edge) o).y2 == y2;
+		}
+
+		@Override
+		public int hashCode() {
+			return (((Float.floatToIntBits(x1) * 31 + Float.floatToIntBits(y1)) * 31 + Float.floatToIntBits(x2)) * 31
+					+ Float.floatToIntBits(y2));
 		}
 	}
 
