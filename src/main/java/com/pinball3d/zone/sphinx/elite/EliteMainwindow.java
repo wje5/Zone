@@ -18,6 +18,7 @@ import com.pinball3d.zone.sphinx.elite.PanelGroup.Edge;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Rect;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Side;
 import com.pinball3d.zone.sphinx.elite.panels.Panel;
+import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -29,7 +30,7 @@ import net.minecraftforge.fml.common.Loader;
 public class EliteMainwindow extends GuiScreen {
 	public static final ResourceLocation ELITE = new ResourceLocation("zone:textures/gui/elite/elite.png");
 
-	private int lastX, lastY;
+	private int lastX, lastY, dragMinX, dragMaxX, dragMinY, dragMaxY;
 	private MenuBar menuBar;
 	private ButtomBar buttomBar;
 	private DropDownList dropDownList;
@@ -64,17 +65,17 @@ public class EliteMainwindow extends GuiScreen {
 
 	private void applyPanels() {
 		PanelGroup g = new PanelGroup(this, 0, 28, getWidth(), getHeight() - 49);
-//		g.addPanel(new PanelMap(this, g));
-//		g.addPanel(new PanelMap(this, g));
-//		g.addPanel(new PanelMap(this, g));
-//		g.addPanel(new PanelMap(this, g));
-//		g.addPanel(new PanelMap(this, g));
-//		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new Panel(this, g, "1"));
-		g.addPanel(new Panel(this, g, "2"));
-		g.addPanel(new Panel(this, g, "3"));
-		g.addPanel(new Panel(this, g, "4"));
-		g.addPanel(new Panel(this, g, "5"));
+		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new PanelMap(this, g));
+		g.addPanel(new Panel(this, g, "4AAAAAAAAAAAAAAAAAAAAAAAA"));
+		g.addPanel(new Panel(this, g, "3BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"));
+		g.addPanel(new Panel(this, g, "1CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"));
+		g.addPanel(new Panel(this, g, "5DDDDDDDDDDDDDDD"));
+		g.addPanel(new Panel(this, g, "2EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"));
 		panels.add(g);
 	}
 
@@ -127,7 +128,7 @@ public class EliteMainwindow extends GuiScreen {
 					|| !draggingPanels.get(Side.RIGHT.ordinal()).isEmpty()) {
 				type = type == MouseType.RESIZE_S ? MouseType.MOVE : MouseType.RESIZE_W;
 			}
-		} else {
+		} else if (MouseHandler.isMouseInsideWindow()) {
 			for (PanelGroup p : panels) {
 				Rect rect = p.getRect();
 				for (Side s : Side.values()) {
@@ -301,9 +302,13 @@ public class EliteMainwindow extends GuiScreen {
 				if (draggingPanels == null) {
 					calcResizePanel(mouseX, mouseY);
 				}
-				onResizePanel(mX, mY);
+				onResizePanel(x, y, mX, mY);
 			}, (cancel) -> {
 				draggingPanels = null;
+				dragMinX = 0;
+				dragMaxX = 0;
+				dragMinY = 0;
+				dragMaxY = 0;
 			});
 		}
 	}
@@ -377,26 +382,88 @@ public class EliteMainwindow extends GuiScreen {
 		}
 	}
 
-	private void onResizePanel(int moveX, int moveY) {
+	private void onResizePanel(int mouseX, int mouseY, int moveX, int moveY) {
+		int minWidth = 200, minHeight = 200;
+		int originX = mouseX - moveX, originY = mouseY - moveY;
+		int originMoveX = moveX, originMoveY = moveY;
+		if (dragMinX != 0) {
+			moveX = Math.max(dragMinX, mouseX) - Math.max(dragMinX, originX);
+		}
+		if (dragMaxX != 0) {
+			int t = Math.min(dragMaxX, mouseX) - Math.min(dragMaxX, originX);
+			if (t != originMoveX) {
+				moveX = t;
+			}
+		}
+		if (dragMinY != 0) {
+			moveY = Math.max(dragMinY, mouseY) - Math.max(dragMinY, originY);
+		}
+		if (dragMaxY != 0) {
+			int t = Math.min(dragMaxY, mouseY) - Math.min(dragMaxY, originY);
+			if (t != originMoveY) {
+				moveY = t;
+			}
+		}
+		int mX = moveX, mY = moveY;
 		for (Side s : Side.values()) {
-			draggingPanels.get(s.ordinal()).forEach(e -> {
+			for (PanelGroup e : draggingPanels.get(s.ordinal())) {
 				switch (s) {
 				case UP:
-					e.setYF(e.getYF() + moveY);
-					e.setHeightF(e.getHeightF() - moveY);
+					int t = (int) (e.getHeightF() - mY);
+					if (t < minHeight) {
+						mY -= minHeight - t;
+					}
 					break;
 				case DOWN:
-					e.setHeightF(e.getHeightF() + moveY);
+					t = (int) (e.getHeightF() + mY);
+					if (t < minHeight) {
+						mY += minHeight - t;
+					}
 					break;
 				case LEFT:
-					e.setXF(e.getXF() + moveX);
-					e.setWidthF(e.getWidthF() - moveX);
+					t = (int) (e.getWidthF() - mX);
+					if (t < minWidth) {
+						mX -= minWidth - t;
+					}
 					break;
 				case RIGHT:
-					e.setWidthF(e.getWidthF() + moveX);
+					t = (int) (e.getWidthF() + mX);
+					if (t < minWidth) {
+						mX += minWidth - t;
+					}
 					break;
 				}
-			});
+			}
+		}
+		if (dragMaxX == 0 && mX < moveX) {
+			dragMaxX = originX + mX;
+		} else if (dragMinX == 0 && mX > moveX) {
+			dragMinX = originX + mX;
+		}
+		if (dragMaxY == 0 && mY < moveY) {
+			dragMaxY = originY + mY;
+		} else if (dragMinY == 0 && mY > moveY) {
+			dragMinY = originY + mY;
+		}
+		for (Side s : Side.values()) {
+			for (PanelGroup e : draggingPanels.get(s.ordinal())) {
+				switch (s) {
+				case UP:
+					e.setYF(e.getYF() + mY);
+					e.setHeightF(e.getHeightF() - mY);
+					break;
+				case DOWN:
+					e.setHeightF(e.getHeightF() + mY);
+					break;
+				case LEFT:
+					e.setXF(e.getXF() + mX);
+					e.setWidthF(e.getWidthF() - mX);
+					break;
+				case RIGHT:
+					e.setWidthF(e.getWidthF() + mX);
+					break;
+				}
+			}
 		}
 	}
 

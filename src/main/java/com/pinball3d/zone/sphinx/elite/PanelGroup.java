@@ -1,6 +1,7 @@
 package com.pinball3d.zone.sphinx.elite;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.pinball3d.zone.sphinx.elite.panels.Panel;
@@ -13,6 +14,8 @@ public class PanelGroup {
 	private float x, y, width, height;
 	private boolean pressing, dragging;
 	private List<Panel> panels = new ArrayList<Panel>();
+	private int[] panelsWidth;
+	private static int MIN_PANEL_WIDTH = 100;
 
 	public PanelGroup(EliteMainwindow parent, float x, float y, float width, float height) {
 		this.parent = parent;
@@ -30,11 +33,19 @@ public class PanelGroup {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
+		calcPanelsWidth();
 		int xOffset = 0;
 		for (int i = 0; i < panels.size(); i++) {
 			Panel e = panels.get(i);
-			String name = e.getName();
-			int w = FontHandler.getStringWidth(name) + 36;
+			int w = panelsWidth[i] - 1;
+			if (i == panels.size() - 1) {
+				if (xOffset + w > getWidth()) {
+					continue;
+				}
+			} else if (xOffset + w > getWidth() - 39) {
+				continue;
+			}
+
 			int color = 0xFF424242;
 			if (chosenIndex == i) {
 				color = 0xFF535353;
@@ -47,7 +58,8 @@ public class PanelGroup {
 			}
 			EliteRenderHelper.drawRect(getX() + xOffset + 1, getY() + 1, w, 28, color);
 			EliteRenderHelper.drawBorder(getX() + xOffset, getY(), w + 2, 30, 1, 0xFF383838);
-			FontHandler.renderText(getX() + xOffset + 11, getY() + 7, name, chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0);
+			FontHandler.renderText(getX() + xOffset + 11, getY() + 7, e.getName(),
+					chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0, w - 36);
 			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + w - 22, getY() + 9, 8, 40, 14, 11);
 			xOffset += w + 1;
 		}
@@ -100,6 +112,43 @@ public class PanelGroup {
 		}
 	}
 
+	public void calcPanelsWidth() {
+		panelsWidth = panels.stream().mapToInt(e -> FontHandler.getStringWidth(e.getName()) + 37).toArray();
+		int maxWidth = getWidth();
+		int totalWidth = Arrays.stream(panelsWidth).sum();
+		while (totalWidth > maxWidth) {
+			List<Integer> l = new ArrayList<Integer>();
+			int max = MIN_PANEL_WIDTH;
+			int second = MIN_PANEL_WIDTH;
+			for (int i = 0; i < panelsWidth.length; i++) {
+				if (panelsWidth[i] > max) {
+					second = max;
+					max = panelsWidth[i];
+					l.clear();
+					l.add(i);
+				} else if (panelsWidth[i] == max) {
+					if (panelsWidth[i] > MIN_PANEL_WIDTH) {
+						l.add(i);
+					}
+				} else if (panelsWidth[i] > second) {
+					second = panelsWidth[i];
+				}
+			}
+			if (!l.isEmpty()) {
+				int remain = totalWidth - maxWidth;
+				int a = (int) Math.ceil(remain * 1.0F / l.size());
+				for (int i : l) {
+					int k = Math.min(Math.min(a, remain), max - second);
+					remain -= k;
+					totalWidth -= k;
+					panelsWidth[i] -= k;
+				}
+			} else {
+				break;
+			}
+		}
+	}
+
 	public void expandToRect(Rect rect) {
 		List<PanelGroup> l = new ArrayList<PanelGroup>();
 		Side side = null;
@@ -120,9 +169,6 @@ public class PanelGroup {
 				side = s;
 				break;
 			}
-		}
-		if (side == null) {
-			System.out.println(side);
 		}
 		switch (side) {
 		case UP:
@@ -251,6 +297,7 @@ public class PanelGroup {
 	}
 
 	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
+		calcPanelsWidth();
 		hoverIndex = -1;
 		dragToIndex = -1;
 		hoverPanelIndex = -1;
@@ -263,9 +310,7 @@ public class PanelGroup {
 				int xOffset = 0;
 				List<Panel> pl = p.getPanels();
 				for (int i = 0; i < pl.size(); i++) {
-					Panel e = pl.get(i);
-					String name = e.getName();
-					int w = FontHandler.getStringWidth(name) + 36;
+					int w = panelsWidth[i] - 1;
 					if (mouseX >= p.x + xOffset && mouseX <= p.x + xOffset + w) {
 						hoverIndex = i;
 						if (dragIndex >= 0) {
@@ -276,7 +321,7 @@ public class PanelGroup {
 						}
 						return;
 					}
-					xOffset += w;
+					xOffset += w + 1;
 				}
 				dragToIndex = pl.size();
 			}

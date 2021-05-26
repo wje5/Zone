@@ -12,7 +12,6 @@ public class MouseHandler {
 	private static MouseType type;
 
 	public static void changeMouse(MouseType type) {
-
 		if (type != MouseHandler.type) {
 			try {
 				if (type != null) {
@@ -46,6 +45,10 @@ public class MouseHandler {
 
 	public static int getY() {
 		return Minecraft.getMinecraft().displayHeight - Mouse.getY();
+	}
+
+	public static boolean isMouseInsideWindow() {
+		return Mouse.isInsideWindow();
 	}
 
 	public static enum MouseType {

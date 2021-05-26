@@ -79,11 +79,9 @@ public class MenuBar {
 		if (mouseButton != 0) {
 			return;
 		}
+		isKeyBoard = false;
 		computeChosenIndex(mouseX, mouseY);
 		if (!isClicked) {
-			if (isKeyBoard) {
-				isKeyBoard = false;
-			}
 			if (chosenIndex >= 0 && chosenIndex < list.size()) {
 				isClicked = true;
 				parent.setFocus(this::onMenuShortCut);
@@ -92,7 +90,6 @@ public class MenuBar {
 			}
 		} else if (!(chosenIndex >= 0 && chosenIndex < list.size())) {
 			isClicked = false;
-			isKeyBoard = false;
 			computeChosenIndex(mouseX, mouseY);
 			parent.setDropDownList(null);
 		}

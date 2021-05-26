@@ -20,6 +20,11 @@ public class FontHandler {
 		return 0;
 	}
 
+	public static float renderText(int x, int y, String s, int color, int width) {
+		s = extrusion(s, width);
+		return renderText(x, y, s, color);
+	}
+
 	public static float renderText(int x, int y, String s, int color) {
 		int t = 0;
 		boolean underLine = false, italic = false, bold = false;
@@ -103,5 +108,33 @@ public class FontHandler {
 			return a[6];
 		}
 		return 0;
+	}
+
+	public static int getHeight(Font font) {
+		return font.getLineHeight();
+	}
+
+	public static String extrusion(String text, int width) {
+		while (getStringWidth(text) > width) {
+			if (text.endsWith("…")) {
+				text = text.substring(0, text.length() - 1);
+			}
+			if (text.length() >= 2) {
+				if (text.charAt(text.length() - 2) == '§') {
+					switch (text.charAt(text.length() - 1)) {
+					case 'n':
+					case 'o':
+					case 'l':
+					case 'r':
+						text = text.substring(0, text.length() - 2);
+					}
+				}
+			}
+			text = text.substring(0, text.length() - 1) + "…";
+			if (text.length() == 1) {
+				return "";
+			}
+		}
+		return text;
 	}
 }
