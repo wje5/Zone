@@ -10,12 +10,13 @@ import net.minecraft.client.renderer.GlStateManager;
 
 public class PanelGroup {
 	private EliteMainwindow parent;
-	private int dragX, dragY, chosenIndex, hoverIndex, dragIndex, dragToIndex, hoverPanelIndex;
+	private int dragX, dragY, chosenIndex, hoverIndex = -1, dragIndex = -1, dragToIndex = -1, hoverPanelIndex = -1,
+			remain;
 	private float x, y, width, height;
-	private boolean pressing, dragging;
+	private boolean pressing, dragging, hoverQuit, hoverRemain;
 	private List<Panel> panels = new ArrayList<Panel>();
 	private int[] panelsWidth;
-	private static int MIN_PANEL_WIDTH = 100;
+	public static int MIN_PANEL_WIDTH = 100, MIN_PANEL_HEIGHT = 100;
 
 	public PanelGroup(EliteMainwindow parent, float x, float y, float width, float height) {
 		this.parent = parent;
@@ -35,17 +36,13 @@ public class PanelGroup {
 	public void doRender(int mouseX, int mouseY) {
 		calcPanelsWidth();
 		int xOffset = 0;
+		EliteRenderHelper.drawRect(getX(), getY(), getWidth(), 30, 0xFF424242);
 		for (int i = 0; i < panels.size(); i++) {
 			Panel e = panels.get(i);
 			int w = panelsWidth[i] - 1;
-			if (i == panels.size() - 1) {
-				if (xOffset + w > getWidth()) {
-					continue;
-				}
-			} else if (xOffset + w > getWidth() - 39) {
+			if (panels.size() - remain <= i) {
 				continue;
 			}
-
 			int color = 0xFF424242;
 			if (chosenIndex == i) {
 				color = 0xFF535353;
@@ -60,8 +57,25 @@ public class PanelGroup {
 			EliteRenderHelper.drawBorder(getX() + xOffset, getY(), w + 2, 30, 1, 0xFF383838);
 			FontHandler.renderText(getX() + xOffset + 11, getY() + 7, e.getName(),
 					chosenIndex == i ? 0xFFF0F0F0 : 0xFFA0A0A0, w - 36);
-			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + w - 22, getY() + 9, 8, 40, 14, 11);
+			if (hoverIndex == i && hoverQuit) {
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + w - 22, getY() + 9, 8, 40, 14,
+						11);
+			} else {
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + w - 18, getY() + 12, 12, 43, 6,
+						6);
+			}
 			xOffset += w + 1;
+		}
+		if (remain > 0) {
+			int w = FontHandler.renderText(getX() + xOffset + 32, getY() + 6, "" + remain, 0xFFF0F0F0, xOffset);
+			if (hoverRemain) {
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + 11, getY() + 6, 32, 40, 22 + w,
+						17);
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + 33 + w, getY() + 6, 255, 40, 1,
+						17);
+			} else {
+				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + 19, getY() + 11, 40, 45, 11, 7);
+			}
 		}
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(getX(), getY() + 28, 0.0F);
@@ -96,15 +110,21 @@ public class PanelGroup {
 					if (g == this && g.panels.size() == 1) {
 						continue;
 					}
-					int gX = g.getX(), gY = g.getY(), gW = g.getWidth(), gH = g.getHeight();
+					float gX = g.getXF(), gY = g.getYF(), gW = g.getWidthF(), gH = g.getHeightF();
 					if (dragX >= gX && dragX <= gX + gW && dragY >= gY && dragY <= gY + gH) {
 						boolean isRow = dragX >= gX + gW / 3.0F && dragX <= gX + gW / 1.5F;
 						if (isRow) {
-							EliteRenderHelper.drawBorder(gX, gY, gW, gH / 2 - 1, 2, 0xFFA0A0A0);
-							EliteRenderHelper.drawBorder(gX, gY + gH / 2 + 1, gW, gH / 2 - 1, 2, 0xFFA0A0A0);
-						} else {
-							EliteRenderHelper.drawBorder(gX, gY, gW / 2 - 1, gH, 2, 0xFFA0A0A0);
-							EliteRenderHelper.drawBorder(gX + gW / 2 + 1, gY, gW / 2 - 1, gH, 2, 0xFFA0A0A0);
+							if (gH / 2 >= MIN_PANEL_HEIGHT) {
+								EliteRenderHelper.drawBorder((int) gX, (int) gY, (int) gW, (int) (gH / 2 - 1), 2,
+										0xFFA0A0A0);
+								EliteRenderHelper.drawBorder((int) gX, (int) (gY + gH / 2 + 1), (int) gW,
+										(int) (gH / 2 - 1), 2, 0xFFA0A0A0);
+							}
+						} else if (gW / 2 >= MIN_PANEL_WIDTH) {
+							EliteRenderHelper.drawBorder((int) gX, (int) gY, (int) (gW / 2 - 1), (int) gH, 2,
+									0xFFA0A0A0);
+							EliteRenderHelper.drawBorder((int) (gX + gW / 2 + 1), (int) gY, (int) (gW / 2 - 1),
+									(int) gH, 2, 0xFFA0A0A0);
 						}
 					}
 				}
@@ -150,6 +170,9 @@ public class PanelGroup {
 	}
 
 	public void expandToRect(Rect rect) {
+		if (parent.getPanels().isEmpty()) {
+			return;
+		}
 		List<PanelGroup> l = new ArrayList<PanelGroup>();
 		Side side = null;
 		for (Side s : Side.values()) {
@@ -194,12 +217,16 @@ public class PanelGroup {
 
 	public void adhere(int mouseX, int mouseY, int dragIndex) {
 		for (PanelGroup g : parent.getPanels()) {
-			int gX = g.getX(), gY = g.getY(), gW = g.getWidth(), gH = g.getHeight();
+			float gX = g.getXF(), gY = g.getYF(), gW = g.getWidthF(), gH = g.getHeightF();
 			if (dragX >= gX && dragX <= gX + gW && dragY >= gY && dragY <= gY + gH) {
 				boolean isRow = dragX >= gX + gW / 3.0F && dragX <= gX + gW / 1.5F;
 				if (isRow) {
+					if (gH / 2 < MIN_PANEL_HEIGHT) {
+						return;
+					}
 					boolean isUp = dragY <= gY + gH / 2;
 					if (isUp) {
+
 						parent.getPanels()
 								.add(new PanelGroup(parent, gX, gY, gW, gH / 2).addPanel(panels.get(dragIndex)));
 						panels.remove(dragIndex);
@@ -212,6 +239,9 @@ public class PanelGroup {
 						g.height = gH / 2;
 					}
 				} else {
+					if (gW / 2 < MIN_PANEL_WIDTH) {
+						return;
+					}
 					boolean isLeft = dragX <= gX + gW / 2;
 					if (isLeft) {
 						parent.getPanels()
@@ -240,6 +270,8 @@ public class PanelGroup {
 			return null;
 		}
 		if (hoverIndex >= 0 && parent.getPanels().get(hoverPanelIndex) == this) {
+			dragX = mouseX;
+			dragY = mouseY;
 			pressing = true;
 			dragIndex = hoverIndex;
 			return new Drag((x, y, mX, mY) -> {
@@ -278,13 +310,51 @@ public class PanelGroup {
 							adhere(dragX, dragY, dragIndex);
 						}
 					} else if (hoverIndex >= 0) {
-						chosenIndex = hoverIndex;
+						if (hoverQuit) {
+							panels.remove(hoverIndex);
+							if (chosenIndex > panels.size() - 1) {
+								if (panels.isEmpty()) {
+									parent.getPanels().remove(this);
+									expandToRect(getRect());
+								} else {
+									chosenIndex--;
+								}
+							}
+						} else {
+							chosenIndex = hoverIndex;
+						}
 					}
 				}
 				pressing = false;
 				dragging = false;
 				dragIndex = -1;
 				dragToIndex = -1;
+				calcPanelGroup(dragX, dragY);
+				dragX = 0;
+				dragY = 0;
+
+			});
+		} else if (hoverRemain) {
+			dragX = mouseX;
+			dragY = mouseY;
+			return new Drag((x, y, mX, mY) -> {
+				dragX = x;
+				dragY = y;
+			}, cancel -> {
+				if (!cancel && hoverRemain) {
+					PanelGroupList l = new PanelGroupList(parent, this,
+							Arrays.stream(Arrays.copyOf(panelsWidth, panels.size() - remain)).sum() + getX() + 11, 51);
+					;
+					if (l.getX() + l.getWidth() > parent.getWidth()) {
+						int lX = parent.getWidth() - l.getWidth();
+						l.setX(lX < 0 ? 0 : lX);
+					}
+					if (l.getY() + l.getHeight() > parent.getHeight()) {
+						int lY = parent.getHeight() - l.getHeight();
+						l.setY(lY < 0 ? 0 : lY);
+					}
+					parent.setDropDownList(l);
+				}
 				dragX = 0;
 				dragY = 0;
 			});
@@ -296,36 +366,70 @@ public class PanelGroup {
 
 	}
 
-	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
-		calcPanelsWidth();
+	public void calcPanelGroup(int mouseX, int mouseY) {
 		hoverIndex = -1;
 		dragToIndex = -1;
 		hoverPanelIndex = -1;
+		hoverQuit = false;
+		hoverRemain = false;
 		List<PanelGroup> l = parent.getPanels();
 		for (int index = 0; index < l.size(); index++) {
+			int xOffset = 0;
+			boolean flag = false, flag2 = false;
 			PanelGroup p = l.get(index);
+			p.calcPanelsWidth();
+			p.remain = 0;
+			if (!(mouseX >= p.getX() && mouseX <= p.getX() + p.getWidth() && mouseY >= p.getY()
+					&& mouseY <= p.getY() + 28)) {
+				flag2 = true;
+			}
 			if (mouseX >= p.getX() && mouseX <= p.getX() + p.getWidth() && mouseY >= p.getY()
-					&& mouseY <= p.getY() + 28) {
+					&& mouseY <= p.getY() + p.getHeight()) {
 				hoverPanelIndex = index;
-				int xOffset = 0;
-				List<Panel> pl = p.getPanels();
-				for (int i = 0; i < pl.size(); i++) {
-					int w = panelsWidth[i] - 1;
-					if (mouseX >= p.x + xOffset && mouseX <= p.x + xOffset + w) {
-						hoverIndex = i;
-						if (dragIndex >= 0) {
-							dragToIndex = hoverIndex;
-							if (dragToIndex < pl.size() && mouseX >= p.x + xOffset + w / 2) {
-								dragToIndex++;
-							}
-						}
-						return;
+			}
+			List<Panel> pl = p.getPanels();
+			for (int i = 0; i < pl.size(); i++) {
+				int w = p.panelsWidth[i] - 1;
+				if (i == pl.size() - 1 && !flag) {
+					if (xOffset + w > p.getWidth()) {
+						flag = true;
+						p.remain++;
+						continue;
 					}
-					xOffset += w + 1;
+				} else if (xOffset + w > p.getWidth() - 61) {
+					flag = true;
+					p.remain++;
+					continue;
 				}
-				dragToIndex = pl.size();
+				if (!flag2 && mouseX >= p.x + xOffset && mouseX <= p.x + xOffset + w) {
+					hoverIndex = i;
+					if (dragIndex >= 0) {
+						dragToIndex = hoverIndex;
+						if (dragToIndex < pl.size() && mouseX >= p.x + xOffset + w / 2) {
+							dragToIndex++;
+						}
+					}
+					if (mouseX >= p.x + xOffset + w - 22 && mouseX <= p.x + xOffset + w - 8 && mouseY >= p.y + 9
+							&& mouseY <= p.y + 20) {
+						hoverQuit = true;
+					}
+					flag2 = true;
+				}
+				xOffset += w + 1;
+			}
+			if (!flag2 && dragIndex >= 0 && dragToIndex < 0) {
+				dragToIndex = pl.size() - p.remain;
+			}
+			int w = FontHandler.getStringWidth("" + p.remain);
+			if (mouseX >= p.getX() + xOffset + 11 && mouseX <= p.getX() + xOffset + 34 + w && mouseY >= p.getY() + 6
+					&& mouseY <= p.getY() + 23) {
+				p.hoverRemain = true;
 			}
 		}
+	}
+
+	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
+		calcPanelGroup(mouseX, mouseY);
 	}
 
 	public PanelGroup addPanel(Panel panel) {

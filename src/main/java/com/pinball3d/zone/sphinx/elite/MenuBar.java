@@ -238,6 +238,14 @@ public class MenuBar {
 		public DropDownList openList(int x, int y) {
 			DropDownList l = new DropDownList(parent, null, x, y);
 			list.forEach(e -> l.addBar(e.setParentList(l)));
+			if (l.getX() + l.getWidth() > parent.getWidth()) {
+				int lX = parent.getWidth() - l.getWidth();
+				l.setX(lX < 0 ? 0 : lX);
+			}
+			if (l.getY() + l.getHeight() > parent.getHeight()) {
+				int lY = parent.getHeight() - l.getHeight();
+				l.setY(lY < 0 ? 0 : lY);
+			}
 			return l;
 		}
 

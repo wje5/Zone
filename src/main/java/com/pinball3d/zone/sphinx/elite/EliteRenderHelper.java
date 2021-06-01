@@ -83,4 +83,31 @@ public class EliteRenderHelper {
 		drawRect(x, y + lineWidth, lineWidth, height - lineWidth, color);
 		drawRect(x + width - lineWidth, y + lineWidth, lineWidth, height - lineWidth, color);
 	}
+
+	public static void drawDottedBorder(int x, int y, int width, int height, int color) {
+		boolean flag = drawDottedLine(x, y, width, true, color, true);
+		flag = drawDottedLine(x + width, y, height, false, color, flag);
+		flag = drawDottedLine(x + width, y + height, -width, true, color, flag);
+		flag = drawDottedLine(x, y + height, -height, false, color, flag);
+	}
+
+	public static boolean drawDottedLine(int x, int y, int length, boolean isRow, int color, boolean flag) {
+		boolean flag2 = true;
+		if (length < 0) {
+			length = -length;
+			flag2 = false;
+		}
+		for (; length > 0; length--) {
+			if (flag) {
+				drawRect(x, y, 1, 1, color);
+			}
+			if (isRow) {
+				x += flag2 ? 1 : -1;
+			} else {
+				y += flag2 ? 1 : -1;
+			}
+			flag = !flag;
+		}
+		return flag;
+	}
 }

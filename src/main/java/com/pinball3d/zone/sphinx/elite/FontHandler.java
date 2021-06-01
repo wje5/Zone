@@ -20,12 +20,12 @@ public class FontHandler {
 		return 0;
 	}
 
-	public static float renderText(int x, int y, String s, int color, int width) {
+	public static int renderText(int x, int y, String s, int color, int width) {
 		s = extrusion(s, width);
 		return renderText(x, y, s, color);
 	}
 
-	public static float renderText(int x, int y, String s, int color) {
+	public static int renderText(int x, int y, String s, int color) {
 		int t = 0;
 		boolean underLine = false, italic = false, bold = false;
 		char[] a = s.toCharArray();
@@ -130,10 +130,10 @@ public class FontHandler {
 					}
 				}
 			}
-			text = text.substring(0, text.length() - 1) + "…";
-			if (text.length() == 1) {
+			if (text.length() < 2) {
 				return "";
 			}
+			text = text.substring(0, text.length() - 1) + "…";
 		}
 		return text;
 	}

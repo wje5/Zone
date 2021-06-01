@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
-public class DropDownList {
+public class DropDownList implements IDropDownList {
 	private int x, y;
 	private DropDownList parentList, childList;
 	private EliteMainwindow parent;
@@ -20,6 +20,7 @@ public class DropDownList {
 		this.y = y;
 	}
 
+	@Override
 	public void doRender(int mouseX, int mouseY) {
 		int width = getWidth();
 		int height = getHeight();
@@ -36,6 +37,7 @@ public class DropDownList {
 		}
 	}
 
+	@Override
 	public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		if (mouseButton != 0) {
 			return true;
@@ -43,6 +45,7 @@ public class DropDownList {
 		return isMouseInList(mouseX, mouseY);
 	}
 
+	@Override
 	public boolean isMouseInList(int mouseX, int mouseY) {
 		computeChosenIndex(mouseX, mouseY);
 		if (childList != null) {
@@ -57,6 +60,7 @@ public class DropDownList {
 		return false;
 	}
 
+	@Override
 	public boolean mouseReleased(int mouseX, int mouseY, int mouseButton) {
 		if (mouseButton != 0) {
 			return true;
@@ -75,6 +79,7 @@ public class DropDownList {
 		return false;
 	}
 
+	@Override
 	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		computeChosenIndex(mouseX, mouseY);
 		if (childList != null) {
@@ -82,6 +87,7 @@ public class DropDownList {
 		}
 	}
 
+	@Override
 	public void keyTyped(char typedChar, int keyCode) {
 		if (childList != null) {
 			childList.keyTyped(typedChar, keyCode);
@@ -149,6 +155,9 @@ public class DropDownList {
 	}
 
 	private boolean computeChosenIndex(int mouseX, int mouseY) {
+		if (childList != null && childList.isMouseInList(mouseX, mouseY)) {
+			return false;
+		}
 		int old = chosenIndex;
 		int w = getWidth();
 		int h = getHeight();
@@ -213,12 +222,31 @@ public class DropDownList {
 		this.isKeyBoard = isKeyBoard;
 	}
 
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public DropDownList setX(int x) {
+		this.x = x;
+		return this;
+	}
+
+	public DropDownList setY(int y) {
+		this.y = y;
+		return this;
+	}
+
 	public DropDownList addBar(ListBar bar) {
 		list.add(bar);
 		bar.setParentList(this);
 		return this;
 	}
 
+	@Override
 	public boolean onQuit() {
 		if (childList != null) {
 			if (childList.onQuit()) {
@@ -330,8 +358,16 @@ public class DropDownList {
 		}
 
 		public DropDownList openList(EliteMainwindow parent, int x, int y) {
-			DropDownList l = new DropDownList(parent, this.parentList, x, y);
+			DropDownList l = new DropDownList(parent, parentList, x, y);
 			list.forEach(e -> l.addBar(e));
+			if (x + l.getWidth() > parent.getWidth()) {
+				int lX = parentList.x - l.getWidth() + 6;
+				l.setX(lX < 0 ? 0 : lX);
+			}
+			if (l.getY() + l.getHeight() > parent.getHeight()) {
+				int lY = parent.getHeight() - l.getHeight();
+				l.setY(lY < 0 ? 0 : lY);
+			}
 			return l;
 		}
 
