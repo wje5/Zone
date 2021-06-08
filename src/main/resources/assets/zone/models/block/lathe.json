@@ -1,19 +1,19 @@
 {
     "parent": "block/cube",
     "display": {
-        "firstperson_righthand": {
-            "rotation": [ 0, 135, 0 ],
-            "translation": [ 0, 0, 0 ],
+        "firstpersoff_righthand": {
+            "rotatioff": [ 0, 135, 0 ],
+            "translatioff": [ 0, 0, 0 ],
             "scale": [ 0.40, 0.40, 0.40 ]
         }
     },
     "textures": {
-        "particle": "zone:blocks/charger_front_off_1",
-        "down": "zone:blocks/machine_buttom_1",
-        "up": "zone:blocks/charger_top_off_1",
-        "north": "zone:blocks/charger_front_off_1",
-        "east": "zone:blocks/charger_left_off_1",
-        "south": "zone:blocks/charger_back_off_1",
-        "west": "zone:blocks/charger_left_off_1"
+        "particle": "zone:blocks/charger_front_off_2",
+        "down": "zone:blocks/machine_buttom_2",
+        "up": "zone:blocks/charger_top_off_2",
+        "north": "zone:blocks/charger_front_off_2",
+        "east": "zone:blocks/charger_left_off_2",
+        "south": "zone:blocks/charger_back_off_2",
+        "west": "zone:blocks/charger_right_off_2"
     }
 }

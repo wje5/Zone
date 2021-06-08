@@ -1,5 +1,6 @@
 package com.pinball3d.zone;
 
+import com.pinball3d.zone.instrument.ClientMidiHandler;
 import com.pinball3d.zone.render.RenderLoader;
 import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
 
@@ -18,6 +19,8 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
+		new KeyBindingHandler();
+		ClientMidiHandler.init();
 	}
 
 	@Override

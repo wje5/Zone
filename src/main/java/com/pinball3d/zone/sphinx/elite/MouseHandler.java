@@ -52,7 +52,8 @@ public class MouseHandler {
 	}
 
 	public static enum MouseType {
-		RESIZE_W(23, 9, 11, 4, 9, 51), RESIZE_S(9, 23, 4, 11, 0, 51), MOVE(23, 23, 11, 11, 0, 77);
+		RESIZE_W(23, 9, 11, 4, 9, 51), RESIZE_S(9, 23, 4, 11, 0, 51), MOVE(23, 23, 11, 11, 0, 77),
+		TEXT(7, 16, 3, 7, 23, 77), TEXT_LIGHT(7, 16, 3, 7, 30, 77);
 
 		public final int width, height, xHotspot, yHotspot, u, v;
 

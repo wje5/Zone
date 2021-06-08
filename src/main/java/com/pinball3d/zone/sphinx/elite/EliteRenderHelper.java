@@ -14,11 +14,11 @@ public class EliteRenderHelper {
 		FontHandler.init();
 	}
 
-	public static void drawRect(int x, int y, int width, int height, int color) {
-		float a = (color >> 24 & 255) / 255.0F;
-		float r = (color >> 16 & 255) / 255.0F;
-		float g = (color >> 8 & 255) / 255.0F;
-		float b = (color & 255) / 255.0F;
+	public static void drawRect(int x, int y, int width, int height, Color color) {
+		float a = color.a / 255.0F;
+		float r = color.r / 255.0F;
+		float g = color.g / 255.0F;
+		float b = color.b / 255.0F;
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
 		GlStateManager.enableBlend();
@@ -49,15 +49,15 @@ public class EliteRenderHelper {
 
 	public static void drawTexture(ResourceLocation texture, int x, int y, float width, float height, float u, float v,
 			float uWidth, float vHeight) {
-		drawTexture(texture, x, y, width, height, u, v, uWidth, vHeight, 0xFFFFFFFF);
+		drawTexture(texture, x, y, width, height, u, v, uWidth, vHeight, Color.WHITE);
 	}
 
 	public static void drawTexture(ResourceLocation texture, float x, float y, float width, float height, float u,
-			float v, float uWidth, float vHeight, int color) {
-		float a = (color >> 24 & 255) / 255.0F;
-		float r = (color >> 16 & 255) / 255.0F;
-		float g = (color >> 8 & 255) / 255.0F;
-		float b = (color & 255) / 255.0F;
+			float v, float uWidth, float vHeight, Color color) {
+		float a = color.a / 255.0F;
+		float r = color.r / 255.0F;
+		float g = color.g / 255.0F;
+		float b = color.b / 255.0F;
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 		GlStateManager.pushMatrix();
 		Tessellator tessellator = Tessellator.getInstance();
@@ -77,21 +77,21 @@ public class EliteRenderHelper {
 		GlStateManager.popMatrix();
 	}
 
-	public static void drawBorder(int x, int y, int width, int height, int lineWidth, int color) {
+	public static void drawBorder(int x, int y, int width, int height, int lineWidth, Color color) {
 		drawRect(x, y, width, lineWidth, color);
 		drawRect(x, y + height - lineWidth, width, lineWidth, color);
 		drawRect(x, y + lineWidth, lineWidth, height - lineWidth, color);
 		drawRect(x + width - lineWidth, y + lineWidth, lineWidth, height - lineWidth, color);
 	}
 
-	public static void drawDottedBorder(int x, int y, int width, int height, int color) {
+	public static void drawDottedBorder(int x, int y, int width, int height, Color color) {
 		boolean flag = drawDottedLine(x, y, width, true, color, true);
 		flag = drawDottedLine(x + width, y, height, false, color, flag);
 		flag = drawDottedLine(x + width, y + height, -width, true, color, flag);
 		flag = drawDottedLine(x, y + height, -height, false, color, flag);
 	}
 
-	public static boolean drawDottedLine(int x, int y, int length, boolean isRow, int color, boolean flag) {
+	public static boolean drawDottedLine(int x, int y, int length, boolean isRow, Color color, boolean flag) {
 		boolean flag2 = true;
 		if (length < 0) {
 			length = -length;

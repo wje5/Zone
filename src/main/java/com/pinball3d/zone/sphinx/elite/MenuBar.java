@@ -24,7 +24,7 @@ public class MenuBar {
 
 	public void doRender(int mouseX, int mouseY) {
 		int x = 4;
-		EliteRenderHelper.drawRect(0, 0, parent.getWidth(), 28, 0xFF535353);
+		EliteRenderHelper.drawRect(0, 0, parent.getWidth(), 28, Color.COMP_BG_LIGHT);
 		for (int i = 0; i < list.size(); i++) {
 			Menu m = list.get(i);
 			x += m.doRender(x, chosenIndex == i ? isClicked ? 2 : 1 : 0);
@@ -200,11 +200,11 @@ public class MenuBar {
 
 	public static class Menu {
 		private EliteMainwindow parent;
-		private String name;
+		private FormattedString name;
 		private char shortCut;
 		private List<ListBar> list = new ArrayList<ListBar>();
 
-		public Menu(EliteMainwindow parent, String name, char shortCut) {
+		public Menu(EliteMainwindow parent, FormattedString name, char shortCut) {
 			this.parent = parent;
 			this.name = name;
 			this.shortCut = shortCut;
@@ -219,7 +219,7 @@ public class MenuBar {
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, 4, 0, 0, w - 3, 20);
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + w - 3, 4, 253, 0, 3, 20);
 			}
-			FontHandler.renderText(x + 8, 6, name, 0xFFC7C7C7);
+			FontHandler.renderText(x + 8, 6, name, Color.FFC7C7C7);
 			return w;
 		}
 
@@ -227,7 +227,7 @@ public class MenuBar {
 			return FontHandler.getStringWidth(name) + 13;
 		}
 
-		public String getName() {
+		public FormattedString getName() {
 			return name;
 		}
 

@@ -8,7 +8,7 @@ public class ButtomBar {
 	}
 
 	public void doRender(int mouseX, int mouseY) {
-		EliteRenderHelper.drawRect(0, parent.getHeight() - 21, parent.getWidth(), 21, 0xFF4A4A4A);
-		FontHandler.renderText(20, parent.getHeight() - 19, "我能吞下玻璃而不伤身体(W)", 0xFFF0F0F0);
+		EliteRenderHelper.drawRect(0, parent.getHeight() - 21, parent.getWidth(), 21, Color.COMP_BG_MEDIUM_DARK);
+		FontHandler.renderText(20, parent.getHeight() - 19, new FormattedString("我能吞下玻璃而不伤身体(W)"), Color.TEXT_LIGHT);
 	}
 }

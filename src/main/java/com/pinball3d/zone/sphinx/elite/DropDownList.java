@@ -24,8 +24,8 @@ public class DropDownList implements IDropDownList {
 	public void doRender(int mouseX, int mouseY) {
 		int width = getWidth();
 		int height = getHeight();
-		EliteRenderHelper.drawBorder(x, y, width, height, 1, 0xFFA0A0A0);
-		EliteRenderHelper.drawRect(x + 1, y + 1, width - 2, height - 2, 0xFFF0F0F0);
+		EliteRenderHelper.drawBorder(x, y, width, height, 1, Color.TEXT_DARK);
+		EliteRenderHelper.drawRect(x + 1, y + 1, width - 2, height - 2, Color.TEXT_LIGHT);
 		int yOffset = 3;
 		for (int i = 0; i < list.size(); i++) {
 			ListBar bar = list.get(i);
@@ -293,9 +293,9 @@ public class DropDownList implements IDropDownList {
 	}
 
 	public static class ButtonBar extends ListBar {
-		private String textL, textR;
+		private FormattedString textL, textR;
 
-		public ButtonBar(String textL, String textR) {
+		public ButtonBar(FormattedString textL, FormattedString textR) {
 			super(FontHandler.getStringWidth(textL) + FontHandler.getStringWidth(textR) + 75, 21);
 			this.textL = textL;
 			this.textR = textR;
@@ -305,12 +305,12 @@ public class DropDownList implements IDropDownList {
 		public void doRender(int x, int y, int width, boolean isHovered) {
 			super.doRender(x, y, width, isHovered);
 			if (isHovered) {
-				EliteRenderHelper.drawRect(x, y, width, height, 0xFF0078D7);
+				EliteRenderHelper.drawRect(x, y, width, height, Color.FF0078D7);
 			}
 			if (textL != null) {
-				FontHandler.renderText(x + 19, y + 5, textL, isHovered ? 0xFFFFFFFF : 0xFF000000);
+				FontHandler.renderText(x + 19, y + 5, textL, isHovered ? Color.WHITE : Color.BLACK);
 				FontHandler.renderText(x + width - FontHandler.getStringWidth(textR) - 16, y + 5, textR,
-						isHovered ? 0xFFFFFFFF : 0xFF000000);
+						isHovered ? Color.WHITE : Color.BLACK);
 			}
 		}
 
@@ -329,16 +329,16 @@ public class DropDownList implements IDropDownList {
 		@Override
 		public void doRender(int x, int y, int width, boolean isHovered) {
 			super.doRender(x, y, width, isHovered);
-			EliteRenderHelper.drawRect(x + 1, y + 3, width - 2, 1, 0xFFA0A0A0);
-			EliteRenderHelper.drawRect(x + 1, y + 4, width - 2, 1, 0xFFFFFFFF);
+			EliteRenderHelper.drawRect(x + 1, y + 3, width - 2, 1, Color.TEXT_DARK);
+			EliteRenderHelper.drawRect(x + 1, y + 4, width - 2, 1, Color.WHITE);
 		}
 	}
 
 	public static class FolderBar extends ListBar {
-		private String text;
+		private FormattedString text;
 		private List<ListBar> list = new ArrayList<ListBar>();
 
-		public FolderBar(String text) {
+		public FolderBar(FormattedString text) {
 			super(FontHandler.getStringWidth(text) + 50, 21);
 			this.text = text;
 		}
@@ -347,13 +347,13 @@ public class DropDownList implements IDropDownList {
 		public void doRender(int x, int y, int width, boolean isHovered) {
 			super.doRender(x, y, width, isHovered);
 			if (isHovered) {
-				EliteRenderHelper.drawRect(x, y, width, height, 0xFF0078D7);
+				EliteRenderHelper.drawRect(x, y, width, height, Color.FF0078D7);
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + width - 10, y + 5, 4, 40, 4, 7);
 			} else {
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + width - 10, y + 5, 0, 40, 4, 7);
 			}
 			if (text != null) {
-				FontHandler.renderText(x + 19, y + 5, text, isHovered ? 0xFFFFFFFF : 0xFF000000);
+				FontHandler.renderText(x + 19, y + 5, text, isHovered ? Color.WHITE : Color.BLACK);
 			}
 		}
 

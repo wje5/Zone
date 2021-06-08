@@ -7,6 +7,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Track;
+
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
@@ -50,79 +59,20 @@ public class EliteMainwindow extends GuiScreen {
 
 	private void applyMenu() {
 		menuBar = new MenuBar(this);
-		menuBar.addMenu(new Menu(this, I18n.format("elite.menu.view"), 'v')
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
-		menuBar.addMenu(new Menu(this, I18n.format("elite.menu.window"), 'w').addBar(
-				new FolderBar("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK").addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-						.addBar(new FolderBar("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z"))
-								.addBar(new ButtonBar("aBCdDDDDDDDD", "Shift+Z")))
-						.addBar(new DividerBar()).addBar(new ButtonBar("AA", "AA"))));
-		menuBar.addMenu(new Menu(this, I18n.format("elite.menu.help"), 'h')
-				.addBar(new ButtonBar("甲乙丙丁戊己庚AbCdEf", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
+		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.view")), 'v')
+				.addBar(new ButtonBar(new FormattedString("甲乙丙丁戊己庚AbCdEf"),
+						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))));
+		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.window")), 'w')
+				.addBar(new FolderBar(new FormattedString(("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")))
+						.addBar(new ButtonBar(new FormattedString("aBCdDDDDDDDD"), new FormattedString("Shift+Z")))
+						.addBar(new FolderBar(new FormattedString("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK"))
+								.addBar(new ButtonBar(new FormattedString("aBCdDDDDDDDD"),
+										new FormattedString("Shift+Z")))
+								.addBar(new DividerBar())
+								.addBar(new ButtonBar(new FormattedString("AA"), new FormattedString("AA"))))));
+		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.help")), 'h')
+				.addBar(new ButtonBar(new FormattedString("甲乙丙丁戊己庚AbCdEf"),
+						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))));
 	}
 
 	private void applyPanels() {
@@ -156,7 +106,7 @@ public class EliteMainwindow extends GuiScreen {
 		g.addPanel(new PanelMap(this, g));
 		g.addPanel(new PanelMap(this, g));
 		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new Panel(this, g, "5DDDDDDDDDDDDDDD"));
+		g.addPanel(new Panel(this, g, new FormattedString("5DDDDDDDDDDDDDDD")));
 		panels.add(g);
 	}
 
@@ -167,6 +117,30 @@ public class EliteMainwindow extends GuiScreen {
 			applyPanels();
 			buttomBar = new ButtomBar(this);
 			inited = true;
+			try {
+				Sequence seq = new Sequence(Sequence.PPQ, 4);
+				Track track = seq.createTrack();
+				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 8, 48, 65), 0));
+//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 6, 48, 65), 2));
+//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 6, 48, 65), 3));
+//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 6, 48, 65), 4));
+//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 6, 48, 65), 5));
+//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 6, 48, 65), 8));
+//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 6, 48, 65), 10));
+//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 6, 48, 65), 30));
+//				for (int i = 24; i < 48; i++) {
+//					track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 6, i + 24, 30 + i * 2), 10 + i));
+//					track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 6, i + 24, 30 + i * 2), 12 + i));
+//				}
+				Sequencer sequencer = MidiSystem.getSequencer();
+				sequencer.open();
+				sequencer.setSequence(seq);
+				sequencer.setTempoInBPM(120);
+				sequencer.start();
+				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 8, 48, 65), 5));
+			} catch (MidiUnavailableException | InvalidMidiDataException e) {
+				e.printStackTrace();
+			}
 		}
 		Keyboard.enableRepeatEvents(true);
 	}
@@ -185,7 +159,7 @@ public class EliteMainwindow extends GuiScreen {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0, 0, 50F);
 		GlStateManager.scale(xScale, yScale, 1.0F);
-		EliteRenderHelper.drawRect(0, 0, getWidth(), getHeight(), 0xFF282828);
+		EliteRenderHelper.drawRect(0, 0, getWidth(), getHeight(), Color.BACKGROUND);
 		menuBar.doRender(mouseX, mouseY);
 		buttomBar.doRender(mouseX, mouseY);
 		panels.forEach(e -> e.doRenderPre(mouseX, mouseY));
@@ -210,9 +184,9 @@ public class EliteMainwindow extends GuiScreen {
 					|| !draggingPanels.get(Side.RIGHT.ordinal()).isEmpty()) {
 				type = type == MouseType.RESIZE_S ? MouseType.MOVE : MouseType.RESIZE_W;
 			}
-		} else if (drag != null) {
-
-		} else if (MouseHandler.isMouseInsideWindow()) {
+		} else if (dropDownList != null) {
+			type = dropDownList.getMouseType(mouseX, mouseY);
+		} else if (drag == null && MouseHandler.isMouseInsideWindow()) {
 			for (PanelGroup p : panels) {
 				Rect rect = p.getRect();
 				for (Side s : Side.values()) {

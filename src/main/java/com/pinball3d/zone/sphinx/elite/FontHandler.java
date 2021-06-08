@@ -1,16 +1,18 @@
 package com.pinball3d.zone.sphinx.elite;
 
+import com.pinball3d.zone.sphinx.elite.FormattedString.StringComponent;
+
 public class FontHandler {
 	public static Font NORMAL, BOLD, ITALIC, BOLD_ITALIC;
 
 	public static void init() {
-		NORMAL = new Font("droidsans/normal/font");
-		BOLD = new Font("droidsans/bold/font");
-		ITALIC = new Font("droidsans/italic/font");
-		BOLD_ITALIC = new Font("droidsans/bold_italic/font");
+		NORMAL = new Font("founder/normal/font");
+		BOLD = new Font("founder/bold/font");
+		ITALIC = new Font("founder/italic/font");
+		BOLD_ITALIC = new Font("founder/bold_italic/font");
 	}
 
-	private static int renderChar(int x, int y, char c, int color, Font font) {
+	public static int renderChar(int x, int y, char c, Color color, Font font) {
 		Integer[] a = font.getChars().get((int) c);
 		if (a != null) {
 			EliteRenderHelper.drawTexture(font.getTextures().get(a[7]), x + a[4], y + a[5], a[2], a[3], a[0], a[1],
@@ -20,45 +22,24 @@ public class FontHandler {
 		return 0;
 	}
 
-	public static int renderText(int x, int y, String s, int color, int width) {
+	public static int renderText(int x, int y, FormattedString s, Color color, int width) {
 		s = extrusion(s, width);
 		return renderText(x, y, s, color);
 	}
 
-	public static int renderText(int x, int y, String s, int color) {
+	public static int renderText(int x, int y, FormattedString s, Color color) {
 		int t = 0;
-		boolean underLine = false, italic = false, bold = false;
-		char[] a = s.toCharArray();
-		for (int i = 0; i < a.length; i++) {
-			char c = a[i];
-			if (c == '§') {
-				if (a.length > i + 1) {
-					char d = a[i + 1];
-					if (d == 'n') {
-						underLine = true;
-						i++;
-						continue;
-					} else if (d == 'o') {
-						italic = true;
-						i++;
-						continue;
-					} else if (d == 'l') {
-						bold = true;
-						i++;
-						continue;
-					} else if (d == 'r') {
-						italic = false;
-						bold = false;
-						underLine = false;
-						i++;
-						continue;
-					}
-				}
+		for (int i = 0; i < s.getComponentsSize(); i++) {
+			StringComponent c = s.get(i);
+			char[] a = c.text.toCharArray();
+			Font font = c.italic ? c.bold ? FontHandler.BOLD_ITALIC : FontHandler.ITALIC
+					: c.bold ? FontHandler.BOLD : FontHandler.NORMAL;
+			Color cColor = c.color == null ? color : c.color;
+			int w = 0;
+			for (char e : a) {
+				w += renderChar(t + x + w, y, e, cColor, font);
 			}
-			Font font = italic ? bold ? FontHandler.BOLD_ITALIC : FontHandler.ITALIC
-					: bold ? FontHandler.BOLD : FontHandler.NORMAL;
-			int w = renderChar(t + x, y, c, color, font);
-			if (underLine) {
+			if (c.underline) {
 				EliteRenderHelper.drawRect(t + x - 1, y + font.getLineHeight() - 1, w, 1, color);
 			}
 			t += w;
@@ -66,40 +47,23 @@ public class FontHandler {
 		return t;
 	}
 
-	public static int getStringWidth(String s) {
-		int t = 0;
-		boolean italic = false, bold = false;
-		char[] a = s.toCharArray();
-		for (int i = 0; i < a.length; i++) {
-			char c = a[i];
-			if (c == '§') {
-				if (a.length > i + 1) {
-					char d = a[i + 1];
-					if (d == 'n') {
-						i++;
-						continue;
-					} else if (d == 'o') {
-						italic = true;
-						i++;
-						continue;
-					} else if (d == 'l') {
-						bold = true;
-						i++;
-						continue;
-					} else if (d == 'r') {
-						italic = false;
-						bold = false;
-						i++;
-						continue;
-					}
-				}
-			}
-			Font font = italic ? bold ? FontHandler.BOLD_ITALIC : FontHandler.ITALIC
-					: bold ? FontHandler.BOLD : FontHandler.NORMAL;
-			float w = getCharWidth(c, font);
-			t += w;
+	public static int getStringComponentWidth(StringComponent c) {
+		Font font = c.italic ? c.bold ? FontHandler.BOLD_ITALIC : FontHandler.ITALIC
+				: c.bold ? FontHandler.BOLD : FontHandler.NORMAL;
+		int w = 0;
+		for (char i : c.text.toCharArray()) {
+			w += getCharWidth(i, font);
 		}
-		return t;
+		return w;
+	}
+
+	public static int getStringWidth(FormattedString s) {
+		int w = 0;
+		for (int i = 0; i < s.getComponentsSize(); i++) {
+			StringComponent c = s.get(i);
+			w += getStringComponentWidth(c);
+		}
+		return w;
 	}
 
 	public static int getCharWidth(char c, Font font) {
@@ -114,26 +78,33 @@ public class FontHandler {
 		return font.getLineHeight();
 	}
 
-	public static String extrusion(String text, int width) {
+	public static FormattedString extrusion(FormattedString text, int width) {
 		while (getStringWidth(text) > width) {
-			if (text.endsWith("…")) {
-				text = text.substring(0, text.length() - 1);
+			StringComponent c = text.get(text.getComponentsSize() - 1);
+			String s = c.text;
+			if (s.endsWith("…")) {
+				s = s.substring(0, s.length() - 1);
 			}
-			if (text.length() >= 2) {
-				if (text.charAt(text.length() - 2) == '§') {
-					switch (text.charAt(text.length() - 1)) {
-					case 'n':
-					case 'o':
-					case 'l':
-					case 'r':
-						text = text.substring(0, text.length() - 2);
-					}
+			if (!s.isEmpty()) {
+				s = s.substring(0, s.length() - 1) + "…";
+				StringComponent[] a = new StringComponent[text.getComponentsSize()];
+				for (int i = 0; i < text.getComponentsSize() - 1; i++) {
+					a[i] = text.get(i);
 				}
+				a[text.getComponentsSize() - 1] = new StringComponent(s, c.color, c.bold, c.italic, c.underline);
+				text = new FormattedString(a);
+			} else if (text.getComponentsSize() > 1) {
+				c = text.get(text.getComponentsSize() - 2);
+				s = c.text;
+				if (!s.isEmpty()) {
+					s = s.substring(0, s.length() - 1) + "…";
+				}
+				StringComponent[] a = new StringComponent[text.getComponentsSize()];
+				for (int i = 0; i < text.getComponentsSize() - 2; i++) {
+					a[i] = text.get(i);
+				}
+				a[text.getComponentsSize() - 2] = new StringComponent(s, c.color, c.bold, c.italic, c.underline);
 			}
-			if (text.length() < 2) {
-				return "";
-			}
-			text = text.substring(0, text.length() - 1) + "…";
 		}
 		return text;
 	}

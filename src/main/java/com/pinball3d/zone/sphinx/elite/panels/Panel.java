@@ -1,14 +1,15 @@
 package com.pinball3d.zone.sphinx.elite.panels;
 
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
+import com.pinball3d.zone.sphinx.elite.FormattedString;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
 
 public class Panel {
 	private EliteMainwindow parent;
 	private PanelGroup parentGroup;
-	private String name;
+	private FormattedString name;
 
-	public Panel(EliteMainwindow parent, PanelGroup parentGroup, String name) {
+	public Panel(EliteMainwindow parent, PanelGroup parentGroup, FormattedString name) {
 		this.parent = parent;
 		this.parentGroup = parentGroup;
 		this.name = name;
@@ -34,7 +35,7 @@ public class Panel {
 		return parentGroup;
 	}
 
-	public String getName() {
+	public FormattedString getName() {
 		return name;
 	}
 
@@ -44,6 +45,6 @@ public class Panel {
 
 	@Override
 	public String toString() {
-		return name;
+		return name.toString();
 	}
 }

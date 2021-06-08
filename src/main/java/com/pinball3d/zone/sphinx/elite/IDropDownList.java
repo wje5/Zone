@@ -1,5 +1,7 @@
 package com.pinball3d.zone.sphinx.elite;
 
+import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
+
 public interface IDropDownList {
 	public void doRender(int mouseX, int mouseY);
 
@@ -14,4 +16,8 @@ public interface IDropDownList {
 	public boolean mouseReleased(int mouseX, int mouseY, int mouseButton);
 
 	public boolean isMouseInList(int mouseX, int mouseY);
+
+	public default MouseType getMouseType(int mouseX, int mouseY) {
+		return null;
+	}
 }

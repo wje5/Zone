@@ -31,7 +31,7 @@ public class BlockLoader {
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module, storage_panel,
-			storage_chest, io_panel, production_panel, beacon_amplifier_matrix, beacon_core;
+			storage_chest, io_panel, production_panel, beacon_amplifier_matrix, beacon_core, piano;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -89,6 +89,7 @@ public class BlockLoader {
 		register(registry, production_panel = new BlockProductionPanel());
 		register(registry, beacon_amplifier_matrix = new BlockBeaconAmplifierMatrix());
 		register(registry, beacon_core = new BlockBeaconCore());
+		register(registry, piano = new BlockPiano());
 	}
 
 	private static void register(IForgeRegistry<Block> registry, Block block) {
@@ -139,6 +140,7 @@ public class BlockLoader {
 		registerItem(registry, production_panel);
 		registerItem(registry, beacon_amplifier_matrix);
 		registerItem(registry, beacon_core);
+		registerItem(registry, piano);
 	}
 
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {

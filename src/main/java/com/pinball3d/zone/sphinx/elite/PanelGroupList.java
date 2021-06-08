@@ -5,15 +5,24 @@ import java.util.Collections;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
+import com.pinball3d.zone.sphinx.elite.FormattedString.StringComponent;
+import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 import com.pinball3d.zone.sphinx.elite.panels.Panel;
+import com.pinball3d.zone.util.Util;
+
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class PanelGroupList implements IDropDownList {
 	private int x, y;
 	private EliteMainwindow parent;
 	private PanelGroup parentGroup;
-	private int chosenIndex = -1;
-	private boolean isText = true;
+	private int chosenIndex = -1, cursorIndex = -1, textOffset = 0;
+	private boolean isText = true, hoverText;
+	private List<Panel> list, list2;
+	private String text = "";
 
 	public PanelGroupList(EliteMainwindow parent, PanelGroup parentGroup, int x, int y) {
 		this.parent = parent;
@@ -24,30 +33,70 @@ public class PanelGroupList implements IDropDownList {
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
+		updateList();
 		int width = getWidth();
 		int height = getHeight();
-
 		int yOffset = 44;
-		List<Panel> list = new ArrayList<Panel>(parentGroup.getPanels());
-		Collections.sort(list, (a, b) -> a.getName().compareTo(b.getName()));
-		EliteRenderHelper.drawBorder(x, y, width, height, 1, 0xFF383838);
-		EliteRenderHelper.drawRect(x + 1, y + 1, width - 2, height - 2, 0xFF535353);
-		EliteRenderHelper.drawRect(x + 6, y + 38, width - 12, 1, 0xFF9F9F9F);
-		EliteRenderHelper.drawRect(x + 6, y + 39, width - 12, 1, 0xFFFFFFFF);
+		EliteRenderHelper.drawBorder(x, y, width, height, 1, Color.DIVIDER_BG);
+		EliteRenderHelper.drawRect(x + 1, y + 1, width - 2, height - 2, Color.COMP_BG_LIGHT);
+		EliteRenderHelper.drawRect(x + 6, y + 38, width - 12, 1, Color.FF9F9F9F);
+		EliteRenderHelper.drawRect(x + 6, y + 39, width - 12, 1, Color.WHITE);
 		for (int i = 0; i < list.size(); i++) {
 			Panel p = list.get(i);
 			if (chosenIndex == i) {
-				EliteRenderHelper.drawRect(x + 6, y + yOffset, width - 12, 22, 0xFF383838);
+				EliteRenderHelper.drawRect(x + 6, y + yOffset, width - 12, 22, Color.DIVIDER_BG);
 				if (!isText) {
-					EliteRenderHelper.drawDottedBorder(x + 6, y + yOffset, width - 12, 22, 0xFFD9BEA7);
+					EliteRenderHelper.drawDottedBorder(x + 6, y + yOffset, width - 12, 22, Color.DOTTED_LINE);
 				}
 			}
-			FontHandler.renderText(x + 11, y + yOffset + 5, p.getName(), 0xFFFFFFFF);
+			FontHandler.renderText(x + 11, y + yOffset + 5, new FormattedString("§l" + p.getName()), Color.WHITE);
 			yOffset += 22;
 		}
-		if (isText) {
-			EliteRenderHelper.drawRect(x + 7, y + 9, 1, 20, 0xFF383838);
+		for (int i = 0; i < list2.size(); i++) {
+			Panel p = list2.get(i);
+			if (chosenIndex == i + list.size()) {
+				EliteRenderHelper.drawRect(x + 6, y + yOffset, width - 12, 22, Color.DIVIDER_BG);
+				if (!isText) {
+					EliteRenderHelper.drawDottedBorder(x + 6, y + yOffset, width - 12, 22, Color.DOTTED_LINE);
+				}
+			}
+			FontHandler.renderText(x + 11, y + yOffset + 5, p.getName(), Color.WHITE);
+			yOffset += 22;
 		}
+
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0, 0, -800F);
+		GlStateManager.enableDepth();
+		GlStateManager.depthFunc(GL11.GL_GEQUAL);
+		EliteRenderHelper.drawRect(x + 7, y + 9, width - 13, 20, Color.COMP_BG_LIGHT);
+		GlStateManager.depthFunc(GL11.GL_LEQUAL);
+
+		int cursorOffset = 0;
+		if (!text.isEmpty()) {
+			int j = 0;
+			StringComponent e = new FormattedString(text, false).get(0);
+			char[] a = e.text.toCharArray();
+			int w = 0;
+			for (char c : a) {
+				w += FontHandler.renderChar(x + w + 7 - textOffset, y + 9, c, Color.WHITE, FontHandler.NORMAL);
+				if (j++ == cursorIndex) {
+					cursorOffset = w;
+				}
+			}
+		}
+		if (isText && parent.mc.world.getTotalWorldTime() % 20 < 10) {
+			EliteRenderHelper.drawRect(x + 7 + cursorOffset - textOffset, y + 9, 1, 20, Color.FFEDEDED);
+		}
+		GlStateManager.popMatrix();
+	}
+
+	public void updateList() {
+		list = new ArrayList<Panel>(parentGroup.getPanels()
+				.subList(parentGroup.getPanels().size() - parentGroup.getRemain(), parentGroup.getPanels().size()));
+		Collections.sort(list, (a, b) -> a.getName().toString().compareTo(b.getName().toString()));
+		list2 = new ArrayList<Panel>(
+				parentGroup.getPanels().subList(0, parentGroup.getPanels().size() - parentGroup.getRemain()));
+		Collections.sort(list2, (a, b) -> a.getName().toString().compareTo(b.getName().toString()));
 	}
 
 	@Override
@@ -68,14 +117,48 @@ public class PanelGroupList implements IDropDownList {
 	}
 
 	@Override
+	public MouseType getMouseType(int mouseX, int mouseY) {
+		if (hoverText) {
+			return MouseType.TEXT_LIGHT;
+		}
+		return IDropDownList.super.getMouseType(mouseX, mouseY);
+	}
+
+	@Override
 	public boolean mouseReleased(int mouseX, int mouseY, int mouseButton) {
 		if (mouseButton != 0) {
 			return true;
 		}
+		updateList();
 		computeChosenIndex(mouseX, mouseY);
+		if (hoverText == true) {
+			isText = true;
+			int xOffset = x + 7;
+			for (int i = 0; i < text.length(); i++) {
+				char c = text.charAt(i);
+				int w = FontHandler.getCharWidth(c, FontHandler.NORMAL);
+				if (mouseX >= xOffset - textOffset && mouseX < xOffset + w - textOffset) {
+					cursorIndex = i;
+					if (mouseX <= xOffset + w / 2 - textOffset) {
+						cursorIndex--;
+					}
+					return true;
+				}
+				xOffset += w;
+			}
+			cursorIndex = text.length() - 1;
+			return true;
+		}
 		if (chosenIndex >= 0) {
-//			list.get(chosenIndex).onClick();
-			// TODO
+			if (chosenIndex < list.size()) {
+				Panel p = list.get(chosenIndex);
+				parentGroup.getPanels().remove(p);
+				parentGroup.getPanels().add(0, p);
+				parentGroup.setChosenIndex(0);
+			} else {
+				parentGroup.setChosenIndex(parentGroup.getPanels().indexOf(list2.get(chosenIndex - list.size())));
+			}
+			parent.setDropDownList(null);
 			return true;
 		}
 		return false;
@@ -83,14 +166,21 @@ public class PanelGroupList implements IDropDownList {
 
 	@Override
 	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
-		if (mouseX >= x + 7 && mouseX <= x + getWidth() - 7 && mouseY >= y + 9 && mouseY <= y + 29) {
-			// TODO
-		}
 		computeChosenIndex(mouseX, mouseY);
 	}
 
 	@Override
 	public void keyTyped(char typedChar, int keyCode) {
+		if (GuiScreen.isKeyComboCtrlV(keyCode)) {
+			String s = GuiScreen.getClipboardString();
+			for (int i = 0; i < s.length(); i++) {
+				if (!Util.isValidChar(s.charAt(i), 8)) {
+					return;
+				}
+			}
+			text += s;
+			return;
+		}
 		switch (keyCode) {
 		case Keyboard.KEY_UP:
 			isText = false;
@@ -115,13 +205,68 @@ public class PanelGroupList implements IDropDownList {
 			}
 			break;
 		case Keyboard.KEY_LEFT:
-			// TODO
+			if (cursorIndex >= 0) {
+				if (GuiScreen.isCtrlKeyDown()) {
+					cursorIndex = -1;
+				} else {
+					cursorIndex--;
+				}
+			}
 			break;
 		case Keyboard.KEY_RIGHT:
-			// TODO
+			if (cursorIndex < text.length() - 1) {
+				if (GuiScreen.isCtrlKeyDown()) {
+					cursorIndex = text.length() - 1;
+				} else {
+					cursorIndex++;
+				}
+			}
 			break;
 		case Keyboard.KEY_RETURN:
-			// TODO if focus box: open index0 else open index
+			if (chosenIndex < 0) {
+				chosenIndex = 0;
+			}
+			if (chosenIndex < list.size()) {
+				Panel p = list.get(chosenIndex);
+				parentGroup.getPanels().remove(p);
+				parentGroup.getPanels().add(0, p);
+				parentGroup.setChosenIndex(0);
+			} else {
+				parentGroup.setChosenIndex(parentGroup.getPanels().indexOf(list2.get(chosenIndex - list.size())));
+			}
+			parent.setDropDownList(null);
+			break;
+		case Keyboard.KEY_BACK:
+			if (cursorIndex >= 0) {
+				text = text.substring(0, cursorIndex)
+						+ (cursorIndex >= text.length() - 1 ? "" : text.substring(cursorIndex + 1));
+				cursorIndex--;
+				int w = FontHandler.getStringWidth(new FormattedString(text, false));
+				int width = getWidth();
+				if (w > width - 14) {
+					textOffset = w - width + 14;
+				} else {
+					textOffset = 0;
+				}
+			}
+			break;
+		case Keyboard.KEY_DELETE:
+			if (cursorIndex < text.length() - 1) {
+				text = text.substring(0, cursorIndex + 1)
+						+ (cursorIndex >= text.length() - 2 ? "" : text.substring(cursorIndex + 2));
+			}
+			break;
+		default:
+			if (isText && Util.isValidChar(typedChar, 8)) {
+				text += typedChar;
+				cursorIndex++;
+				int w = FontHandler.getStringWidth(new FormattedString(text, false));
+				int width = getWidth();
+				if (w > width - 14) {
+					textOffset = w - width + 14;
+					System.out.println(textOffset);
+				}
+			}
 			break;
 		}
 	}
@@ -130,20 +275,26 @@ public class PanelGroupList implements IDropDownList {
 		int old = chosenIndex;
 		int w = getWidth();
 		int h = getHeight();
-		chosenIndex = -1;
+		hoverText = false;
+		if (isText) {
+			chosenIndex = -1;
+		}
 		if (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h) {
+			if (mouseX >= x + 7 && mouseX <= x + w - 7 && mouseY >= y + 9 && mouseY <= y + 29) {
+				hoverText = true;
+			}
 			if (mouseX >= x + 6 && mouseX <= x + w - 6 && mouseY >= y + 44 && mouseY <= y + h - 5) {
 				int yOffset = y + 44;
 				for (int i = 0; i < parentGroup.getPanels().size(); i++) {
-					if (mouseY >= yOffset && mouseY <= yOffset + 22) {
+					if (mouseY >= yOffset && mouseY <= yOffset + 22 && (i != old || isText)) {
 						chosenIndex = i;
-						return old != chosenIndex;
+						return true;
 					}
 					yOffset += 22;
 				}
 			}
 		}
-		return old != chosenIndex;
+		return false;
 	}
 
 	public void setChosenIndex(int chosenIndex) {

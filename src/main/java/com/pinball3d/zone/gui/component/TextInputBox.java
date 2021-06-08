@@ -13,8 +13,7 @@ public class TextInputBox extends Component {
 	public String text = "";
 	public int maxLength, flag, maxNumber = Integer.MAX_VALUE;
 	protected Runnable event, onInput;
-	public boolean isFocus;
-	public boolean isPixel;
+	public boolean isFocus, isPixel;
 
 	public TextInputBox(IHasComponents parent, int x, int y, int width, int maxLength, Runnable onClick) {
 		this(parent, x, y, width, 13, maxLength, onClick);
