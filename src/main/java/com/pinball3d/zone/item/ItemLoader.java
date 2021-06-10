@@ -109,11 +109,11 @@ public class ItemLoader {
 		register(registry, terminal = new ItemTerminal(), false);
 
 		register(registry, fc = new ItemFC());
-		register(registry, drill = new ItemDrill());
-		register(registry, drill_heavy = new ItemDrillHeavy());
-		register(registry, drill_head = new ItemDrillHead());
-		register(registry, drill_heavy_head = new ItemDrillHeavyHead());
-		register(registry, drill_empty = new ItemDrillEmpty());
+//		register(registry, drill = new ItemDrill());
+//		register(registry, drill_heavy = new ItemDrillHeavy());
+//		register(registry, drill_head = new ItemDrillHead());
+//		register(registry, drill_heavy_head = new ItemDrillHeavyHead());
+//		register(registry, drill_empty = new ItemDrillEmpty());
 		register(registry, crucible_spoon = new ItemCrucibleSpoon(false));
 		register(registry, crucible_spoon_filled = new ItemCrucibleSpoon(true));
 		register(registry, manual = new ItemManual());

@@ -7,15 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiEvent;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
-import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Track;
-
 import org.lwjgl.input.Keyboard;
 
 import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
@@ -117,30 +108,6 @@ public class EliteMainwindow extends GuiScreen {
 			applyPanels();
 			buttomBar = new ButtomBar(this);
 			inited = true;
-			try {
-				Sequence seq = new Sequence(Sequence.PPQ, 4);
-				Track track = seq.createTrack();
-				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 8, 48, 65), 0));
-//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 6, 48, 65), 2));
-//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 6, 48, 65), 3));
-//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 6, 48, 65), 4));
-//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 6, 48, 65), 5));
-//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 6, 48, 65), 8));
-//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 6, 48, 65), 10));
-//				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 6, 48, 65), 30));
-//				for (int i = 24; i < 48; i++) {
-//					track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 6, i + 24, 30 + i * 2), 10 + i));
-//					track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 6, i + 24, 30 + i * 2), 12 + i));
-//				}
-				Sequencer sequencer = MidiSystem.getSequencer();
-				sequencer.open();
-				sequencer.setSequence(seq);
-				sequencer.setTempoInBPM(120);
-				sequencer.start();
-				track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_OFF, 8, 48, 65), 5));
-			} catch (MidiUnavailableException | InvalidMidiDataException e) {
-				e.printStackTrace();
-			}
 		}
 		Keyboard.enableRepeatEvents(true);
 	}

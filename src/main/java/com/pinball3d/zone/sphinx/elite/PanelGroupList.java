@@ -208,8 +208,26 @@ public class PanelGroupList implements IDropDownList {
 			if (cursorIndex >= 0) {
 				if (GuiScreen.isCtrlKeyDown()) {
 					cursorIndex = -1;
+					textOffset = 0;
 				} else {
 					cursorIndex--;
+					int j = 0, cursorOffset = 0;
+					StringComponent e = new FormattedString(text, false).get(0);
+					char[] a = e.text.toCharArray();
+					int w = 0;
+					for (char c : a) {
+						w += FontHandler.getCharWidth(c, FontHandler.NORMAL);
+						if (j++ == cursorIndex) {
+							cursorOffset = w;
+						}
+					}
+					while (cursorOffset < textOffset) {
+						textOffset -= 50;
+						if (textOffset < 0) {
+							textOffset = 0;
+							break;
+						}
+					}
 				}
 			}
 			break;
@@ -217,8 +235,18 @@ public class PanelGroupList implements IDropDownList {
 			if (cursorIndex < text.length() - 1) {
 				if (GuiScreen.isCtrlKeyDown()) {
 					cursorIndex = text.length() - 1;
+					int w = FontHandler.getStringWidth(new FormattedString(text, false));
+					int width = getWidth();
+					if (w > width - 14) {
+						textOffset = w - width + 14;
+					}
 				} else {
 					cursorIndex++;
+					int w = FontHandler.getStringWidth(new FormattedString(text, false));
+					int width = getWidth();
+					if (w > width - 14) {
+						textOffset -= 50;
+					}
 				}
 			}
 			break;

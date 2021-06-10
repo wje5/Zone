@@ -21,19 +21,21 @@ public class ClientMidiHandler {
 			sequencer.open();
 			sequencer.setSequence(seq);
 			sequencer.setTempoInBPM(1200);
-			sequencer.start();
 			track.add(new MidiEvent(new ShortMessage(ShortMessage.NOTE_ON, 0, 48, 65), 50000000));
-			sequencer.getTickPosition();
 		} catch (MidiUnavailableException | InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void onMessage(int command, int channel, int pitch, int keystroke) {
-		try {
-			track.add(new MidiEvent(new ShortMessage(command, channel, pitch, keystroke), sequencer.getTickPosition()));
-		} catch (InvalidMidiDataException e) {
-			e.printStackTrace();
+		if (track != null) {
+			try {
+				sequencer.start();
+				track.add(new MidiEvent(new ShortMessage(command, channel, pitch, keystroke),
+						sequencer.getTickPosition()));
+			} catch (InvalidMidiDataException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
