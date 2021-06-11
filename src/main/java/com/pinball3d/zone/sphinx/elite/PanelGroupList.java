@@ -7,7 +7,6 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import com.pinball3d.zone.sphinx.elite.FormattedString.StringComponent;
 import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 import com.pinball3d.zone.sphinx.elite.panels.Panel;
 import com.pinball3d.zone.util.Util;
@@ -70,21 +69,10 @@ public class PanelGroupList implements IDropDownList {
 		GlStateManager.depthFunc(GL11.GL_GEQUAL);
 		EliteRenderHelper.drawRect(x + 7, y + 9, width - 13, 20, Color.COMP_BG_LIGHT);
 		GlStateManager.depthFunc(GL11.GL_LEQUAL);
-
-		int cursorOffset = 0;
-		if (!text.isEmpty()) {
-			int j = 0;
-			StringComponent e = new FormattedString(text, false).get(0);
-			char[] a = e.text.toCharArray();
-			int w = 0;
-			for (char c : a) {
-				w += FontHandler.renderChar(x + w + 7 - textOffset, y + 9, c, Color.WHITE, FontHandler.NORMAL);
-				if (j++ == cursorIndex) {
-					cursorOffset = w;
-				}
-			}
-		}
+		FontHandler.renderText(x + 7 - textOffset, y + 9, new FormattedString(text, false), Color.WHITE);
 		if (isText && parent.mc.world.getTotalWorldTime() % 20 < 10) {
+			int cursorOffset = FontHandler
+					.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
 			EliteRenderHelper.drawRect(x + 7 + cursorOffset - textOffset, y + 9, 1, 20, Color.FFEDEDED);
 		}
 		GlStateManager.popMatrix();
@@ -211,16 +199,8 @@ public class PanelGroupList implements IDropDownList {
 					textOffset = 0;
 				} else {
 					cursorIndex--;
-					int j = 0, cursorOffset = 0;
-					StringComponent e = new FormattedString(text, false).get(0);
-					char[] a = e.text.toCharArray();
-					int w = 0;
-					for (char c : a) {
-						w += FontHandler.getCharWidth(c, FontHandler.NORMAL);
-						if (j++ == cursorIndex) {
-							cursorOffset = w;
-						}
-					}
+					int cursorOffset = FontHandler
+							.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
 					while (cursorOffset < textOffset) {
 						textOffset -= 50;
 						if (textOffset < 0) {
@@ -242,10 +222,16 @@ public class PanelGroupList implements IDropDownList {
 					}
 				} else {
 					cursorIndex++;
+					int cursorOffset = FontHandler
+							.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
 					int w = FontHandler.getStringWidth(new FormattedString(text, false));
 					int width = getWidth();
-					if (w > width - 14) {
-						textOffset -= 50;
+					if (cursorOffset > textOffset + width - 14) {
+						textOffset += 50;
+						if (textOffset > w - width + 14) {
+							textOffset = w - width + 14;
+							break;
+						}
 					}
 				}
 			}
@@ -266,15 +252,25 @@ public class PanelGroupList implements IDropDownList {
 			break;
 		case Keyboard.KEY_BACK:
 			if (cursorIndex >= 0) {
+				int charWidth = FontHandler.getCharWidth(text.charAt(cursorIndex), FontHandler.NORMAL);
 				text = text.substring(0, cursorIndex)
 						+ (cursorIndex >= text.length() - 1 ? "" : text.substring(cursorIndex + 1));
 				cursorIndex--;
 				int w = FontHandler.getStringWidth(new FormattedString(text, false));
 				int width = getWidth();
-				if (w > width - 14) {
-					textOffset = w - width + 14;
-				} else {
+				if (w <= width - 14) {
 					textOffset = 0;
+				} else {
+					textOffset -= charWidth;
+					int cursorOffset = FontHandler
+							.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
+					while (cursorOffset < textOffset) {
+						textOffset -= 50;
+						if (textOffset < 0) {
+							textOffset = 0;
+							break;
+						}
+					}
 				}
 			}
 			break;
@@ -282,17 +278,27 @@ public class PanelGroupList implements IDropDownList {
 			if (cursorIndex < text.length() - 1) {
 				text = text.substring(0, cursorIndex + 1)
 						+ (cursorIndex >= text.length() - 2 ? "" : text.substring(cursorIndex + 2));
+				int leftWidth = FontHandler
+						.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
+				int rightWidth = FontHandler
+						.getStringWidth(new FormattedString(text.substring(cursorIndex + 1), false));
+				int w = FontHandler.getStringWidth(new FormattedString(text, false));
+				int width = getWidth();
+				if (w <= width - 14) {
+					textOffset = 0;
+				} else if (textOffset + width - 14 > w) {
+					textOffset = w - (width - 14);
+				}
 			}
 			break;
 		default:
 			if (isText && Util.isValidChar(typedChar, 8)) {
-				text += typedChar;
+				text = text.substring(0, cursorIndex + 1) + typedChar + text.substring(cursorIndex + 1);
 				cursorIndex++;
 				int w = FontHandler.getStringWidth(new FormattedString(text, false));
 				int width = getWidth();
 				if (w > width - 14) {
 					textOffset = w - width + 14;
-					System.out.println(textOffset);
 				}
 			}
 			break;
