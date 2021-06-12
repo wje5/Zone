@@ -28,6 +28,9 @@ public class Color {
 
 	public static final Color DOTTED_LINE = new Color(0xFFD9BEA7);
 
+	public static final Color CHOSEN_TEXT_BG = new Color(0xFF0078D7);
+	public static final Color CHOSEN_TEXT_CURSOR = new Color(0xFFFF8728);
+
 	public static final Color FF9F9F9F = new Color(0xFF9F9F9F);
 	public static final Color FFEDEDED = new Color(0xFFEDEDED);
 	public static final Color FF0078D7 = new Color(0xFF0078D7);

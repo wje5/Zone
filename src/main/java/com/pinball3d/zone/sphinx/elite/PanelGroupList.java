@@ -18,7 +18,7 @@ public class PanelGroupList implements IDropDownList {
 	private int x, y;
 	private EliteMainwindow parent;
 	private PanelGroup parentGroup;
-	private int chosenIndex = -1, cursorIndex = -1, textOffset = 0;
+	private int chosenIndex = -1, cursorIndex = -1, cursorIndex2 = -2, textOffset = 0;
 	private boolean isText = true, hoverText;
 	private List<Panel> list, list2;
 	private String text = "";
@@ -69,12 +69,26 @@ public class PanelGroupList implements IDropDownList {
 		GlStateManager.depthFunc(GL11.GL_GEQUAL);
 		EliteRenderHelper.drawRect(x + 7, y + 9, width - 13, 20, Color.COMP_BG_LIGHT);
 		GlStateManager.depthFunc(GL11.GL_LEQUAL);
-		FontHandler.renderText(x + 7 - textOffset, y + 9, new FormattedString(text, false), Color.WHITE);
-		if (isText && parent.mc.world.getTotalWorldTime() % 20 < 10) {
-			int cursorOffset = FontHandler
-					.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
+
+		int cursorOffset = FontHandler.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
+		if (cursorIndex2 > -2) {
+			int cursorOffset2 = FontHandler
+					.getStringWidth(new FormattedString(text.substring(0, cursorIndex2 + 1), false));
+			if (isText && parent.mc.world.getTotalWorldTime() % 20 < 10) {
+				EliteRenderHelper.drawRect(x + 7 + cursorOffset - textOffset, y + 9, 1, 20, Color.CHOSEN_TEXT_CURSOR);
+			}
+			if (cursorIndex2 > cursorIndex) {
+				EliteRenderHelper.drawRect(x + 8 + cursorOffset - textOffset, y + 9, cursorOffset2 - cursorOffset - 1,
+						20, Color.CHOSEN_TEXT_BG);
+			} else {
+				EliteRenderHelper.drawRect(x + 7 + cursorOffset2 - textOffset, y + 9, cursorOffset - cursorOffset2 - 1,
+						20, Color.CHOSEN_TEXT_BG);
+			}
+		} else if (isText && parent.mc.world.getTotalWorldTime() % 20 < 10) {
 			EliteRenderHelper.drawRect(x + 7 + cursorOffset - textOffset, y + 9, 1, 20, Color.FFEDEDED);
 		}
+
+		FontHandler.renderText(x + 7 - textOffset, y + 9, new FormattedString(text, false), Color.WHITE);
 		GlStateManager.popMatrix();
 	}
 
@@ -193,6 +207,24 @@ public class PanelGroupList implements IDropDownList {
 			}
 			break;
 		case Keyboard.KEY_LEFT:
+			if (GuiScreen.isShiftKeyDown()) {
+				if (cursorIndex2 == -2) {
+					cursorIndex2 = cursorIndex;
+				}
+			} else if (!GuiScreen.isCtrlKeyDown() && cursorIndex2 > -2) {
+				cursorIndex = Math.min(cursorIndex, cursorIndex2);
+				cursorIndex2 = -2;
+				int cursorOffset = FontHandler
+						.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
+				while (cursorOffset < textOffset) {
+					textOffset -= 50;
+					if (textOffset < 0) {
+						textOffset = 0;
+						break;
+					}
+				}
+				break;
+			}
 			if (cursorIndex >= 0) {
 				if (GuiScreen.isCtrlKeyDown()) {
 					cursorIndex = -1;
@@ -212,6 +244,26 @@ public class PanelGroupList implements IDropDownList {
 			}
 			break;
 		case Keyboard.KEY_RIGHT:
+			if (GuiScreen.isShiftKeyDown()) {
+				if (cursorIndex2 == -2) {
+					cursorIndex2 = cursorIndex;
+				}
+			} else if (!GuiScreen.isCtrlKeyDown() && cursorIndex2 > -2) {
+				cursorIndex = Math.max(cursorIndex, cursorIndex2);
+				cursorIndex2 = -2;
+				int cursorOffset = FontHandler
+						.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
+				int w = FontHandler.getStringWidth(new FormattedString(text, false));
+				int width = getWidth();
+				while (cursorOffset > textOffset + width - 14) {
+					textOffset += 50;
+					if (textOffset > w - width + 14) {
+						textOffset = w - width + 14;
+						break;
+					}
+				}
+				break;
+			}
 			if (cursorIndex < text.length() - 1) {
 				if (GuiScreen.isCtrlKeyDown()) {
 					cursorIndex = text.length() - 1;
