@@ -6,6 +6,10 @@ public class Drag {
 	private OnDrag onDrag;
 	private Consumer<Boolean> onStop;
 
+	public static Drag EMPTY = new Drag((x, y, moveX, moveY) -> {
+	}, cancel -> {
+	});
+
 	public Drag(OnDrag onDrag, Consumer<Boolean> onStop) {
 		this.onDrag = onDrag;
 		this.onStop = onStop;

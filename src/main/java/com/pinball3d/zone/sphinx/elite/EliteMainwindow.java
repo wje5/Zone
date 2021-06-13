@@ -36,7 +36,7 @@ public class EliteMainwindow extends GuiScreen {
 	private IDropDownList dropDownList;
 	private IFocus focus;
 	private List<PanelGroup> panels = new ArrayList<PanelGroup>();
-	private Drag drag;
+	private Drag dragLeft, dragRight;
 	private boolean inited;
 	private List<Set<PanelGroup>> draggingPanels;
 
@@ -153,7 +153,7 @@ public class EliteMainwindow extends GuiScreen {
 			}
 		} else if (dropDownList != null) {
 			type = dropDownList.getMouseType(mouseX, mouseY);
-		} else if (drag == null && MouseHandler.isMouseInsideWindow()) {
+		} else if (dragLeft == null && dragRight == null && MouseHandler.isMouseInsideWindow()) {
 			for (PanelGroup p : panels) {
 				Rect rect = p.getRect();
 				for (Side s : Side.values()) {
@@ -200,10 +200,18 @@ public class EliteMainwindow extends GuiScreen {
 				super.keyTyped(typedChar, keyCode);
 			}
 		} else if (keyCode == Keyboard.KEY_LMENU) {
-			if (drag != null) {
-				drag.stop(true);
-				drag = null;
-			} else {
+			boolean flag = false;
+			if (dragLeft != null) {
+				dragLeft.stop(true);
+				dragLeft = null;
+				flag = true;
+			}
+			if (dragRight != null) {
+				dragRight.stop(true);
+				dragRight = null;
+				flag = true;
+			}
+			if (!flag) {
 				menuBar.onPressAlt();
 			}
 			if (dropDownList != null) {
@@ -263,8 +271,11 @@ public class EliteMainwindow extends GuiScreen {
 			dropDownList.onMouseMoved(mouseX, mouseY, moveX, moveY);
 		}
 		panels.forEach(e -> e.onMouseMoved(mouseX, mouseY, moveX, moveY));
-		if (drag != null) {
-			drag.drag(mouseX, mouseY, moveX, moveY);
+		if (dragLeft != null) {
+			dragLeft.drag(mouseX, mouseY, moveX, moveY);
+		}
+		if (dragRight != null) {
+			dragRight.drag(mouseX, mouseY, moveX, moveY);
 		}
 	}
 
@@ -276,10 +287,15 @@ public class EliteMainwindow extends GuiScreen {
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();
 		if (dropDownList != null) {
-			if (!dropDownList.mouseClicked(mouseX, mouseY, mouseButton)) {
+			Drag d = dropDownList.mouseClicked(mouseX, mouseY, mouseButton);
+			if (d == null) {
 				dropDownList = null;
 				menuBar.onListClosed();
+			} else if (mouseButton == 0) {
+				dragLeft = d;
+				return;
 			} else {
+				dragRight = d;
 				return;
 			}
 		} else {
@@ -314,16 +330,22 @@ public class EliteMainwindow extends GuiScreen {
 		}
 		for (PanelGroup g : panels) {
 			Drag d = g.onMouseClicked(mouseX, mouseY, mouseButton);
-			if (mouseButton == 0 && d != null && drag == null) {
-				drag = d;
+			if (d != null) {
+				if (mouseButton == 0) {
+					if (dragLeft == null) {
+						dragLeft = d;
+					}
+				} else if (dragRight == null) {
+					dragRight = d;
+				}
 				break;
 			}
 		}
 	}
 
 	private void onStartDragPanelSide(int mouseX, int mouseY) {
-		if (drag == null) {
-			drag = new Drag((x, y, mX, mY) -> {
+		if (dragLeft == null) {
+			dragLeft = new Drag((x, y, mX, mY) -> {
 				if (draggingPanels == null) {
 					calcResizePanel(mouseX, mouseY);
 				}
@@ -498,24 +520,29 @@ public class EliteMainwindow extends GuiScreen {
 		}
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();
-		if (mouseButton == 0) {
-			if (drag != null) {
-				drag.stop(false);
-				drag = null;
-			} else if (!menuBar.mouseReleased(mouseX, mouseY, mouseButton)) {
-				if (dropDownList != null) {
-					if (!dropDownList.mouseReleased(mouseX, mouseY, mouseButton)) {
-						dropDownList = null;
-						menuBar.onListClosed();
-					} else {
-						return;
-					}
+
+		if (!menuBar.mouseReleased(mouseX, mouseY, mouseButton)) {
+			if (dropDownList != null) {
+				if (!dropDownList.mouseReleased(mouseX, mouseY, mouseButton)) {
+					dropDownList = null;
+					menuBar.onListClosed();
 				} else {
-					for (PanelGroup g : panels) {
-						g.onMouseReleased(mouseX, mouseY, mouseButton);
-					}
+					return;
+				}
+			} else {
+				for (PanelGroup g : panels) {
+					g.onMouseReleased(mouseX, mouseY, mouseButton);
 				}
 			}
+		}
+		if (mouseButton == 0) {
+			if (dragLeft != null) {
+				dragLeft.stop(false);
+				dragLeft = null;
+			}
+		} else if (dragRight != null) {
+			dragRight.stop(false);
+			dragRight = null;
 		}
 	}
 

@@ -38,11 +38,11 @@ public class DropDownList implements IDropDownList {
 	}
 
 	@Override
-	public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		if (mouseButton != 0) {
-			return true;
+	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		if (!isMouseInList(mouseX, mouseY)) {
+			return null;
 		}
-		return isMouseInList(mouseX, mouseY);
+		return Drag.EMPTY;
 	}
 
 	@Override

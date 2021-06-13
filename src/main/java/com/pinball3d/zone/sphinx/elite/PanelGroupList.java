@@ -102,11 +102,11 @@ public class PanelGroupList implements IDropDownList {
 	}
 
 	@Override
-	public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		if (mouseButton != 0) {
-			return true;
+	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton) {
+		if (!isMouseInList(mouseX, mouseY)) {
+			return null;
 		}
-		return isMouseInList(mouseX, mouseY);
+		return Drag.EMPTY;
 	}
 
 	@Override
@@ -242,6 +242,9 @@ public class PanelGroupList implements IDropDownList {
 					}
 				}
 			}
+			if (cursorIndex2 == cursorIndex) {
+				cursorIndex2 = -2;
+			}
 			break;
 		case Keyboard.KEY_RIGHT:
 			if (GuiScreen.isShiftKeyDown()) {
@@ -287,6 +290,9 @@ public class PanelGroupList implements IDropDownList {
 					}
 				}
 			}
+			if (cursorIndex2 == cursorIndex) {
+				cursorIndex2 = -2;
+			}
 			break;
 		case Keyboard.KEY_RETURN:
 			if (chosenIndex < 0) {
@@ -330,10 +336,6 @@ public class PanelGroupList implements IDropDownList {
 			if (cursorIndex < text.length() - 1) {
 				text = text.substring(0, cursorIndex + 1)
 						+ (cursorIndex >= text.length() - 2 ? "" : text.substring(cursorIndex + 2));
-				int leftWidth = FontHandler
-						.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
-				int rightWidth = FontHandler
-						.getStringWidth(new FormattedString(text.substring(cursorIndex + 1), false));
 				int w = FontHandler.getStringWidth(new FormattedString(text, false));
 				int width = getWidth();
 				if (w <= width - 14) {

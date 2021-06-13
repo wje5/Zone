@@ -11,7 +11,7 @@ public interface IDropDownList {
 
 	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY);
 
-	public boolean mouseClicked(int mouseX, int mouseY, int mouseButton);
+	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton);
 
 	public boolean mouseReleased(int mouseX, int mouseY, int mouseButton);
 
