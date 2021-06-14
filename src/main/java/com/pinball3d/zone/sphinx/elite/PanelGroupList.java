@@ -19,7 +19,7 @@ public class PanelGroupList implements IDropDownList {
 	private EliteMainwindow parent;
 	private PanelGroup parentGroup;
 	private int chosenIndex = -1, cursorIndex = -1, cursorIndex2 = -2, textOffset = 0;
-	private boolean isText = true, hoverText;
+	private boolean isText = true, hoverText, init;
 	private List<Panel> list, list2;
 	private String text = "";
 
@@ -32,6 +32,10 @@ public class PanelGroupList implements IDropDownList {
 
 	@Override
 	public void doRender(int mouseX, int mouseY) {
+		if (!init) {
+			init = true;
+			computeChosenIndex(mouseX, mouseY);
+		}
 		updateList();
 		int width = getWidth();
 		int height = getHeight();
@@ -106,6 +110,13 @@ public class PanelGroupList implements IDropDownList {
 		if (!isMouseInList(mouseX, mouseY)) {
 			return null;
 		}
+		if (mouseButton == 0 && isText) {
+			return new Drag((x, y, moveX, moveY) -> {
+
+			}, cancel -> {
+
+			});
+		}
 		return Drag.EMPTY;
 	}
 
@@ -157,8 +168,10 @@ public class PanelGroupList implements IDropDownList {
 				parentGroup.getPanels().remove(p);
 				parentGroup.getPanels().add(0, p);
 				parentGroup.setChosenIndex(0);
+				parentGroup.calcPanelGroup(mouseX, mouseY);
 			} else {
 				parentGroup.setChosenIndex(parentGroup.getPanels().indexOf(list2.get(chosenIndex - list.size())));
+				parentGroup.calcPanelGroup(mouseX, mouseY);
 			}
 			parent.setDropDownList(null);
 			return true;

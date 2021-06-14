@@ -334,6 +334,8 @@ public class EliteMainwindow extends GuiScreen {
 				if (mouseButton == 0) {
 					if (dragLeft == null) {
 						dragLeft = d;
+					} else {
+						System.out.println(dragLeft);
 					}
 				} else if (dragRight == null) {
 					dragRight = d;

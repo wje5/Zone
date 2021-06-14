@@ -336,16 +336,17 @@ public class PanelGroup {
 
 			});
 		} else if (hoverRemain) {
+			System.out.println(mouseButton);
 			dragX = mouseX;
 			dragY = mouseY;
 			return new Drag((x, y, mX, mY) -> {
 				dragX = x;
 				dragY = y;
 			}, cancel -> {
+				System.out.println(cancel);
 				if (!cancel && hoverRemain) {
 					PanelGroupList l = new PanelGroupList(parent, this,
 							Arrays.stream(Arrays.copyOf(panelsWidth, panels.size() - remain)).sum() + getX() + 11, 51);
-					;
 					if (l.getX() + l.getWidth() > parent.getWidth()) {
 						int lX = parent.getWidth() - l.getWidth();
 						l.setX(lX < 0 ? 0 : lX);

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 public class FormattedString {
 	private StringComponent[] components;
+	public static final FormattedString EMPTY = new FormattedString("", false);
 
 	public FormattedString(String text) {
 		this(text, true);

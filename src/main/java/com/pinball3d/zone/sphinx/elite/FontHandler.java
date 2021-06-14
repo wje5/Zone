@@ -51,8 +51,8 @@ public class FontHandler {
 		Font font = c.italic ? c.bold ? FontHandler.BOLD_ITALIC : FontHandler.ITALIC
 				: c.bold ? FontHandler.BOLD : FontHandler.NORMAL;
 		int w = 0;
-		for (char i : c.text.toCharArray()) {
-			w += getCharWidth(i, font);
+		for (int i = 0; i < c.text.length(); i++) {
+			w += getCharWidth(c.text.charAt(i), font);
 		}
 		return w;
 	}
@@ -61,6 +61,9 @@ public class FontHandler {
 		int w = 0;
 		for (int i = 0; i < s.getComponentsSize(); i++) {
 			StringComponent c = s.get(i);
+			if (c == null) {
+				return 0;
+			}
 			w += getStringComponentWidth(c);
 		}
 		return w;
@@ -99,11 +102,14 @@ public class FontHandler {
 				if (!s.isEmpty()) {
 					s = s.substring(0, s.length() - 1) + "…";
 				}
-				StringComponent[] a = new StringComponent[text.getComponentsSize()];
+				StringComponent[] a = new StringComponent[text.getComponentsSize() - 1];
 				for (int i = 0; i < text.getComponentsSize() - 2; i++) {
 					a[i] = text.get(i);
 				}
 				a[text.getComponentsSize() - 2] = new StringComponent(s, c.color, c.bold, c.italic, c.underline);
+				text = new FormattedString(a);
+			} else {
+				return FormattedString.EMPTY;
 			}
 		}
 		return text;
