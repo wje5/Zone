@@ -186,6 +186,10 @@ public class EliteMainwindow extends GuiScreen {
 				}
 			}
 		}
+		Minecraft mc = Minecraft.getMinecraft();
+		if (mouseX <= 0 || mouseX >= mc.displayWidth - 1 || mouseY <= 1 || mouseY >= mc.displayHeight) {
+			type = null;
+		}
 		MouseHandler.changeMouse(type);
 	}
 
@@ -528,8 +532,6 @@ public class EliteMainwindow extends GuiScreen {
 				if (!dropDownList.mouseReleased(mouseX, mouseY, mouseButton)) {
 					dropDownList = null;
 					menuBar.onListClosed();
-				} else {
-					return;
 				}
 			} else {
 				for (PanelGroup g : panels) {

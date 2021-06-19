@@ -343,7 +343,6 @@ public class PanelGroup {
 				dragX = x;
 				dragY = y;
 			}, cancel -> {
-				System.out.println(cancel);
 				if (!cancel && hoverRemain) {
 					PanelGroupList l = new PanelGroupList(parent, this,
 							Arrays.stream(Arrays.copyOf(panelsWidth, panels.size() - remain)).sum() + getX() + 11, 51);
