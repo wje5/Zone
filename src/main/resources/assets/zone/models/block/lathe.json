@@ -8,12 +8,12 @@
         }
     },
     "textures": {
-        "particle": "zone:blocks/charger_front_off_2",
-        "down": "zone:blocks/machine_buttom_2",
-        "up": "zone:blocks/charger_top_off_2",
-        "north": "zone:blocks/charger_front_off_2",
-        "east": "zone:blocks/charger_left_off_2",
-        "south": "zone:blocks/charger_back_off_2",
-        "west": "zone:blocks/charger_right_off_2"
+        "particle": "zone:blocks/elec_furnace_front_off_3",
+        "down": "zone:blocks/elec_furnace_top_off_3",
+        "up": "zone:blocks/elec_furnace_top_off_3",
+        "north": "zone:blocks/elec_furnace_front_off_3",
+        "east": "zone:blocks/elec_furnace_left_off_3",
+        "south": "zone:blocks/elec_furnace_back_off_3",
+        "west": "zone:blocks/elec_furnace_left_off_3"
     }
 }

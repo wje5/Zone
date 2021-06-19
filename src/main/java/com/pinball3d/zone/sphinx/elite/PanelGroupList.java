@@ -259,17 +259,114 @@ public class PanelGroupList implements IDropDownList {
 		computeChosenIndex(mouseX, mouseY);
 	}
 
+	public String deleteChosen() {
+		if (cursorIndex2 != -2) {
+			int min = 0, max = 0;
+			String removed = null;
+			if (cursorIndex > cursorIndex2) {
+				min = cursorIndex2;
+				max = cursorIndex;
+				removed = text.substring(min + 1, max + 1);
+				textOffset -= FontHandler.getStringWidth(new FormattedString(removed, false));
+			} else {
+				min = cursorIndex;
+				max = cursorIndex2;
+				removed = text.substring(min + 1, max + 1);
+			}
+			text = (min < 0 ? "" : text.substring(0, min + 1))
+					+ ((max >= text.length() - 1 ? "" : text.substring(max + 1)));
+			cursorIndex = min;
+			cursorIndex2 = -2;
+			int cursorOffset = FontHandler
+					.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
+			while (cursorOffset < textOffset) {
+				textOffset -= 50;
+				if (textOffset < 0) {
+					textOffset = 0;
+					break;
+				}
+			}
+			int w = FontHandler.getStringWidth(new FormattedString(text, false));
+			int width = getWidth();
+			if (textOffset > w - width + 14) {
+				textOffset = w - width + 14;
+			} else {
+				while (cursorOffset > textOffset + width - 14) {
+					textOffset += 50;
+					if (textOffset > w - width + 14) {
+						textOffset = w - width + 14;
+						break;
+					}
+				}
+			}
+			if (textOffset < 0) {
+				textOffset = 0;
+			}
+			return removed;
+		}
+		return "";
+	}
+
 	@Override
 	public void keyTyped(char typedChar, int keyCode) {
 		if (GuiScreen.isKeyComboCtrlV(keyCode)) {
 			String s = GuiScreen.getClipboardString();
-			for (int i = 0; i < s.length(); i++) {
-				if (!Util.isValidChar(s.charAt(i), 8)) {
-					return;
+			if (cursorIndex2 != -2) {
+				int min = 0, max = 0;
+				if (cursorIndex > cursorIndex2) {
+					min = cursorIndex2;
+					max = cursorIndex;
+				} else {
+					min = cursorIndex;
+					max = cursorIndex2;
+				}
+				text = (min < 0 ? "" : text.substring(0, min + 1)) + s
+						+ (max >= text.length() - 1 ? "" : text.substring(max + 1));
+				cursorIndex = min + s.length();
+				cursorIndex2 = -2;
+			} else {
+				text = text.substring(0, cursorIndex + 1) + s + text.substring(cursorIndex + 1);
+				cursorIndex += s.length();
+			}
+			int w = FontHandler.getStringWidth(new FormattedString(text, false));
+			int width = getWidth();
+			int cursorOffset = FontHandler
+					.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
+			while (cursorOffset > textOffset + width - 14) {
+				textOffset += 50;
+				if (textOffset > w - width + 14) {
+					textOffset = w - width + 14;
+					break;
 				}
 			}
-			text += s;
 			return;
+		}
+		if (GuiScreen.isKeyComboCtrlX(keyCode)) {
+			if (cursorIndex2 != -2) {
+				String s = deleteChosen();
+				System.out.println(s);
+				GuiScreen.setClipboardString(s);
+			}
+			return;
+		}
+		if (GuiScreen.isKeyComboCtrlC(keyCode)) {
+			if (cursorIndex2 != -2) {
+				if (cursorIndex > cursorIndex2) {
+					GuiScreen.setClipboardString(text.substring(cursorIndex2 + 1, cursorIndex + 1));
+				} else {
+					GuiScreen.setClipboardString(text.substring(cursorIndex + 1, cursorIndex2 + 1));
+				}
+			}
+			return;
+		}
+		if (GuiScreen.isKeyComboCtrlA(keyCode)) {
+			cursorIndex = text.length() - 1;
+			cursorIndex2 = -1;
+			int w = FontHandler.getStringWidth(new FormattedString(text, false));
+			int width = getWidth();
+			if (w > width - 14) {
+				textOffset = w - width + 14;
+			}
 		}
 		switch (keyCode) {
 		case Keyboard.KEY_UP:
@@ -398,48 +495,7 @@ public class PanelGroupList implements IDropDownList {
 			break;
 		case Keyboard.KEY_BACK:
 			if (cursorIndex2 != -2) {
-				int min = 0, max = 0;
-				if (cursorIndex > cursorIndex2) {
-					min = cursorIndex2;
-					max = cursorIndex;
-					String removed = text.substring(min, max + 1);
-					textOffset -= FontHandler.getStringWidth(new FormattedString(removed, false));
-				} else {
-					min = cursorIndex;
-					max = cursorIndex2;
-				}
-				text = (min < 0 ? "" : text.substring(0, min + 1))
-						+ ((max >= text.length() - 1 ? "" : text.substring(max + 1)));
-				cursorIndex = min;
-				cursorIndex2 = -2;
-
-				int cursorOffset = FontHandler
-						.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
-				while (cursorOffset < textOffset) {
-					textOffset -= 50;
-					if (textOffset < 0) {
-						textOffset = 0;
-						break;
-					}
-				}
-				int w = FontHandler.getStringWidth(new FormattedString(text, false));
-				int width = getWidth();
-				if (textOffset > w - width + 14) {
-					textOffset = w - width + 14;
-				} else {
-					while (cursorOffset > textOffset + width - 14) {
-						textOffset += 50;
-						if (textOffset > w - width + 14) {
-							textOffset = w - width + 14;
-							break;
-						}
-					}
-				}
-
-				if (textOffset < 0) {
-					textOffset = 0;
-					break;
-				}
+				deleteChosen();
 				break;
 			}
 			if (cursorIndex >= 0) {
@@ -471,48 +527,7 @@ public class PanelGroupList implements IDropDownList {
 			break;
 		case Keyboard.KEY_DELETE:
 			if (cursorIndex2 != -2) {
-				int min = 0, max = 0;
-				if (cursorIndex > cursorIndex2) {
-					min = cursorIndex2;
-					max = cursorIndex;
-					String removed = text.substring(min, max + 1);
-					textOffset -= FontHandler.getStringWidth(new FormattedString(removed, false));
-				} else {
-					min = cursorIndex;
-					max = cursorIndex2;
-				}
-				text = (min < 0 ? "" : text.substring(0, min + 1))
-						+ ((max >= text.length() - 1 ? "" : text.substring(max + 1)));
-				cursorIndex = min;
-				cursorIndex2 = -2;
-
-				int cursorOffset = FontHandler
-						.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
-				while (cursorOffset < textOffset) {
-					textOffset -= 50;
-					if (textOffset < 0) {
-						textOffset = 0;
-						break;
-					}
-				}
-				int w = FontHandler.getStringWidth(new FormattedString(text, false));
-				int width = getWidth();
-				if (textOffset > w - width + 14) {
-					textOffset = w - width + 14;
-				} else {
-					while (cursorOffset > textOffset + width - 14) {
-						textOffset += 50;
-						if (textOffset > w - width + 14) {
-							textOffset = w - width + 14;
-							break;
-						}
-					}
-				}
-
-				if (textOffset < 0) {
-					textOffset = 0;
-					break;
-				}
+				deleteChosen();
 				break;
 			}
 			if (cursorIndex < text.length() - 1) {
@@ -538,9 +553,8 @@ public class PanelGroupList implements IDropDownList {
 						min = cursorIndex;
 						max = cursorIndex2;
 					}
-					text = min < 0 ? ""
-							: text.substring(0, min + 1) + typedChar
-									+ (max >= text.length() - 1 ? "" : text.substring(max + 1));
+					text = (min < 0 ? "" : text.substring(0, min + 1)) + typedChar
+							+ (max >= text.length() - 1 ? "" : text.substring(max + 1));
 					cursorIndex = min + 1;
 					cursorIndex2 = -2;
 				} else {
