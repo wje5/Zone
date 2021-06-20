@@ -8,6 +8,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
+import com.pinball3d.zone.sphinx.elite.history.EventTyping;
+import com.pinball3d.zone.sphinx.elite.history.History;
+import com.pinball3d.zone.sphinx.elite.history.HistoryEvent;
 import com.pinball3d.zone.sphinx.elite.panels.Panel;
 import com.pinball3d.zone.util.Util;
 
@@ -22,6 +25,7 @@ public class PanelGroupList implements IDropDownList {
 	private boolean isText = true, hoverText, init, dragLeft, dragRight, dragText;
 	private List<Panel> list, list2;
 	private String text = "";
+	private History history = new History();
 
 	public PanelGroupList(EliteMainwindow parent, PanelGroup parentGroup, int x, int y) {
 		this.parent = parent;
@@ -307,6 +311,36 @@ public class PanelGroupList implements IDropDownList {
 		return "";
 	}
 
+	public void undo() {
+		cursorIndex2 = -2;
+		HistoryEvent event = history.undo();
+		if (event != null) {
+			switch (event.type) {
+			case TYPING:
+				EventTyping e = (EventTyping) event;
+				text = text.substring(0, e.index) + e.old + text.substring(e.index + e.text.length(), text.length());
+				cursorIndex = e.index + e.old.length() - 1;
+				System.out.println(e.index + "|" + e.old + "|" + e.text);
+				break;
+			}
+		}
+	}
+
+	public void redo() {
+		cursorIndex2 = -2;
+		HistoryEvent event = history.redo();
+		if (event != null) {
+			switch (event.type) {
+			case TYPING:
+				EventTyping e = (EventTyping) event;
+				text = text.substring(0, e.index) + e.text + text.substring(e.index + e.old.length(), text.length());
+				cursorIndex = e.index + e.text.length() - 1;
+				System.out.println(e.index + "|" + e.old + "|" + e.text);
+				break;
+			}
+		}
+	}
+
 	@Override
 	public void keyTyped(char typedChar, int keyCode) {
 		if (GuiScreen.isKeyComboCtrlV(keyCode)) {
@@ -320,13 +354,17 @@ public class PanelGroupList implements IDropDownList {
 					min = cursorIndex;
 					max = cursorIndex2;
 				}
+				String removed = text.substring(min + 1, max + 1);
 				text = (min < 0 ? "" : text.substring(0, min + 1)) + s
 						+ (max >= text.length() - 1 ? "" : text.substring(max + 1));
 				cursorIndex = min + s.length();
 				cursorIndex2 = -2;
+				history.push(new EventTyping(min + 1, removed, s));
 			} else {
 				text = text.substring(0, cursorIndex + 1) + s + text.substring(cursorIndex + 1);
+				history.push(new EventTyping(cursorIndex + 1, "", s));
 				cursorIndex += s.length();
+
 			}
 			int w = FontHandler.getStringWidth(new FormattedString(text, false));
 			int width = getWidth();
@@ -343,8 +381,14 @@ public class PanelGroupList implements IDropDownList {
 		}
 		if (GuiScreen.isKeyComboCtrlX(keyCode)) {
 			if (cursorIndex2 != -2) {
+				if (cursorIndex > cursorIndex2) {
+					history.push(
+							new EventTyping(cursorIndex2 + 1, text.substring(cursorIndex2 + 1, cursorIndex + 1), ""));
+				} else {
+					history.push(
+							new EventTyping(cursorIndex + 1, text.substring(cursorIndex + 1, cursorIndex2 + 1), ""));
+				}
 				String s = deleteChosen();
-				System.out.println(s);
 				GuiScreen.setClipboardString(s);
 			}
 			return;
@@ -367,6 +411,15 @@ public class PanelGroupList implements IDropDownList {
 			if (w > width - 14) {
 				textOffset = w - width + 14;
 			}
+			return;
+		}
+		if (keyCode == Keyboard.KEY_Z && GuiScreen.isCtrlKeyDown() && !GuiScreen.isShiftKeyDown()
+				&& !GuiScreen.isAltKeyDown()) {
+			undo();
+		}
+		if (keyCode == Keyboard.KEY_Y && GuiScreen.isCtrlKeyDown() && !GuiScreen.isShiftKeyDown()
+				&& !GuiScreen.isAltKeyDown()) {
+			redo();
 		}
 		switch (keyCode) {
 		case Keyboard.KEY_UP:
@@ -495,11 +548,19 @@ public class PanelGroupList implements IDropDownList {
 			break;
 		case Keyboard.KEY_BACK:
 			if (cursorIndex2 != -2) {
+				if (cursorIndex > cursorIndex2) {
+					history.push(
+							new EventTyping(cursorIndex2 + 1, text.substring(cursorIndex2 + 1, cursorIndex + 1), ""));
+				} else {
+					history.push(
+							new EventTyping(cursorIndex + 1, text.substring(cursorIndex + 1, cursorIndex2 + 1), ""));
+				}
 				deleteChosen();
 				break;
 			}
 			if (cursorIndex >= 0) {
 				int charWidth = FontHandler.getCharWidth(text.charAt(cursorIndex), FontHandler.NORMAL);
+				history.push(new EventTyping(cursorIndex, text.substring(cursorIndex, cursorIndex + 1), ""));
 				text = text.substring(0, cursorIndex)
 						+ (cursorIndex >= text.length() - 1 ? "" : text.substring(cursorIndex + 1));
 				cursorIndex--;
@@ -527,10 +588,18 @@ public class PanelGroupList implements IDropDownList {
 			break;
 		case Keyboard.KEY_DELETE:
 			if (cursorIndex2 != -2) {
+				if (cursorIndex > cursorIndex2) {
+					history.push(
+							new EventTyping(cursorIndex2 + 1, text.substring(cursorIndex2 + 1, cursorIndex + 1), ""));
+				} else {
+					history.push(
+							new EventTyping(cursorIndex + 1, text.substring(cursorIndex + 1, cursorIndex2 + 1), ""));
+				}
 				deleteChosen();
 				break;
 			}
 			if (cursorIndex < text.length() - 1) {
+				history.push(new EventTyping(cursorIndex + 1, text.substring(cursorIndex + 1, cursorIndex + 2), ""));
 				text = text.substring(0, cursorIndex + 1)
 						+ (cursorIndex >= text.length() - 2 ? "" : text.substring(cursorIndex + 2));
 				int w = FontHandler.getStringWidth(new FormattedString(text, false));
@@ -553,11 +622,19 @@ public class PanelGroupList implements IDropDownList {
 						min = cursorIndex;
 						max = cursorIndex2;
 					}
+					if (cursorIndex > cursorIndex2) {
+						history.push(new EventTyping(cursorIndex2 + 1,
+								text.substring(cursorIndex2 + 1, cursorIndex + 1), "" + typedChar));
+					} else {
+						history.push(new EventTyping(cursorIndex + 1, text.substring(cursorIndex + 1, cursorIndex2 + 1),
+								"" + typedChar));
+					}
 					text = (min < 0 ? "" : text.substring(0, min + 1)) + typedChar
 							+ (max >= text.length() - 1 ? "" : text.substring(max + 1));
 					cursorIndex = min + 1;
 					cursorIndex2 = -2;
 				} else {
+					history.push(new EventTyping(cursorIndex + 1, "", "" + typedChar));
 					text = text.substring(0, cursorIndex + 1) + typedChar + text.substring(cursorIndex + 1);
 					cursorIndex++;
 				}

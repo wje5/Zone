@@ -39,7 +39,6 @@ public class EliteMainwindow extends GuiScreen {
 	private Drag dragLeft, dragRight;
 	private boolean inited;
 	private List<Set<PanelGroup>> draggingPanels;
-	private History history = new History();
 
 	public static EliteMainwindow getWindow() {
 		GuiScreen s = Minecraft.getMinecraft().currentScreen;
