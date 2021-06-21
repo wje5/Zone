@@ -336,7 +336,6 @@ public class PanelGroup {
 
 			});
 		} else if (hoverRemain) {
-			System.out.println(mouseButton);
 			dragX = mouseX;
 			dragY = mouseY;
 			return new Drag((x, y, mX, mY) -> {

@@ -12,7 +12,6 @@ import com.pinball3d.zone.sphinx.elite.history.EventTyping;
 import com.pinball3d.zone.sphinx.elite.history.History;
 import com.pinball3d.zone.sphinx.elite.history.HistoryEvent;
 import com.pinball3d.zone.sphinx.elite.panels.Panel;
-import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -320,7 +319,24 @@ public class PanelGroupList implements IDropDownList {
 				EventTyping e = (EventTyping) event;
 				text = text.substring(0, e.index) + e.old + text.substring(e.index + e.text.length(), text.length());
 				cursorIndex = e.index + e.old.length() - 1;
-				System.out.println(e.index + "|" + e.old + "|" + e.text);
+				int width = getWidth();
+				int cursorOffset = FontHandler
+						.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
+				int w = FontHandler.getStringWidth(new FormattedString(text, false));
+				while (cursorOffset > textOffset + width - 14) {
+					textOffset += 50;
+					if (textOffset > w - width + 14) {
+						textOffset = w - width + 14;
+						break;
+					}
+				}
+				while (cursorOffset < textOffset) {
+					textOffset -= 50;
+					if (textOffset < 0) {
+						textOffset = 0;
+						break;
+					}
+				}
 				break;
 			}
 		}
@@ -335,7 +351,24 @@ public class PanelGroupList implements IDropDownList {
 				EventTyping e = (EventTyping) event;
 				text = text.substring(0, e.index) + e.text + text.substring(e.index + e.old.length(), text.length());
 				cursorIndex = e.index + e.text.length() - 1;
-				System.out.println(e.index + "|" + e.old + "|" + e.text);
+				int width = getWidth();
+				int cursorOffset = FontHandler
+						.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
+				int w = FontHandler.getStringWidth(new FormattedString(text, false));
+				while (cursorOffset > textOffset + width - 14) {
+					textOffset += 50;
+					if (textOffset > w - width + 14) {
+						textOffset = w - width + 14;
+						break;
+					}
+				}
+				while (cursorOffset < textOffset) {
+					textOffset -= 50;
+					if (textOffset < 0) {
+						textOffset = 0;
+						break;
+					}
+				}
 				break;
 			}
 		}
@@ -612,7 +645,7 @@ public class PanelGroupList implements IDropDownList {
 			}
 			break;
 		default:
-			if (isText && Util.isValidChar(typedChar, 8)) {
+			if (isText) {
 				if (cursorIndex2 != -2) {
 					int min = 0, max = 0;
 					if (cursorIndex > cursorIndex2) {
