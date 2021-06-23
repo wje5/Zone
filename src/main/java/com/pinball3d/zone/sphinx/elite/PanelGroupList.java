@@ -2,6 +2,7 @@ package com.pinball3d.zone.sphinx.elite;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
@@ -22,7 +23,7 @@ public class PanelGroupList implements IDropDownList {
 	private PanelGroup parentGroup;
 	private int chosenIndex = -1, cursorIndex = -1, cursorIndex2 = -2, textOffset = 0, dragX, dragY;
 	private boolean isText = true, hoverText, init, dragLeft, dragRight, dragText;
-	private List<Panel> list, list2;
+	private List<Panel> list = new ArrayList<Panel>(), list2 = new ArrayList<Panel>();
 	private String text = "";
 	private History history = new History();
 
@@ -105,10 +106,24 @@ public class PanelGroupList implements IDropDownList {
 	public void updateList() {
 		list = new ArrayList<Panel>(parentGroup.getPanels()
 				.subList(parentGroup.getPanels().size() - parentGroup.getRemain(), parentGroup.getPanels().size()));
-		Collections.sort(list, (a, b) -> a.getName().toString().compareTo(b.getName().toString()));
 		list2 = new ArrayList<Panel>(
 				parentGroup.getPanels().subList(0, parentGroup.getPanels().size() - parentGroup.getRemain()));
+		Iterator<Panel> it = list.iterator();
+		while (it.hasNext()) {
+			Panel p = it.next();
+			if (!p.getName().toString().startsWith(text)) {
+				it.remove();
+			}
+		}
+		it = list2.iterator();
+		while (it.hasNext()) {
+			Panel p = it.next();
+			if (!p.getName().toString().startsWith(text)) {
+				it.remove();
+			}
+		}
 		Collections.sort(list2, (a, b) -> a.getName().toString().compareTo(b.getName().toString()));
+		Collections.sort(list, (a, b) -> a.getName().toString().compareTo(b.getName().toString()));
 	}
 
 	@Override
@@ -701,7 +716,7 @@ public class PanelGroupList implements IDropDownList {
 			}
 			if (mouseX >= x + 6 && mouseX <= x + w - 6 && mouseY >= y + 44 && mouseY <= y + h - 5) {
 				int yOffset = y + 44;
-				for (int i = 0; i < parentGroup.getPanels().size(); i++) {
+				for (int i = 0; i < list.size() + list2.size(); i++) {
 					if (mouseY >= yOffset && mouseY <= yOffset + 22 && (i != old || isText)) {
 						chosenIndex = i;
 						return true;
