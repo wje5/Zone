@@ -70,7 +70,7 @@ public class ModelRender {
 						+ Math.max(Math.max(y1, y2), Math.max(y3, y4))) / 2;
 				float zCenter = (Math.min(Math.min(z1, z2), Math.min(z3, z4))
 						+ Math.max(Math.max(z1, z2), Math.max(z3, z4))) / 2;
-				float light = 1 - LightUtil.diffuseLight(xCenter, yCenter, zCenter);
+				float light = LightUtil.diffuseLight(xCenter, yCenter, zCenter);
 				float lr = r * light, lg = g * light, lb = b * light;
 				bufferbuilder.pos(x1, y1, z1).color(lr, lg, lb, a).endVertex();
 				bufferbuilder.pos(x2, y2, z2).color(lr, lg, lb, a).endVertex();
@@ -177,6 +177,17 @@ public class ModelRender {
 				list.add(getPoint(fs[i * 3], fs[i * 3 + 1], fs[i * 3 + 2]));
 			}
 			polygons.add(list);
+		}
+
+		public static Model createCube(float size) {
+			Model model = new Model();
+			model.addQuad(0, 0, 0, 0, size, 0, size, size, 0, size, 0, 0);
+			model.addQuad(0, 0, size, size, 0, size, size, size, size, 0, size, size);
+			model.addQuad(0, 0, 0, 0, 0, size, 0, size, size, 0, size, 0);
+			model.addQuad(size, 0, size, size, 0, 0, size, size, 0, size, size, size);
+			model.addQuad(0, 0, 0, size, 0, 0, size, 0, size, 0, 0, size);
+			model.addQuad(0, size, size, size, size, size, size, size, 0, 0, size, 0);
+			return model;
 		}
 	}
 }

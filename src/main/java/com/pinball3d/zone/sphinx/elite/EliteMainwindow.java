@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
 import com.pinball3d.zone.sphinx.elite.DropDownList.DividerBar;
@@ -114,8 +115,6 @@ public class EliteMainwindow extends GuiScreen {
 
 	@Override
 	public void drawScreen(int mX, int mY, float partialTicks) {
-		float xScale = width * 1.0F / getWidth();
-		float yScale = height * 1.0F / getHeight();
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();
 		if (mouseX != this.lastX || mouseY != this.lastY) {
@@ -123,21 +122,30 @@ public class EliteMainwindow extends GuiScreen {
 			int moveY = mouseY - this.lastY;
 			onMouseMoved(this.lastX = mouseX, this.lastY = mouseY, moveX, moveY);
 		}
+		GlStateManager.matrixMode(GL11.GL_PROJECTION);
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(0, 0, 50F);
-		GlStateManager.scale(xScale, yScale, 1.0F);
+		GlStateManager.loadIdentity();
+		GlStateManager.ortho(0, getWidth(), getHeight(), 0, 1000.0D, 3000.0D);
+		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+		GlStateManager.pushMatrix();
+		GlStateManager.loadIdentity();
+		GlStateManager.translate(0, 0, -2000F);
 		EliteRenderHelper.drawRect(0, 0, getWidth(), getHeight(), Color.BACKGROUND);
 		menuBar.doRender(mouseX, mouseY);
 		buttomBar.doRender(mouseX, mouseY);
-		panels.forEach(e -> e.doRenderPre(mouseX, mouseY));
-		panels.forEach(e -> e.doRender(mouseX, mouseY));
-		panels.forEach(e -> e.doRenderPost(mouseX, mouseY));
+		panels.forEach(e -> e.doRenderPre(mouseX, mouseY, partialTicks));
+		panels.forEach(e -> e.doRender(mouseX, mouseY, partialTicks));
+		panels.forEach(e -> e.doRenderPost(mouseX, mouseY, partialTicks));
 		if (dropDownList != null) {
 			dropDownList.doRender(mouseX, mouseY);
 		}
 		updateMouse(mouseX, mouseY);
 		MouseHandler.renderMouse();
 		GlStateManager.popMatrix();
+		GlStateManager.matrixMode(GL11.GL_PROJECTION);
+		GlStateManager.popMatrix();
+		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 	}
 
 	public void updateMouse(int mouseX, int mouseY) {
