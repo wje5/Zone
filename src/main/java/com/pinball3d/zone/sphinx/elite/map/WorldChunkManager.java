@@ -15,8 +15,8 @@ public class WorldChunkManager {
 	public WorldChunkManager(World worldIn, int renderDistanceChunks, MapRenderManager renderManager) {
 		this.renderManager = renderManager;
 		this.world = worldIn;
-		this.setCountChunksXYZ(renderDistanceChunks);
-		this.createRenderChunks();
+		setCountChunksXYZ(renderDistanceChunks);
+		createRenderChunks();
 	}
 
 	public void createRenderChunks() {

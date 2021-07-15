@@ -22,7 +22,8 @@ public class ClassTransformerZone implements IClassTransformer {
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
 		try {
-			if (transformedName.equals("net.minecraft.client.renderer.EntityRenderer")) {
+			switch (transformedName) {
+			case "net.minecraft.client.renderer.EntityRenderer":
 				ClassReader reader = new ClassReader(basicClass);
 				ClassNode node = new ClassNode();
 				reader.accept(node, 0);
@@ -52,6 +53,37 @@ public class ClassTransformerZone implements IClassTransformer {
 					}
 				}
 				ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+				node.accept(writer);
+				return writer.toByteArray();
+			case "net.minecraft.client.renderer.BlockModelRenderer":
+				reader = new ClassReader(basicClass);
+				node = new ClassNode();
+				reader.accept(node, 0);
+				it = node.methods.iterator();
+				while (it.hasNext()) {
+					MethodNode method = it.next();
+					if (method.name.equals("renderModelSmooth") || (method.name.equals("b"))) {
+						LabelNode label = new LabelNode();
+						InsnList list = new InsnList();
+//						list.add(label);
+//						list.add(new InsnNode(Opcodes.RETURN));
+//						method.instructions.insert(method.instructions.getLast(), list);
+//						InsnList list2 = new InsnList();
+//						list2.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+//								LoadingPluginZone.runtimeDeobf ? "bib;" : "net/minecraft/client/Minecraft",
+//								LoadingPluginZone.runtimeDeobf ? "b" : "getMinecraft",
+//								LoadingPluginZone.runtimeDeobf ? "()Lbib;" : "()Lnet/minecraft/client/Minecraft;"));
+//						list2.add(new FieldInsnNode(Opcodes.GETFIELD,
+//								LoadingPluginZone.runtimeDeobf ? "bib" : "net/minecraft/client/Minecraft",
+//								LoadingPluginZone.runtimeDeobf ? "m" : "currentScreen",
+//								LoadingPluginZone.runtimeDeobf ? "Lblk;" : "Lnet/minecraft/client/gui/GuiScreen;"));
+//						list2.add(new TypeInsnNode(Opcodes.INSTANCEOF,
+//								"com/pinball3d/zone/sphinx/elite/EliteMainwindow"));
+//						list2.add(new JumpInsnNode(Opcodes.IFNE, label));
+//						method.instructions.insertBefore(method.instructions.getFirst(), list2);
+					}
+				}
+				writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 				node.accept(writer);
 				return writer.toByteArray();
 			}

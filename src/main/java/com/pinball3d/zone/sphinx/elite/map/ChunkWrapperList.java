@@ -29,12 +29,12 @@ public class ChunkWrapperList {
 	}
 
 	public void addChunk(ChunkWrapper chunk, BlockRenderLayer layer) {
-		this.chunks.add(chunk);
+		chunks.add(chunk);
 	}
 
 	public void renderChunkLayer(BlockRenderLayer layer) {
 		if (this.inited) {
-			for (ChunkWrapper renderchunk : this.chunks) {
+			for (ChunkWrapper renderchunk : chunks) {
 				GlStateManager.pushMatrix();
 				preRenderChunk(renderchunk);
 				GlStateManager.callList(renderchunk.getDisplayList(layer, renderchunk.getCompiledChunk()));

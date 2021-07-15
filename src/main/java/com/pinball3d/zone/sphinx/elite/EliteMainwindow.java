@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -115,6 +116,7 @@ public class EliteMainwindow extends GuiScreen {
 
 	@Override
 	public void drawScreen(int mX, int mY, float partialTicks) {
+		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();
 		if (mouseX != this.lastX || mouseY != this.lastY) {
@@ -209,6 +211,15 @@ public class EliteMainwindow extends GuiScreen {
 					dropDownList = null;
 				}
 			} else if (menuBar.onQuit()) {
+				Iterator<PanelGroup> it = panels.iterator();
+				while (it.hasNext()) {
+					Iterator<Panel> it2 = it.next().getPanels().iterator();
+					while (it2.hasNext()) {
+						if (!it2.next().canQuit()) {
+							return;
+						}
+					}
+				}
 				super.keyTyped(typedChar, keyCode);
 			}
 		} else if (keyCode == Keyboard.KEY_LMENU) {
@@ -585,6 +596,7 @@ public class EliteMainwindow extends GuiScreen {
 
 	@Override
 	public void onGuiClosed() {
+		panels.forEach(e -> e.getPanels().forEach(p -> p.close()));
 		MouseHandler.changeMouse(null);
 		Keyboard.enableRepeatEvents(false);
 		super.onGuiClosed();

@@ -29,8 +29,12 @@ public class Panel {
 
 	}
 
-	public boolean onQuit() {
+	public boolean canQuit() {
 		return true;
+	}
+
+	public void close() {
+
 	}
 
 	public boolean keyTyped(char typedChar, int keyCode) {

@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.chunk.CompiledChunk;
 
 public class ChunkRenderTaskWrapper implements Comparable<ChunkRenderTaskWrapper> {
 	private MapRenderManager renderManager;
-	private ChunkWrapper wrapper;
+	private ChunkWrapper chunk;
 	private Type type;
 	private Status status = Status.PENDING;
 	private CompiledChunk compiledChunk;
@@ -23,9 +23,9 @@ public class ChunkRenderTaskWrapper implements Comparable<ChunkRenderTaskWrapper
 	private double distanceSq;
 	private RegionRenderCacheBuilder cacheBuilder;
 
-	public ChunkRenderTaskWrapper(MapRenderManager renderManager, ChunkWrapper wrapper, Type type, double distanceSq) {
+	public ChunkRenderTaskWrapper(MapRenderManager renderManager, ChunkWrapper chunk, Type type, double distanceSq) {
 		this.renderManager = renderManager;
-		this.wrapper = wrapper;
+		this.chunk = chunk;
 		this.type = type;
 		this.distanceSq = distanceSq;
 	}
@@ -34,8 +34,8 @@ public class ChunkRenderTaskWrapper implements Comparable<ChunkRenderTaskWrapper
 		return status;
 	}
 
-	public ChunkWrapper getWrapper() {
-		return wrapper;
+	public ChunkWrapper getChunk() {
+		return chunk;
 	}
 
 	public CompiledChunk getCompiledChunk() {
@@ -67,7 +67,7 @@ public class ChunkRenderTaskWrapper implements Comparable<ChunkRenderTaskWrapper
 		lock.lock();
 		try {
 			if (type == Type.REBUILD_CHUNK && status != Status.DONE) {
-				wrapper.setNeedsUpdate(false);
+				chunk.setNeedsUpdate(false);
 			}
 			finished = true;
 			status = Status.DONE;

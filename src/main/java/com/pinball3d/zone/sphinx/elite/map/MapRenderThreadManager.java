@@ -8,6 +8,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
+import org.lwjgl.opengl.GL11;
+
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import com.google.common.util.concurrent.Futures;
@@ -190,10 +192,10 @@ public class MapRenderThreadManager {
 	}
 
 	private void uploadDisplayList(BufferBuilder builder, int list, ChunkWrapper wrapper) {
-		GlStateManager.glNewList(list, 4864);
+		GlStateManager.glNewList(list, GL11.GL_COMPILE);
 		GlStateManager.pushMatrix();
 		wrapper.multModelviewMatrix();
-		this.worldVertexUploader.draw(builder);
+		worldVertexUploader.draw(builder);
 		GlStateManager.popMatrix();
 		GlStateManager.glEndList();
 	}

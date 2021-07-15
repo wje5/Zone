@@ -26,7 +26,7 @@ import net.minecraft.world.World;
 public class MapRenderThread extends Thread {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private MapRenderManager renderManager;
-	private boolean shouldRun;
+	private boolean shouldRun = true;
 	private MapRenderThreadManager manager;
 	private RegionRenderCacheBuilder regionRenderCacheBuilder;
 
@@ -66,9 +66,9 @@ public class MapRenderThread extends Thread {
 				return;
 			}
 			BlockPos blockpos = new BlockPos(Minecraft.getMinecraft().player);// TODO change to camera pos
-			BlockPos blockpos1 = wrapper.getWrapper().getPosition();
+			BlockPos blockpos1 = wrapper.getChunk().getPosition();
 			if (blockpos1.add(8, 8, 8).distanceSq(blockpos) > 576.0D) {
-				World world = wrapper.getWrapper().getWorld();
+				World world = wrapper.getChunk().getWorld();
 				BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(blockpos1);
 				if (!isChunkExisting(pos.setPos(blockpos1).move(EnumFacing.WEST, 16), world)
 						|| !isChunkExisting(pos.setPos(blockpos1).move(EnumFacing.NORTH, 16), world)
@@ -88,9 +88,9 @@ public class MapRenderThread extends Thread {
 		ChunkCompileTaskGenerator.Type type = wrapper.getType();
 
 		if (type == ChunkCompileTaskGenerator.Type.REBUILD_CHUNK) {
-			wrapper.getWrapper().rebuildChunk(f, f1, f2, wrapper);
+			wrapper.getChunk().rebuildChunk(f, f1, f2, wrapper);
 		} else if (type == ChunkCompileTaskGenerator.Type.RESORT_TRANSPARENCY) {
-			wrapper.getWrapper().resortTransparency(f, f1, f2, wrapper);
+			wrapper.getChunk().resortTransparency(f, f1, f2, wrapper);
 		}
 
 		wrapper.getLock().lock();
@@ -113,17 +113,16 @@ public class MapRenderThread extends Thread {
 		List<ListenableFuture<Object>> list = Lists.newArrayList();
 
 		if (type == ChunkCompileTaskGenerator.Type.REBUILD_CHUNK) {
-			for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values()) {
-				if (compiledchunk.isLayerStarted(blockrenderlayer)) {
-					list.add(manager.uploadChunk(blockrenderlayer,
-							wrapper.getCacheBuilder().getWorldRendererByLayer(blockrenderlayer), wrapper.getWrapper(),
-							compiledchunk, wrapper.getDistanceSq()));
+			for (BlockRenderLayer layer : BlockRenderLayer.values()) {
+				if (compiledchunk.isLayerStarted(layer)) {
+					list.add(manager.uploadChunk(layer, wrapper.getCacheBuilder().getWorldRendererByLayer(layer),
+							wrapper.getChunk(), compiledchunk, wrapper.getDistanceSq()));
 				}
 			}
 		} else if (type == ChunkCompileTaskGenerator.Type.RESORT_TRANSPARENCY) {
 			list.add(manager.uploadChunk(BlockRenderLayer.TRANSLUCENT,
-					wrapper.getCacheBuilder().getWorldRendererByLayer(BlockRenderLayer.TRANSLUCENT),
-					wrapper.getWrapper(), compiledchunk, wrapper.getDistanceSq()));
+					wrapper.getCacheBuilder().getWorldRendererByLayer(BlockRenderLayer.TRANSLUCENT), wrapper.getChunk(),
+					compiledchunk, wrapper.getDistanceSq()));
 		}
 
 		ListenableFuture<List<Object>> listenablefuture = Futures.allAsList(list);
@@ -155,7 +154,7 @@ public class MapRenderThread extends Thread {
 					}
 					return;
 				}
-				wrapper.getWrapper().setCompiledChunk(compiledchunk);
+				wrapper.getChunk().setCompiledChunk(compiledchunk);
 			}
 
 			@Override

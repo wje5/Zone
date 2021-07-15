@@ -283,14 +283,14 @@ public class ChunkWrapper {
 	}
 
 	public void deleteGlResources() {
-		this.stopCompileTask();
-		this.world = null;
+		stopCompileTask();
+		world = null;
 		for (int i = 0; i < BlockRenderLayer.values().length; ++i) {
-			if (this.vertexBuffers[i] != null) {
-				this.vertexBuffers[i].deleteGlBuffers();
+			if (vertexBuffers[i] != null) {
+				vertexBuffers[i].deleteGlBuffers();
 			}
 		}
-		GLAllocation.deleteDisplayLists(this.baseDisplayList, BlockRenderLayer.values().length);
+		GLAllocation.deleteDisplayLists(baseDisplayList, BlockRenderLayer.values().length);
 	}
 
 	public ChunkRenderTaskWrapper makeCompileTaskTransparency() {
@@ -310,7 +310,7 @@ public class ChunkWrapper {
 			}
 			w = null;
 		} finally {
-			this.lockCompileTask.unlock();
+			lockCompileTask.unlock();
 		}
 		return w;
 	}
@@ -320,7 +320,7 @@ public class ChunkWrapper {
 		double d0 = boundingBox.minX + 8.0D - player.posX;
 		double d1 = boundingBox.minY + 8.0D - player.posY;
 		double d2 = boundingBox.minZ + 8.0D - player.posZ;
-		return d0 * d0 + d1 * d1 + d2 * d2;
+		return d0 * d0 + d1 * d1 + d2 * d2;// TODO change to camera
 	}
 
 	private void preRenderBlocks(BufferBuilder buffer, BlockPos pos) {

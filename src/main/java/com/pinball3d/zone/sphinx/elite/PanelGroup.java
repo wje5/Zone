@@ -311,13 +311,16 @@ public class PanelGroup {
 							}
 						} else if (hoverIndex >= 0) {
 							if (hoverQuit) {
-								panels.remove(hoverIndex);
-								if (chosenIndex > panels.size() - 1) {
-									if (panels.isEmpty()) {
-										parent.getPanels().remove(this);
-										expandToRect(getRect());
-									} else {
-										chosenIndex--;
+								if (panels.get(hoverIndex).canQuit()) {
+									panels.get(hoverIndex).close();
+									panels.remove(hoverIndex);
+									if (chosenIndex > panels.size() - 1) {
+										if (panels.isEmpty()) {
+											parent.getPanels().remove(this);
+											expandToRect(getRect());
+										} else {
+											chosenIndex--;
+										}
 									}
 								}
 							} else {
