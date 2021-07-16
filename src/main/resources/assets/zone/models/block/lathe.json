@@ -8,12 +8,12 @@
         }
     },
     "textures": {
-        "particle": "zone:blocks/centrifuge_front_off_3",
-        "down": "zone:blocks/centrifuge_buttom_off_3",
-        "up": "zone:blocks/centrifuge_top_off_3",
-        "north": "zone:blocks/centrifuge_front_off_3",
-        "east": "zone:blocks/centrifuge_left_off_3",
-        "south": "zone:blocks/centrifuge_back_off_3",
-        "west": "zone:blocks/centrifuge_right_off_3"
+        "particle": "zone:blocks/alloy_smelter_front_off_3",
+        "down": "zone:blocks/alloy_smelter_buttom_off_3",
+        "up": "zone:blocks/alloy_smelter_top_off_3",
+        "north": "zone:blocks/alloy_smelter_front_off_3",
+        "east": "zone:blocks/alloy_smelter_left_off_3",
+        "south": "zone:blocks/alloy_smelter_back_off_3",
+        "west": "zone:blocks/alloy_smelter_right_off_3"
     }
 }

@@ -106,6 +106,7 @@ public class EliteMainwindow extends GuiScreen {
 	@Override
 	public void initGui() {
 		if (!inited) {
+			mc.renderGlobal.setWorldAndLoadRenderers(null);
 			applyMenu();
 			applyPanels();
 			buttomBar = new ButtomBar(this);
