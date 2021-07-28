@@ -65,7 +65,7 @@ public class MapRenderThread extends Thread {
 				}
 				return;
 			}
-			BlockPos blockpos = new BlockPos(Minecraft.getMinecraft().player);// TODO change to camera pos
+			BlockPos blockpos = new BlockPos(renderManager.cameraX, renderManager.cameraY, renderManager.cameraZ);
 			BlockPos blockpos1 = wrapper.getChunk().getPosition();
 			if (blockpos1.add(8, 8, 8).distanceSq(blockpos) > 576.0D) {
 				World world = wrapper.getChunk().getWorld();

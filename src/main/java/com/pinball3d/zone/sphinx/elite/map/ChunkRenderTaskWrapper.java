@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.chunk.ChunkCompileTaskGenerator.Type;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 
 public class ChunkRenderTaskWrapper implements Comparable<ChunkRenderTaskWrapper> {
-	private MapRenderManager renderManager;
 	private ChunkWrapper chunk;
 	private Type type;
 	private Status status = Status.PENDING;
@@ -23,8 +22,7 @@ public class ChunkRenderTaskWrapper implements Comparable<ChunkRenderTaskWrapper
 	private double distanceSq;
 	private RegionRenderCacheBuilder cacheBuilder;
 
-	public ChunkRenderTaskWrapper(MapRenderManager renderManager, ChunkWrapper chunk, Type type, double distanceSq) {
-		this.renderManager = renderManager;
+	public ChunkRenderTaskWrapper(ChunkWrapper chunk, Type type, double distanceSq) {
 		this.chunk = chunk;
 		this.type = type;
 		this.distanceSq = distanceSq;

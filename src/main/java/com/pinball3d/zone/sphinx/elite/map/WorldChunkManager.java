@@ -5,11 +5,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class WorldChunkManager {
-	protected final MapRenderManager renderManager;
-	protected final World world;
-	protected int countChunksY;
-	protected int countChunksX;
-	protected int countChunksZ;
+	public final MapRenderManager renderManager;
+	public final World world;
+	public int countChunksY;
+	public int countChunksX;
+	public int countChunksZ;
 	public ChunkWrapper[] renderChunks;
 
 	public WorldChunkManager(World worldIn, int renderDistanceChunks, MapRenderManager renderManager) {
@@ -26,7 +26,7 @@ public class WorldChunkManager {
 			for (int l = 0; l < countChunksY; ++l) {
 				for (int i1 = 0; i1 < countChunksZ; ++i1) {
 					int j1 = (i1 * countChunksY + l) * countChunksX + k;
-					renderChunks[j1] = new ChunkWrapper(renderManager, world);
+					renderChunks[j1] = new ChunkWrapper(world);
 					renderChunks[j1].setPosition(k * 16, l * 16, i1 * 16);
 				}
 			}
@@ -49,14 +49,14 @@ public class WorldChunkManager {
 	public void updateChunkPositions(double viewEntityX, double viewEntityZ) {
 		int i = MathHelper.floor(viewEntityX) - 8;
 		int j = MathHelper.floor(viewEntityZ) - 8;
-		int k = this.countChunksX * 16;
-		for (int l = 0; l < this.countChunksX; ++l) {
-			int i1 = this.getBaseCoordinate(i, k, l);
-			for (int j1 = 0; j1 < this.countChunksZ; ++j1) {
-				int k1 = this.getBaseCoordinate(j, k, j1);
-				for (int l1 = 0; l1 < this.countChunksY; ++l1) {
+		int k = countChunksX * 16;
+		for (int l = 0; l < countChunksX; ++l) {
+			int i1 = getBaseCoordinate(i, k, l);
+			for (int j1 = 0; j1 < countChunksZ; ++j1) {
+				int k1 = getBaseCoordinate(j, k, j1);
+				for (int l1 = 0; l1 < countChunksY; ++l1) {
 					int i2 = l1 * 16;
-					ChunkWrapper renderchunk = this.renderChunks[(j1 * this.countChunksY + l1) * this.countChunksX + l];
+					ChunkWrapper renderchunk = renderChunks[(j1 * countChunksY + l1) * countChunksX + l];
 					renderchunk.setPosition(i1, i2, k1);
 				}
 			}

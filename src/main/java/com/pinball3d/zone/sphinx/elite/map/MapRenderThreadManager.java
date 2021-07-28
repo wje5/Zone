@@ -243,8 +243,8 @@ public class MapRenderThreadManager {
 		}
 
 		@Override
-		public int compareTo(PendingUpload p_compareTo_1_) {
-			return Doubles.compare(this.distanceSq, p_compareTo_1_.distanceSq);
+		public int compareTo(PendingUpload pendingUpload) {
+			return Doubles.compare(distanceSq, pendingUpload.distanceSq);
 		}
 	}
 }

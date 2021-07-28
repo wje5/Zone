@@ -9,6 +9,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.common.collect.Sets;
 import com.pinball3d.zone.core.LoadingPluginZone;
+import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
+import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -24,7 +26,6 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -39,7 +40,6 @@ import net.minecraft.world.chunk.Chunk;
 public class ChunkWrapper {
 	public static int updatedCount;
 	private World world;
-	private MapRenderManager renderManager;
 	private ChunkCache chunkCache;
 	private MutableBlockPos position = new MutableBlockPos(-1, -1, -1);
 	private ReentrantLock lockCompileTask = new ReentrantLock();
@@ -56,8 +56,7 @@ public class ChunkWrapper {
 	private final int baseDisplayList = GLAllocation.generateDisplayLists(BlockRenderLayer.values().length);
 	private static Method method;
 
-	public ChunkWrapper(MapRenderManager renderManager, World world) {
-		this.renderManager = renderManager;
+	public ChunkWrapper(World world) {
 		for (int i = 0; i < mapEnumFacing.length; i++) {
 			mapEnumFacing[i] = new BlockPos.MutableBlockPos();
 		}
@@ -207,8 +206,7 @@ public class ChunkWrapper {
 		ChunkRenderTaskWrapper w;
 		try {
 			finishCompileTask();
-			wrapper = new ChunkRenderTaskWrapper(renderManager, this, ChunkCompileTaskGenerator.Type.REBUILD_CHUNK,
-					getDistanceSq());
+			wrapper = new ChunkRenderTaskWrapper(this, ChunkCompileTaskGenerator.Type.REBUILD_CHUNK, getDistanceSq());
 			rebuildWorldView();
 			w = wrapper;
 		} finally {
@@ -234,10 +232,10 @@ public class ChunkWrapper {
 		CompiledChunk compiledchunk = wrapper.getCompiledChunk();
 
 		if (compiledchunk.getState() != null && !compiledchunk.isLayerEmpty(BlockRenderLayer.TRANSLUCENT)) {
-			preRenderBlocks(wrapper.getCacheBuilder().getWorldRendererByLayer(BlockRenderLayer.TRANSLUCENT), position);
+			preRender(wrapper.getCacheBuilder().getWorldRendererByLayer(BlockRenderLayer.TRANSLUCENT), position);
 			wrapper.getCacheBuilder().getWorldRendererByLayer(BlockRenderLayer.TRANSLUCENT)
 					.setVertexState(compiledchunk.getState());
-			postRenderBlocks(BlockRenderLayer.TRANSLUCENT, x, y, z,
+			postRender(BlockRenderLayer.TRANSLUCENT, x, y, z,
 					wrapper.getCacheBuilder().getWorldRendererByLayer(BlockRenderLayer.TRANSLUCENT), compiledchunk);
 		}
 	}
@@ -302,8 +300,8 @@ public class ChunkWrapper {
 					wrapper.finish();
 					wrapper = null;
 				}
-				wrapper = new ChunkRenderTaskWrapper(renderManager, this,
-						ChunkCompileTaskGenerator.Type.RESORT_TRANSPARENCY, getDistanceSq());
+				wrapper = new ChunkRenderTaskWrapper(this, ChunkCompileTaskGenerator.Type.RESORT_TRANSPARENCY,
+						getDistanceSq());
 				wrapper.setCompiledChunk(compiledChunk);
 				w = wrapper;
 				return w;
@@ -316,26 +314,18 @@ public class ChunkWrapper {
 	}
 
 	public double getDistanceSq() {
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		double d0 = boundingBox.minX + 8.0D - player.posX;
-		double d1 = boundingBox.minY + 8.0D - player.posY;
-		double d2 = boundingBox.minZ + 8.0D - player.posZ;
-		return d0 * d0 + d1 * d1 + d2 * d2;// TODO change to camera
-	}
-
-	private void preRenderBlocks(BufferBuilder buffer, BlockPos pos) {
-		buffer.begin(7, DefaultVertexFormats.BLOCK);
-		buffer.setTranslation((-pos.getX()), (-pos.getY()), (-pos.getZ()));
-	}
-
-	private void postRenderBlocks(BlockRenderLayer layer, float x, float y, float z, BufferBuilder buffer,
-			CompiledChunk chunk) {
-		if (layer == BlockRenderLayer.TRANSLUCENT && !chunk.isLayerEmpty(layer)) {
-			buffer.sortVertexData(x, y, z);
-			chunk.setState(buffer.getVertexState());
+		Minecraft mc = Minecraft.getMinecraft();
+		if (mc.currentScreen instanceof EliteMainwindow) {
+			PanelMap map = ((EliteMainwindow) mc.currentScreen).getMapPanel();
+			if (map != null) {
+				MapRenderManager manager = map.getRenderManager();
+				double d0 = boundingBox.minX + 8.0D - manager.getCameraX();
+				double d1 = boundingBox.minY + 8.0D - manager.getCameraY();
+				double d2 = boundingBox.minZ + 8.0D - manager.getCameraZ();
+				return d0 * d0 + d1 * d1 + d2 * d2;
+			}
 		}
-
-		buffer.finishDrawing();
+		return Integer.MAX_VALUE;
 	}
 
 	public BlockPos getPosition() {

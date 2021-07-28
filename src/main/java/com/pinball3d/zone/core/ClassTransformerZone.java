@@ -31,37 +31,13 @@ public class ClassTransformerZone implements IClassTransformer {
 				Iterator<MethodNode> it = node.methods.iterator();
 				while (it.hasNext()) {
 					MethodNode method = it.next();
-//					if (method.name.equals("renderWorld") || (method.name.equals("b") && method.signature != null
-//							&& method.signature.equals("(FJ)V"))) {
-//						LabelNode label = new LabelNode();
-//						InsnList list = new InsnList();
-//						list.add(label);
-//						list.add(new InsnNode(Opcodes.RETURN));
-//						method.instructions.insert(method.instructions.getLast(), list);
-//						InsnList list2 = new InsnList();
-//						list2.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-//								LoadingPluginZone.runtimeDeobf ? "bib;" : "net/minecraft/client/Minecraft",
-//								LoadingPluginZone.runtimeDeobf ? "b" : "getMinecraft",
-//								LoadingPluginZone.runtimeDeobf ? "()Lbib;" : "()Lnet/minecraft/client/Minecraft;"));
-//						list2.add(new FieldInsnNode(Opcodes.GETFIELD,
-//								LoadingPluginZone.runtimeDeobf ? "bib" : "net/minecraft/client/Minecraft",
-//								LoadingPluginZone.runtimeDeobf ? "m" : "currentScreen",
-//								LoadingPluginZone.runtimeDeobf ? "Lblk;" : "Lnet/minecraft/client/gui/GuiScreen;"));
-//						list2.add(new TypeInsnNode(Opcodes.INSTANCEOF,
-//								"com/pinball3d/zone/sphinx/elite/EliteMainwindow"));
-//						list2.add(new JumpInsnNode(Opcodes.IFNE, label));
-//						method.instructions.insertBefore(method.instructions.getFirst(), list2);
-//					}
 					if (method.name.equals("updateCameraAndRender")
 							|| method.name.equals("a") && method.signature.equals("(FJ)V")) {
 						ListIterator<AbstractInsnNode> it2 = method.instructions.iterator();
-//						LabelNode label = (LabelNode) method.instructions.get(548);
-//						LineNumberNode line1027 = (LineNumberNode) method.instructions.get(322);
 						LabelNode label = null;
 						LineNumberNode line1027 = null;
 						while (it2.hasNext()) {
 							AbstractInsnNode n = it2.next();
-							System.out.println(n);
 							if (n instanceof MethodInsnNode) {
 								MethodInsnNode m = (MethodInsnNode) n;
 								if ((m.owner.equals("net/minecraft/client/renderer/GlStateManager")
@@ -76,14 +52,6 @@ public class ClassTransformerZone implements IClassTransformer {
 									line1027 = (LineNumberNode) n.getNext().getNext().getNext();
 								}
 							}
-//							if (n instanceof LineNumberNode) {
-//								LineNumberNode line = (LineNumberNode) n;
-//								if (line.line == 1027) {
-//									line1027 = line;
-//								} else if (line.line == 1076) {
-//									label = (LabelNode) n.getPrevious();
-//								}
-//							}
 						}
 						InsnList list = new InsnList();
 						list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
@@ -104,32 +72,31 @@ public class ClassTransformerZone implements IClassTransformer {
 				ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 				node.accept(writer);
 				return writer.toByteArray();
-			case "net.minecraft.client.renderer.BlockModelRenderer":
+			case "net.minecraftforge.client.model.pipeline.ForgeBlockModelRenderer":
 				reader = new ClassReader(basicClass);
 				node = new ClassNode();
 				reader.accept(node, 0);
 				it = node.methods.iterator();
 				while (it.hasNext()) {
 					MethodNode method = it.next();
-					if (method.name.equals("renderModelSmooth") || (method.name.equals("b"))) {
-						LabelNode label = new LabelNode();
-						InsnList list = new InsnList();
-//						list.add(label);
-//						list.add(new InsnNode(Opcodes.RETURN));
-//						method.instructions.insert(method.instructions.getLast(), list);
-//						InsnList list2 = new InsnList();
-//						list2.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-//								LoadingPluginZone.runtimeDeobf ? "bib;" : "net/minecraft/client/Minecraft",
-//								LoadingPluginZone.runtimeDeobf ? "b" : "getMinecraft",
-//								LoadingPluginZone.runtimeDeobf ? "()Lbib;" : "()Lnet/minecraft/client/Minecraft;"));
-//						list2.add(new FieldInsnNode(Opcodes.GETFIELD,
-//								LoadingPluginZone.runtimeDeobf ? "bib" : "net/minecraft/client/Minecraft",
-//								LoadingPluginZone.runtimeDeobf ? "m" : "currentScreen",
-//								LoadingPluginZone.runtimeDeobf ? "Lblk;" : "Lnet/minecraft/client/gui/GuiScreen;"));
-//						list2.add(new TypeInsnNode(Opcodes.INSTANCEOF,
-//								"com/pinball3d/zone/sphinx/elite/EliteMainwindow"));
-//						list2.add(new JumpInsnNode(Opcodes.IFNE, label));
-//						method.instructions.insertBefore(method.instructions.getFirst(), list2);
+					if (method.name.equals("render")) {
+						ListIterator<AbstractInsnNode> it2 = method.instructions.iterator();
+						while (it2.hasNext()) {
+							AbstractInsnNode n = it2.next();
+							if (n instanceof MethodInsnNode) {
+								MethodInsnNode m = (MethodInsnNode) n;
+								if (m.name.equals("shouldSideBeRendered")
+										|| m.owner.equals("awt") && m.name.equals("c")) {
+									m.setOpcode(Opcodes.INVOKESTATIC);
+									m.owner = "com/pinball3d/zone/sphinx/elite/map/MapRenderManager";
+									m.name = "shouldSideBeRendered";
+									m.desc = LoadingPluginZone.runtimeDeobf ? "(Lawt;Lamy;Let;Lfa;)Z"
+											: "(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;)Z";
+									m.itf = false;
+									break;
+								}
+							}
+						}
 					}
 				}
 				writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);

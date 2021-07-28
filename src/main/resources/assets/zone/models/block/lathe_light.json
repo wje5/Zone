@@ -8,12 +8,12 @@
         }
     },
     "textures": {
-        "particle": "zone:blocks/alloy_smelter_front_on_3",
-        "down": "zone:blocks/alloy_smelter_buttom_on_3",
-        "up": "zone:blocks/alloy_smelter_top_on_3",
-        "north": "zone:blocks/alloy_smelter_front_on_3",
-        "east": "zone:blocks/alloy_smelter_left_on_3",
-        "south": "zone:blocks/alloy_smelter_back_on_3",
-        "west": "zone:blocks/alloy_smelter_right_on_3"
+        "particle": "zone:blocks/forming_press_front_on_3",
+        "down": "zone:blocks/forming_press_buttom_on_3",
+        "up": "zone:blocks/forming_press_top_on_3",
+        "north": "zone:blocks/forming_press_front_on_3",
+        "east": "zone:blocks/forming_press_left_on_3",
+        "south": "zone:blocks/forming_press_back_on_3",
+        "west": "zone:blocks/forming_press_right_on_3"
     }
 }

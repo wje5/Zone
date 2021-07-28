@@ -3,9 +3,7 @@ package com.pinball3d.zone.core;
 import java.util.Map;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 
-@SortingIndex(Integer.MAX_VALUE)
 public class LoadingPluginZone implements IFMLLoadingPlugin {
 	public static boolean runtimeDeobf;
 

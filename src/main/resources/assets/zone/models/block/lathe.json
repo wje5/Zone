@@ -1,19 +1,19 @@
 {
     "parent": "block/cube",
     "display": {
-        "firstpersoff_righthand": {
-            "rotatioff": [ 0, 135, 0 ],
-            "translatioff": [ 0, 0, 0 ],
+        "firstperson_righthand": {
+            "rotation": [ 0, 135, 0 ],
+            "translation": [ 0, 0, 0 ],
             "scale": [ 0.40, 0.40, 0.40 ]
         }
     },
     "textures": {
-        "particle": "zone:blocks/alloy_smelter_front_off_3",
-        "down": "zone:blocks/alloy_smelter_buttom_off_3",
-        "up": "zone:blocks/alloy_smelter_top_off_3",
-        "north": "zone:blocks/alloy_smelter_front_off_3",
-        "east": "zone:blocks/alloy_smelter_left_off_3",
-        "south": "zone:blocks/alloy_smelter_back_off_3",
-        "west": "zone:blocks/alloy_smelter_right_off_3"
+        "particle": "zone:blocks/forming_press_front_off_3",
+        "down": "zone:blocks/forming_press_buttom_off_3",
+        "up": "zone:blocks/forming_press_top_off_3",
+        "north": "zone:blocks/forming_press_front_off_3",
+        "east": "zone:blocks/forming_press_left_off_3",
+        "south": "zone:blocks/forming_press_back_off_3",
+        "west": "zone:blocks/forming_press_right_off_3"
     }
 }

@@ -20,6 +20,7 @@ public class ChunkWrapperList {
 		this.cameraX = cameraX;
 		this.cameraY = cameraY;
 		this.cameraZ = cameraZ;
+
 	}
 
 	public void preRenderChunk(ChunkWrapper chunk) {
@@ -33,7 +34,7 @@ public class ChunkWrapperList {
 	}
 
 	public void renderChunkLayer(BlockRenderLayer layer) {
-		if (this.inited) {
+		if (inited) {
 			for (ChunkWrapper renderchunk : chunks) {
 				GlStateManager.pushMatrix();
 				preRenderChunk(renderchunk);

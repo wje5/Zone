@@ -71,34 +71,6 @@ public class EliteMainwindow extends GuiScreen {
 	private void applyPanels() {
 		PanelGroup g = new PanelGroup(this, 0, 28, getWidth(), getHeight() - 49);
 		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelMap(this, g));
 		g.addPanel(new Panel(this, g, new FormattedString("5DDDDDDDDDDDDDDD")));
 		panels.add(g);
 	}
@@ -269,7 +241,7 @@ public class EliteMainwindow extends GuiScreen {
 	}
 
 	public void quitMenuBar() {
-		this.dropDownList = null;
+		dropDownList = null;
 		menuBar.onQuit();
 	}
 
@@ -287,6 +259,17 @@ public class EliteMainwindow extends GuiScreen {
 
 	public int getHeight() {
 		return mc.displayHeight;
+	}
+
+	public PanelMap getMapPanel() {
+		for (PanelGroup i : panels) {
+			for (Panel j : i.getPanels()) {
+				if (j instanceof PanelMap) {
+					return (PanelMap) j;
+				}
+			}
+		}
+		return null;
 	}
 
 	private void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
@@ -598,6 +581,7 @@ public class EliteMainwindow extends GuiScreen {
 	@Override
 	public void onGuiClosed() {
 		panels.forEach(e -> e.getPanels().forEach(p -> p.close()));
+		mc.renderGlobal.setWorldAndLoadRenderers(mc.world);
 		MouseHandler.changeMouse(null);
 		Keyboard.enableRepeatEvents(false);
 		super.onGuiClosed();
