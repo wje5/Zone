@@ -57,6 +57,7 @@ public class NetworkHandler {
 		registerMessage(MessageMidiToClient.Handler.class, MessageMidiToClient.class, Side.CLIENT);
 		registerMessage(MessageMidiToServer.Handler.class, MessageMidiToServer.class, Side.SERVER);
 		registerMessage(MessageCloseChannel.Handler.class, MessageCloseChannel.class, Side.SERVER);
+		registerMessage(MessageUpdateCameraPos.Handler.class, MessageUpdateCameraPos.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

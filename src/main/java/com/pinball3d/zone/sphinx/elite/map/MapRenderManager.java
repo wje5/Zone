@@ -15,6 +15,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Quaternion;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.pinball3d.zone.network.MessageUpdateCameraPos;
+import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 
@@ -42,7 +44,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public class MapRenderManager implements IWorldEventListener {
-	private int currentRenderRange = -1, renderRange = 8;
+	private int currentRenderRange = -1, renderRange = 2;
 	private MapRenderThreadManager renderManager;
 	private Set<ChunkWrapper> chunksToUpdate = new LinkedHashSet<ChunkWrapper>();
 	private boolean displayListDirty = true;
@@ -206,6 +208,8 @@ public class MapRenderManager implements IWorldEventListener {
 			chunkManagerUpdateChunkX = chunkX;
 			chunkManagerUpdateChunkY = chunkY;
 			chunkManagerUpdateChunkZ = chunkZ;
+			NetworkHandler.instance
+					.sendToServer(new MessageUpdateCameraPos(mc.player, new BlockPos(cameraX, cameraY, cameraZ)));
 			chunkManager.updateChunkPositions(cameraX, cameraZ);
 		}
 

@@ -30,6 +30,8 @@ public class MapRenderThread extends Thread {
 	private MapRenderThreadManager manager;
 	private RegionRenderCacheBuilder regionRenderCacheBuilder;
 
+	private static volatile int m = 0;
+
 	public MapRenderThread(MapRenderManager renderManager, MapRenderThreadManager manager) {
 		this(renderManager, manager, null);
 	}
@@ -44,6 +46,7 @@ public class MapRenderThread extends Thread {
 	@Override
 	public void run() {
 		while (this.shouldRun) {
+//			System.out.println(this);
 			try {
 				processTask(manager.getNextChunkUpdate());
 			} catch (InterruptedException e) {
@@ -82,6 +85,10 @@ public class MapRenderThread extends Thread {
 			wrapper.getLock().unlock();
 		}
 		wrapper.setCacheBuilder(getRegionRenderCacheBuilder());
+//		synchronized (MapRenderThread.class) {
+//			m++;
+//			System.out.println("start:" + m);
+//		}
 		float f = renderManager.getCameraX();
 		float f1 = renderManager.getCameraY();
 		float f2 = renderManager.getCameraZ();
@@ -101,7 +108,11 @@ public class MapRenderThread extends Thread {
 					LOGGER.warn("Chunk render task was {} when I expected it to be compiling; aborting task",
 							wrapper.getStatus());
 				}
-				this.freeRenderBuilder(wrapper);
+//				synchronized (MapRenderThread.class) {
+//					m--;
+//					System.out.println("free:" + wrapper.getStatus() + "|" + m);
+//				}
+				freeRenderBuilder(wrapper);
 				return;
 			}
 			wrapper.setStatus(ChunkCompileTaskGenerator.Status.UPLOADING);
@@ -136,6 +147,10 @@ public class MapRenderThread extends Thread {
 			@Override
 			public void onSuccess(@Nullable List<Object> p_onSuccess_1_) {
 				MapRenderThread.this.freeRenderBuilder(wrapper);
+//				synchronized (MapRenderThread.class) {
+//					System.out.println("freesuccess" + m);
+//					m--;
+//				}
 				wrapper.getLock().lock();
 				label49: {
 					try {
@@ -160,6 +175,10 @@ public class MapRenderThread extends Thread {
 			@Override
 			public void onFailure(Throwable e) {
 				MapRenderThread.this.freeRenderBuilder(wrapper);
+//				synchronized (MapRenderThread.class) {
+//					System.out.println("freefail" + m);
+//					m--;
+//				}
 				if (!(e instanceof CancellationException) && !(e instanceof InterruptedException)) {
 					Minecraft.getMinecraft().crashed(CrashReport.makeCrashReport(e, "Rendering chunk"));
 				}

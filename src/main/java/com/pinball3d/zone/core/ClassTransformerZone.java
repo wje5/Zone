@@ -16,6 +16,7 @@ import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 
@@ -95,6 +96,42 @@ public class ClassTransformerZone implements IClassTransformer {
 									m.itf = false;
 									break;
 								}
+							}
+						}
+					}
+				}
+				writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+				node.accept(writer);
+				return writer.toByteArray();
+			case "net.minecraft.server.management.PlayerList":
+				reader = new ClassReader(basicClass);
+				node = new ClassNode();
+				reader.accept(node, 0);
+				it = node.methods.iterator();
+				while (it.hasNext()) {
+					MethodNode method = it.next();
+					if (method.name.equals("serverUpdateMovingPlayer")
+							|| method.name.equals("d") && method.signature.equals("(Loq;)V")) {
+						ListIterator<AbstractInsnNode> it2 = method.instructions.iterator();
+						while (it2.hasNext()) {
+							AbstractInsnNode n = it2.next();
+							if (n instanceof VarInsnNode) {
+								it2.next();
+								it2.remove();
+								it2.next();
+								it2.remove();
+								it2.next();
+								it2.remove();
+								it2.next();
+								it2.remove();
+								method.instructions
+										.insert(n,
+												new MethodInsnNode(Opcodes.INVOKESTATIC,
+														"com/pinball3d/zone/sphinx/elite/map/ServerChunkHelper",
+														"updateCameraPos",
+														LoadingPluginZone.runtimeDeobf ? "(Loq;)V"
+																: "(Lnet/minecraft/entity/player/EntityPlayerMP;)V",
+														false));
 							}
 						}
 					}
