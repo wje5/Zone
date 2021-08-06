@@ -45,8 +45,7 @@ public class MapRenderThread extends Thread {
 
 	@Override
 	public void run() {
-		while (this.shouldRun) {
-//			System.out.println(this);
+		while (shouldRun) {
 			try {
 				processTask(manager.getNextChunkUpdate());
 			} catch (InterruptedException e) {
@@ -87,7 +86,7 @@ public class MapRenderThread extends Thread {
 		wrapper.setCacheBuilder(getRegionRenderCacheBuilder());
 //		synchronized (MapRenderThread.class) {
 //			m++;
-//			System.out.println("start:" + m);
+//			System.out.println("start" + m);
 //		}
 		float f = renderManager.getCameraX();
 		float f1 = renderManager.getCameraY();

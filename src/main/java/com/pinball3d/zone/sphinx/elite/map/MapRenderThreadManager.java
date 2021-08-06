@@ -10,7 +10,6 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 import org.lwjgl.opengl.GL11;
 
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -110,6 +109,10 @@ public class MapRenderThreadManager {
 		boolean flag;
 		try {
 			ChunkRenderTaskWrapper wrapper = chunk.makeTaskWrapper();
+			if (hasNoFreeBuilders()) {
+				System.out.println("DRRRRRRRRRRRRRRRR");
+				runChunkUploads(Long.MAX_VALUE);
+			}
 			try {
 				renderer.processTask(wrapper);
 			} catch (InterruptedException e) {
@@ -124,7 +127,7 @@ public class MapRenderThreadManager {
 
 	public void stopChunkUpdates() {
 		clearChunkUpdates();
-		List<RegionRenderCacheBuilder> list = Lists.<RegionRenderCacheBuilder>newArrayList();
+		List<RegionRenderCacheBuilder> list = new ArrayList<RegionRenderCacheBuilder>();
 		while (list.size() != builderCount) {
 			runChunkUploads(Long.MAX_VALUE);
 			try {
@@ -174,6 +177,7 @@ public class MapRenderThreadManager {
 	public ListenableFuture<Object> uploadChunk(final BlockRenderLayer layer, final BufferBuilder builder,
 			ChunkWrapper wrapper, final CompiledChunk chunk, final double distanceSq) {
 		if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+//			System.out.println("upload in main thread");
 			uploadDisplayList(builder, wrapper.getDisplayList(layer, chunk), wrapper);
 			builder.setTranslation(0.0D, 0.0D, 0.0D);
 			return Futures.<Object>immediateFuture(null);
@@ -181,6 +185,7 @@ public class MapRenderThreadManager {
 			ListenableFutureTask<Object> task = ListenableFutureTask.<Object>create(new Runnable() {
 				@Override
 				public void run() {
+//					System.out.println("toUpload:" + chunkUploads.size());
 					MapRenderThreadManager.this.uploadChunk(layer, builder, wrapper, chunk, distanceSq);
 				}
 			}, null);

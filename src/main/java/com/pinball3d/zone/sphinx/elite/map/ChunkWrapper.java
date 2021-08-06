@@ -241,24 +241,24 @@ public class ChunkWrapper {
 	}
 
 	public void setNeedsUpdate(boolean immediate) {
-		if (this.needsUpdate) {
-			immediate |= this.needsImmediateUpdate;
+		if (needsUpdate) {
+			immediate |= needsImmediateUpdate;
 		}
-		this.needsUpdate = true;
-		this.needsImmediateUpdate = immediate;
+		needsUpdate = true;
+		needsImmediateUpdate = immediate;
 	}
 
 	public void clearNeedsUpdate() {
-		this.needsUpdate = false;
-		this.needsImmediateUpdate = false;
+		needsUpdate = false;
+		needsImmediateUpdate = false;
 	}
 
 	public boolean needsUpdate() {
-		return this.needsUpdate;
+		return needsUpdate;
 	}
 
 	public boolean needsImmediateUpdate() {
-		return this.needsUpdate && this.needsImmediateUpdate;
+		return needsUpdate && needsImmediateUpdate;
 	}
 
 	public CompiledChunk getCompiledChunk() {
@@ -267,7 +267,6 @@ public class ChunkWrapper {
 
 	public void setCompiledChunk(CompiledChunk compiledChunkIn) {
 		lockCompiledChunk.lock();
-
 		try {
 			compiledChunk = compiledChunkIn;
 		} finally {
@@ -329,7 +328,7 @@ public class ChunkWrapper {
 	}
 
 	public BlockPos getPosition() {
-		return this.position;
+		return position;
 	}
 
 	private void rebuildWorldView() {

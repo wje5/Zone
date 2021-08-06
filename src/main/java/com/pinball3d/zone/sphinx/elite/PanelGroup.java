@@ -268,7 +268,6 @@ public class PanelGroup {
 
 	public Drag onMouseClicked(int mouseX, int mouseY, int mouseButton) {
 		if (mouseButton == 0) {
-
 			if (hoverIndex >= 0 && parent.getPanels().get(hoverPanelIndex) == this) {
 				dragX = mouseX;
 				dragY = mouseY;

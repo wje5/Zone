@@ -44,7 +44,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 public class MapRenderManager implements IWorldEventListener {
-	private int currentRenderRange = -1, renderRange = 2;
+	private int currentRenderRange = -1;
 	private MapRenderThreadManager renderManager;
 	private Set<ChunkWrapper> chunksToUpdate = new LinkedHashSet<ChunkWrapper>();
 	private boolean displayListDirty = true;
@@ -190,7 +190,7 @@ public class MapRenderManager implements IWorldEventListener {
 	}
 
 	public void applyMap(float partialTicks) {
-		if (currentRenderRange != renderRange) {
+		if (currentRenderRange != mc.gameSettings.renderDistanceChunks) {
 			initRenderers();
 		}
 		double d0 = cameraX - chunkManagerUpdateX;
@@ -239,14 +239,13 @@ public class MapRenderManager implements IWorldEventListener {
 			displayListDirty = false;
 			renderInfos = new ArrayList<ContainerLocalRenderInformation>();
 			Queue<ContainerLocalRenderInformation> queue = new ArrayDeque<ContainerLocalRenderInformation>();
-			if (!displayListDirty) {
-				for (ChunkWrapper w : chunkManager.renderChunks) {
-					ContainerLocalRenderInformation info = new ContainerLocalRenderInformation(w, (EnumFacing) null, 0);
-					info.setFacing = 15;
-					renderInfos.add(info);
-				}
-				break tag;
-			}
+//			if (!displayListDirty) {
+//				for (ChunkWrapper w : chunkManager.renderChunks) {
+//					ContainerLocalRenderInformation info = new ContainerLocalRenderInformation(w, (EnumFacing) null, 0);
+//					renderInfos.add(info);
+//				}
+//				break tag;
+//			}
 
 			boolean flag1 = true;
 			if (renderchunk != null) {
@@ -296,6 +295,7 @@ public class MapRenderManager implements IWorldEventListener {
 				renderInfos.add(info);
 				for (EnumFacing e : EnumFacing.values()) {
 					ChunkWrapper chunk = getRenderChunkOffset(blockpos, chunk3, e);
+					flag1 = false;
 					if ((!flag1 || !info.hasDirection(e.getOpposite()))
 							&& (!flag1 || facing == null
 									|| chunk3.getCompiledChunk().isVisible(facing.getOpposite(), e))
@@ -313,21 +313,15 @@ public class MapRenderManager implements IWorldEventListener {
 
 		Set<ChunkWrapper> set = chunksToUpdate;
 		chunksToUpdate = new LinkedHashSet<ChunkWrapper>();
+//		System.out.println("renderInfo" + renderInfos.size());
 		for (ContainerLocalRenderInformation info : renderInfos) {
 			ChunkWrapper chunk = info.chunk;
-			if (chunk.needsUpdate()) {
-//				System.out.println(chunk);
-			}
 			if (chunk.needsUpdate() || set.contains(chunk)) {
 				displayListDirty = true;
 				BlockPos blockpos2 = chunk.getPosition().add(8, 8, 8);
 				boolean flag3 = blockpos2.distanceSq(cameraPos) < 768.0D;
-				if (net.minecraftforge.common.ForgeModContainer.alwaysSetupTerrainOffThread
-						|| (!chunk.needsImmediateUpdate() && !flag3)) {
+				if (!flag3) {
 					chunksToUpdate.add(chunk);
-				} else {
-					renderManager.updateChunkNow(chunk);
-					chunk.clearNeedsUpdate();
 				}
 			}
 		}
@@ -368,7 +362,7 @@ public class MapRenderManager implements IWorldEventListener {
 				renderManager = new MapRenderThreadManager(this);
 			}
 			displayListDirty = true;
-			currentRenderRange = renderRange;
+			currentRenderRange = mc.gameSettings.renderDistanceChunks;
 
 			if (chunkManager != null) {
 				chunkManager.deleteGlResources();
@@ -377,7 +371,7 @@ public class MapRenderManager implements IWorldEventListener {
 			synchronized (setTileEntities) {
 				setTileEntities.clear();
 			}
-			chunkManager = new WorldChunkManager(world, renderRange, this);
+			chunkManager = new WorldChunkManager(world, mc.gameSettings.renderDistanceChunks, this);
 			if (world != null) {
 				chunkManager.updateChunkPositions(cameraX, cameraZ);
 			}
@@ -526,26 +520,27 @@ public class MapRenderManager implements IWorldEventListener {
 		switch (facing) {
 		case WEST:
 			if (pos.getX() == minX && pos.getZ() >= minZ && pos.getZ() <= maxZ) {
-				return true;
+				return false;
 			}
-			break;
+			return false;
 		case EAST:
 			if (pos.getX() == maxX && pos.getZ() >= minZ && pos.getZ() <= maxZ) {
-				return true;
+				return false;
 			}
-			break;
+			return false;
 		case NORTH:
 			if (pos.getZ() == minZ && pos.getX() >= minX && pos.getX() <= maxX) {
-				return true;
+				return false;
 			}
-			break;
+			return false;
 		case SOUTH:
 			if (pos.getZ() == maxZ && pos.getX() >= minX && pos.getX() <= maxX) {
 				return true;
 			}
-			break;
+			return false;
+		default:
+			return false;
 		}
-		return false;
 	}
 
 	private static Quaternion makeQuaternion(float p_188035_0_, float p_188035_1_, float p_188035_2_) {
@@ -573,6 +568,7 @@ public class MapRenderManager implements IWorldEventListener {
 			}
 		}
 		return state.shouldSideBeRendered(blockAccess, pos, facing);
+
 	}
 
 	public float getCameraX() {

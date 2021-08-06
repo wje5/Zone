@@ -56,23 +56,25 @@ public class ServerChunkHelper {
 						}
 						if (!flag && !overlaps(l1 - i + cameraChunkX, i2 - i + cameraChunkZ, k, l, i1)
 								&& (flag2 || !overlaps(l1 - i + cameraChunkX, i2 - i + cameraChunkZ,
-										managedCameraChunkX, managedCameraChunkZ, i))) {
+										managedCameraChunkX, managedCameraChunkZ, i))
+								&& player.world.isChunkGeneratedAt(l1 - i + cameraChunkX, i2 - i + cameraChunkZ)) {
 							getOrCreateEntry(map, l1 - i + cameraChunkX, i2 - i + cameraChunkZ).addPlayer(player);
+
 						}
 						if (!overlaps(l1 - j1, i2 - k1, i, j, i1)
 								&& (flag || !overlaps(l1 - j1, i2 - k1, cameraChunkX, cameraChunkZ, i1))) {
-							PlayerChunkMapEntry playerchunkmapentry = map.getEntry(l1 - j1, i2 - k1);
-							if (playerchunkmapentry != null) {
-								playerchunkmapentry.removePlayer(player);
+							PlayerChunkMapEntry entry = map.getEntry(l1 - j1, i2 - k1);
+							if (entry != null) {
+								entry.removePlayer(player);
 							}
 						}
 						if (!flag2 && !overlaps(l1 - i + managedCameraChunkX, i2 - i + managedCameraChunkZ, i, j, i1)
 								&& (flag || !overlaps(l1 - i + managedCameraChunkX, i2 - i + managedCameraChunkZ,
 										cameraChunkX, cameraChunkZ, i1))) {
-							PlayerChunkMapEntry playerchunkmapentry = map.getEntry(l1 - i + managedCameraChunkX,
+							PlayerChunkMapEntry entry = map.getEntry(l1 - i + managedCameraChunkX,
 									i2 - i + managedCameraChunkZ);
-							if (playerchunkmapentry != null) {
-								playerchunkmapentry.removePlayer(player);
+							if (entry != null) {
+								entry.removePlayer(player);
 							}
 						}
 					}
@@ -87,7 +89,7 @@ public class ServerChunkHelper {
 				markSortPending(map);
 			}
 		}
-		System.out.println(cameraPos + "|" + player.getUniqueID() + "|" + player.getPosition());
+//		System.out.println(cameraPos + "|" + player.getUniqueID() + "|" + player.getPosition()); //TODO
 	}
 
 	public static void setCameraPos(UUID uuid, BlockPos pos) {
