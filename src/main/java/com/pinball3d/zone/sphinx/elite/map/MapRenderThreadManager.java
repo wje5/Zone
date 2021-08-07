@@ -25,7 +25,6 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.MathHelper;
 
 public class MapRenderThreadManager {
-	private MapRenderManager renderManager;
 	private List<MapRenderThread> threads = new ArrayList<MapRenderThread>();
 	private BlockingQueue<RegionRenderCacheBuilder> freeBuilders;
 	private WorldVertexBufferUploader worldVertexUploader = new WorldVertexBufferUploader();
@@ -35,7 +34,6 @@ public class MapRenderThreadManager {
 	private MapRenderThread renderer;
 
 	public MapRenderThreadManager(MapRenderManager renderManager) {
-		this.renderManager = renderManager;
 		int i = Math.max(1, (int) (Runtime.getRuntime().maxMemory() * 0.3D) / 10485760);
 		int j = Math.max(1, MathHelper.clamp(Runtime.getRuntime().availableProcessors(), 1, i / 5));
 		builderCount = MathHelper.clamp(j * 10, 1, i);

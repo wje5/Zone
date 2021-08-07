@@ -25,7 +25,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.chunk.VisGraph;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
@@ -41,7 +40,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 
 public class MapRenderManager implements IWorldEventListener {
 	private int currentRenderRange = -1;
@@ -72,6 +70,8 @@ public class MapRenderManager implements IWorldEventListener {
 	private double prevRenderSortX, prevRenderSortY, prevRenderSortZ;
 
 	private int frameCount;
+
+	public static int K;
 
 	public MapRenderManager() {
 		lightmapTexture = new DynamicTexture(16, 16);
@@ -222,7 +222,6 @@ public class MapRenderManager implements IWorldEventListener {
 		ChunkWrapper renderchunk = chunkManager.getRenderChunk(cameraPos);
 		BlockPos blockpos = new BlockPos(MathHelper.floor(d3 / 16D) * 16, MathHelper.floor(d4 / 16D) * 16,
 				MathHelper.floor(d5 / 16D) * 16);
-//		System.out.println(renderchunk.getPosition());
 		displayListDirty = displayListDirty || !chunksToUpdate.isEmpty() || cameraX != lastViewCameraX
 				|| cameraY != lastViewCameraY || cameraZ != lastViewCameraZ || cameraRotX != lastViewCameraRotX
 				|| cameraRotY != lastViewCameraRotY;
@@ -231,56 +230,25 @@ public class MapRenderManager implements IWorldEventListener {
 		lastViewCameraZ = cameraZ;
 		lastViewCameraRotX = cameraRotX;
 		lastViewCameraRotY = cameraRotY;
-//		
 		cameraPrevX = cameraX;
 		cameraPrevY = cameraY;
 		cameraPrevZ = cameraZ;
-		tag: if (displayListDirty) {
+		if (displayListDirty) {
 			displayListDirty = false;
 			renderInfos = new ArrayList<ContainerLocalRenderInformation>();
 			Queue<ContainerLocalRenderInformation> queue = new ArrayDeque<ContainerLocalRenderInformation>();
-//			if (!displayListDirty) {
-//				for (ChunkWrapper w : chunkManager.renderChunks) {
-//					ContainerLocalRenderInformation info = new ContainerLocalRenderInformation(w, (EnumFacing) null, 0);
-//					renderInfos.add(info);
-//				}
-//				break tag;
-//			}
 
-			boolean flag1 = true;
 			if (renderchunk != null) {
-				boolean flag2 = false;
 				ContainerLocalRenderInformation info = new ContainerLocalRenderInformation(renderchunk,
 						(EnumFacing) null, 0);
-				Set<EnumFacing> set1 = getVisibleFacings(cameraPos);
-				if (set1.size() == 1) {
-					Vector3f vector3f = getViewVector(partialTicks);
-					EnumFacing enumfacing = EnumFacing.getFacingFromVector(vector3f.x, vector3f.y, vector3f.z)
-							.getOpposite();
-					set1.remove(enumfacing);
-				}
-				if (set1.isEmpty()) {
-					flag2 = true;
-				}
-				boolean isCameraInBlock = false;
-				if (flag2 && !isCameraInBlock) {
-					renderInfos.add(info);
-				} else {
-					if (isCameraInBlock && world.getBlockState(cameraPos).isOpaqueCube()) {
-						flag1 = false;
-					}
-					renderchunk.setFrameIndex(frameCount);
-					queue.add(info);
-				}
+				renderchunk.setFrameIndex(frameCount);
+				queue.add(info);
 			} else {
 				int i = cameraPos.getY() > 0 ? 248 : 8;
 				for (int j = -currentRenderRange; j <= currentRenderRange; j++) {
 					for (int k = -currentRenderRange; k <= currentRenderRange; k++) {
 						ChunkWrapper chunk = chunkManager.getRenderChunk(new BlockPos((j << 4) + 8, i, (k << 4) + 8));
-						if (chunk != null
-//								&&camera.isBoundingBoxInFrustum(renderchunk1.boundingBox.expand(0.0,
-//								cameraPos.getY() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY, 0.0)) TODO
-						) {
+						if (chunk != null) {
 							chunk.setFrameIndex(frameCount);
 							queue.add(new ContainerLocalRenderInformation(chunk, (EnumFacing) null, 0));
 						}
@@ -291,17 +259,10 @@ public class MapRenderManager implements IWorldEventListener {
 			while (!queue.isEmpty()) {
 				ContainerLocalRenderInformation info = queue.poll();
 				ChunkWrapper chunk3 = info.chunk;
-				EnumFacing facing = info.facing;
 				renderInfos.add(info);
 				for (EnumFacing e : EnumFacing.values()) {
 					ChunkWrapper chunk = getRenderChunkOffset(blockpos, chunk3, e);
-					flag1 = false;
-					if ((!flag1 || !info.hasDirection(e.getOpposite()))
-							&& (!flag1 || facing == null
-									|| chunk3.getCompiledChunk().isVisible(facing.getOpposite(), e))
-							&& chunk != null && chunk.setFrameIndex(frameCount)
-//							&& camera.isBoundingBoxInFrustum(renderchunk2.boundingBox) TODO
-					) {
+					if (chunk != null && chunk.setFrameIndex(frameCount)) {
 						ContainerLocalRenderInformation info2 = new ContainerLocalRenderInformation(chunk, e,
 								info.counter + 1);
 						info2.setDirection(info.setFacing, e);
@@ -318,11 +279,7 @@ public class MapRenderManager implements IWorldEventListener {
 			ChunkWrapper chunk = info.chunk;
 			if (chunk.needsUpdate() || set.contains(chunk)) {
 				displayListDirty = true;
-				BlockPos blockpos2 = chunk.getPosition().add(8, 8, 8);
-				boolean flag3 = blockpos2.distanceSq(cameraPos) < 768.0D;
-				if (!flag3) {
-					chunksToUpdate.add(chunk);
-				}
+				chunksToUpdate.add(chunk);
 			}
 		}
 		chunksToUpdate.addAll(set);
@@ -463,18 +420,6 @@ public class MapRenderManager implements IWorldEventListener {
 		renderManager.stopChunkUpdates();
 	}
 
-	private Set<EnumFacing> getVisibleFacings(BlockPos pos) {
-		VisGraph visgraph = new VisGraph();
-		BlockPos blockpos = new BlockPos(pos.getX() >> 4 << 4, pos.getY() >> 4 << 4, pos.getZ() >> 4 << 4);
-		Chunk chunk = world.getChunkFromBlockCoords(blockpos);
-		for (BlockPos.MutableBlockPos p : BlockPos.getAllInBoxMutable(blockpos, blockpos.add(15, 15, 15))) {
-			if (chunk.getBlockState(p).isOpaqueCube()) {
-				visgraph.setOpaqueCube(p);
-			}
-		}
-		return visgraph.getVisibleFacings(pos);
-	}
-
 	private ChunkWrapper getRenderChunkOffset(BlockPos cameraPos, ChunkWrapper chunk, EnumFacing facing) {
 		BlockPos pos = chunk.getBlockPosOffset16(facing);
 		if (MathHelper.abs(cameraPos.getX() - pos.getX()) > currentRenderRange * 16) {
@@ -500,7 +445,7 @@ public class MapRenderManager implements IWorldEventListener {
 		GlStateManager.scale(0.00390625F, 0.00390625F, 0.00390625F);
 		GlStateManager.translate(8.0F, 8.0F, 8.0F);
 		GlStateManager.matrixMode(5888);
-		mc.getTextureManager().bindTexture(this.locationLightMap);
+		mc.getTextureManager().bindTexture(locationLightMap);
 		GlStateManager.glTexParameteri(3553, 10241, 9729);
 		GlStateManager.glTexParameteri(3553, 10240, 9729);
 		GlStateManager.glTexParameteri(3553, 10242, 10496);
@@ -513,28 +458,40 @@ public class MapRenderManager implements IWorldEventListener {
 	public boolean isBorder(BlockPos pos, EnumFacing facing) {
 		int chunkX = MathHelper.floor(cameraX / 16D);
 		int chunkZ = MathHelper.floor(cameraZ / 16D);
-		int minX = (chunkX - currentRenderRange) * 16;
-		int maxX = (chunkX + currentRenderRange) * 16 + 15;
-		int minZ = (chunkZ - currentRenderRange) * 16;
-		int maxZ = (chunkZ + currentRenderRange) * 16 + 15;
+		int minX = (chunkX - currentRenderRange + 1) * 16;
+		int maxX = (chunkX + currentRenderRange - 1) * 16 + 15;
+		int minZ = (chunkZ - currentRenderRange + 1) * 16;
+		int maxZ = (chunkZ + currentRenderRange - 1) * 16 + 15;
 		switch (facing) {
 		case WEST:
-			if (pos.getX() == minX && pos.getZ() >= minZ && pos.getZ() <= maxZ) {
-				return false;
+			if (pos.getX() == minX) {
+				return true;
+			}
+			if (pos.getX() % 16 == 0) {
+				return true;
 			}
 			return false;
 		case EAST:
-			if (pos.getX() == maxX && pos.getZ() >= minZ && pos.getZ() <= maxZ) {
-				return false;
+			if (pos.getX() == maxX) {
+				return true;
+			}
+			if (pos.getX() % 15 == 0) {
+				return true;
 			}
 			return false;
 		case NORTH:
-			if (pos.getZ() == minZ && pos.getX() >= minX && pos.getX() <= maxX) {
-				return false;
+			if (pos.getZ() == minZ) {
+				return true;
+			}
+			if (pos.getZ() % 16 == 0) {
+				return true;
 			}
 			return false;
 		case SOUTH:
-			if (pos.getZ() == maxZ && pos.getX() >= minX && pos.getX() <= maxX) {
+			if (pos.getZ() == maxZ) {
+				return true;
+			}
+			if (pos.getZ() % 16 == 15) {
 				return true;
 			}
 			return false;

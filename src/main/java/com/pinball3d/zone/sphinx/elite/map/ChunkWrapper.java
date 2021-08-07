@@ -354,7 +354,7 @@ public class ChunkWrapper {
 	}
 
 	public BlockPos getBlockPosOffset16(EnumFacing facing) {
-		return this.mapEnumFacing[facing.ordinal()];
+		return mapEnumFacing[facing.ordinal()];
 	}
 
 	public World getWorld() {
