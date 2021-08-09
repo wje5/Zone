@@ -18,14 +18,11 @@ import net.minecraft.client.resources.I18n;
 
 public class PanelMap extends Panel {
 	private static BlockFluidRenderer fluidRenderer;
-	private float xOffset, yOffset, zOffset;
 	private MapRenderManager renderManager;
 	private boolean inited;
 
 	public PanelMap(EliteMainwindow parent, PanelGroup parentGroup) {
 		super(parent, parentGroup, new FormattedString(I18n.format("elite.panel.map")));
-		xOffset = (float) -parent.mc.player.posX + parentGroup.getPanelWidth() / 2;
-		yOffset = (float) -parent.mc.player.posZ + parentGroup.getPanelHeight() / 2;
 		if (fluidRenderer == null) {
 			BlockRendererDispatcher dispatcher = parent.mc.getBlockRendererDispatcher();
 			try {
@@ -37,7 +34,6 @@ public class PanelMap extends Panel {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	@Override
@@ -53,6 +49,13 @@ public class PanelMap extends Panel {
 		}, cancel -> {
 
 		}) : null;
+	}
+
+	@Override
+	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
+		if (isMouseInPanel(mouseX, mouseY)) {
+			renderManager.scale += distance * 0.25F;
+		}
 	}
 
 	@Override

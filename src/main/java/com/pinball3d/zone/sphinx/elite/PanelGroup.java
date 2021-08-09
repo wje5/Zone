@@ -369,6 +369,10 @@ public class PanelGroup {
 
 	}
 
+	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
+		panels.get(chosenIndex).onMouseScrolled(mouseX - getX() - 1, mouseY - getY() - 31, distance);
+	}
+
 	public void calcPanelGroup(int mouseX, int mouseY) {
 		hoverIndex = -1;
 		dragToIndex = -1;

@@ -94,12 +94,12 @@ public class MapRenderManager implements IWorldEventListener {
 		GlStateManager.enableAlpha();
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.5F);
 
-//		GlStateManager.enableCull(); // TODO
-		GlStateManager.disableCull();
+		GlStateManager.enableCull();
+//		GlStateManager.disableCull()
 
 		GlStateManager.viewport(x, mc.displayHeight - (y + height), width, height);
 		GlStateManager.loadIdentity();
-		GlStateManager.ortho(0, width, height, 0, 0.0D, 5000.0D);
+		GlStateManager.ortho(0, width, height, 0, 0.0D, 5000);
 
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 		GlStateManager.translate(width / 2, height / 2, 0);
@@ -456,41 +456,41 @@ public class MapRenderManager implements IWorldEventListener {
 	}
 
 	public boolean isBorder(BlockPos pos, EnumFacing facing) {
-		int chunkX = MathHelper.floor(cameraX / 16D);
-		int chunkZ = MathHelper.floor(cameraZ / 16D);
-		int minX = (chunkX - currentRenderRange + 1) * 16;
-		int maxX = (chunkX + currentRenderRange - 1) * 16 + 15;
-		int minZ = (chunkZ - currentRenderRange + 1) * 16;
-		int maxZ = (chunkZ + currentRenderRange - 1) * 16 + 15;
+//		int chunkX = MathHelper.floor(cameraX / 16D);
+//		int chunkZ = MathHelper.floor(cameraZ / 16D);
+//		int minX = (chunkX - currentRenderRange + 1) * 16;
+//		int maxX = (chunkX + currentRenderRange - 1) * 16 + 15;
+//		int minZ = (chunkZ - currentRenderRange + 1) * 16;
+//		int maxZ = (chunkZ + currentRenderRange - 1) * 16 + 15;
 		switch (facing) {
 		case WEST:
-			if (pos.getX() == minX) {
-				return true;
-			}
+//			if (pos.getX() == minX) {
+//				return true;
+//			}
 			if (pos.getX() % 16 == 0) {
 				return true;
 			}
 			return false;
 		case EAST:
-			if (pos.getX() == maxX) {
-				return true;
-			}
+//			if (pos.getX() == maxX) {
+//				return true;
+//			}
 			if (pos.getX() % 15 == 0) {
 				return true;
 			}
 			return false;
 		case NORTH:
-			if (pos.getZ() == minZ) {
-				return true;
-			}
+//			if (pos.getZ() == minZ) {
+//				return true;
+//			}
 			if (pos.getZ() % 16 == 0) {
 				return true;
 			}
 			return false;
 		case SOUTH:
-			if (pos.getZ() == maxZ) {
-				return true;
-			}
+//			if (pos.getZ() == maxZ) {
+//				return true;
+//			}
 			if (pos.getZ() % 16 == 15) {
 				return true;
 			}

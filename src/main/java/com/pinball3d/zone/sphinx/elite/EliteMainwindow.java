@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
@@ -92,10 +93,10 @@ public class EliteMainwindow extends GuiScreen {
 		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();
-		if (mouseX != this.lastX || mouseY != this.lastY) {
-			int moveX = mouseX - this.lastX;
-			int moveY = mouseY - this.lastY;
-			onMouseMoved(this.lastX = mouseX, this.lastY = mouseY, moveX, moveY);
+		if (mouseX != lastX || mouseY != lastY) {
+			int moveX = mouseX - lastX;
+			int moveY = mouseY - lastY;
+			onMouseMoved(lastX = mouseX, lastY = mouseY, moveX, moveY);
 		}
 		GlStateManager.matrixMode(GL11.GL_PROJECTION);
 		GlStateManager.pushMatrix();
@@ -347,6 +348,24 @@ public class EliteMainwindow extends GuiScreen {
 				}
 				break;
 			}
+		}
+	}
+
+	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
+		for (PanelGroup g : panels) {
+			g.onMouseScrolled(mouseX, mouseY, distance);
+		}
+	}
+
+	@Override
+	public void handleMouseInput() throws IOException {
+		super.handleMouseInput();
+		int scrollDistance = Mouse.getEventDWheel();
+		if (scrollDistance != 0) {
+			if (scrollDistance % 120 != 0) {
+				throw new RuntimeException("???????");
+			}
+			onMouseScrolled(MouseHandler.getX(), MouseHandler.getY(), scrollDistance / 120);
 		}
 	}
 

@@ -53,6 +53,10 @@ public class Panel {
 		return;
 	}
 
+	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
+
+	}
+
 	public MouseType getMouseType(int mouseX, int mouseY) {
 		return null;
 	}
