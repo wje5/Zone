@@ -74,24 +74,24 @@ public class ScreenPiano extends GuiScreen {
 			int x = 0;
 			int y = 0;
 			mc.getTextureManager().bindTexture(PIANO);
-			drawTexturedModalRect(x, y, 0, 0, 13, 92);
-			drawTexturedModalRect(x + 11, y, 131, 0, 8, 61);
-			drawTexturedModalRect(x += 13, y, 13, 0, 13, 92);
+			drawTexturedModalRect(x, y, 0, states[0] == 0 ? 0 : 92, 13, 92);
+			drawTexturedModalRect(x + 11, y, 131, states[1] == 0 ? 0 : 92, 8, 61);
+			drawTexturedModalRect(x += 13, y, 13, states[2] == 0 ? 0 : 92, 13, 92);
 			for (int i = 0; i < 7; i++) {
-				drawTexturedModalRect(x += 13, y, 26, 0, 13, 92);
-				drawTexturedModalRect(x + 9, y, 131, 0, 8, 61);
-				drawTexturedModalRect(x += 13, y, 39, 0, 13, 92);
-				drawTexturedModalRect(x + 10, y, 131, 0, 8, 61);
-				drawTexturedModalRect(x += 13, y, 52, 0, 13, 92);
-				drawTexturedModalRect(x += 13, y, 65, 0, 13, 92);
-				drawTexturedModalRect(x + 8, y, 131, 0, 8, 61);
-				drawTexturedModalRect(x += 13, y, 78, 0, 13, 92);
-				drawTexturedModalRect(x + 9, y, 131, 0, 8, 61);
-				drawTexturedModalRect(x += 13, y, 91, 0, 13, 92);
-				drawTexturedModalRect(x + 11, y, 131, 0, 8, 61);
-				drawTexturedModalRect(x += 13, y, 104, 0, 13, 92);
+				drawTexturedModalRect(x += 13, y, 26, states[3 + i * 12] == 0 ? 0 : 92, 13, 92);
+				drawTexturedModalRect(x + 9, y, 131, states[4 + i * 12] == 0 ? 0 : 92, 8, 61);
+				drawTexturedModalRect(x += 13, y, 39, states[5 + i * 12] == 0 ? 0 : 92, 13, 92);
+				drawTexturedModalRect(x + 10, y, 131, states[6 + i * 12] == 0 ? 0 : 92, 8, 61);
+				drawTexturedModalRect(x += 13, y, 52, states[7 + i * 12] == 0 ? 0 : 92, 13, 92);
+				drawTexturedModalRect(x += 13, y, 65, states[8 + i * 12] == 0 ? 0 : 92, 13, 92);
+				drawTexturedModalRect(x + 8, y, 131, states[9 + i * 12] == 0 ? 0 : 92, 8, 61);
+				drawTexturedModalRect(x += 13, y, 78, states[10 + i * 12] == 0 ? 0 : 92, 13, 92);
+				drawTexturedModalRect(x + 9, y, 131, states[11 + i * 12] == 0 ? 0 : 92, 8, 61);
+				drawTexturedModalRect(x += 13, y, 91, states[12 + i * 12] == 0 ? 0 : 92, 13, 92);
+				drawTexturedModalRect(x + 11, y, 131, states[13 + i * 12] == 0 ? 0 : 92, 8, 61);
+				drawTexturedModalRect(x += 13, y, 104, states[14 + i * 12] == 0 ? 0 : 92, 13, 92);
 			}
-			drawTexturedModalRect(x += 13, y, 117, 0, 14, 92);
+			drawTexturedModalRect(x += 13, y, 117, states[87] == 0 ? 0 : 92, 14, 92);
 
 			GlStateManager.popMatrix();
 			GlStateManager.matrixMode(GL11.GL_PROJECTION);
@@ -106,7 +106,7 @@ public class ScreenPiano extends GuiScreen {
 			return;
 		}
 		int k = getKeyFromPos(MouseHandler.getX(), MouseHandler.getY());
-		if (k >= 0 && !KeyBindingHandler.nodes[k].isKeyDown()) {
+		if (k >= 0 && !Keyboard.isKeyDown(KeyBindingHandler.nodes[k].getKeyCode())) {
 			noteOn(k);
 		}
 	}
@@ -117,7 +117,7 @@ public class ScreenPiano extends GuiScreen {
 			return;
 		}
 		int k = getKeyFromPos(MouseHandler.getX(), MouseHandler.getY());
-		if (k >= 0 && !KeyBindingHandler.nodes[k].isKeyDown()) {
+		if (k >= 0 && !Keyboard.isKeyDown(KeyBindingHandler.nodes[k].getKeyCode())) {
 			noteOff(k);
 		}
 	}
@@ -129,10 +129,10 @@ public class ScreenPiano extends GuiScreen {
 		int k = getKeyFromPos(mousePrevX, mousePrevY);
 		int k2 = getKeyFromPos(mouseX, mouseY);
 		if (k != k2) {
-			if (k >= 0 && !KeyBindingHandler.nodes[k].isKeyDown()) {
+			if (k >= 0 && !Keyboard.isKeyDown(KeyBindingHandler.nodes[k].getKeyCode())) {
 				noteOff(k);
 			}
-			if (k2 >= 0 && !KeyBindingHandler.nodes[k2].isKeyDown()) {
+			if (k2 >= 0 && !Keyboard.isKeyDown(KeyBindingHandler.nodes[k2].getKeyCode())) {
 				noteOn(k2);
 			}
 		}
@@ -244,7 +244,6 @@ public class ScreenPiano extends GuiScreen {
 
 	private void noteOn(int key) {
 		if (states[key] == 0) {
-			System.out.println("on" + key);
 			int keystroke = 127;
 			states[key] = keystroke;
 			ClientMidiHandler.onMessage(ShortMessage.NOTE_ON, 0, key + 23, keystroke);
@@ -254,7 +253,6 @@ public class ScreenPiano extends GuiScreen {
 
 	private void noteOff(int key) {
 		if (states[key] > 0) {
-			System.out.println("off" + key);
 			states[key] = 0;
 			ClientMidiHandler.onMessage(ShortMessage.NOTE_OFF, 0, key + 23, 0);
 			NetworkHandler.instance.sendToServer(new MessageMidiToServer(ShortMessage.NOTE_OFF, key + 23, 0));
