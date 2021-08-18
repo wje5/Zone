@@ -1,11 +1,13 @@
 package com.pinball3d.zone.block;
 
+import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.item.ItemCastingTable;
 import com.pinball3d.zone.item.ItemConstructBlock;
 import com.pinball3d.zone.item.ItemCrucible;
 import com.pinball3d.zone.item.ItemLoader;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -36,7 +38,8 @@ public class BlockLoader {
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
 		IForgeRegistry<Block> registry = event.getRegistry();
-		register(registry, iron_hull = new BlockIronHull());
+		register(registry,
+				iron_hull = setName(new Block(Material.IRON).setHardness(5.0F).setResistance(10.0F), "iron_hull"));
 		register(registry, clarity_glass = new BlockClarityGlass());
 		register(registry, reinforced_glass = new BlockReinforcedGlass());
 		register(registry, etherium_hull = new BlockEtheriumHull());
@@ -90,6 +93,10 @@ public class BlockLoader {
 		register(registry, beacon_amplifier_matrix = new BlockBeaconAmplifierMatrix());
 		register(registry, beacon_core = new BlockBeaconCore());
 		register(registry, piano = new BlockPiano());
+	}
+
+	private static Block setName(Block block, String name) {
+		return block.setRegistryName("zone", name).setUnlocalizedName(name).setCreativeTab(TabZone.tab);
 	}
 
 	private static void register(IForgeRegistry<Block> registry, Block block) {

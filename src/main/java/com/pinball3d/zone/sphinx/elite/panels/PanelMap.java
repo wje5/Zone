@@ -54,7 +54,7 @@ public class PanelMap extends Panel {
 	@Override
 	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
 		if (isMouseInPanel(mouseX, mouseY)) {
-			renderManager.scale += distance * 0.25F;
+			renderManager.scale += distance;
 		}
 	}
 

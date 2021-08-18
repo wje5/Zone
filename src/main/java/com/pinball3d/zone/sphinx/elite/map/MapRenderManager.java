@@ -22,11 +22,15 @@ import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -50,8 +54,11 @@ public class MapRenderManager implements IWorldEventListener {
 	private WorldChunkManager chunkManager;
 	private List<ContainerLocalRenderInformation> renderInfos = new ArrayList<ContainerLocalRenderInformation>(69696);
 	private ChunkWrapperList chunkWrapperList = new ChunkWrapperList();
-	public float cameraX, cameraY = 0, cameraZ, cameraPrevX, cameraPrevY, cameraPrevZ, cameraRotX = -45F,
-			cameraRotY = 45F, cameraRotZ, scale = 4F;
+	public float cameraX, cameraY = 0, cameraZ, cameraPrevX, cameraPrevY, cameraPrevZ,
+//			
+			cameraRotX = -45F, cameraRotY = 45F,
+//			cameraRotX = 0, cameraRotY = 0,
+			cameraRotZ, scale = 4F;
 	private final DynamicTexture lightmapTexture;
 	private final ResourceLocation locationLightMap;
 	private Minecraft mc = Minecraft.getMinecraft();
@@ -71,7 +78,7 @@ public class MapRenderManager implements IWorldEventListener {
 
 	private int frameCount;
 
-	public static int K;
+	private Framebuffer frameBuffer;
 
 	public MapRenderManager() {
 		lightmapTexture = new DynamicTexture(16, 16);
@@ -88,105 +95,169 @@ public class MapRenderManager implements IWorldEventListener {
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 		GlStateManager.pushMatrix();
 		GlStateManager.matrixMode(GL11.GL_PROJECTION);
-
 		// TODO EntityRenderer.updateLightMap
 		GlStateManager.enableDepth();
 		GlStateManager.enableAlpha();
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.5F);
 
 		GlStateManager.enableCull();
-//		GlStateManager.disableCull()
 
-		GlStateManager.viewport(x, mc.displayHeight - (y + height), width, height);
+		if (frameBuffer == null) {
+			frameBuffer = new Framebuffer(width, height, true);
+			frameBuffer.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
+		} else if (frameBuffer.framebufferWidth != width || frameBuffer.framebufferHeight != height) {
+			System.out.println("update" + width + "|" + height);
+			frameBuffer.deleteFramebuffer();
+			frameBuffer.createFramebuffer(width, height);
+		}
+		frameBuffer.bindFramebuffer(false);
+//		GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
+//		GlStateManager.viewport(0, 0, width, height);
+		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+//		GlStateManager.viewport(x, mc.displayHeight - (y + height), width, height);
+		GlStateManager.viewport(0, 0, width, height);
 		GlStateManager.loadIdentity();
-		GlStateManager.ortho(0, width, height, 0, 0.0D, 5000);
-
+//		GlStateManager.ortho(0, mc.displayWidth, mc.displayHeight, 0, 0, 5000);
+		GlStateManager.ortho(-width / 2F, width / 2F, height / 2F, -height / 2F, -50000, 50000);
+//		GL11.glFrustum(0, width, height, 0, 1000, 5000);
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-		GlStateManager.translate(width / 2, height / 2, 0);
+		GlStateManager.loadIdentity();
+//		EliteRenderHelper.drawRect(0, 0, width, height, Color.WHITE);
+//		EliteRenderHelper.drawBorder(0, 0, width, height, 3, Color.WHITE);
+		if (x != 121212) {
+//			GlStateManager.translate(width / 2 - x / 2, height / 2 - y / 2, 0);
+//			GlStateManager.translate(0, 0, 256);
 //		GlStateManager.translate(cameraX, cameraY, cameraZ);
-		GlStateManager.rotate(makeQuaternion(cameraRotX, cameraRotY, cameraRotZ));
-		GlStateManager.scale(scale, -scale, scale);
+			GlStateManager.rotate(makeQuaternion(cameraRotX, cameraRotY, cameraRotZ));
+			GlStateManager.scale(scale, -scale, scale);
 //		GlStateManager.translate(0, 0, 0.05F);
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		RenderHelper.disableStandardItemLighting();
-		applyMap(partialTicks);
-		updateChunks(finishTime);
-		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-		GlStateManager.pushMatrix();
-		GlStateManager.disableAlpha();
-		renderBlockLayer(BlockRenderLayer.SOLID, partialTicks);
-		GlStateManager.enableAlpha();
-		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false,
-				this.mc.gameSettings.mipmapLevels > 0);
-		renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, partialTicks);
-		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-		renderBlockLayer(BlockRenderLayer.CUTOUT, partialTicks);
-		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-		GlStateManager.popMatrix();
-		GlStateManager.pushMatrix();
-		RenderHelper.enableStandardItemLighting();
-		net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
-//		renderEntities(entity, icamera, partialTicks); TODO
-		net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
-		RenderHelper.disableStandardItemLighting();
-		disableLightmap();
-		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-		GlStateManager.popMatrix();
-		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
-				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-//        renderglobal.drawBlockDamageTexture(Tessellator.getInstance(), Tessellator.getInstance().getBuffer(), entity, partialTicks); TODO
-		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-		GlStateManager.disableBlend();
-		enableLightmap();
-//		mc.effectRenderer.renderLitParticles(entity, partialTicks); TODO
-		RenderHelper.disableStandardItemLighting();
-//		mc.effectRenderer.renderParticles(entity, partialTicks);
-		disableLightmap();
-		GlStateManager.depthMask(false);
-		GlStateManager.enableCull();
-//        renderRainSnow(partialTicks); TODO
-		GlStateManager.depthMask(true);
-//		renderglobal.renderWorldBorder(entity, partialTicks);//TODO
-		GlStateManager.disableBlend();
-		GlStateManager.enableCull();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
-				GlStateManager.DestFactor.ZERO);
-		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-		GlStateManager.enableBlend();
-		GlStateManager.depthMask(false);
-		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		renderBlockLayer(BlockRenderLayer.TRANSLUCENT, partialTicks);
+			GlStateManager.shadeModel(GL11.GL_SMOOTH);
+			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+			RenderHelper.disableStandardItemLighting();
+			applyMap(partialTicks);
+			updateChunks(finishTime);
+			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 
-		RenderHelper.enableStandardItemLighting();
-		net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
+			GlStateManager.enableDepth();
+
+			GlStateManager.pushMatrix();
+			GlStateManager.disableAlpha();
+			renderBlockLayer(BlockRenderLayer.SOLID, partialTicks);
+			GlStateManager.enableAlpha();
+			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false,
+					this.mc.gameSettings.mipmapLevels > 0);
+			renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, partialTicks);
+			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+			renderBlockLayer(BlockRenderLayer.CUTOUT, partialTicks);
+			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+			GlStateManager.shadeModel(GL11.GL_FLAT);
+			GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+			GlStateManager.popMatrix();
+			GlStateManager.pushMatrix();
+			RenderHelper.enableStandardItemLighting();
+			net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+//		renderEntities(entity, icamera, partialTicks); TODO
+			net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+			RenderHelper.disableStandardItemLighting();
+			disableLightmap();
+			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+			GlStateManager.popMatrix();
+			GlStateManager.enableBlend();
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+					GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+//        renderglobal.drawBlockDamageTexture(Tessellator.getInstance(), Tessellator.getInstance().getBuffer(), entity, partialTicks); TODO
+			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+			GlStateManager.disableBlend();
+			enableLightmap();
+//		mc.effectRenderer.renderLitParticles(entity, partialTicks); TODO
+			RenderHelper.disableStandardItemLighting();
+//		mc.effectRenderer.renderParticles(entity, partialTicks);
+			disableLightmap();
+			GlStateManager.depthMask(false);
+			GlStateManager.enableCull();
+//        renderRainSnow(partialTicks); TODO
+			GlStateManager.depthMask(true);
+//		renderglobal.renderWorldBorder(entity, partialTicks);//TODO
+			GlStateManager.disableBlend();
+			GlStateManager.enableCull();
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+					GlStateManager.DestFactor.ZERO);
+			GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+			GlStateManager.enableBlend();
+			GlStateManager.depthMask(false);
+			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+			GlStateManager.shadeModel(GL11.GL_SMOOTH);
+			renderBlockLayer(BlockRenderLayer.TRANSLUCENT, partialTicks);
+
+			RenderHelper.enableStandardItemLighting();
+			net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
 //		renderglobal.renderEntities(entity, icamera, partialTicks);  TODO
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
-				GlStateManager.DestFactor.ZERO);
-		net.minecraftforge.client.ForgeHooksClient.setRenderPass(-1);
-		RenderHelper.disableStandardItemLighting();
-		GlStateManager.shadeModel(7424);
-		GlStateManager.depthMask(true);
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.disableFog();
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+					GlStateManager.DestFactor.ZERO);
+			net.minecraftforge.client.ForgeHooksClient.setRenderPass(-1);
+			RenderHelper.disableStandardItemLighting();
+			GlStateManager.shadeModel(GL11.GL_FLAT);
+			GlStateManager.depthMask(true);
+			GlStateManager.enableCull();
+			GlStateManager.disableBlend();
+			GlStateManager.disableFog();
+		}
+		frameBuffer.unbindFramebuffer();
+		GlStateManager.pushMatrix();
+		frameBuffer.framebufferRender(width, height);
+		GlStateManager.popMatrix();
 
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 		GlStateManager.popMatrix();
 		GlStateManager.matrixMode(GL11.GL_PROJECTION);
 		GlStateManager.popMatrix();
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+		GlStateManager.pushMatrix();
+		mc.getFramebuffer().bindFramebuffer(true);
+//		GlStateManager.loadIdentity();
+//		GlStateManager.translate(0, 0, -1000);
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO,
+				GlStateManager.DestFactor.ONE);
+//		frameBuffer.framebufferRenderExt(width, height, false);
+		renderFrameBuffer(width, height);
+		GlStateManager.popMatrix();
+		mc.getFramebuffer().bindFramebuffer(true);
+
 		GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
 		frameCount++;
+	}
+
+	public void renderFrameBuffer(int width, int height) {
+		GlStateManager.colorMask(true, true, true, false);
+		GlStateManager.disableDepth();
+		GlStateManager.depthMask(false);
+		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableLighting();
+		GlStateManager.disableAlpha();
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		frameBuffer.bindFramebufferTexture();
+		float f2 = (float) frameBuffer.framebufferWidth / (float) frameBuffer.framebufferTextureWidth;
+		float f3 = (float) frameBuffer.framebufferHeight / (float) frameBuffer.framebufferTextureHeight;
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder bufferbuilder = tessellator.getBuffer();
+		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+		bufferbuilder.pos(0.0D, height, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
+		bufferbuilder.pos(width, height, 0.0D).tex(f2, 0.0D).color(255, 255, 255, 255).endVertex();
+		bufferbuilder.pos(width, 0.0D, 0.0D).tex(f2, f3).color(255, 255, 255, 255).endVertex();
+		bufferbuilder.pos(0.0D, 0.0D, 0.0D).tex(0.0D, f3).color(255, 255, 255, 255).endVertex();
+		tessellator.draw();
+		frameBuffer.unbindFramebufferTexture();
+		GlStateManager.depthMask(true);
+		GlStateManager.colorMask(true, true, true, true);
 	}
 
 	public void applyMap(float partialTicks) {
