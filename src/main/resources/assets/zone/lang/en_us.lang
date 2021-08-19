@@ -185,6 +185,7 @@ sphinx.next=Next >
 sphinx.back=< Back
 sphinx.cancel=Cancel
 sphinx.confirm=Confirm
+sphinx.launch=Launch
 sphinx.finish=Finish
 sphinx.output=Output
 sphinx.time=Time
@@ -342,6 +343,12 @@ elite.menu.window=§nW§rindow
 elite.menu.help=§nH§relp
 
 elite.panel.map=Map
+
+elite.choose_network.title=Sphinx Elite Launcher
+elite.choose_network.text1=§lSelect a network to connect
+elite.choose_network.text2=Connect to use terminal for network operations
+elite.choose_network.text3=Network:
+elite.choose_network.text4=§uU§rse this as the default and do not ask again
 
 sound.grinder=Grinder:Work
 sound.drainer=Drainer:Work

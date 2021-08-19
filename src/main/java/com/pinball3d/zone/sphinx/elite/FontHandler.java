@@ -27,6 +27,10 @@ public class FontHandler {
 		return renderText(x, y, s, color);
 	}
 
+	public static int renderTextCenter(int x, int y, FormattedString s, Color color) {
+		return renderText(x - getStringWidth(s) / 2, y, s, color);
+	}
+
 	public static int renderText(int x, int y, FormattedString s, Color color) {
 		int t = 0;
 		for (int i = 0; i < s.getComponentsSize(); i++) {

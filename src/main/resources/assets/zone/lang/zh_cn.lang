@@ -185,6 +185,7 @@ sphinx.next=下一步 >
 sphinx.back=< 上一步
 sphinx.cancel=取消
 sphinx.confirm=确认
+sphinx.launch=运行
 sphinx.finish=完成
 sphinx.output=输出
 sphinx.time=用时
@@ -342,6 +343,12 @@ elite.menu.window=窗口(W)
 elite.menu.help=帮助(H)
 
 elite.panel.map=地图
+
+elite.choose_network.title=Sphinx Elite 启动器
+elite.choose_network.text1=§l选择要连接的网络
+elite.choose_network.text2=连接以使用终端进行网络操作
+elite.choose_network.text3=选择网络:
+elite.choose_network.text4=不再询问(U)
 
 sound.grinder=磨粉机：工作
 sound.drainer=收集器：工作
