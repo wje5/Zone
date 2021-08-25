@@ -1,5 +1,7 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.network.elite.MessageRequestNetworks;
+
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -8,7 +10,7 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class NetworkHandler {
 	public static SimpleNetworkWrapper instance = NetworkRegistry.INSTANCE.newSimpleChannel("zone");
-
+	private static MessageZone.Handler handler = new MessageZone.Handler();
 	private static int nextID = 0;
 
 	public NetworkHandler() {
@@ -58,10 +60,23 @@ public class NetworkHandler {
 		registerMessage(MessageMidiToServer.Handler.class, MessageMidiToServer.class, Side.SERVER);
 		registerMessage(MessageCloseChannel.Handler.class, MessageCloseChannel.class, Side.SERVER);
 		registerMessage(MessageUpdateCameraPos.Handler.class, MessageUpdateCameraPos.class, Side.SERVER);
+
+		// ELITE
+		registerMessage(MessageRequestNetworks.class, Side.SERVER);
+		registerMessage(MessageRequestNetworks.PostBack.class, Side.CLIENT);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(
 			Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, Side side) {
 		instance.registerMessage(messageHandler, requestMessageType, nextID++, side);
+	}
+
+	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(
+			IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, Side side) {
+		instance.registerMessage(messageHandler, requestMessageType, nextID++, side);
+	}
+
+	private static void registerMessage(Class<? extends MessageZone> requestMessageType, Side side) {
+		registerMessage(handler, requestMessageType, side);
 	}
 }

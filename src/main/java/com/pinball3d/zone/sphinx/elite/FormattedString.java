@@ -14,7 +14,7 @@ public class FormattedString {
 	}
 
 	public FormattedString(String text, boolean isEscape) {
-		boolean underLine = false, italic = false, bold = false;
+		boolean underLine = false, italic = false, bold = false, alt = false;
 		Color color = null;
 		char[] a = text.toCharArray();
 		List<StringComponent> l = new ArrayList<StringComponent>();
@@ -26,7 +26,7 @@ public class FormattedString {
 					char d = a[i + 1];
 					if (d == 'n') {
 						if (!s.isEmpty() && !underLine) {
-							l.add(new StringComponent(s, color, bold, italic, underLine));
+							l.add(new StringComponent(s, color, bold, italic, underLine ? 1 : 0));
 							s = "";
 						}
 						underLine = true;
@@ -34,7 +34,7 @@ public class FormattedString {
 						continue;
 					} else if (d == 'o') {
 						if (!s.isEmpty() && !italic) {
-							l.add(new StringComponent(s, color, bold, italic, underLine));
+							l.add(new StringComponent(s, color, bold, italic, underLine ? 1 : 0));
 							s = "";
 						}
 						italic = true;
@@ -42,29 +42,43 @@ public class FormattedString {
 						continue;
 					} else if (d == 'l') {
 						if (!s.isEmpty() && !bold) {
-							l.add(new StringComponent(s, color, bold, italic, underLine));
+							l.add(new StringComponent(s, color, bold, italic, underLine ? 1 : 0));
 							s = "";
 						}
 						bold = true;
 						i++;
 						continue;
+					} else if (d == 'a') {
+						if (!s.isEmpty() && !alt) {
+							l.add(new StringComponent(s, color, bold, italic, underLine ? 1 : 0));
+							s = "";
+						}
+						alt = true;
+						i++;
+						continue;
 					} else if (d == 'r') {
 						if (!s.isEmpty() && (italic || bold || underLine)) {
-							l.add(new StringComponent(s, color, bold, italic, underLine));
+							l.add(new StringComponent(s, color, bold, italic, underLine ? 1 : 0));
 							s = "";
 						}
 						italic = false;
 						bold = false;
 						underLine = false;
+						alt = false;
 						i++;
 						continue;
 					}
 				}
 			}
 			s += c;
+			if (alt) {
+				l.add(new StringComponent(s, color, bold, italic, 2));
+				alt = false;
+				s = "";
+			}
 		}
 		if (!s.isEmpty()) {
-			l.add(new StringComponent(s, color, bold, italic, underLine));
+			l.add(new StringComponent(s, color, bold, italic, alt ? 2 : underLine ? 1 : 0));
 		}
 		components = l.toArray(new StringComponent[] {});
 	}
@@ -91,9 +105,9 @@ public class FormattedString {
 		public final Color color;
 		public final boolean bold;
 		public final boolean italic;
-		public final boolean underline;
+		public final int underline;
 
-		public StringComponent(String text, Color color, boolean bold, boolean italic, boolean underline) {
+		public StringComponent(String text, Color color, boolean bold, boolean italic, int underline) {
 			this.text = text;
 			this.color = color;
 			this.bold = bold;

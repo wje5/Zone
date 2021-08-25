@@ -32,6 +32,10 @@ public class FontHandler {
 	}
 
 	public static int renderText(int x, int y, FormattedString s, Color color) {
+		return renderText(x, y, s, color, false);
+	}
+
+	public static int renderText(int x, int y, FormattedString s, Color color, boolean isAlt) {
 		int t = 0;
 		for (int i = 0; i < s.getComponentsSize(); i++) {
 			StringComponent c = s.get(i);
@@ -43,7 +47,7 @@ public class FontHandler {
 			for (char e : a) {
 				w += renderChar(t + x + w, y, e, cColor, font);
 			}
-			if (c.underline) {
+			if (c.underline == 1 || (c.underline == 2 && isAlt)) {
 				EliteRenderHelper.drawRect(t + x - 1, y + font.getLineHeight() - 1, w, 1, color);
 			}
 			t += w;

@@ -40,7 +40,7 @@ public class EliteMainwindow extends GuiScreen {
 	private IFocus focus;
 	private List<PanelGroup> panels = new ArrayList<PanelGroup>();
 	private Drag dragLeft, dragRight;
-	private boolean inited;
+	private boolean inited, isAlt;
 	private List<Set<PanelGroup>> draggingPanels;
 
 	public static EliteMainwindow getWindow() {
@@ -196,7 +196,8 @@ public class EliteMainwindow extends GuiScreen {
 				}
 				super.keyTyped(typedChar, keyCode);
 			}
-		} else if (keyCode == Keyboard.KEY_LMENU) {
+		} else if (keyCode == Keyboard.KEY_LMENU || keyCode == Keyboard.KEY_RMENU) {
+			isAlt = true;
 			boolean flag = false;
 			if (dragLeft != null) {
 				dragLeft.stop(true);
@@ -260,6 +261,10 @@ public class EliteMainwindow extends GuiScreen {
 
 	public int getHeight() {
 		return mc.displayHeight;
+	}
+
+	public boolean isAlt() {
+		return isAlt;
 	}
 
 	public PanelMap getMapPanel() {

@@ -2,9 +2,10 @@ package com.pinball3d.zone.item;
 
 import java.util.UUID;
 
+import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.network.elite.MessageRequestNetworks;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.INeedNetwork;
-import com.pinball3d.zone.sphinx.elite.ScreenChooseNetwork;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -46,7 +47,8 @@ public class ItemTerminal extends ZoneItem {
 	@SideOnly(Side.CLIENT)
 	public void openScreen() {
 //		Minecraft.getMinecraft().displayGuiScreen(new EliteMainwindow());
-		Minecraft.getMinecraft().displayGuiScreen(new ScreenChooseNetwork());
+//		Minecraft.getMinecraft().displayGuiScreen(new ScreenChooseNetwork());
+		NetworkHandler.instance.sendToServer(new MessageRequestNetworks(new WorldPos(Minecraft.getMinecraft().player)));
 	}
 
 	@Override

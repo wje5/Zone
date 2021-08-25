@@ -338,9 +338,9 @@ manual.sphinx_system_7=-Layer 5-\n\n\n\n\n\n\n\n\n\nIf any of the structure part
 manual.sphinx_system_8=\nPlace the Transmission Module\nright below the\nDynavolt Restrainer.\nThe whole system depends on\nthe energy provided by them.\n\nThen, at the center of any of\nthe four edges in Layer 1,\nyou should place the\nController Mainframe, that\nshould form the structure.\n\nRight-click on it to boot\nthe system.\nThe system doesn't require a\npassword by default.
 manual.sphinx_system_9=Booting procedure takes about\n13 seconds,and costs roughly\n4 stacks of Energy.\nIt uses one Energy per 10 ticks.\nIt's necessary to maintain the\nsystem.\n\n§oHave fun!§r
 
-elite.menu.view=§nV§riew
-elite.menu.window=§nW§rindow
-elite.menu.help=§nH§relp
+elite.menu.view=§aView
+elite.menu.window=§aWindow
+elite.menu.help=§aHelp
 
 elite.panel.map=Map
 
@@ -348,7 +348,7 @@ elite.choose_network.title=Sphinx Elite Launcher
 elite.choose_network.text1=§lSelect a network to connect
 elite.choose_network.text2=Connect to use terminal for network operations
 elite.choose_network.text3=Network:
-elite.choose_network.text4=§uU§rse this as the default and do not ask again
+elite.choose_network.text4=§aUse this as the default and do not ask again
 
 sound.grinder=Grinder:Work
 sound.drainer=Drainer:Work

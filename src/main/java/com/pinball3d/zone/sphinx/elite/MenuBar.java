@@ -219,7 +219,7 @@ public class MenuBar {
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, 4, 0, 0, w - 3, 20);
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + w - 3, 4, 253, 0, 3, 20);
 			}
-			FontHandler.renderText(x + 8, 6, name, Color.FFC7C7C7);
+			FontHandler.renderText(x + 8, 6, name, Color.FFC7C7C7, parent.isAlt());
 			return w;
 		}
 
