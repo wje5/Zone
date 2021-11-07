@@ -56,9 +56,9 @@ public class MapRenderManager implements IWorldEventListener {
 	private ChunkWrapperList chunkWrapperList = new ChunkWrapperList();
 	public float cameraX, cameraY = 0, cameraZ, cameraPrevX, cameraPrevY, cameraPrevZ,
 //			
-			cameraRotX = -45F, cameraRotY = 45F,
+			cameraPitch = 45F, cameraYaw = 45F,
 //			cameraRotX = 0, cameraRotY = 0,
-			cameraRotZ, scale = 4F;
+			scale = 4F;
 	private final DynamicTexture lightmapTexture;
 	private final ResourceLocation locationLightMap;
 	private Minecraft mc = Minecraft.getMinecraft();
@@ -128,7 +128,7 @@ public class MapRenderManager implements IWorldEventListener {
 //			GlStateManager.translate(width / 2 - x / 2, height / 2 - y / 2, 0);
 //			GlStateManager.translate(0, 0, 256);
 //		GlStateManager.translate(cameraX, cameraY, cameraZ);
-			GlStateManager.rotate(makeQuaternion(cameraRotX, cameraRotY, cameraRotZ));
+			GlStateManager.rotate(makeQuaternion(-cameraPitch, cameraYaw + 180F, 0));
 			GlStateManager.scale(scale, -scale, scale);
 //		GlStateManager.translate(0, 0, 0.05F);
 			GlStateManager.shadeModel(GL11.GL_SMOOTH);
@@ -294,13 +294,13 @@ public class MapRenderManager implements IWorldEventListener {
 		BlockPos blockpos = new BlockPos(MathHelper.floor(d3 / 16D) * 16, MathHelper.floor(d4 / 16D) * 16,
 				MathHelper.floor(d5 / 16D) * 16);
 		displayListDirty = displayListDirty || !chunksToUpdate.isEmpty() || cameraX != lastViewCameraX
-				|| cameraY != lastViewCameraY || cameraZ != lastViewCameraZ || cameraRotX != lastViewCameraRotX
-				|| cameraRotY != lastViewCameraRotY;
+				|| cameraY != lastViewCameraY || cameraZ != lastViewCameraZ || cameraPitch != lastViewCameraRotX
+				|| cameraYaw != lastViewCameraRotY;
 		lastViewCameraX = cameraX;
 		lastViewCameraY = cameraY;
 		lastViewCameraZ = cameraZ;
-		lastViewCameraRotX = cameraRotX;
-		lastViewCameraRotY = cameraRotY;
+		lastViewCameraRotX = cameraPitch;
+		lastViewCameraRotY = cameraYaw;
 		cameraPrevX = cameraX;
 		cameraPrevY = cameraY;
 		cameraPrevZ = cameraZ;
@@ -443,7 +443,7 @@ public class MapRenderManager implements IWorldEventListener {
 //		float f4 = -MathHelper.cos(-f * 0.017453292F);
 //		float f5 = MathHelper.sin(-f * 0.017453292F);
 //		return new Vector3f(f3 * f4, f5, f2 * f4);
-		return new Vector3f(cameraRotX, cameraRotY, cameraRotZ);
+		return new Vector3f(cameraPitch, cameraYaw, 0);
 	}
 
 	public int renderBlockLayer(BlockRenderLayer layer, double partialTicks) {

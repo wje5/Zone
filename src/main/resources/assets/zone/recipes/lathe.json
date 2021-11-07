@@ -19,7 +19,7 @@
       "item": "zone:etherium_hull"
     },
     "=": {
-      "item": "zone:drill_head"
+      "item": "minecraft:diamond"
     },
     "O": {
       "item": "zone:advenced_circuit_board"

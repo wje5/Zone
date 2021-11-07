@@ -1,0 +1,8 @@
+{
+    "parent": "block/piston_head",
+    "textures": {
+        "unsticky": "zone:blocks/powered_piston_top_normal",
+        "side": "zone:blocks/powered_piston_side",
+        "platform": "zone:blocks/powered_piston_top_normal"
+    }
+}

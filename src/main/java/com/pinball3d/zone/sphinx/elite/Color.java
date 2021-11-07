@@ -3,6 +3,9 @@ package com.pinball3d.zone.sphinx.elite;
 public class Color {
 	public static final Color WHITE = new Color(0xFFFFFFFF);
 	public static final Color BLACK = new Color(0xFF000000);
+	public static final Color RED = new Color(0xFFFF0000);
+	public static final Color GREEN = new Color(0xFF00FF00);
+	public static final Color BLUE = new Color(0xFF0000FF);
 
 	public static final Color COMP_BG_LIGHT = new Color(0xFF535353);
 	public static final Color COMP_BG_CHOSEN = new Color(0xFF4F4F4F);
@@ -53,6 +56,6 @@ public class Color {
 	}
 
 	public int toInt() {
-		return (a << 24 & 0xFF000000) | (a << 16 & 0xFF0000) | (a << 8 & 0xFF00) | (a & 0xFF);
+		return (a << 24 & 0xFF000000) | (r << 16 & 0xFF0000) | (g << 8 & 0xFF00) | (b & 0xFF);
 	}
 }

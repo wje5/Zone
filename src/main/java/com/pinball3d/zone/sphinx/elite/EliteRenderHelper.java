@@ -110,4 +110,25 @@ public class EliteRenderHelper {
 		}
 		return flag;
 	}
+
+	public static void drawLine(int x, int y, int x2, int y2, Color color) {
+		float a = color.a / 255.0F;
+		float r = color.r / 255.0F;
+		float g = color.g / 255.0F;
+		float b = color.b / 255.0F;
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder bufferbuilder = tessellator.getBuffer();
+		GlStateManager.enableBlend();
+		GlStateManager.disableTexture2D();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		GlStateManager.color(r, g, b, a);
+		bufferbuilder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+		bufferbuilder.pos(x, y, 0).endVertex();
+		bufferbuilder.pos(x2, y2, 0).endVertex();
+		tessellator.draw();
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();
+	}
 }

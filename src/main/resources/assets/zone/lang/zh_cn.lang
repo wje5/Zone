@@ -165,6 +165,8 @@ tile.io_panel.name=IO面板
 tile.production_panel.name=生产面板
 tile.beacon_amplifier_matrix.name=信标增幅矩阵
 tile.beacon_core.name=信标核心
+tile.powered_piston.name=动力活塞
+tile.powered_piston_sticky.name=动力粘性活塞
 
 container.drainer=收集器
 container.grinder=研磨机

@@ -1,0 +1,8 @@
+{
+    "parent": "block/cube_bottom_top",
+    "textures": {
+        "bottom": "zone:blocks/powered_piston_bottom",
+        "side": "zone:blocks/powered_piston_side",
+        "top": "zone:blocks/powered_piston_top_normal"
+    }
+}

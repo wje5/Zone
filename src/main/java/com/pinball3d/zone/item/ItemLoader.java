@@ -29,7 +29,7 @@ public class ItemLoader {
 			transistor, energy_group, restrain_circle, theile_tube, laser_generater, crystallization_accelerator,
 			redstone_crystal, dioptric_crystal, induction_tube, smoothing_unit, blaze_crystal, display_screen,
 			amplify_unit, network_adapter, interference_crystal, half_interference_unit, sagger, fire_brick, clay_mold,
-			ceramic_mold, redstone_crystal_lens, tar, paddle, impeller;
+			ceramic_mold, redstone_crystal_lens, tar, paddle, impeller, energy_grid;
 
 	public static Item energy, construct_block, terminal, fc, drill, drill_heavy, drill_head, drill_heavy_head,
 			drill_empty, crucible_spoon, crucible_spoon_filled, manual, crucible, casting_table, hybrid_fuel;
@@ -105,9 +105,10 @@ public class ItemLoader {
 		register(registry, tar = new ZoneItem("tar"));
 		register(registry, paddle = new ZoneItem("paddle"));
 		register(registry, impeller = new ZoneItem("impeller"));
+		register(registry, energy_grid = new ZoneItem("energy_grid"));
+
 		register(registry, energy = new ZoneItem("energy"));
 		register(registry, terminal = new ItemTerminal(), false);
-
 		register(registry, fc = new ItemFC());
 //		register(registry, drill = new ItemDrill());
 //		register(registry, drill_heavy = new ItemDrillHeavy());

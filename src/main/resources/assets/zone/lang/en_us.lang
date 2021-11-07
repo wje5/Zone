@@ -165,6 +165,8 @@ tile.io_panel.name=IO Panel
 tile.production_panel.name=Production Panel
 tile.beacon_amplifier_matrix.name=Beacon Amplifier Matrix
 tile.beacon_core.name=Beacon Core
+tile.powered_piston.name=Powered Piston
+tile.powered_piston_sticky.name=Powered Sticky Piston
 
 container.drainer=Drainer
 container.grinder=Grinder
