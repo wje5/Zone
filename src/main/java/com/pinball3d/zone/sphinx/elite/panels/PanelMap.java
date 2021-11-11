@@ -1,11 +1,20 @@
 package com.pinball3d.zone.sphinx.elite.panels;
 
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Quaternion;
 
 import com.pinball3d.zone.core.LoadingPluginZone;
 import com.pinball3d.zone.sphinx.elite.Color;
 import com.pinball3d.zone.sphinx.elite.Drag;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
+import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
 import com.pinball3d.zone.sphinx.elite.FontHandler;
 import com.pinball3d.zone.sphinx.elite.FormattedString;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
@@ -14,7 +23,9 @@ import com.pinball3d.zone.sphinx.elite.map.MapRenderManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockFluidRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.math.MathHelper;
 
 public class PanelMap extends Panel {
 	private static BlockFluidRenderer fluidRenderer;
@@ -46,9 +57,9 @@ public class PanelMap extends Panel {
 				double d = moveY * Math.sin(renderManager.cameraPitch / 180F * Math.PI);
 				renderManager.cameraZ += d * Math.cos(renderManager.cameraYaw / 180F * Math.PI);
 				renderManager.cameraX -= d * Math.sin(renderManager.cameraYaw / 180F * Math.PI);
-				System.out.println(d * Math.cos(renderManager.cameraYaw / 180F * Math.PI) + "|"
-						+ d * Math.sin(renderManager.cameraYaw / 180F * Math.PI));
-				System.out.println(d);
+
+				renderManager.cameraX += moveX * Math.cos(renderManager.cameraYaw / 180F * Math.PI);
+				renderManager.cameraZ += moveX * Math.sin(renderManager.cameraYaw / 180F * Math.PI);
 			} else {
 				renderManager.cameraPitch = (renderManager.cameraPitch + moveY * 0.1F) % 360;
 				renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
@@ -112,38 +123,132 @@ public class PanelMap extends Panel {
 						"x:" + renderManager.cameraX + " y:" + renderManager.cameraY + " z:" + renderManager.cameraZ),
 				Color.TEXT_LIGHT, getParentGroup().getWidth());
 
-//		int length = 33;
-//		int x = getParentGroup().getWidth() - 90;
-//		int y = 10;
-//		int x1 = (int) (MathHelper.cos(renderManager.cameraYaw * 0.017453292F) * length);
-//		int y1 = (int) (MathHelper.sin(renderManager.cameraPitch * 0.017453292F)
-//				* MathHelper.sin(renderManager.cameraYaw * 0.017453292F) * length);
-//		EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x1, y + 40 + y1, new Color(0xFF9C3645));
-//		int x2 = 0;
-//		int y2 = (int) (-MathHelper.cos(renderManager.cameraPitch * 0.017453292F) * length);
-//		EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x2, y + 40 + y2, new Color(0xFF2890FF));
-//		int x3 = (int) (-MathHelper.cos((renderManager.cameraYaw + 90) * 0.017453292F) * length);
-//		int y3 = (int) (-MathHelper.sin(renderManager.cameraPitch * 0.017453292F)
-//				* MathHelper.sin((renderManager.cameraYaw + 90) * 0.017453292F) * length);
-//		EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x3, y + 40 + y3, new Color(0xFF628A1C));
-//
-//		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - x1 + 33, y - y1 + 33,
-//				renderManager.cameraYaw < 0 ? 0 : 15, 100, 15, 15);
-//		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - x2 + 33, y - y2 + 33,
-//				renderManager.cameraPitch < 0 ? 0 : 15, 130, 15, 15);
-//		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - x3 + 33, y - y3 + 33,
-//				Math.abs(renderManager.cameraYaw) < 90 ? 0 : 15, 115, 15, 15);
-//
-//		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x1 + 33, y + y1 + 33,
-//				renderManager.cameraYaw < 0 ? 15 : 0, 100, 15, 15);
-//		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x2 + 33, y + y2 + 33,
-//				renderManager.cameraPitch < 0 ? 15 : 0, 130, 15, 15);
-//		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x3 + 33, y + y3 + 33,
-//				Math.abs(renderManager.cameraYaw) < 90 ? 15 : 0, 115, 15, 15);
-//
-//		if (Math.sqrt((mouseX - x - 40) * (mouseX - x - 40) + (mouseY - y - 40) * (mouseY - y - 40)) < 40) {
-//			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, y, 78, 85, 80, 80);
-//		}
+		drawRotaryBall(getParentGroup().getWidth() - 90, 10, mouseX, mouseY);
+//		drawRotaryBall3D(getParentGroup().getWidth() - 90, 10, mouseX, mouseY);
 		super.doRender(mouseX, mouseY, partialTicks);
+	}
+
+	public void drawRotaryBall(int x, int y, int mouseX, int mouseY) {
+		int length = 33;
+		int x1 = (int) (-MathHelper.cos(renderManager.cameraYaw * 0.017453292F) * length);
+		int y1 = (int) (MathHelper.sin(renderManager.cameraPitch * 0.017453292F)
+				* MathHelper.sin(renderManager.cameraYaw * 0.017453292F) * length);
+		float z1 = MathHelper.cos((renderManager.cameraYaw + 90) * 0.017453292F)
+				* MathHelper.cos((renderManager.cameraPitch + 180) * 0.017453292F) * length;
+		int x2 = 0;
+		int y2 = (int) (MathHelper.cos((renderManager.cameraPitch + 180) * 0.017453292F) * length);
+		float z2 = -MathHelper.sin((renderManager.cameraPitch + 180) * 0.017453292F) * length;
+		int x3 = (int) (MathHelper.cos((renderManager.cameraYaw + 90) * 0.017453292F) * length);
+		int y3 = (int) (-MathHelper.sin(renderManager.cameraPitch * 0.017453292F)
+				* MathHelper.sin((renderManager.cameraYaw + 90) * 0.017453292F) * length);
+		float z3 = MathHelper.cos((renderManager.cameraYaw) * 0.017453292F)
+				* MathHelper.cos((renderManager.cameraPitch + 180) * 0.017453292F) * length;
+
+		Map<Float, Runnable> map = new TreeMap<Float, Runnable>((a, b) -> a < b ? 1 : -1);
+		map.put(z1, () -> {
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - x1 + 33, y - y1 + 33,
+					renderManager.cameraYaw >= 0 ? 0 : 15, 100, 15, 15);
+			EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x1, y + 40 + y1,
+					renderManager.cameraYaw >= 0 ? new Color(0xFFFF3352) : new Color(0xFF9C3645));
+		});
+		map.put(z2, () -> {
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - x2 + 33, y - y2 + 33,
+					renderManager.cameraPitch >= 0 ? 0 : 15, 130, 15, 15);
+			EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x2, y + 40 + y2,
+					renderManager.cameraPitch >= 0 ? new Color(0xFF2890FF) : new Color(0xFF30649C));
+		});
+		map.put(z3, () -> {
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - x3 + 33, y - y3 + 33,
+					Math.abs(renderManager.cameraYaw) >= 90 ? 0 : 15, 115, 15, 15);
+			EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x3, y + 40 + y3,
+					Math.abs(renderManager.cameraYaw) >= 90 ? new Color(0xFF8BDC00) : new Color(0xFF628A1C));
+		});
+		map.put(-z1, () -> EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x1 + 33, y + y1 + 33,
+				renderManager.cameraYaw >= 0 ? 15 : 0, 100, 15, 15));
+		map.put(-z2, () -> EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x2 + 33, y + y2 + 33,
+				renderManager.cameraPitch >= 0 ? 15 : 0, 130, 15, 15));
+		map.put(-z3, () -> EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x3 + 33, y + y3 + 33,
+				Math.abs(renderManager.cameraYaw) >= 90 ? 15 : 0, 115, 15, 15));
+		map.forEach((a, b) -> b.run());
+	}
+
+	public void drawRotaryBall3D(int x, int y, int mouseX, int mouseY) {
+		if (Math.sqrt((mouseX - x - 40) * (mouseX - x - 40) + (mouseY - y - 40) * (mouseY - y - 40)) < 40) {
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, y, 78, 85, 80, 80);
+		}
+
+		GlStateManager.enableDepth();
+		GL11.glPushMatrix();
+		GL11.glTranslatef(x + 40, y + 40, 0);
+		Quaternion q = MapRenderManager.makeQuaternion(-renderManager.cameraPitch, renderManager.cameraYaw + 180F, 0);
+		GlStateManager.rotate(q);
+		q.x = -q.x;
+		q.y = -q.y;
+		q.z = -q.z;
+
+		int length = 33;
+		EliteRenderHelper.drawLine(0, 0, 0, length, 0, 0,
+				renderManager.cameraYaw >= 0 ? new Color(0xFFFF3352) : new Color(0xFF9C3645));
+		EliteRenderHelper.drawLine(0, 0, 0, 0, -length, 0,
+				renderManager.cameraPitch >= 0 ? new Color(0xFF2890FF) : new Color(0xFF30649C));
+		EliteRenderHelper.drawLine(0, 0, 0, 0, 0, length,
+				Math.abs(renderManager.cameraYaw) >= 90 ? new Color(0xFF8BDC00) : new Color(0xFF628A1C));
+
+		GlStateManager.disableDepth();
+		GL11.glPushMatrix();
+		GL11.glTranslatef(-length, 0, 0);
+		GlStateManager.rotate(q);
+		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, renderManager.cameraYaw >= 0 ? 0 : 15, 100, 15,
+				15);
+		GL11.glPopMatrix();
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(length, 0, 0);
+		GlStateManager.rotate(q);
+		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, renderManager.cameraYaw < 0 ? 0 : 15, 100, 15, 15);
+		GL11.glPopMatrix();
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(0, length, 0);
+		GlStateManager.rotate(q);
+		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, renderManager.cameraPitch >= 0 ? 0 : 15, 130, 15,
+				15);
+		GL11.glPopMatrix();
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(0, -length, 0);
+		GlStateManager.rotate(q);
+		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, renderManager.cameraPitch < 0 ? 0 : 15, 130, 15,
+				15);
+		GL11.glPopMatrix();
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(0, 0, -length);
+		GlStateManager.rotate(q);
+		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, Math.abs(renderManager.cameraYaw) >= 90 ? 0 : 15,
+				115, 15, 15);
+		GL11.glPopMatrix();
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(0, 0, length);
+		GlStateManager.rotate(q);
+		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, Math.abs(renderManager.cameraYaw) < 90 ? 0 : 15,
+				115, 15, 15);
+		GL11.glPopMatrix();
+		GlStateManager.enableDepth();
+
+		GL11.glPopMatrix();
+	}
+
+	public static void printMatrix() {
+		ByteBuffer bb = ByteBuffer.allocateDirect(64);
+		bb.order(ByteOrder.LITTLE_ENDIAN);
+		FloatBuffer fb = bb.asFloatBuffer();
+		GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, fb);
+		System.out.println(fb.get() + "|" + fb.get() + "|" + fb.get() + "|" + fb.get());
+		System.out.println(fb.get() + "|" + fb.get() + "|" + fb.get() + "|" + fb.get());
+		System.out.println(fb.get() + "|" + fb.get() + "|" + fb.get() + "|" + fb.get());
+		System.out.println(fb.get() + "|" + fb.get() + "|" + fb.get() + "|" + fb.get());
+		System.out.println(fb);
 	}
 }

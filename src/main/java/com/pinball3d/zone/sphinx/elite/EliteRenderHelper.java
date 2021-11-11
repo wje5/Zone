@@ -112,6 +112,10 @@ public class EliteRenderHelper {
 	}
 
 	public static void drawLine(int x, int y, int x2, int y2, Color color) {
+		drawLine(x, y, 0, x2, y2, 0, color);
+	}
+
+	public static void drawLine(int x, int y, int z, int x2, int y2, int z2, Color color) {
 		float a = color.a / 255.0F;
 		float r = color.r / 255.0F;
 		float g = color.g / 255.0F;
@@ -125,8 +129,8 @@ public class EliteRenderHelper {
 				GlStateManager.DestFactor.ZERO);
 		GlStateManager.color(r, g, b, a);
 		bufferbuilder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-		bufferbuilder.pos(x, y, 0).endVertex();
-		bufferbuilder.pos(x2, y2, 0).endVertex();
+		bufferbuilder.pos(x, y, z).endVertex();
+		bufferbuilder.pos(x2, y2, z2).endVertex();
 		tessellator.draw();
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableBlend();

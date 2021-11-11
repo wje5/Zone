@@ -54,11 +54,8 @@ public class MapRenderManager implements IWorldEventListener {
 	private WorldChunkManager chunkManager;
 	private List<ContainerLocalRenderInformation> renderInfos = new ArrayList<ContainerLocalRenderInformation>(69696);
 	private ChunkWrapperList chunkWrapperList = new ChunkWrapperList();
-	public float cameraX, cameraY = 0, cameraZ, cameraPrevX, cameraPrevY, cameraPrevZ,
-//			
-			cameraPitch = 45F, cameraYaw = 45F,
-//			cameraRotX = 0, cameraRotY = 0,
-			scale = 4F;
+	public float cameraX, cameraY = 0, cameraZ, cameraPrevX, cameraPrevY, cameraPrevZ, cameraPitch = 45F,
+			cameraYaw = 45F, scale = 4F;
 	private final DynamicTexture lightmapTexture;
 	private final ResourceLocation locationLightMap;
 	private Minecraft mc = Minecraft.getMinecraft();
@@ -571,7 +568,7 @@ public class MapRenderManager implements IWorldEventListener {
 		}
 	}
 
-	private static Quaternion makeQuaternion(float p_188035_0_, float p_188035_1_, float p_188035_2_) {
+	public static Quaternion makeQuaternion(float p_188035_0_, float p_188035_1_, float p_188035_2_) {
 		float f = p_188035_0_ * 0.017453292F;
 		float f1 = p_188035_1_ * 0.017453292F;
 		float f2 = p_188035_2_ * 0.017453292F;
