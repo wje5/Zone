@@ -6,10 +6,10 @@ public class FontHandler {
 	public static Font NORMAL, BOLD, ITALIC, BOLD_ITALIC;
 
 	public static void init() {
-		NORMAL = new Font("founder/normal/font");
-		BOLD = new Font("founder/bold/font");
-		ITALIC = new Font("founder/italic/font");
-		BOLD_ITALIC = new Font("founder/bold_italic/font");
+		NORMAL = new Font("founder/normal/font", 277473);
+		BOLD = new Font("founder/bold/font", 277473);
+		ITALIC = new Font("founder/italic/font", 277473);
+		BOLD_ITALIC = new Font("founder/bold_italic/font", 277473);
 	}
 
 	public static int renderChar(int x, int y, char c, Color color, Font font) {

@@ -33,7 +33,7 @@ public class ClassTransformerZone implements IClassTransformer {
 				while (it.hasNext()) {
 					MethodNode method = it.next();
 					if (method.name.equals("updateCameraAndRender")
-							|| method.name.equals("a") && method.signature.equals("(FJ)V")) {
+							|| method.name.equals("a") && "(FJ)V".equals(method.desc)) {
 						ListIterator<AbstractInsnNode> it2 = method.instructions.iterator();
 						LabelNode label = null;
 						LineNumberNode line1027 = null;
@@ -56,8 +56,8 @@ public class ClassTransformerZone implements IClassTransformer {
 						}
 						InsnList list = new InsnList();
 						list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
-								LoadingPluginZone.runtimeDeobf ? "bib;" : "net/minecraft/client/Minecraft",
-								LoadingPluginZone.runtimeDeobf ? "b" : "getMinecraft",
+								LoadingPluginZone.runtimeDeobf ? "bib" : "net/minecraft/client/Minecraft",
+								LoadingPluginZone.runtimeDeobf ? "func_71410_x" : "getMinecraft",
 								LoadingPluginZone.runtimeDeobf ? "()Lbib;" : "()Lnet/minecraft/client/Minecraft;",
 								false));
 						list.add(new FieldInsnNode(Opcodes.GETFIELD,
@@ -111,7 +111,7 @@ public class ClassTransformerZone implements IClassTransformer {
 				while (it.hasNext()) {
 					MethodNode method = it.next();
 					if (method.name.equals("serverUpdateMovingPlayer")
-							|| method.name.equals("d") && method.signature.equals("(Loq;)V")) {
+							|| method.name.equals("d") && method.desc != null && "(Loq;)V".equals(method.desc)) {
 						ListIterator<AbstractInsnNode> it2 = method.instructions.iterator();
 						while (it2.hasNext()) {
 							AbstractInsnNode n = it2.next();

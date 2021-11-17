@@ -3,6 +3,9 @@ package com.pinball3d.zone.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
@@ -596,6 +599,14 @@ public class Util {
 		return true;
 	}
 
+	public static ByteBuffer readToBuffer(InputStream stream, int size) throws IOException {
+		ByteBuffer bytebuffer = ByteBuffer.allocateDirect(size + 1);
+		ReadableByteChannel channel = Channels.newChannel(stream);
+		while (channel.read(bytebuffer) != -1) {
+		}
+		return bytebuffer;
+	}
+
 	public static int readInt(InputStream stream) throws IOException {
 		byte[] bytes = new byte[4];
 		stream.read(bytes);
@@ -609,8 +620,11 @@ public class Util {
 	}
 
 	public static boolean[] readBooleans(InputStream stream) throws IOException {
+		return byteToBool8((byte) stream.read());
+	}
+
+	public static boolean[] byteToBool8(byte b) {
 		boolean[] bools = new boolean[8];
-		byte b = (byte) stream.read();
 		for (int i = 0; i < 7; i++) {
 			bools[i] = (b & 0x80) == 0x80;
 			b <<= 1;

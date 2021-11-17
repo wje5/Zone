@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Quaternion;
 
 import com.pinball3d.zone.core.LoadingPluginZone;
 import com.pinball3d.zone.sphinx.elite.Color;
@@ -23,7 +22,6 @@ import com.pinball3d.zone.sphinx.elite.map.MapRenderManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockFluidRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
 
@@ -122,9 +120,7 @@ public class PanelMap extends Panel {
 				new FormattedString(
 						"x:" + renderManager.cameraX + " y:" + renderManager.cameraY + " z:" + renderManager.cameraZ),
 				Color.TEXT_LIGHT, getParentGroup().getWidth());
-
 		drawRotaryBall(getParentGroup().getWidth() - 90, 10, mouseX, mouseY);
-//		drawRotaryBall3D(getParentGroup().getWidth() - 90, 10, mouseX, mouseY);
 		super.doRender(mouseX, mouseY, partialTicks);
 	}
 
@@ -148,96 +144,37 @@ public class PanelMap extends Panel {
 		map.put(z1, () -> {
 			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - x1 + 33, y - y1 + 33,
 					renderManager.cameraYaw >= 0 ? 0 : 15, 100, 15, 15);
-			EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x1, y + 40 + y1,
-					renderManager.cameraYaw >= 0 ? new Color(0xFFFF3352) : new Color(0xFF9C3645));
 		});
 		map.put(z2, () -> {
 			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - x2 + 33, y - y2 + 33,
 					renderManager.cameraPitch >= 0 ? 0 : 15, 130, 15, 15);
-			EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x2, y + 40 + y2,
-					renderManager.cameraPitch >= 0 ? new Color(0xFF2890FF) : new Color(0xFF30649C));
 		});
 		map.put(z3, () -> {
 			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - x3 + 33, y - y3 + 33,
 					Math.abs(renderManager.cameraYaw) >= 90 ? 0 : 15, 115, 15, 15);
+		});
+		map.put(-z1, () -> {
+			EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x1, y + 40 + y1,
+					renderManager.cameraYaw >= 0 ? new Color(0xFFFF3352) : new Color(0xFF9C3645));
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x1 + 33, y + y1 + 33,
+					renderManager.cameraYaw >= 0 ? 15 : 0, 100, 15, 15);
+			FontHandler.renderTextCenter(x + 40 + x1, y + 32 + y1, new FormattedString("X"), new Color(0xFF2E2E2E));
+		});
+		map.put(-z2, () -> {
+			EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x2, y + 40 + y2,
+					renderManager.cameraPitch >= 0 ? new Color(0xFF2890FF) : new Color(0xFF30649C));
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x2 + 33, y + y2 + 33,
+					renderManager.cameraPitch >= 0 ? 15 : 0, 130, 15, 15);
+			FontHandler.renderTextCenter(x + 40 + x2, y + 32 + y2, new FormattedString("Y"), new Color(0xFF2E2E2E));
+		});
+		map.put(-z3, () -> {
 			EliteRenderHelper.drawLine(x + 40, y + 40, x + 40 + x3, y + 40 + y3,
 					Math.abs(renderManager.cameraYaw) >= 90 ? new Color(0xFF8BDC00) : new Color(0xFF628A1C));
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x3 + 33, y + y3 + 33,
+					Math.abs(renderManager.cameraYaw) >= 90 ? 15 : 0, 115, 15, 15);
+			FontHandler.renderTextCenter(x + 40 + x3, y + 32 + y3, new FormattedString("Z"), new Color(0xFF2E2E2E));
 		});
-		map.put(-z1, () -> EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x1 + 33, y + y1 + 33,
-				renderManager.cameraYaw >= 0 ? 15 : 0, 100, 15, 15));
-		map.put(-z2, () -> EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x2 + 33, y + y2 + 33,
-				renderManager.cameraPitch >= 0 ? 15 : 0, 130, 15, 15));
-		map.put(-z3, () -> EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + x3 + 33, y + y3 + 33,
-				Math.abs(renderManager.cameraYaw) >= 90 ? 15 : 0, 115, 15, 15));
 		map.forEach((a, b) -> b.run());
-	}
-
-	public void drawRotaryBall3D(int x, int y, int mouseX, int mouseY) {
-		if (Math.sqrt((mouseX - x - 40) * (mouseX - x - 40) + (mouseY - y - 40) * (mouseY - y - 40)) < 40) {
-			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, y, 78, 85, 80, 80);
-		}
-
-		GlStateManager.enableDepth();
-		GL11.glPushMatrix();
-		GL11.glTranslatef(x + 40, y + 40, 0);
-		Quaternion q = MapRenderManager.makeQuaternion(-renderManager.cameraPitch, renderManager.cameraYaw + 180F, 0);
-		GlStateManager.rotate(q);
-		q.x = -q.x;
-		q.y = -q.y;
-		q.z = -q.z;
-
-		int length = 33;
-		EliteRenderHelper.drawLine(0, 0, 0, length, 0, 0,
-				renderManager.cameraYaw >= 0 ? new Color(0xFFFF3352) : new Color(0xFF9C3645));
-		EliteRenderHelper.drawLine(0, 0, 0, 0, -length, 0,
-				renderManager.cameraPitch >= 0 ? new Color(0xFF2890FF) : new Color(0xFF30649C));
-		EliteRenderHelper.drawLine(0, 0, 0, 0, 0, length,
-				Math.abs(renderManager.cameraYaw) >= 90 ? new Color(0xFF8BDC00) : new Color(0xFF628A1C));
-
-		GlStateManager.disableDepth();
-		GL11.glPushMatrix();
-		GL11.glTranslatef(-length, 0, 0);
-		GlStateManager.rotate(q);
-		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, renderManager.cameraYaw >= 0 ? 0 : 15, 100, 15,
-				15);
-		GL11.glPopMatrix();
-
-		GL11.glPushMatrix();
-		GL11.glTranslatef(length, 0, 0);
-		GlStateManager.rotate(q);
-		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, renderManager.cameraYaw < 0 ? 0 : 15, 100, 15, 15);
-		GL11.glPopMatrix();
-
-		GL11.glPushMatrix();
-		GL11.glTranslatef(0, length, 0);
-		GlStateManager.rotate(q);
-		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, renderManager.cameraPitch >= 0 ? 0 : 15, 130, 15,
-				15);
-		GL11.glPopMatrix();
-
-		GL11.glPushMatrix();
-		GL11.glTranslatef(0, -length, 0);
-		GlStateManager.rotate(q);
-		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, renderManager.cameraPitch < 0 ? 0 : 15, 130, 15,
-				15);
-		GL11.glPopMatrix();
-
-		GL11.glPushMatrix();
-		GL11.glTranslatef(0, 0, -length);
-		GlStateManager.rotate(q);
-		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, Math.abs(renderManager.cameraYaw) >= 90 ? 0 : 15,
-				115, 15, 15);
-		GL11.glPopMatrix();
-
-		GL11.glPushMatrix();
-		GL11.glTranslatef(0, 0, length);
-		GlStateManager.rotate(q);
-		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, -7, -7, Math.abs(renderManager.cameraYaw) < 90 ? 0 : 15,
-				115, 15, 15);
-		GL11.glPopMatrix();
-		GlStateManager.enableDepth();
-
-		GL11.glPopMatrix();
 	}
 
 	public static void printMatrix() {

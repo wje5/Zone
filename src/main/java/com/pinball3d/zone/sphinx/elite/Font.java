@@ -2,6 +2,7 @@ package com.pinball3d.zone.sphinx.elite;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,35 +24,35 @@ public class Font {
 	private Map<Long, Integer> kernings = new HashMap<Long, Integer>();
 	private List<ResourceLocation> textures = new ArrayList<ResourceLocation>();
 
-	public Font(String name) {
+	public Font(String name, int fileSize) {
 		InputStream stream = null;
 		try {
 			stream = Minecraft.getMinecraft().getResourceManager()
 					.getResource(new ResourceLocation("zone:fonts/" + name + ".bin")).getInputStream();
-			boolean[] flags = Util.readBooleans(stream);
-			size = Util.readInt(stream);
-			lineHeight = Util.readInt(stream);
-			base = Util.readInt(stream);
-			scaleW = Util.readInt(stream);
-			scaleH = Util.readInt(stream);
-			pages = Util.readInt(stream);
-			charsCount = Util.readInt(stream);
-			kerningsCount = Util.readInt(stream);
-			padding = new int[] { Util.readInt(stream), Util.readInt(stream), Util.readInt(stream),
-					Util.readInt(stream) };
-			spacing = new int[] { Util.readInt(stream), Util.readInt(stream) };
+			ByteBuffer buffer = Util.readToBuffer(stream, fileSize);
+			buffer.clear();
+			boolean[] flags = Util.byteToBool8(buffer.get());
+			size = buffer.getInt();
+			lineHeight = buffer.getInt();
+			base = buffer.getInt();
+			scaleW = buffer.getInt();
+			scaleH = buffer.getInt();
+			pages = buffer.getInt();
+			charsCount = buffer.getInt();
+			kerningsCount = buffer.getInt();
+			padding = new int[] { buffer.getInt(), buffer.getInt(), buffer.getInt(), buffer.getInt() };
+			spacing = new int[] { buffer.getInt(), buffer.getInt() };
 			for (int i = 0; i < charsCount; i++) {
-				int id = Util.readInt(stream);
-				Integer[] a = new Integer[] { Util.readInt(stream), Util.readInt(stream), Util.readInt(stream),
-						Util.readInt(stream), Util.readInt(stream), Util.readInt(stream), Util.readInt(stream),
-						Util.readInt(stream) };
+				int id = buffer.getInt();
+				Integer[] a = new Integer[] { buffer.getInt(), buffer.getInt(), buffer.getInt(), buffer.getInt(),
+						buffer.getInt(), buffer.getInt(), buffer.getInt(), buffer.getInt() };
 				chars.put(id, a);
 			}
 			for (int i = 0; i < kerningsCount; i++) {
-				long l = Util.readInt(stream);
+				long l = buffer.getInt();
 				l <<= 32;
-				l |= Util.readInt(stream);
-				kernings.put(l, Util.readInt(stream));
+				l |= buffer.getInt();
+				kernings.put(l, buffer.getInt());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

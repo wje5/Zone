@@ -25,6 +25,8 @@ compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
 minecraft {
     version = "1.12.2-14.23.5.2847"
     runDir = "run"
@@ -94,10 +96,25 @@ dependencies {
     compile files('natives/')
 }
 
+//jar {
+//    manifest {
+//        attributes([
+//            "FMLCorePlugin": "com.pinball3d.zone.core.LoadingPluginZone"
+//        ])
+//    }
+//}
+
 shadowJar {
     dependencies {
         include(dependency('org.apache.pdfbox:pdfbox:2.0.21'))
         include(dependency('org.apache.pdfbox:fontbox:2.0.21'))
+    }
+    manifest {
+        attributes([
+            "FMLCorePlugin": "com.pinball3d.zone.core.LoadingPluginZone",
+            "FMLCorePluginContainsFMLMod": true,
+            "ForceLoadAsMod": true,
+        ])
     }
     exclude 'dummyThing' // can someone explain why this is here
     classifier = 'release'

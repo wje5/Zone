@@ -204,6 +204,20 @@ public class MapRenderManager implements IWorldEventListener {
 			GlStateManager.disableBlend();
 			GlStateManager.disableFog();
 		}
+//		PanelMap.printMatrix();
+		GL11.glColor4f(1, 1, 1, 1);
+//		GL11.glBegin(GL11.GL_LINES);
+		GL11.glBegin(GL11.GL_TRIANGLES);
+//		GL11.glVertex3f(mouseX, mouseY, finishTime);
+		int chunkX = MathHelper.floor(cameraX / 16D);
+		int chunkZ = MathHelper.floor(cameraZ / 16D);
+		for (int i = -currentRenderRange; i <= currentRenderRange; i++) {
+			GL11.glVertex3f((chunkX - currentRenderRange) * 16, -10, chunkZ + i);
+			GL11.glVertex3f((chunkX + currentRenderRange) * 16, -10, chunkZ + i);
+			GL11.glVertex3f(0, 0, 0);
+		}
+		GL11.glEnd();
+
 		frameBuffer.unbindFramebuffer();
 		GlStateManager.pushMatrix();
 		frameBuffer.framebufferRender(width, height);
@@ -342,7 +356,6 @@ public class MapRenderManager implements IWorldEventListener {
 
 		Set<ChunkWrapper> set = chunksToUpdate;
 		chunksToUpdate = new LinkedHashSet<ChunkWrapper>();
-//		System.out.println("renderInfo" + renderInfos.size());
 		for (ContainerLocalRenderInformation info : renderInfos) {
 			ChunkWrapper chunk = info.chunk;
 			if (chunk.needsUpdate() || set.contains(chunk)) {
