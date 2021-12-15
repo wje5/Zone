@@ -12,19 +12,23 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.Project;
 import org.lwjgl.util.vector.Quaternion;
-import org.lwjgl.util.vector.Vector3f;
 
 import com.pinball3d.zone.network.MessageUpdateCameraPos;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
+import com.pinball3d.zone.sphinx.elite.MouseHandler;
 import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -41,6 +45,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
@@ -54,8 +60,8 @@ public class MapRenderManager implements IWorldEventListener {
 	private WorldChunkManager chunkManager;
 	private List<ContainerLocalRenderInformation> renderInfos = new ArrayList<ContainerLocalRenderInformation>(69696);
 	private ChunkWrapperList chunkWrapperList = new ChunkWrapperList();
-	public float cameraX, cameraY = 0, cameraZ, cameraPrevX, cameraPrevY, cameraPrevZ, cameraPitch = 45F,
-			cameraYaw = 45F, scale = 4F;
+	public float cameraX, cameraY = 270, cameraZ, cameraPrevX, cameraPrevY, cameraPrevZ, cameraPitch = 90F,
+			cameraYaw = 0F, scale = 15F;
 	private final DynamicTexture lightmapTexture;
 	private final ResourceLocation locationLightMap;
 	private Minecraft mc = Minecraft.getMinecraft();
@@ -72,17 +78,17 @@ public class MapRenderManager implements IWorldEventListener {
 	private float lastViewCameraRotX = Float.MIN_VALUE;
 	private float lastViewCameraRotY = Float.MIN_VALUE;
 	private double prevRenderSortX, prevRenderSortY, prevRenderSortZ;
-
 	private int frameCount;
-
 	private Framebuffer frameBuffer;
+	private RayTraceResult rayTraceResult;
+	private double[] ray = new double[6];
 
 	public MapRenderManager() {
 		lightmapTexture = new DynamicTexture(16, 16);
 		locationLightMap = mc.getTextureManager().getDynamicTextureLocation("lightMap", lightmapTexture);
 	}
 
-	public void doRender(int x, int y, int width, int height, int mouseX, int mouseY, float partialTicks) {
+	public void doRender(int width, int height, int mouseX, int mouseY, float partialTicks) {
 		int j = Math.min(Minecraft.getDebugFPS(), mc.gameSettings.limitFramerate);
 		j = Math.max(j, 60);
 		long l = Math.max(1000000000 / j / 4, 0L);
@@ -92,7 +98,9 @@ public class MapRenderManager implements IWorldEventListener {
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 		GlStateManager.pushMatrix();
 		GlStateManager.matrixMode(GL11.GL_PROJECTION);
+
 		// TODO EntityRenderer.updateLightMap
+		getMouseOver(mouseX, mouseY, width, height, partialTicks);
 		GlStateManager.enableDepth();
 		GlStateManager.enableAlpha();
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.5F);
@@ -108,115 +116,139 @@ public class MapRenderManager implements IWorldEventListener {
 			frameBuffer.createFramebuffer(width, height);
 		}
 		frameBuffer.bindFramebuffer(false);
-//		GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
-//		GlStateManager.viewport(0, 0, width, height);
-		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-//		GlStateManager.viewport(x, mc.displayHeight - (y + height), width, height);
 		GlStateManager.viewport(0, 0, width, height);
+		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+//		GlStateManager.loadIdentity();
+//		GlStateManager.ortho(-width / 2F, width / 2F, height / 2F, -height / 2F, 0, 5000);
+//		GL11.glFrustum(-width / 2F, width / 2F, height / 2F, -height / 2F, 0.05F, 512 * Math.sqrt(2));
+//		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+//		GlStateManager.loadIdentity();
+////		GlStateManager.translate(0.0F, 0.0F, 0.05F);
+//		GlStateManager.rotate(cameraPitch, 1, 0, 0);
+//		GlStateManager.rotate(cameraYaw, 0, 1, 0);
+////		GlStateManager.rotate(makeQuaternion(-cameraPitch, cameraYaw + 180F, 0));
+//		GlStateManager.scale(scale, -scale, scale);
+		GlStateManager.matrixMode(GL11.GL_PROJECTION);
 		GlStateManager.loadIdentity();
-//		GlStateManager.ortho(0, mc.displayWidth, mc.displayHeight, 0, 0, 5000);
-		GlStateManager.ortho(-width / 2F, width / 2F, height / 2F, -height / 2F, -50000, 50000);
-//		GL11.glFrustum(0, width, height, 0, 1000, 5000);
+		Project.gluPerspective(70, width * 1.0F / height, 0.05F, 512 * MathHelper.SQRT_2);
+		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 		GlStateManager.loadIdentity();
-//		EliteRenderHelper.drawRect(0, 0, width, height, Color.WHITE);
-//		EliteRenderHelper.drawBorder(0, 0, width, height, 3, Color.WHITE);
-		if (x != 121212) {
-//			GlStateManager.translate(width / 2 - x / 2, height / 2 - y / 2, 0);
-//			GlStateManager.translate(0, 0, 256);
-//		GlStateManager.translate(cameraX, cameraY, cameraZ);
-			GlStateManager.rotate(makeQuaternion(-cameraPitch, cameraYaw + 180F, 0));
-			GlStateManager.scale(scale, -scale, scale);
-//		GlStateManager.translate(0, 0, 0.05F);
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			RenderHelper.disableStandardItemLighting();
-			applyMap(partialTicks);
-			updateChunks(finishTime);
-			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+//		GlStateManager.translate(0.0F, 0.0F, 0.05F);
+		GlStateManager.translate(0, 0, scale);
+		GlStateManager.rotate(cameraPitch, 1, 0, 0);
+		GlStateManager.rotate(cameraYaw, 0, 1, 0);
 
-			GlStateManager.enableDepth();
+//		GlStateManager.rotate(makeQuaternion(-cameraPitch, cameraYaw + 180F, 0));
+//		GlStateManager.scale(scale, -scale, scale);
 
-			GlStateManager.pushMatrix();
-			GlStateManager.disableAlpha();
-			renderBlockLayer(BlockRenderLayer.SOLID, partialTicks);
-			GlStateManager.enableAlpha();
-			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false,
-					this.mc.gameSettings.mipmapLevels > 0);
-			renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, partialTicks);
-			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-			renderBlockLayer(BlockRenderLayer.CUTOUT, partialTicks);
-			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-			GlStateManager.shadeModel(GL11.GL_FLAT);
-			GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-			GlStateManager.popMatrix();
-			GlStateManager.pushMatrix();
-			RenderHelper.enableStandardItemLighting();
-			net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		RenderHelper.disableStandardItemLighting();
+		applyMap(partialTicks);
+		updateChunks(finishTime);
+		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+		GlStateManager.pushMatrix();
+		GlStateManager.disableAlpha();
+		renderBlockLayer(BlockRenderLayer.SOLID, partialTicks);
+		GlStateManager.enableAlpha();
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false,
+				this.mc.gameSettings.mipmapLevels > 0);
+		renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, partialTicks);
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+		renderBlockLayer(BlockRenderLayer.CUTOUT, partialTicks);
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+		GlStateManager.shadeModel(GL11.GL_FLAT);
+		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+
+		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+		GlStateManager.popMatrix();
+		GlStateManager.pushMatrix();
+		RenderHelper.enableStandardItemLighting();
+		net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
 //		renderEntities(entity, icamera, partialTicks); TODO
-			net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
-			RenderHelper.disableStandardItemLighting();
-			disableLightmap();
-			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-			GlStateManager.popMatrix();
-			GlStateManager.enableBlend();
-			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
-					GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-//        renderglobal.drawBlockDamageTexture(Tessellator.getInstance(), Tessellator.getInstance().getBuffer(), entity, partialTicks); TODO
-			mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-			GlStateManager.disableBlend();
-			enableLightmap();
-//		mc.effectRenderer.renderLitParticles(entity, partialTicks); TODO
-			RenderHelper.disableStandardItemLighting();
-//		mc.effectRenderer.renderParticles(entity, partialTicks);
-			disableLightmap();
-			GlStateManager.depthMask(false);
-			GlStateManager.enableCull();
-//        renderRainSnow(partialTicks); TODO
-			GlStateManager.depthMask(true);
-//		renderglobal.renderWorldBorder(entity, partialTicks);//TODO
-			GlStateManager.disableBlend();
-			GlStateManager.enableCull();
-			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
-					GlStateManager.DestFactor.ZERO);
-			GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-			GlStateManager.enableBlend();
-			GlStateManager.depthMask(false);
-			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-			renderBlockLayer(BlockRenderLayer.TRANSLUCENT, partialTicks);
+		net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+		RenderHelper.disableStandardItemLighting();
+		disableLightmap();
 
-			RenderHelper.enableStandardItemLighting();
-			net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
-//		renderglobal.renderEntities(entity, icamera, partialTicks);  TODO
+		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+		GlStateManager.popMatrix();
+
+		// TODO selectBox
+//		System.out.println(rayTraceResult
+//				+ (rayTraceResult != null ? "|" + world.getBlockState(rayTraceResult.getBlockPos()) : ""));
+		if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
+			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
 					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
 					GlStateManager.DestFactor.ZERO);
-			net.minecraftforge.client.ForgeHooksClient.setRenderPass(-1);
-			RenderHelper.disableStandardItemLighting();
-			GlStateManager.shadeModel(GL11.GL_FLAT);
+			GlStateManager.glLineWidth(2.0F);
+			GlStateManager.disableTexture2D();
+			GlStateManager.depthMask(false);
+			BlockPos blockpos = rayTraceResult.getBlockPos();
+			IBlockState iblockstate = world.getBlockState(blockpos);
+
+			if (iblockstate.getMaterial() != Material.AIR && world.getWorldBorder().contains(blockpos)) {
+				RenderGlobal.drawSelectionBoundingBox(iblockstate.getSelectedBoundingBox(world, blockpos)
+						.grow(0.0020000000949949026D).offset(-cameraX, -cameraY, -cameraZ), 1.0F, 0.0F, 0.0F, 1.0F);
+			}
+
+			GlStateManager.glBegin(GL11.GL_LINES);
+			GL11.glVertex3d(ray[0] - cameraX, ray[1] - cameraY, ray[2] - cameraZ);
+			GL11.glVertex3d(ray[3] - cameraX, ray[4] - cameraY, ray[5] - cameraZ);
+			GlStateManager.glEnd();
+
 			GlStateManager.depthMask(true);
-			GlStateManager.enableCull();
+			GlStateManager.enableTexture2D();
 			GlStateManager.disableBlend();
-			GlStateManager.disableFog();
 		}
-//		PanelMap.printMatrix();
-		GL11.glColor4f(1, 1, 1, 1);
-//		GL11.glBegin(GL11.GL_LINES);
-		GL11.glBegin(GL11.GL_TRIANGLES);
-//		GL11.glVertex3f(mouseX, mouseY, finishTime);
-		int chunkX = MathHelper.floor(cameraX / 16D);
-		int chunkZ = MathHelper.floor(cameraZ / 16D);
-		for (int i = -currentRenderRange; i <= currentRenderRange; i++) {
-			GL11.glVertex3f((chunkX - currentRenderRange) * 16, -10, chunkZ + i);
-			GL11.glVertex3f((chunkX + currentRenderRange) * 16, -10, chunkZ + i);
-			GL11.glVertex3f(0, 0, 0);
-		}
-		GL11.glEnd();
+
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE,
+				GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+//        renderglobal.drawBlockDamageTexture(Tessellator.getInstance(), Tessellator.getInstance().getBuffer(), entity, partialTicks); TODO
+		mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+		GlStateManager.disableBlend();
+		enableLightmap();
+//		mc.effectRenderer.renderLitParticles(entity, partialTicks); TODO
+		RenderHelper.disableStandardItemLighting();
+//		mc.effectRenderer.renderParticles(entity, partialTicks);
+		disableLightmap();
+		GlStateManager.depthMask(false);
+		GlStateManager.enableCull();
+//        renderRainSnow(partialTicks); TODO
+		GlStateManager.depthMask(true);
+//		renderglobal.renderWorldBorder(entity, partialTicks);//TODO
+		GlStateManager.disableBlend();
+		GlStateManager.enableCull();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+		GlStateManager.enableBlend();
+		GlStateManager.depthMask(false);
+		mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		renderBlockLayer(BlockRenderLayer.TRANSLUCENT, partialTicks);
+
+		RenderHelper.enableStandardItemLighting();
+		net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
+//		renderglobal.renderEntities(entity, icamera, partialTicks);  TODO
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+				GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+				GlStateManager.DestFactor.ZERO);
+		net.minecraftforge.client.ForgeHooksClient.setRenderPass(-1);
+		RenderHelper.disableStandardItemLighting();
+		GlStateManager.shadeModel(GL11.GL_FLAT);
+		GlStateManager.depthMask(true);
+		GlStateManager.enableCull();
+		GlStateManager.disableBlend();
+		GlStateManager.disableFog();
 
 		frameBuffer.unbindFramebuffer();
 		GlStateManager.pushMatrix();
@@ -300,7 +332,8 @@ public class MapRenderManager implements IWorldEventListener {
 		double d5 = cameraPrevZ + (cameraZ - cameraPrevZ) * partialTicks;
 		chunkWrapperList.init(d3, d4, d5);
 
-		BlockPos cameraPos = new BlockPos(cameraX, cameraY, cameraZ);
+//		BlockPos cameraPos = new BlockPos(cameraX, cameraY, cameraZ);
+		BlockPos cameraPos = new BlockPos(cameraX, 8, cameraZ);
 		ChunkWrapper renderchunk = chunkManager.getRenderChunk(cameraPos);
 		BlockPos blockpos = new BlockPos(MathHelper.floor(d3 / 16D) * 16, MathHelper.floor(d4 / 16D) * 16,
 				MathHelper.floor(d5 / 16D) * 16);
@@ -442,18 +475,195 @@ public class MapRenderManager implements IWorldEventListener {
 		}
 	}
 
-	protected Vector3f getViewVector(double partialTicks) {
-//		float f = cameraRotX;
-//		float f1 = cameraRotY;
-//		if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 2) {
-//			f += 180.0F;
-//		}
-//		float f2 = MathHelper.cos(-f1 * 0.017453292F - (float) Math.PI);
-//		float f3 = MathHelper.sin(-f1 * 0.017453292F - (float) Math.PI);
-//		float f4 = -MathHelper.cos(-f * 0.017453292F);
-//		float f5 = MathHelper.sin(-f * 0.017453292F);
-//		return new Vector3f(f3 * f4, f5, f2 * f4);
-		return new Vector3f(cameraPitch, cameraYaw, 0);
+	public Vec3d getViewVector(double partialTicks) {
+		return getVectorForRotation((180 - cameraPitch) / 180 * Math.PI, cameraYaw / 180 * Math.PI).normalize();
+	}
+
+	public Vec3d getVectorForRotation(double pitch, double yaw) {
+		double f = Math.cos(-yaw - Math.PI);
+		double f1 = Math.sin(-yaw - Math.PI);
+		double f2 = -Math.cos(-pitch);
+		double f3 = Math.sin(-pitch);
+		return new Vec3d(f1 * f2, f3, f * f2).normalize();
+	}
+
+	public Vec3d rotate(Vec3d vec1, Vec3d vec2, double rad) {
+		double s = Math.sin(rad);
+		double c = Math.cos(rad);
+		double omc = 1 - c;
+		double xx = vec2.x * vec2.x;
+		double yy = vec2.y * vec2.y;
+		double zz = vec2.z * vec2.z;
+		double xy = vec2.x * vec2.y;
+		double yz = vec2.y * vec2.z;
+		double zx = vec2.z * vec2.x;
+		double xs = vec2.x * s;
+		double ys = vec2.y * s;
+		double zs = vec2.z * s;
+		double x = (omc * xx + c) * vec1.x + (omc * xy - zs) * vec1.y + (omc * zx + ys) * vec1.z;
+		double y = (omc * xy + zs) * vec1.x + (omc * yy + c) * vec1.y + (omc * yz - xs) * vec1.z;
+		double z = (omc * zx - ys) * vec1.x + (omc * yz + xs) * vec1.y + (omc * zz + c) * vec1.z;
+		return new Vec3d(x, y, z);
+	}
+
+	private void getMouseOver(int mouseX, int mouseY, int width, int height, double partialTicks) {
+		double d1 = (mouseX - width * 0.5);
+		double d2 = (mouseY - height * 0.5);
+		double xOffset = 0, yOffset = 0, zOffset = 0;
+		yOffset += d2 * Math.cos(cameraPitch / 180F * Math.PI);
+		double d = d2 * Math.sin(cameraPitch / 180F * Math.PI);
+		zOffset += d * Math.cos(cameraYaw / 180F * Math.PI);
+		xOffset -= d * Math.sin(cameraYaw / 180F * Math.PI);
+		xOffset += d1 * Math.cos(cameraYaw / 180F * Math.PI);
+		zOffset += d1 * Math.sin(cameraYaw / 180F * Math.PI);
+		xOffset = 0;
+		yOffset = 0;
+		zOffset = 0;
+		double fovy = 70 * Math.PI / 180;
+		double fovx = 2 * Math.atan(Math.tan(fovy / 2) / height * width);
+		double pitchOffset = Math.atan((mouseY - height * 0.5) * 2 / height * Math.tan(fovy / 2));
+		double yawOffset = Math.atan((mouseX - width * 0.5) * 2 / width * Math.tan(fovx / 2) * Math.cos(pitchOffset));
+		Vec3d vec31 = new Vec3d(cameraX - xOffset, cameraY - yOffset, cameraZ - zOffset)
+				.add(getViewVector(partialTicks).scale(scale));
+		Vec3d v = getVectorForRotation(-pitchOffset, 0);
+		v = rotate(v, getVectorForRotation(-pitchOffset - Math.PI / 2, 0), yawOffset);
+		v = rotate(v, new Vec3d(1, 0, 0), (180 - cameraPitch) / 180 * Math.PI).normalize();
+		v = rotate(v, new Vec3d(0, 1, 0), -cameraYaw / 180 * Math.PI);
+		Vec3d vec32 = vec31.add(v.scale(400));
+//		System.out.println(mouseX + "|" + mouseY + "|" + pitchOffset + "|" + yawOffset + "|" + vec31 + "|" + vec32);
+		if (MouseHandler.isButtonPressed(0)) {
+			ray = new double[] { vec31.x, vec31.y, vec31.z, vec32.x, vec32.y, vec32.z };
+		}
+		rayTraceResult = rayTraceBlocks(world, vec31, vec32, true, false, false);
+	}
+
+	public RayTraceResult rayTraceBlocks(World world, Vec3d vec31, Vec3d vec32, boolean stopOnLiquid,
+			boolean ignoreBlockWithoutBoundingBox, boolean returnLastUncollidableBlock) {
+		if (Double.isNaN(vec31.x) || Double.isNaN(vec31.y) || Double.isNaN(vec31.z) || Double.isNaN(vec32.x)
+				|| Double.isNaN(vec32.y) || Double.isNaN(vec32.z)) {
+			return null;
+		}
+		int i = MathHelper.floor(vec32.x);
+		int j = MathHelper.floor(vec32.y);
+		int k = MathHelper.floor(vec32.z);
+		int l = MathHelper.floor(vec31.x);
+		int i1 = MathHelper.floor(vec31.y);
+		int j1 = MathHelper.floor(vec31.z);
+		BlockPos blockpos = new BlockPos(l, i1, j1);
+		IBlockState iblockstate = world.getBlockState(blockpos);
+		Block block = iblockstate.getBlock();
+		if ((!ignoreBlockWithoutBoundingBox || iblockstate.getCollisionBoundingBox(world, blockpos) != Block.NULL_AABB)
+				&& block.canCollideCheck(iblockstate, stopOnLiquid)) {
+			RayTraceResult raytraceresult = iblockstate.collisionRayTrace(world, blockpos, vec31, vec32);
+			if (raytraceresult != null) {
+				return raytraceresult;
+			}
+		}
+		RayTraceResult raytraceresult2 = null;
+		int k1 = 2000;
+		while (k1-- >= 0) {
+			if (Double.isNaN(vec31.x) || Double.isNaN(vec31.y) || Double.isNaN(vec31.z)) {
+				return null;
+			}
+			if (l == i && i1 == j && j1 == k) {
+				return returnLastUncollidableBlock ? raytraceresult2 : null;
+			}
+			boolean flag2 = true;
+			boolean flag = true;
+			boolean flag1 = true;
+			double d0 = 999.0D;
+			double d1 = 999.0D;
+			double d2 = 999.0D;
+
+			if (i > l) {
+				d0 = l + 1.0D;
+			} else if (i < l) {
+				d0 = l + 0.0D;
+			} else {
+				flag2 = false;
+			}
+
+			if (j > i1) {
+				d1 = i1 + 1.0D;
+			} else if (j < i1) {
+				d1 = i1 + 0.0D;
+			} else {
+				flag = false;
+			}
+
+			if (k > j1) {
+				d2 = j1 + 1.0D;
+			} else if (k < j1) {
+				d2 = j1 + 0.0D;
+			} else {
+				flag1 = false;
+			}
+
+			double d3 = 999.0D;
+			double d4 = 999.0D;
+			double d5 = 999.0D;
+			double d6 = vec32.x - vec31.x;
+			double d7 = vec32.y - vec31.y;
+			double d8 = vec32.z - vec31.z;
+
+			if (flag2) {
+				d3 = (d0 - vec31.x) / d6;
+			}
+
+			if (flag) {
+				d4 = (d1 - vec31.y) / d7;
+			}
+
+			if (flag1) {
+				d5 = (d2 - vec31.z) / d8;
+			}
+
+			if (d3 == -0.0D) {
+				d3 = -1.0E-4D;
+			}
+
+			if (d4 == -0.0D) {
+				d4 = -1.0E-4D;
+			}
+
+			if (d5 == -0.0D) {
+				d5 = -1.0E-4D;
+			}
+
+			EnumFacing enumfacing;
+
+			if (d3 < d4 && d3 < d5) {
+				enumfacing = i > l ? EnumFacing.WEST : EnumFacing.EAST;
+				vec31 = new Vec3d(d0, vec31.y + d7 * d3, vec31.z + d8 * d3);
+			} else if (d4 < d5) {
+				enumfacing = j > i1 ? EnumFacing.DOWN : EnumFacing.UP;
+				vec31 = new Vec3d(vec31.x + d6 * d4, d1, vec31.z + d8 * d4);
+			} else {
+				enumfacing = k > j1 ? EnumFacing.NORTH : EnumFacing.SOUTH;
+				vec31 = new Vec3d(vec31.x + d6 * d5, vec31.y + d7 * d5, d2);
+			}
+
+			l = MathHelper.floor(vec31.x) - (enumfacing == EnumFacing.EAST ? 1 : 0);
+			i1 = MathHelper.floor(vec31.y) - (enumfacing == EnumFacing.UP ? 1 : 0);
+			j1 = MathHelper.floor(vec31.z) - (enumfacing == EnumFacing.SOUTH ? 1 : 0);
+			blockpos = new BlockPos(l, i1, j1);
+			IBlockState iblockstate1 = world.getBlockState(blockpos);
+			Block block1 = iblockstate1.getBlock();
+
+			if (!ignoreBlockWithoutBoundingBox || iblockstate1.getMaterial() == Material.PORTAL
+					|| iblockstate1.getCollisionBoundingBox(world, blockpos) != Block.NULL_AABB) {
+				if (block1.canCollideCheck(iblockstate1, stopOnLiquid)) {
+					RayTraceResult raytraceresult1 = iblockstate1.collisionRayTrace(world, blockpos, vec31, vec32);
+
+					if (raytraceresult1 != null) {
+						return raytraceresult1;
+					}
+				} else {
+					raytraceresult2 = new RayTraceResult(RayTraceResult.Type.MISS, vec31, enumfacing, blockpos);
+				}
+			}
+		}
+		return returnLastUncollidableBlock ? raytraceresult2 : null;
 	}
 
 	public int renderBlockLayer(BlockRenderLayer layer, double partialTicks) {
@@ -607,18 +817,6 @@ public class MapRenderManager implements IWorldEventListener {
 		}
 		return state.shouldSideBeRendered(blockAccess, pos, facing);
 
-	}
-
-	public float getCameraX() {
-		return cameraX;
-	}
-
-	public float getCameraY() {
-		return cameraY;
-	}
-
-	public float getCameraZ() {
-		return cameraZ;
 	}
 
 	public class ContainerLocalRenderInformation {

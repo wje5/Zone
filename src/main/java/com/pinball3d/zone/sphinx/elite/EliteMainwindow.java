@@ -39,7 +39,7 @@ public class EliteMainwindow extends GuiScreen {
 	private IDropDownList dropDownList;
 	private IFocus focus;
 	private List<PanelGroup> panels = new ArrayList<PanelGroup>();
-	private Drag dragLeft, dragRight;
+	private Drag drag;
 	private boolean inited, isAlt;
 	private List<Set<PanelGroup>> draggingPanels;
 
@@ -137,7 +137,7 @@ public class EliteMainwindow extends GuiScreen {
 			}
 		} else if (dropDownList != null) {
 			type = dropDownList.getMouseType(mouseX, mouseY);
-		} else if (dragLeft == null && dragRight == null && MouseHandler.isMouseInsideWindow()) {
+		} else if (drag == null && MouseHandler.isMouseInsideWindow()) {
 			for (PanelGroup p : panels) {
 				Rect rect = p.getRect();
 				for (Side s : Side.values()) {
@@ -199,14 +199,9 @@ public class EliteMainwindow extends GuiScreen {
 		} else if (keyCode == Keyboard.KEY_LMENU || keyCode == Keyboard.KEY_RMENU) {
 			isAlt = true;
 			boolean flag = false;
-			if (dragLeft != null) {
-				dragLeft.stop(true);
-				dragLeft = null;
-				flag = true;
-			}
-			if (dragRight != null) {
-				dragRight.stop(true);
-				dragRight = null;
+			if (drag != null) {
+				drag.stop(true);
+				drag = null;
 				flag = true;
 			}
 			if (!flag) {
@@ -284,33 +279,26 @@ public class EliteMainwindow extends GuiScreen {
 			dropDownList.onMouseMoved(mouseX, mouseY, moveX, moveY);
 		}
 		panels.forEach(e -> e.onMouseMoved(mouseX, mouseY, moveX, moveY));
-		if (dragLeft != null) {
-			dragLeft.drag(mouseX, mouseY, moveX, moveY);
-		}
-		if (dragRight != null) {
-			dragRight.drag(mouseX, mouseY, moveX, moveY);
+		if (drag != null) {
+			drag.drag(mouseX, mouseY, moveX, moveY);
 		}
 	}
 
 	@Override
 	protected void mouseClicked(int mX, int mY, int mouseButton) throws IOException {
-		if (mouseButton != 0 && mouseButton != 1) {
-			return;
+		if (drag != null) {
+			drag.stop(true);
+			drag = null;
 		}
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();
 		if (dropDownList != null) {
-			Drag d = dropDownList.mouseClicked(mouseX, mouseY, mouseButton);
-			if (d == null) {
+			Drag drag = dropDownList.mouseClicked(mouseX, mouseY, mouseButton);
+			if (drag == null) {
 				dropDownList = null;
 				menuBar.onListClosed();
-			} else if (mouseButton == 0) {
-				dragLeft = d;
-				return;
-			} else {
-				dragRight = d;
-				return;
 			}
+			return;
 		} else {
 			menuBar.mouseClicked(mouseX, mouseY, mouseButton);
 		}
@@ -344,13 +332,7 @@ public class EliteMainwindow extends GuiScreen {
 		for (PanelGroup g : panels) {
 			Drag d = g.onMouseClicked(mouseX, mouseY, mouseButton);
 			if (d != null) {
-				if (mouseButton == 0) {
-					if (dragLeft == null) {
-						dragLeft = d;
-					}
-				} else if (dragRight == null) {
-					dragRight = d;
-				}
+				drag = d;
 				break;
 			}
 		}
@@ -367,28 +349,23 @@ public class EliteMainwindow extends GuiScreen {
 		super.handleMouseInput();
 		int scrollDistance = Mouse.getEventDWheel();
 		if (scrollDistance != 0) {
-			if (scrollDistance % 120 != 0) {
-				throw new RuntimeException("???????");
-			}
-			onMouseScrolled(MouseHandler.getX(), MouseHandler.getY(), scrollDistance / 120);
+			onMouseScrolled(MouseHandler.getX(), MouseHandler.getY(), scrollDistance);
 		}
 	}
 
 	private void onStartDragPanelSide(int mouseX, int mouseY) {
-		if (dragLeft == null) {
-			dragLeft = new Drag((x, y, mX, mY) -> {
-				if (draggingPanels == null) {
-					calcResizePanel(mouseX, mouseY);
-				}
-				onResizePanel(x, y, mX, mY);
-			}, (cancel) -> {
-				draggingPanels = null;
-				dragMinX = 0;
-				dragMaxX = 0;
-				dragMinY = 0;
-				dragMaxY = 0;
-			});
-		}
+		drag = new Drag(0, (x, y, mX, mY) -> {
+			if (draggingPanels == null) {
+				calcResizePanel(mouseX, mouseY);
+			}
+			onResizePanel(x, y, mX, mY);
+		}, (cancel) -> {
+			draggingPanels = null;
+			dragMinX = 0;
+			dragMaxX = 0;
+			dragMinY = 0;
+			dragMaxY = 0;
+		});
 	}
 
 	private void calcResizePanel(int mouseX, int mouseY) {
@@ -546,8 +523,9 @@ public class EliteMainwindow extends GuiScreen {
 
 	@Override
 	protected void mouseReleased(int mX, int mY, int mouseButton) {
-		if (mouseButton != 0 && mouseButton != 1) {
-			return;
+		if (drag != null) {
+			drag.stop(false);
+			drag = null;
 		}
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();
@@ -563,15 +541,6 @@ public class EliteMainwindow extends GuiScreen {
 					g.onMouseReleased(mouseX, mouseY, mouseButton);
 				}
 			}
-		}
-		if (mouseButton == 0) {
-			if (dragLeft != null) {
-				dragLeft.stop(false);
-				dragLeft = null;
-			}
-		} else if (dragRight != null) {
-			dragRight.stop(false);
-			dragRight = null;
 		}
 	}
 

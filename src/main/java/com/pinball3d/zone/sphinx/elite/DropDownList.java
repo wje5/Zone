@@ -42,7 +42,7 @@ public class DropDownList implements IDropDownList {
 		if (!isMouseInList(mouseX, mouseY)) {
 			return null;
 		}
-		return Drag.EMPTY;
+		return Drag.emptyDrag(mouseButton);
 	}
 
 	@Override

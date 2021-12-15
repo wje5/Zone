@@ -7,6 +7,7 @@ import java.nio.FloatBuffer;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import com.pinball3d.zone.core.LoadingPluginZone;
@@ -47,35 +48,46 @@ public class PanelMap extends Panel {
 
 	@Override
 	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		return isMouseInPanel(mouseX, mouseY) ? new Drag((x, y, moveX, moveY) -> {
-			if (mouseButton == 0) {
-//				renderManager.cameraX += moveX;
-//				renderManager.cameraZ += moveY;// FIXME
-				renderManager.cameraY += moveY * Math.cos(renderManager.cameraPitch / 180F * Math.PI);
-				double d = moveY * Math.sin(renderManager.cameraPitch / 180F * Math.PI);
-				renderManager.cameraZ += d * Math.cos(renderManager.cameraYaw / 180F * Math.PI);
-				renderManager.cameraX -= d * Math.sin(renderManager.cameraYaw / 180F * Math.PI);
+		if (!isMouseInPanel(mouseX, mouseY)) {
+			return null;
+		}
+		if (mouseButton == 0) {
+			return Drag.emptyDrag(mouseButton);// TODO
+		} else if (mouseButton == 1) {
+			return Drag.emptyDrag(mouseButton);// TODO
+		} else if (mouseButton == 2) {
+			boolean flag = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
+			return isMouseInPanel(mouseX, mouseY) ? new Drag(mouseButton, (x, y, moveX, moveY) -> {
+				if (flag) {
+					renderManager.cameraY += moveY * Math.cos(renderManager.cameraPitch / 180F * Math.PI);
+					double d = moveY * Math.sin(renderManager.cameraPitch / 180F * Math.PI);
+					renderManager.cameraZ += d * Math.cos(renderManager.cameraYaw / 180F * Math.PI);
+					renderManager.cameraX -= d * Math.sin(renderManager.cameraYaw / 180F * Math.PI);
 
-				renderManager.cameraX += moveX * Math.cos(renderManager.cameraYaw / 180F * Math.PI);
-				renderManager.cameraZ += moveX * Math.sin(renderManager.cameraYaw / 180F * Math.PI);
-			} else {
-				renderManager.cameraPitch = (renderManager.cameraPitch + moveY * 0.1F) % 360;
-				renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
-						: renderManager.cameraPitch < -180 ? renderManager.cameraPitch + 360F
-								: renderManager.cameraPitch;
-				renderManager.cameraYaw = (renderManager.cameraYaw + moveX * 0.1F) % 360;
-				renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
-						: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
-			}
-		}, cancel -> {
+					renderManager.cameraX += moveX * Math.cos(renderManager.cameraYaw / 180F * Math.PI);
+					renderManager.cameraZ += moveX * Math.sin(renderManager.cameraYaw / 180F * Math.PI);
+				} else {
+					renderManager.cameraPitch = (renderManager.cameraPitch + moveY * 0.1F) % 360;
+					renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
+							: renderManager.cameraPitch < -180 ? renderManager.cameraPitch + 360F
+									: renderManager.cameraPitch;
+					renderManager.cameraYaw = (renderManager.cameraYaw + moveX * 0.1F) % 360;
+					renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
+							: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
+				}
+			}, cancel -> {
 
-		}) : null;
+			}) : null;
+		} else {
+			return Drag.emptyDrag(mouseButton);
+		}
+
 	}
 
 	@Override
 	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
 		if (isMouseInPanel(mouseX, mouseY)) {
-			renderManager.scale += distance;
+			renderManager.scale += distance / 120F;
 		}
 	}
 
@@ -98,9 +110,27 @@ public class PanelMap extends Panel {
 			renderManager.setWorldAndLoadRenderers(getParent().mc.world);
 			inited = true;
 		}
+		float speed = 0.3F;
+		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+			renderManager.cameraZ -= speed;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			renderManager.cameraX -= speed;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			renderManager.cameraZ += speed;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			renderManager.cameraX += speed;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+			renderManager.cameraY += speed;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+			renderManager.cameraY -= speed;
+		}
 		PanelGroup group = getParentGroup();
-		renderManager.doRender(group.getPanelX(), group.getPanelY(), group.getPanelWidth(), group.getPanelHeight(),
-				mouseX, mouseY, partialTicks);
+		renderManager.doRender(group.getPanelWidth(), group.getPanelHeight(), mouseX, mouseY, partialTicks);
 
 		FontHandler.renderText(10, 0, new FormattedString("(123中(文测试）AaBbCc"), Color.TEXT_LIGHT,
 				getParentGroup().getWidth());
@@ -113,9 +143,11 @@ public class PanelMap extends Panel {
 				new FormattedString("§o我§n能吞§l下玻璃而§r不伤身§l体(KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK"),
 				Color.TEXT_LIGHT, getParentGroup().getWidth());
 
-		FontHandler.renderText(0, 100,
-				new FormattedString("pitch:" + renderManager.cameraPitch + " yaw:" + renderManager.cameraYaw),
-				Color.TEXT_LIGHT, getParentGroup().getWidth());
+		FontHandler
+				.renderText(
+						0, 100, new FormattedString("pitch:" + renderManager.cameraPitch + " yaw:"
+								+ renderManager.cameraYaw + " scale:" + renderManager.scale),
+						Color.TEXT_LIGHT, getParentGroup().getWidth());
 		FontHandler.renderText(0, 120,
 				new FormattedString(
 						"x:" + renderManager.cameraX + " y:" + renderManager.cameraY + " z:" + renderManager.cameraZ),

@@ -30,8 +30,6 @@ public class MapRenderThread extends Thread {
 	private MapRenderThreadManager manager;
 	private RegionRenderCacheBuilder regionRenderCacheBuilder;
 
-	private static volatile int m = 0;
-
 	public MapRenderThread(MapRenderManager renderManager, MapRenderThreadManager manager) {
 		this(renderManager, manager, null);
 	}
@@ -84,13 +82,9 @@ public class MapRenderThread extends Thread {
 			wrapper.getLock().unlock();
 		}
 		wrapper.setCacheBuilder(getRegionRenderCacheBuilder());
-//		synchronized (MapRenderThread.class) {
-//			m++;
-//			System.out.println("start" + m);
-//		}
-		float f = renderManager.getCameraX();
-		float f1 = renderManager.getCameraY();
-		float f2 = renderManager.getCameraZ();
+		float f = renderManager.cameraX;
+		float f1 = renderManager.cameraY;
+		float f2 = renderManager.cameraZ;
 		ChunkCompileTaskGenerator.Type type = wrapper.getType();
 
 		if (type == ChunkCompileTaskGenerator.Type.REBUILD_CHUNK) {

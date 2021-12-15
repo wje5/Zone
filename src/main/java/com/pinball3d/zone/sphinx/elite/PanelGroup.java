@@ -79,8 +79,10 @@ public class PanelGroup {
 			}
 		}
 		GlStateManager.pushMatrix();
+//		GlStateManager.rotate(45, 1, 1, 0);
 		GlStateManager.translate(getX() + 1, getY() + 30, 0.0F);
 		panels.get(chosenIndex).doRender(mouseX - getX() - 1, mouseY - getY() - 31, partialTicks);
+//		panels.get(chosenIndex).doRender(mouseX, mouseY, partialTicks);
 		GlStateManager.popMatrix();
 		EliteRenderHelper.drawBorder(getX(), getY(), getWidth(), getHeight(), 1, Color.DIVIDER_BG);
 		EliteRenderHelper.drawRect(getX(), getY() + 29, getWidth(), 1, Color.DIVIDER_BG);
@@ -178,7 +180,7 @@ public class PanelGroup {
 		Side side = null;
 		for (Side s : Side.values()) {
 			Edge edge = rect.getEdge(s);
-			int total = 0;
+			float total = 0;
 			for (PanelGroup group : parent.getPanels()) {
 				Rect r = group.getRect();
 				if (rect.isAdjoin(r) == s) {
@@ -192,6 +194,8 @@ public class PanelGroup {
 			if (total == edge.getLength()) {
 				side = s;
 				break;
+			} else {
+				l.clear();
 			}
 		}
 		switch (side) {
@@ -260,6 +264,8 @@ public class PanelGroup {
 				if (panels.isEmpty()) {
 					parent.getPanels().remove(this);
 					expandToRect(getRect());
+				} else {
+					chosenIndex = panels.size() - 1;
 				}
 				break;
 			}
@@ -273,7 +279,7 @@ public class PanelGroup {
 				dragY = mouseY;
 				pressing = true;
 				dragIndex = hoverIndex;
-				return new Drag((x, y, mX, mY) -> {
+				return new Drag(0, (x, y, mX, mY) -> {
 					dragX = x;
 					dragY = y;
 					if (Math.abs(mouseX - dragX) + Math.abs(mouseY - dragY) > 3) {
@@ -339,7 +345,7 @@ public class PanelGroup {
 			} else if (hoverRemain) {
 				dragX = mouseX;
 				dragY = mouseY;
-				return new Drag((x, y, mX, mY) -> {
+				return new Drag(0, (x, y, mX, mY) -> {
 					dragX = x;
 					dragY = y;
 				}, cancel -> {
@@ -536,10 +542,9 @@ public class PanelGroup {
 			s += panels.get(i);
 			if (i < panels.size() - 1) {
 				s += " ,";
-			} else {
-				s += "}";
 			}
 		}
+		s += "}";
 		return s;
 	}
 

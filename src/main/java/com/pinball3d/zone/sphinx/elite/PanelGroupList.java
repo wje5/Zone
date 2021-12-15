@@ -159,7 +159,7 @@ public class PanelGroupList implements IDropDownList {
 				computeChosenIndex(mouseX, mouseY);
 			}
 			dragText = true;
-			return new Drag((x, y, moveX, moveY) -> {
+			return new Drag(0, (x, y, moveX, moveY) -> {
 				if (cursorIndex2 == -2) {
 					cursorIndex2 = cursorIndex;
 				}
@@ -210,12 +210,15 @@ public class PanelGroupList implements IDropDownList {
 				dragText = false;
 			});
 		}
+		if (mouseButton >= 2) {
+			return Drag.emptyDrag(mouseButton);
+		}
 		if (chosenIndex >= 0) {
 			isText = false;
 		}
 		dragX = mouseX;
 		dragY = mouseY;
-		return new Drag((x, y, moveX, moveY) -> {
+		return new Drag(mouseButton, (x, y, moveX, moveY) -> {
 			dragX = x;
 			dragY = y;
 		}, cancel -> {

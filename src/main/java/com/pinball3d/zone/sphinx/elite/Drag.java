@@ -3,14 +3,18 @@ package com.pinball3d.zone.sphinx.elite;
 import java.util.function.Consumer;
 
 public class Drag {
+	public final int button;
 	private OnDrag onDrag;
 	private Consumer<Boolean> onStop;
 
-	public static Drag EMPTY = new Drag((x, y, moveX, moveY) -> {
-	}, cancel -> {
-	});
+	public static Drag emptyDrag(int button) {
+		return new Drag(-1, (x, y, moveX, moveY) -> {
+		}, cancel -> {
+		});
+	}
 
-	public Drag(OnDrag onDrag, Consumer<Boolean> onStop) {
+	public Drag(int button, OnDrag onDrag, Consumer<Boolean> onStop) {
+		this.button = button;
 		this.onDrag = onDrag;
 		this.onStop = onStop;
 	}

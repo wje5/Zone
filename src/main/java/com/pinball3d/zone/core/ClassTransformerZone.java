@@ -111,7 +111,7 @@ public class ClassTransformerZone implements IClassTransformer {
 				while (it.hasNext()) {
 					MethodNode method = it.next();
 					if (method.name.equals("serverUpdateMovingPlayer")
-							|| method.name.equals("d") && method.desc != null && "(Loq;)V".equals(method.desc)) {
+							|| method.name.equals("d") && "(Loq;)V".equals(method.desc)) {
 						ListIterator<AbstractInsnNode> it2 = method.instructions.iterator();
 						while (it2.hasNext()) {
 							AbstractInsnNode n = it2.next();
@@ -134,6 +134,47 @@ public class ClassTransformerZone implements IClassTransformer {
 														false));
 							}
 						}
+					}
+				}
+				writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+				node.accept(writer);
+				return writer.toByteArray();
+			case "net.minecraft.client.renderer.RenderGlobal":
+				reader = new ClassReader(basicClass);
+				node = new ClassNode();
+				reader.accept(node, 0);
+				it = node.methods.iterator();
+				while (it.hasNext()) {
+					MethodNode method = it.next();
+					if (method.name.equals("updateClouds") || method.name.equals("k")) {
+						ListIterator<AbstractInsnNode> it2 = method.instructions.iterator();
+						LabelNode label13 = null;
+						LineNumberNode line1422 = null;
+						while (it2.hasNext()) {
+							AbstractInsnNode n = it2.next();
+							if (line1422 == null && n instanceof FieldInsnNode && ((FieldInsnNode) n).name
+									.equals(LoadingPluginZone.runtimeDeobf ? "ae" : "setLightUpdates")) {
+								AbstractInsnNode e = n.getPrevious().getPrevious().getPrevious();
+								line1422 = (LineNumberNode) e;
+							}
+							if (n instanceof JumpInsnNode && n.getOpcode() == Opcodes.GOTO) {
+								label13 = (LabelNode) n.getNext();
+							}
+						}
+						InsnList list = new InsnList();
+						list.add(new MethodInsnNode(Opcodes.INVOKESTATIC,
+								LoadingPluginZone.runtimeDeobf ? "bib" : "net/minecraft/client/Minecraft",
+								LoadingPluginZone.runtimeDeobf ? "func_71410_x" : "getMinecraft",
+								LoadingPluginZone.runtimeDeobf ? "()Lbib;" : "()Lnet/minecraft/client/Minecraft;",
+								false));
+						list.add(new FieldInsnNode(Opcodes.GETFIELD,
+								LoadingPluginZone.runtimeDeobf ? "bib" : "net/minecraft/client/Minecraft",
+								LoadingPluginZone.runtimeDeobf ? "m" : "currentScreen",
+								LoadingPluginZone.runtimeDeobf ? "Lblk;" : "Lnet/minecraft/client/gui/GuiScreen;"));
+						list.add(new TypeInsnNode(Opcodes.INSTANCEOF,
+								"com/pinball3d/zone/sphinx/elite/EliteMainwindow"));
+						list.add(new JumpInsnNode(Opcodes.IFNE, label13));
+						method.instructions.insert(line1422, list);
 					}
 				}
 				writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);

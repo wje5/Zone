@@ -46,7 +46,7 @@ public class Panel {
 	}
 
 	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		return isMouseInPanel(mouseX, mouseY) ? Drag.EMPTY : null;
+		return isMouseInPanel(mouseX, mouseY) ? Drag.emptyDrag(mouseButton) : null;
 	}
 
 	public void mouseReleased(int mouseX, int mouseY, int mouseButton) {

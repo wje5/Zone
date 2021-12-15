@@ -318,9 +318,9 @@ public class ChunkWrapper {
 			PanelMap map = ((EliteMainwindow) mc.currentScreen).getMapPanel();
 			if (map != null) {
 				MapRenderManager manager = map.getRenderManager();
-				double d0 = boundingBox.minX + 8.0D - manager.getCameraX();
-				double d1 = boundingBox.minY + 8.0D - manager.getCameraY();
-				double d2 = boundingBox.minZ + 8.0D - manager.getCameraZ();
+				double d0 = boundingBox.minX + 8.0D - manager.cameraX;
+				double d1 = boundingBox.minY + 8.0D - manager.cameraY;
+				double d2 = boundingBox.minZ + 8.0D - manager.cameraZ;
 				return d0 * d0 + d1 * d1 + d2 * d2;
 			}
 		}
