@@ -201,7 +201,7 @@ public class EliteMainwindow extends GuiScreen {
 			boolean flag = false;
 			if (drag != null) {
 				drag.stop(true);
-				drag = null;
+				setDrag(null);
 				flag = true;
 			}
 			if (!flag) {
@@ -288,7 +288,7 @@ public class EliteMainwindow extends GuiScreen {
 	protected void mouseClicked(int mX, int mY, int mouseButton) throws IOException {
 		if (drag != null) {
 			drag.stop(true);
-			drag = null;
+			setDrag(null);
 		}
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();
@@ -332,9 +332,19 @@ public class EliteMainwindow extends GuiScreen {
 		for (PanelGroup g : panels) {
 			Drag d = g.onMouseClicked(mouseX, mouseY, mouseButton);
 			if (d != null) {
-				drag = d;
+				setDrag(d);
 				break;
 			}
+		}
+	}
+
+	private void setDrag(Drag drag) {
+		if (this.drag != null && this.drag.grab) {
+			MouseHandler.ungrab();
+		}
+		this.drag = drag;
+		if (drag != null && drag.grab) {
+			MouseHandler.grab();
 		}
 	}
 
@@ -354,7 +364,7 @@ public class EliteMainwindow extends GuiScreen {
 	}
 
 	private void onStartDragPanelSide(int mouseX, int mouseY) {
-		drag = new Drag(0, (x, y, mX, mY) -> {
+		setDrag(new Drag(0, (x, y, mX, mY) -> {
 			if (draggingPanels == null) {
 				calcResizePanel(mouseX, mouseY);
 			}
@@ -365,7 +375,7 @@ public class EliteMainwindow extends GuiScreen {
 			dragMaxX = 0;
 			dragMinY = 0;
 			dragMaxY = 0;
-		});
+		}));
 	}
 
 	private void calcResizePanel(int mouseX, int mouseY) {
@@ -525,7 +535,7 @@ public class EliteMainwindow extends GuiScreen {
 	protected void mouseReleased(int mX, int mY, int mouseButton) {
 		if (drag != null) {
 			drag.stop(false);
-			drag = null;
+			setDrag(null);
 		}
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();

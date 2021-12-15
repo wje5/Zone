@@ -6,17 +6,23 @@ public class Drag {
 	public final int button;
 	private OnDrag onDrag;
 	private Consumer<Boolean> onStop;
+	public final boolean grab;
 
-	public static Drag emptyDrag(int button) {
-		return new Drag(-1, (x, y, moveX, moveY) -> {
+	public Drag(int button) {
+		this(button, (x, y, moveX, moveY) -> {
 		}, cancel -> {
 		});
 	}
 
 	public Drag(int button, OnDrag onDrag, Consumer<Boolean> onStop) {
+		this(button, onDrag, onStop, false);
+	}
+
+	public Drag(int button, OnDrag onDrag, Consumer<Boolean> onStop, boolean grab) {
 		this.button = button;
 		this.onDrag = onDrag;
 		this.onStop = onStop;
+		this.grab = grab;
 	}
 
 	public void setOnStop(Consumer<Boolean> onStop) {

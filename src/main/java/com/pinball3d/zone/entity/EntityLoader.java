@@ -15,7 +15,7 @@ public class EntityLoader {
 
 	@SubscribeEvent
 	public static void onEntityRegistation(RegistryEvent.Register<EntityEntry> event) {
-		register(event.getRegistry(), EntityPiano.class, "piano", "Piano");
+
 	}
 
 	public static void register(IForgeRegistry<EntityEntry> registry, Class<? extends Entity> clazz, String entityId,

@@ -211,7 +211,7 @@ public class PanelGroupList implements IDropDownList {
 			});
 		}
 		if (mouseButton >= 2) {
-			return Drag.emptyDrag(mouseButton);
+			return new Drag(mouseButton);
 		}
 		if (chosenIndex >= 0) {
 			isText = false;

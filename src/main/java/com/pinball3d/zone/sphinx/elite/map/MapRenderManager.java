@@ -81,7 +81,6 @@ public class MapRenderManager implements IWorldEventListener {
 	private int frameCount;
 	private Framebuffer frameBuffer;
 	private RayTraceResult rayTraceResult;
-	private double[] ray = new double[6];
 
 	public MapRenderManager() {
 		lightmapTexture = new DynamicTexture(16, 16);
@@ -178,10 +177,8 @@ public class MapRenderManager implements IWorldEventListener {
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 		GlStateManager.popMatrix();
 
-		// TODO selectBox
-//		System.out.println(rayTraceResult
-//				+ (rayTraceResult != null ? "|" + world.getBlockState(rayTraceResult.getBlockPos()) : ""));
-		if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
+		if (MouseHandler.isCursorEnable() && rayTraceResult != null
+				&& rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
 			GlStateManager.enableBlend();
 			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
 					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
@@ -196,11 +193,6 @@ public class MapRenderManager implements IWorldEventListener {
 				RenderGlobal.drawSelectionBoundingBox(iblockstate.getSelectedBoundingBox(world, blockpos)
 						.grow(0.0020000000949949026D).offset(-cameraX, -cameraY, -cameraZ), 1.0F, 0.0F, 0.0F, 1.0F);
 			}
-
-			GlStateManager.glBegin(GL11.GL_LINES);
-			GL11.glVertex3d(ray[0] - cameraX, ray[1] - cameraY, ray[2] - cameraZ);
-			GL11.glVertex3d(ray[3] - cameraX, ray[4] - cameraY, ray[5] - cameraZ);
-			GlStateManager.glEnd();
 
 			GlStateManager.depthMask(true);
 			GlStateManager.enableTexture2D();
@@ -530,10 +522,6 @@ public class MapRenderManager implements IWorldEventListener {
 		v = rotate(v, new Vec3d(1, 0, 0), (180 - cameraPitch) / 180 * Math.PI).normalize();
 		v = rotate(v, new Vec3d(0, 1, 0), -cameraYaw / 180 * Math.PI);
 		Vec3d vec32 = vec31.add(v.scale(400));
-//		System.out.println(mouseX + "|" + mouseY + "|" + pitchOffset + "|" + yawOffset + "|" + vec31 + "|" + vec32);
-		if (MouseHandler.isButtonPressed(0)) {
-			ray = new double[] { vec31.x, vec31.y, vec31.z, vec32.x, vec32.y, vec32.z };
-		}
 		rayTraceResult = rayTraceBlocks(world, vec31, vec32, true, false, false);
 	}
 

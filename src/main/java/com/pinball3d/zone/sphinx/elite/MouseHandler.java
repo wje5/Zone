@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 
 public class MouseHandler {
 	private static MouseType type;
+	private static int lastX, lastY;
 
 	public static void changeMouse(MouseType type) {
 		if (type != MouseHandler.type) {
@@ -47,12 +48,38 @@ public class MouseHandler {
 		return Minecraft.getMinecraft().displayHeight - Mouse.getY();
 	}
 
+	public static int getMoveX() {
+		int mouseX = getX();
+		int moveX = mouseX - lastX;
+		lastX = mouseX;
+		return moveX;
+	}
+
+	public static int getMoveY() {
+		int mouseY = getY();
+		int moveY = mouseY - lastY;
+		lastY = mouseY;
+		return moveY;
+	}
+
 	public static boolean isMouseInsideWindow() {
 		return Mouse.isInsideWindow();
 	}
 
 	public static boolean isButtonPressed(int button) {
 		return Mouse.isButtonDown(button);
+	}
+
+	public static void grab() {
+		Mouse.setGrabbed(true);
+	}
+
+	public static void ungrab() {
+		Mouse.setGrabbed(false);
+	}
+
+	public static boolean isCursorEnable() {
+		return !Mouse.isGrabbed();
 	}
 
 	public static enum MouseType {

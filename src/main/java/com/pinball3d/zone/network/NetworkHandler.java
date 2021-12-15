@@ -56,9 +56,6 @@ public class NetworkHandler {
 		registerMessage(MessageNewOreDictionary.Handler.class, MessageNewOreDictionary.class, Side.SERVER);
 		registerMessage(MessageNewOreDictionaryCallback.Handler.class, MessageNewOreDictionaryCallback.class,
 				Side.CLIENT);
-		registerMessage(MessageMidiToClient.Handler.class, MessageMidiToClient.class, Side.CLIENT);
-		registerMessage(MessageMidiToServer.Handler.class, MessageMidiToServer.class, Side.SERVER);
-		registerMessage(MessageCloseChannel.Handler.class, MessageCloseChannel.class, Side.SERVER);
 		registerMessage(MessageUpdateCameraPos.Handler.class, MessageUpdateCameraPos.class, Side.SERVER);
 
 		// ELITE

@@ -52,9 +52,24 @@ public class PanelMap extends Panel {
 			return null;
 		}
 		if (mouseButton == 0) {
-			return Drag.emptyDrag(mouseButton);// TODO
+			int dx = getParentGroup().getWidth() - 50 - mouseX;
+			int dy = 50 - mouseY;
+			if (Math.sqrt(dx * dx + dy * dy) < 40) {
+				return new Drag(mouseButton, (x, y, moveX, moveY) -> {
+					float speed = .5F;
+					renderManager.cameraPitch = (renderManager.cameraPitch + moveY * speed) % 360;
+					renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
+							: renderManager.cameraPitch < -180 ? renderManager.cameraPitch + 360F
+									: renderManager.cameraPitch;
+					renderManager.cameraYaw = (renderManager.cameraYaw + moveX * speed) % 360;
+					renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
+							: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
+				}, cancel -> {
+				}, true);
+			}
+			return new Drag(mouseButton);// TODO
 		} else if (mouseButton == 1) {
-			return Drag.emptyDrag(mouseButton);// TODO
+			return new Drag(mouseButton);// TODO
 		} else if (mouseButton == 2) {
 			boolean flag = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 			return isMouseInPanel(mouseX, mouseY) ? new Drag(mouseButton, (x, y, moveX, moveY) -> {
@@ -76,12 +91,10 @@ public class PanelMap extends Panel {
 							: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
 				}
 			}, cancel -> {
-
 			}) : null;
 		} else {
-			return Drag.emptyDrag(mouseButton);
+			return new Drag(mouseButton);
 		}
-
 	}
 
 	@Override
@@ -206,6 +219,11 @@ public class PanelMap extends Panel {
 					Math.abs(renderManager.cameraYaw) >= 90 ? 15 : 0, 115, 15, 15);
 			FontHandler.renderTextCenter(x + 40 + x3, y + 32 + y3, new FormattedString("Z"), new Color(0xFF2E2E2E));
 		});
+		int dx = x + 40 - mouseX;
+		int dy = y + 40 - mouseY;
+		if (Math.sqrt(dx * dx + dy * dy) < 40) {
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + 0, y + 0, 78, 85, 80, 80);
+		}
 		map.forEach((a, b) -> b.run());
 	}
 
