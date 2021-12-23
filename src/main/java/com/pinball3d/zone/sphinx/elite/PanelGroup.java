@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.pinball3d.zone.sphinx.elite.panels.Panel;
+import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
 
 import net.minecraft.client.renderer.GlStateManager;
 
@@ -28,7 +28,7 @@ public class PanelGroup {
 
 	public void doRenderPre(int mouseX, int mouseY, float partialTicks) {
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(getX() + 1, getY() + 30, 0.0F);
+		GlStateManager.translate(getPanelX(), getPanelY(), 0.0F);
 		panels.get(chosenIndex).doRenderPre(mouseX - getX() - 1, mouseY - getY() - 31, partialTicks);
 		GlStateManager.popMatrix();
 	}
@@ -79,10 +79,8 @@ public class PanelGroup {
 			}
 		}
 		GlStateManager.pushMatrix();
-//		GlStateManager.rotate(45, 1, 1, 0);
-		GlStateManager.translate(getX() + 1, getY() + 30, 0.0F);
+		GlStateManager.translate(getPanelX(), getPanelY(), 0.0F);
 		panels.get(chosenIndex).doRender(mouseX - getX() - 1, mouseY - getY() - 31, partialTicks);
-//		panels.get(chosenIndex).doRender(mouseX, mouseY, partialTicks);
 		GlStateManager.popMatrix();
 		EliteRenderHelper.drawBorder(getX(), getY(), getWidth(), getHeight(), 1, Color.DIVIDER_BG);
 		EliteRenderHelper.drawRect(getX(), getY() + 29, getWidth(), 1, Color.DIVIDER_BG);
@@ -90,7 +88,7 @@ public class PanelGroup {
 
 	public void doRenderPost(int mouseX, int mouseY, float partialTicks) {
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(getX() + 1, getY() + 30, 0.0F);
+		GlStateManager.translate(getPanelX(), getPanelY(), 0.0F);
 		panels.get(chosenIndex).doRenderPost(mouseX - getX() - 1, mouseY - getY() - 31, partialTicks);
 		GlStateManager.popMatrix();
 		if (dragging) {
@@ -369,10 +367,6 @@ public class PanelGroup {
 			}
 		}
 		return panels.get(chosenIndex).mouseClicked(mouseX - getX() - 1, mouseY - getY() - 31, mouseButton);
-	}
-
-	public void onMouseReleased(int mouseX, int mouseY, int mouseButton) {
-
 	}
 
 	public void onMouseScrolled(int mouseX, int mouseY, int distance) {

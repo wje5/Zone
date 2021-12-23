@@ -12,7 +12,7 @@ import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 import com.pinball3d.zone.sphinx.elite.history.EventTyping;
 import com.pinball3d.zone.sphinx.elite.history.History;
 import com.pinball3d.zone.sphinx.elite.history.HistoryEvent;
-import com.pinball3d.zone.sphinx.elite.panels.Panel;
+import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;

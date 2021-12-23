@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
@@ -20,8 +19,9 @@ import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Edge;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Rect;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Side;
-import com.pinball3d.zone.sphinx.elite.panels.Panel;
+import com.pinball3d.zone.sphinx.elite.panels.PanelInfo;
 import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
+import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.Loader;
 public class EliteMainwindow extends GuiScreen {
 	public static final ResourceLocation ELITE = new ResourceLocation("zone:textures/gui/elite/elite.png");
 
-	private int lastX, lastY, dragMinX, dragMaxX, dragMinY, dragMaxY;
+	private int dragMinX, dragMaxX, dragMinY, dragMaxY;
 	private MenuBar menuBar;
 	private ButtomBar buttomBar;
 	private IDropDownList dropDownList;
@@ -72,7 +72,7 @@ public class EliteMainwindow extends GuiScreen {
 	private void applyPanels() {
 		PanelGroup g = new PanelGroup(this, 0, 28, getWidth(), getHeight() - 49);
 		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new Panel(this, g, new FormattedString("5DDDDDDDDDDDDDDD")));
+		g.addPanel(new PanelInfo(getWindow(), g));
 		panels.add(g);
 	}
 
@@ -91,13 +91,16 @@ public class EliteMainwindow extends GuiScreen {
 	@Override
 	public void drawScreen(int mX, int mY, float partialTicks) {
 		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+		updateMouse();
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();
-		if (mouseX != lastX || mouseY != lastY) {
-			int moveX = mouseX - lastX;
-			int moveY = mouseY - lastY;
-			onMouseMoved(lastX = mouseX, lastY = mouseY, moveX, moveY);
+		int moveX = MouseHandler.getDX();
+		int moveY = MouseHandler.getDY();
+		if (moveX != 0 || moveY != 0) {
+			onMouseMoved(mouseX, mouseY, moveX, moveY);
 		}
+
 		GlStateManager.matrixMode(GL11.GL_PROJECTION);
 		GlStateManager.pushMatrix();
 		GlStateManager.loadIdentity();
@@ -116,7 +119,6 @@ public class EliteMainwindow extends GuiScreen {
 		if (dropDownList != null) {
 			dropDownList.doRender(mouseX, mouseY);
 		}
-		updateMouse(mouseX, mouseY);
 		MouseHandler.renderMouse();
 		GlStateManager.popMatrix();
 		GlStateManager.matrixMode(GL11.GL_PROJECTION);
@@ -124,7 +126,14 @@ public class EliteMainwindow extends GuiScreen {
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 	}
 
-	public void updateMouse(int mouseX, int mouseY) {
+	public void updateMouse() {
+		MouseHandler.updateDelta();
+		int mouseX = MouseHandler.getX();
+		int mouseY = MouseHandler.getY();
+		int scrollDistance = MouseHandler.getDWheel();
+		if (scrollDistance != 0) {
+			onMouseScrolled(MouseHandler.getX(), MouseHandler.getY(), scrollDistance);
+		}
 		MouseType type = null;
 		if (draggingPanels != null) {
 			if (!draggingPanels.get(Side.UP.ordinal()).isEmpty()
@@ -357,10 +366,7 @@ public class EliteMainwindow extends GuiScreen {
 	@Override
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
-		int scrollDistance = Mouse.getEventDWheel();
-		if (scrollDistance != 0) {
-			onMouseScrolled(MouseHandler.getX(), MouseHandler.getY(), scrollDistance);
-		}
+
 	}
 
 	private void onStartDragPanelSide(int mouseX, int mouseY) {
@@ -545,10 +551,6 @@ public class EliteMainwindow extends GuiScreen {
 				if (!dropDownList.mouseReleased(mouseX, mouseY, mouseButton)) {
 					dropDownList = null;
 					menuBar.onListClosed();
-				}
-			} else {
-				for (PanelGroup g : panels) {
-					g.onMouseReleased(mouseX, mouseY, mouseButton);
 				}
 			}
 		}

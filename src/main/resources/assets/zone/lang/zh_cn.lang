@@ -345,6 +345,7 @@ elite.menu.window=窗口(§aW)
 elite.menu.help=帮助(§aH)
 
 elite.panel.map=地图
+elite.panel.info=信息
 
 elite.choose_network.title=Sphinx Elite 启动器
 elite.choose_network.text1=§l选择要连接的网络

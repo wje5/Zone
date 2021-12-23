@@ -345,6 +345,7 @@ elite.menu.window=§aWindow
 elite.menu.help=§aHelp
 
 elite.panel.map=Map
+elite.panel.info=Info
 
 elite.choose_network.title=Sphinx Elite Launcher
 elite.choose_network.text1=§lSelect a network to connect

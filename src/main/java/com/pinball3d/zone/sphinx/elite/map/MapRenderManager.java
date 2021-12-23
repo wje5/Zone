@@ -60,8 +60,8 @@ public class MapRenderManager implements IWorldEventListener {
 	private WorldChunkManager chunkManager;
 	private List<ContainerLocalRenderInformation> renderInfos = new ArrayList<ContainerLocalRenderInformation>(69696);
 	private ChunkWrapperList chunkWrapperList = new ChunkWrapperList();
-	public float cameraX, cameraY = 270, cameraZ, cameraPrevX, cameraPrevY, cameraPrevZ, cameraPitch = 90F,
-			cameraYaw = 0F, scale = 15F;
+	public float cameraX, cameraY = 260, cameraZ, cameraPrevX, cameraPrevY, cameraPrevZ, cameraPitch = 45F,
+			cameraYaw = 45F, scale = 0F;
 	private final DynamicTexture lightmapTexture;
 	private final ResourceLocation locationLightMap;
 	private Minecraft mc = Minecraft.getMinecraft();
@@ -80,11 +80,13 @@ public class MapRenderManager implements IWorldEventListener {
 	private double prevRenderSortX, prevRenderSortY, prevRenderSortZ;
 	private int frameCount;
 	private Framebuffer frameBuffer;
-	private RayTraceResult rayTraceResult;
+	public RayTraceResult rayTraceResult, selectedRayTraceResult;
 
 	public MapRenderManager() {
 		lightmapTexture = new DynamicTexture(16, 16);
 		locationLightMap = mc.getTextureManager().getDynamicTextureLocation("lightMap", lightmapTexture);
+		NetworkHandler.instance
+				.sendToServer(new MessageUpdateCameraPos(mc.player, new BlockPos(cameraX, cameraY, cameraZ)));
 	}
 
 	public void doRender(int width, int height, int mouseX, int mouseY, float partialTicks) {
@@ -110,7 +112,6 @@ public class MapRenderManager implements IWorldEventListener {
 			frameBuffer = new Framebuffer(width, height, true);
 			frameBuffer.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
 		} else if (frameBuffer.framebufferWidth != width || frameBuffer.framebufferHeight != height) {
-			System.out.println("update" + width + "|" + height);
 			frameBuffer.deleteFramebuffer();
 			frameBuffer.createFramebuffer(width, height);
 		}
@@ -177,26 +178,11 @@ public class MapRenderManager implements IWorldEventListener {
 		GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 		GlStateManager.popMatrix();
 
-		if (MouseHandler.isCursorEnable() && rayTraceResult != null
-				&& rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
-			GlStateManager.enableBlend();
-			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
-					GlStateManager.DestFactor.ZERO);
-			GlStateManager.glLineWidth(2.0F);
-			GlStateManager.disableTexture2D();
-			GlStateManager.depthMask(false);
-			BlockPos blockpos = rayTraceResult.getBlockPos();
-			IBlockState iblockstate = world.getBlockState(blockpos);
-
-			if (iblockstate.getMaterial() != Material.AIR && world.getWorldBorder().contains(blockpos)) {
-				RenderGlobal.drawSelectionBoundingBox(iblockstate.getSelectedBoundingBox(world, blockpos)
-						.grow(0.0020000000949949026D).offset(-cameraX, -cameraY, -cameraZ), 1.0F, 0.0F, 0.0F, 1.0F);
-			}
-
-			GlStateManager.depthMask(true);
-			GlStateManager.enableTexture2D();
-			GlStateManager.disableBlend();
+		if (selectedRayTraceResult != null) {
+			drawSelectBoundingBox(selectedRayTraceResult, true);
+		}
+		if (MouseHandler.isCursorEnable() && rayTraceResult != null) {
+			drawSelectBoundingBox(rayTraceResult, false);
 		}
 
 		GlStateManager.enableBlend();
@@ -268,6 +254,30 @@ public class MapRenderManager implements IWorldEventListener {
 
 		GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
 		frameCount++;
+	}
+
+	public void drawSelectBoundingBox(RayTraceResult ray, boolean isSelected) {
+		if (ray.typeOfHit == RayTraceResult.Type.BLOCK) {
+			GlStateManager.enableBlend();
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+					GlStateManager.DestFactor.ZERO);
+			GlStateManager.glLineWidth(2.0F);
+			GlStateManager.disableTexture2D();
+			GlStateManager.depthMask(false);
+			BlockPos blockpos = ray.getBlockPos();
+			IBlockState iblockstate = world.getBlockState(blockpos);
+
+			if (iblockstate.getMaterial() != Material.AIR && world.getWorldBorder().contains(blockpos)) {
+				RenderGlobal.drawSelectionBoundingBox(iblockstate.getSelectedBoundingBox(world, blockpos)
+						.grow(0.0020000000949949026D).offset(-cameraX, -cameraY, -cameraZ), 1.0F,
+						isSelected ? 0.5F : 0.0F, 0.0F, 1.0F);
+			}
+
+			GlStateManager.depthMask(true);
+			GlStateManager.enableTexture2D();
+			GlStateManager.disableBlend();
+		}
 	}
 
 	public void renderFrameBuffer(int width, int height) {

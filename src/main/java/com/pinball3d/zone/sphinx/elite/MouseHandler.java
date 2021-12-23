@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 
 public class MouseHandler {
 	private static MouseType type;
-	private static int lastX, lastY;
+	private static int dX, dY, dWheel, grabX, grabY;
 
 	public static void changeMouse(MouseType type) {
 		if (type != MouseHandler.type) {
@@ -32,7 +32,7 @@ public class MouseHandler {
 	}
 
 	public static void renderMouse() {
-		if (type != null) {
+		if (isCursorEnable() && type != null) {
 			int x = getX();
 			int y = getY();
 			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x - type.xHotspot, y - type.yHotspot, type.u, type.v,
@@ -41,25 +41,29 @@ public class MouseHandler {
 	}
 
 	public static int getX() {
-		return Mouse.getX();
+		return Mouse.isGrabbed() ? grabX : Mouse.getX();
 	}
 
 	public static int getY() {
-		return Minecraft.getMinecraft().displayHeight - Mouse.getY();
+		return Mouse.isGrabbed() ? grabY : Minecraft.getMinecraft().displayHeight - Mouse.getY();
 	}
 
-	public static int getMoveX() {
-		int mouseX = getX();
-		int moveX = mouseX - lastX;
-		lastX = mouseX;
-		return moveX;
+	public static int getDX() {
+		return dX;
 	}
 
-	public static int getMoveY() {
-		int mouseY = getY();
-		int moveY = mouseY - lastY;
-		lastY = mouseY;
-		return moveY;
+	public static int getDY() {
+		return dY;
+	}
+
+	public static int getDWheel() {
+		return dWheel;
+	}
+
+	public static void updateDelta() {
+		dX = Mouse.getDX();
+		dY = -Mouse.getDY();
+		dWheel = Mouse.getDWheel();
 	}
 
 	public static boolean isMouseInsideWindow() {
@@ -71,6 +75,8 @@ public class MouseHandler {
 	}
 
 	public static void grab() {
+		grabX = getX();
+		grabY = getY();
 		Mouse.setGrabbed(true);
 	}
 

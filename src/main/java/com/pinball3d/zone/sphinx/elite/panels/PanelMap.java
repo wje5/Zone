@@ -19,6 +19,7 @@ import com.pinball3d.zone.sphinx.elite.FontHandler;
 import com.pinball3d.zone.sphinx.elite.FormattedString;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
 import com.pinball3d.zone.sphinx.elite.map.MapRenderManager;
+import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockFluidRenderer;
@@ -56,7 +57,7 @@ public class PanelMap extends Panel {
 			int dy = 50 - mouseY;
 			if (Math.sqrt(dx * dx + dy * dy) < 40) {
 				return new Drag(mouseButton, (x, y, moveX, moveY) -> {
-					float speed = .5F;
+					float speed = 0.5F;
 					renderManager.cameraPitch = (renderManager.cameraPitch + moveY * speed) % 360;
 					renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
 							: renderManager.cameraPitch < -180 ? renderManager.cameraPitch + 360F
@@ -67,7 +68,12 @@ public class PanelMap extends Panel {
 				}, cancel -> {
 				}, true);
 			}
-			return new Drag(mouseButton);// TODO
+			return new Drag(mouseButton, (x, y, moveX, moveY) -> {
+			}, cancel -> {
+				if (!cancel) {
+					renderManager.selectedRayTraceResult = renderManager.rayTraceResult;
+				}
+			});
 		} else if (mouseButton == 1) {
 			return new Drag(mouseButton);// TODO
 		} else if (mouseButton == 2) {
@@ -143,7 +149,7 @@ public class PanelMap extends Panel {
 			renderManager.cameraY -= speed;
 		}
 		PanelGroup group = getParentGroup();
-		renderManager.doRender(group.getPanelWidth(), group.getPanelHeight(), mouseX, mouseY, partialTicks);
+		renderManager.doRender(getWidth(), getHeight(), mouseX, mouseY, partialTicks);
 
 		FontHandler.renderText(10, 0, new FormattedString("(123中(文测试）AaBbCc"), Color.TEXT_LIGHT,
 				getParentGroup().getWidth());

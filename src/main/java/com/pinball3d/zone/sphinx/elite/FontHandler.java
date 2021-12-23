@@ -4,6 +4,7 @@ import com.pinball3d.zone.sphinx.elite.FormattedString.StringComponent;
 
 public class FontHandler {
 	public static Font NORMAL, BOLD, ITALIC, BOLD_ITALIC;
+	public static int HEIGHT = 17;
 
 	public static void init() {
 		NORMAL = new Font("founder/normal/font", 277473);
@@ -83,10 +84,6 @@ public class FontHandler {
 			return a[6];
 		}
 		return 0;
-	}
-
-	public static int getHeight(Font font) {
-		return font.getLineHeight();
 	}
 
 	public static FormattedString extrusion(FormattedString text, int width) {
