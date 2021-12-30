@@ -46,6 +46,8 @@ item.redstone_crystal_lens.name=Redstone Crystal Lens
 item.tar.name=Tar
 item.paddle.name=Paddle
 item.impeller.name=Impeller
+item.energy_grid.name=Energy Grid
+
 item.energy.name=Energy
 item.construct_block.name=Construct Block
 item.terminal.name=Terminal
@@ -56,6 +58,8 @@ item.drill_heavy_head.name=Heavy Drill Head
 item.crucible_spoon.name=Crucible Spoon
 item.manual.name=Rigger Manual
 item.hybrid_fuel.name=Hybrid Fuel
+item.pipette.name=Pipette
+
 item.crushed_iron_ore.name=Crushed Iron Ore
 item.crushed_gold_ore.name=Crushed Gold Ore
 item.crushed_diamond_ore.name=Crushed Diamond Ore
@@ -64,6 +68,7 @@ item.crushed_redstone_ore.name=Crushed Redstone Ore
 item.crushed_coal_ore.name=Crushed Coal Ore
 item.crushed_lapis_ore.name=Crushed Lapis Ore
 item.crushed_quartz_ore.name=Crushed Quartz Ore
+
 item.iron_dust.name=Iron Dust
 item.gold_dust.name=Gold Dust
 item.diamond_dust.name=Diamond Dust
@@ -79,6 +84,7 @@ item.clay_dust.name=Clay Dust
 item.flint_dust.name=Flint Dust
 item.prismarine_dust.name=Prismarine Dust
 item.garton_metal_dust.name=Garton Metal Dust
+
 item.small_pile_iron_dust.name=Small Pile Iron Dust
 item.small_pile_gold_dust.name=Small Pile Gold Dust
 item.small_pile_diamond_dust.name=Small Pile Diamond Dust
@@ -97,6 +103,7 @@ item.small_pile_prismarine_dust.name=Small Pile Prismarine Dust
 item.small_pile_garton_metal_dust.name=Small Pile Garton Metal Dust
 item.small_pile_glowstone_dust.name=Small Pile Glowstone Dust
 item.small_pile_blaze_powder.name=Small Pile Blaze Powder
+
 item.tiny_pile_iron_dust.name=Tiny Pile Iron Dust
 item.tiny_pile_gold_dust.name=Tiny Pile Gold Dust
 item.tiny_pile_diamond_dust.name=Tiny Pile Diamond Dust
@@ -115,11 +122,14 @@ item.tiny_pile_prismarine_dust.name=Tiny Pile Prismarine Dust
 item.tiny_pile_garton_metal_dust.name=Tiny Pile Garton Metal Dust
 item.tiny_pile_glowstone_dust.name=Tiny Pile Glowstone Dust
 item.tiny_pile_blaze_powder.name=Tiny Pile Blaze Powder
+
 item.truss_x.name=Truss
 item.truss_z.name=Truss
 item.processing_center_light.name=Processing Center
 item.water.name=Water
 item.lava.name=Lava
+item.fluid.name=Unknown Fluid
+
 item.construct_block_axis_x.name=Construct Block
 item.construct_block_axis_y.name=Construct Block
 item.construct_block_axis_z.name=Construct Block
