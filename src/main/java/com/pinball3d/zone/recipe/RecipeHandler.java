@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.pinball3d.zone.FluidHandler;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.item.ItemLoader;
 
@@ -169,7 +170,7 @@ public class RecipeHandler {
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.crushed_quartz_ore),
 				new ItemStack(ItemLoader.tiny_pile_quartz_dust), new ItemStack(ItemLoader.tiny_pile_quartz_dust),
 				new ItemStack(ItemLoader.small_pile_netherrack_dust), 100));
-		register(new RecipeCentrifuge(new ItemStack(ItemLoader.lava), new ItemStack(ItemLoader.tar),
+		register(new RecipeCentrifuge(new ItemStack(FluidHandler.lava), new ItemStack(ItemLoader.tar),
 				new ItemStack(ItemLoader.tiny_pile_quartz_dust), new ItemStack(ItemLoader.tiny_pile_glowstone_dust),
 				100));
 		register(new RecipeCentrifuge(new ItemStack(ItemLoader.tar),

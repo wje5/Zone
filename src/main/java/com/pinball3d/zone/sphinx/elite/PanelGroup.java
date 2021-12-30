@@ -29,7 +29,7 @@ public class PanelGroup {
 	public void doRenderPre(int mouseX, int mouseY, float partialTicks) {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(getPanelX(), getPanelY(), 0.0F);
-		panels.get(chosenIndex).doRenderPre(mouseX - getX() - 1, mouseY - getY() - 31, partialTicks);
+		getChosenPanel().doRenderPre(mouseX - getX() - 1, mouseY - getY() - 31, partialTicks);
 		GlStateManager.popMatrix();
 	}
 
@@ -57,6 +57,10 @@ public class PanelGroup {
 			EliteRenderHelper.drawBorder(getX() + xOffset, getY(), w + 2, 30, 1, Color.DIVIDER_BG);
 			FontHandler.renderText(getX() + xOffset + 11, getY() + 7, e.getName(),
 					chosenIndex == i ? Color.TEXT_LIGHT : Color.TEXT_DARK, w - 36);
+			if (parent.getFocusPanel() == this && chosenIndex == i) {
+				EliteRenderHelper.drawRect(getX() + xOffset + 1, getY() + 25, w, 4, new Color(0xFF316C6B));
+			}
+
 			if (hoverIndex == i && hoverQuit) {
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + w - 22, getY() + 9, 8, 40, 14,
 						11);
@@ -80,7 +84,7 @@ public class PanelGroup {
 		}
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(getPanelX(), getPanelY(), 0.0F);
-		panels.get(chosenIndex).doRender(mouseX - getX() - 1, mouseY - getY() - 31, partialTicks);
+		getChosenPanel().doRender(mouseX - getX() - 1, mouseY - getY() - 31, partialTicks);
 		GlStateManager.popMatrix();
 		EliteRenderHelper.drawBorder(getX(), getY(), getWidth(), getHeight(), 1, Color.DIVIDER_BG);
 		EliteRenderHelper.drawRect(getX(), getY() + 29, getWidth(), 1, Color.DIVIDER_BG);
@@ -89,7 +93,7 @@ public class PanelGroup {
 	public void doRenderPost(int mouseX, int mouseY, float partialTicks) {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(getPanelX(), getPanelY(), 0.0F);
-		panels.get(chosenIndex).doRenderPost(mouseX - getX() - 1, mouseY - getY() - 31, partialTicks);
+		getChosenPanel().doRenderPost(mouseX - getX() - 1, mouseY - getY() - 31, partialTicks);
 		GlStateManager.popMatrix();
 		if (dragging) {
 			if (dragToIndex >= 0) {
@@ -366,11 +370,11 @@ public class PanelGroup {
 				});
 			}
 		}
-		return panels.get(chosenIndex).mouseClicked(mouseX - getX() - 1, mouseY - getY() - 31, mouseButton);
+		return getChosenPanel().mouseClicked(mouseX - getX() - 1, mouseY - getY() - 31, mouseButton);
 	}
 
 	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
-		panels.get(chosenIndex).onMouseScrolled(mouseX - getX() - 1, mouseY - getY() - 31, distance);
+		getChosenPanel().onMouseScrolled(mouseX - getX() - 1, mouseY - getY() - 31, distance);
 	}
 
 	public void calcPanelGroup(int mouseX, int mouseY) {
@@ -515,6 +519,10 @@ public class PanelGroup {
 
 	public int getChosenIndex() {
 		return chosenIndex;
+	}
+
+	public Panel getChosenPanel() {
+		return panels.get(chosenIndex);
 	}
 
 	public void setChosenIndex(int index) {

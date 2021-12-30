@@ -37,6 +37,9 @@ public class FontHandler {
 	}
 
 	public static int renderText(int x, int y, FormattedString s, Color color, boolean isAlt) {
+		if (s == null) {
+			return 0;
+		}
 		int t = 0;
 		for (int i = 0; i < s.getComponentsSize(); i++) {
 			StringComponent c = s.get(i);
@@ -57,6 +60,9 @@ public class FontHandler {
 	}
 
 	public static int getStringComponentWidth(StringComponent c) {
+		if (c == null) {
+			return 0;
+		}
 		Font font = c.italic ? c.bold ? FontHandler.BOLD_ITALIC : FontHandler.ITALIC
 				: c.bold ? FontHandler.BOLD : FontHandler.NORMAL;
 		int w = 0;
@@ -67,6 +73,9 @@ public class FontHandler {
 	}
 
 	public static int getStringWidth(FormattedString s) {
+		if (s == null) {
+			return 0;
+		}
 		int w = 0;
 		for (int i = 0; i < s.getComponentsSize(); i++) {
 			StringComponent c = s.get(i);
@@ -87,6 +96,9 @@ public class FontHandler {
 	}
 
 	public static FormattedString extrusion(FormattedString text, int width) {
+		if (text == null) {
+			return text;
+		}
 		while (getStringWidth(text) > width) {
 			StringComponent c = text.get(text.getComponentsSize() - 1);
 			String s = c.text;

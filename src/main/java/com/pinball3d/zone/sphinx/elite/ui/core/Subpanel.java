@@ -26,6 +26,11 @@ public class Subpanel extends Component {
 	private Component focus;
 	private ILayout layout;
 	private int scrollingDistance;
+	private int width;
+
+	public Subpanel(EliteMainwindow parent, Subpanel parentPanel, ILayout layout) {
+		this(parent, parentPanel, 1000000, 1000000, layout);
+	}
 
 	public Subpanel(EliteMainwindow parent, Subpanel parentPanel, int width, int height, ILayout layout) {
 		super(parent, parentPanel, width, height);
@@ -36,14 +41,18 @@ public class Subpanel extends Component {
 		this.layout = layout;
 	}
 
-	public void refreshComponentsPos() {
-		components = layout.arrange(componentsOrigin, getRenderWidth());
-	}
-
 	public void addComponent(Component c, Object... layoutData) {
 		List<Object> data = new ArrayList<Object>();
 		data.addAll(Arrays.asList(layoutData));
 		componentsOrigin.put(c, data);
+	}
+
+	public void removeComponent(Component c) {
+		componentsOrigin.remove(c);
+	}
+
+	public void clearComponents() {
+		componentsOrigin.clear();
 	}
 
 	public int getLength() {
@@ -62,8 +71,30 @@ public class Subpanel extends Component {
 	}
 
 	@Override
+	public int getWidth() {
+		return width;
+	}
+
+	@Override
+	public int getHeight() {
+		return getLength();
+	}
+
+	@Override
+	public void refresh() {
+		super.refresh();
+		componentsOrigin.forEach((c, pos) -> {
+			c.refresh();
+		});
+		components = layout.arrange(componentsOrigin, 1000000);
+		width = components.isEmpty() ? 0
+				: components.entrySet().stream().mapToInt(e -> e.getKey().getWidth() + e.getValue().x).max().getAsInt();
+		components = layout.arrange(componentsOrigin, getRenderWidth());
+	}
+
+	@Override
 	public void doRenderPre(int mouseX, int mouseY, float partialTicks) {
-		refreshComponentsPos();
+		super.doRenderPre(mouseX, mouseY, partialTicks);
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0, -scrollingDistance, 0);
 		components.forEach((c, pos) -> {
@@ -85,7 +116,7 @@ public class Subpanel extends Component {
 
 	@Override
 	public void doRender(int mouseX, int mouseY, float partialTicks) {
-		refreshComponentsPos();
+		super.doRender(mouseX, mouseY, partialTicks);
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0, -scrollingDistance, 0);
 		components.forEach((c, pos) -> {
@@ -106,7 +137,7 @@ public class Subpanel extends Component {
 
 	@Override
 	public void doRenderPost(int mouseX, int mouseY, float partialTicks) {
-		refreshComponentsPos();
+		super.doRenderPost(mouseX, mouseY, partialTicks);
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0, -scrollingDistance, 0);
 		components.forEach((c, pos) -> {
@@ -140,7 +171,7 @@ public class Subpanel extends Component {
 				}
 			}
 		}
-		return null;
+		return super.mouseClicked(mouseX, mouseY, mouseButton);
 	}
 
 	@Override
@@ -158,29 +189,25 @@ public class Subpanel extends Component {
 				}
 			}
 		}
-		if (getRenderBox() == null) {
-			System.out.println("DRR");
-		}
 		int max = getLength() - getRenderBox().height;
 		System.out.println(max + "|" + scrollingDistance + "|" + distance);
 		if (max < 0) {
 			scrollingDistance = 0;
-			return false;
+			return super.onMouseScrolled(mouseX, mouseY, distance);
 		}
 		if (scrollingDistance >= max) {
 			scrollingDistance = Math.max(0, max);
 			if (distance < 0) {
-				return false;
+				return super.onMouseScrolled(mouseX, mouseY, distance);
 			}
 		}
 		if (scrollingDistance <= 0) {
 			scrollingDistance = 0;
 			if (distance > 0) {
-				return false;
+				return super.onMouseScrolled(mouseX, mouseY, distance);
 			}
 		}
 		scrollingDistance = ZoneMathHelper.mid(0, scrollingDistance - distance, max);
-
 		return true;
 	}
 
@@ -199,6 +226,6 @@ public class Subpanel extends Component {
 				}
 			}
 		}
-		return null;
+		return super.getMouseType(mouseX, mouseY);
 	}
 }

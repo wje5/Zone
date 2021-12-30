@@ -1,2 +1,4 @@
 Manifest-Version: 1.0
 FMLCorePlugin: com.pinball3d.zone.core.LoadingPluginZone
+FMLCorePluginContainsFMLMod: true
+ForceLoadAsMod: true

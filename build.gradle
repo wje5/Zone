@@ -93,16 +93,21 @@ dependencies {
     compile "org.apache.pdfbox:pdfbox:2.0.21"
     compile "org.apache.pdfbox:fontbox:2.0.21"
     provided files('lib/CraftTweaker2-1.12-4.1.20.618-deobf.jar')
+    //deobfCompile files('lib/Mantle-1.12-1.3.3.55.jar')
+    deobfCompile "slimeknights.mantle:Mantle:1.12-1.3.3.55"
+    deobfCompile "slimeknights:TConstruct:1.12.2-2.13.0.190"
     compile files('natives/')
 }
 
-//jar {
-//    manifest {
-//        attributes([
-//            "FMLCorePlugin": "com.pinball3d.zone.core.LoadingPluginZone"
-//        ])
-//    }
-//}
+jar {
+    manifest {
+        attributes([
+            "FMLCorePlugin": "com.pinball3d.zone.core.LoadingPluginZone",
+            "FMLCorePluginContainsFMLMod": true,
+            "ForceLoadAsMod": true,
+        ])
+    }
+}
 
 shadowJar {
     dependencies {

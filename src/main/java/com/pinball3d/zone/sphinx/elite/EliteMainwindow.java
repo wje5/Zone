@@ -42,6 +42,7 @@ public class EliteMainwindow extends GuiScreen {
 	private Drag drag;
 	private boolean inited, isAlt;
 	private List<Set<PanelGroup>> draggingPanels;
+	private PanelGroup focusPanel;
 
 	public static EliteMainwindow getWindow() {
 		GuiScreen s = Minecraft.getMinecraft().currentScreen;
@@ -70,10 +71,13 @@ public class EliteMainwindow extends GuiScreen {
 	}
 
 	private void applyPanels() {
-		PanelGroup g = new PanelGroup(this, 0, 28, getWidth(), getHeight() - 49);
+		PanelGroup g = new PanelGroup(this, 0, 28, getWidth() - 200, getHeight() - 49);
 		g.addPanel(new PanelMap(this, g));
-		g.addPanel(new PanelInfo(getWindow(), g));
 		panels.add(g);
+
+		PanelGroup g2 = new PanelGroup(this, getWidth() - 200, 28, 200, getHeight() - 49);
+		g2.addPanel(new PanelInfo(getWindow(), g2));
+		panels.add(g2);
 	}
 
 	@Override
@@ -271,6 +275,13 @@ public class EliteMainwindow extends GuiScreen {
 		return isAlt;
 	}
 
+	public PanelGroup getFocusPanel() {
+		if (!panels.contains(focusPanel)) {
+			focusPanel = panels.isEmpty() ? null : panels.get(0);
+		}
+		return focusPanel;
+	}
+
 	public PanelMap getMapPanel() {
 		for (PanelGroup i : panels) {
 			for (Panel j : i.getPanels()) {
@@ -342,6 +353,7 @@ public class EliteMainwindow extends GuiScreen {
 			Drag d = g.onMouseClicked(mouseX, mouseY, mouseButton);
 			if (d != null) {
 				setDrag(d);
+				focusPanel = g;
 				break;
 			}
 		}

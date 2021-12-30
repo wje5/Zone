@@ -2,8 +2,10 @@ package com.pinball3d.zone.sphinx.elite.ui.core;
 
 import com.pinball3d.zone.math.Box4i;
 import com.pinball3d.zone.math.Pos2i;
+import com.pinball3d.zone.sphinx.elite.Color;
 import com.pinball3d.zone.sphinx.elite.Drag;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
+import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
 import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 
 public class Component {
@@ -18,6 +20,10 @@ public class Component {
 		this.height = height;
 	}
 
+	public void refresh() {
+
+	}
+
 	public void doRenderPre(int mouseX, int mouseY, float partialTicks) {
 
 	}
@@ -27,7 +33,7 @@ public class Component {
 	}
 
 	public void doRenderPost(int mouseX, int mouseY, float partialTicks) {
-//		EliteRenderHelper.drawBorder(0, 0, getRenderWidth(), height, 1, Color.RED);
+		EliteRenderHelper.drawBorder(0, 0, getRenderWidth(), getHeight(), 1, Color.RED);
 	}
 
 	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton) {

@@ -1,16 +1,12 @@
 package com.pinball3d.zone.item;
 
+import com.pinball3d.zone.FluidHandler;
 import com.pinball3d.zone.psp.ItemFC;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -54,7 +50,7 @@ public class ItemLoader {
 			tiny_pile_glowstone_dust, tiny_pile_blaze_powder;
 
 	public static Item construct_block_axis_x, construct_block_axis_y, construct_block_axis_z, truss_x, truss_z,
-			processing_center_light, water, lava;
+			processing_center_light;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
@@ -190,25 +186,7 @@ public class ItemLoader {
 			ModelLoader.setCustomModelResourceLocation(terminal, 1,
 					new ModelResourceLocation("zone:terminal_2", "inventory"));
 		}
-		Block.REGISTRY.forEach(e -> {
-			if (e instanceof IFluidBlock) {
-				Item item = new ItemFluid((IFluidBlock) e);
-				ResourceLocation name = item.getRegistryName();
-				if (!registry.containsKey(name)) {
-					register(registry, item, false);
-					if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-						registerRender(item, new ModelResourceLocation(e.getRegistryName(), null));
-					}
-				}
-			}
-		});
-		register(registry, water = new ItemVanillaFluid(Blocks.FLOWING_WATER, "water"));
-		register(registry, lava = new ItemVanillaFluid(Blocks.FLOWING_LAVA, "lava") {
-			@Override
-			public int getItemBurnTime(ItemStack itemStack) {
-				return 20000;
-			}
-		});
+		FluidHandler.registerFluidItems(registry);
 		OreDictionary.registerOre("plateIron", iron_plate);
 		OreDictionary.registerOre("plateGold", gold_plate);
 		OreDictionary.registerOre("dustIron", iron_dust);
@@ -249,11 +227,11 @@ public class ItemLoader {
 		OreDictionary.registerOre("dustTinyBlaze", tiny_pile_blaze_powder);
 	}
 
-	private static void register(IForgeRegistry<Item> registry, Item item) {
+	public static void register(IForgeRegistry<Item> registry, Item item) {
 		register(registry, item, true);
 	}
 
-	private static void register(IForgeRegistry<Item> registry, Item item, boolean flag) {
+	public static void register(IForgeRegistry<Item> registry, Item item, boolean flag) {
 		registry.register(item);
 		if (flag && FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 			registerRender(item);
@@ -261,13 +239,13 @@ public class ItemLoader {
 	}
 
 	@SideOnly(Side.CLIENT)
-	private static void registerRender(Item item) {
+	public static void registerRender(Item item) {
 		ModelResourceLocation model = new ModelResourceLocation(item.getRegistryName(), "inventory");
 		ModelLoader.setCustomModelResourceLocation(item, 0, model);
 	}
 
 	@SideOnly(Side.CLIENT)
-	private static void registerRender(Item item, ModelResourceLocation model) {
+	public static void registerRender(Item item, ModelResourceLocation model) {
 		ModelLoader.setCustomModelResourceLocation(item, 0, model);
 	}
 }

@@ -45,6 +45,12 @@ public class Panel {
 			public int getMinWidth() {
 				return Panel.this.getWidth();
 			}
+
+			@Override
+			public void doRenderPre(int mouseX, int mouseY, float partialTicks) {
+				refresh();
+				super.doRenderPre(mouseX, mouseY, partialTicks);
+			}
 		};
 	}
 

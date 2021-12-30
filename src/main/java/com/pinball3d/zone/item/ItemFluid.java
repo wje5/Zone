@@ -1,134 +1,180 @@
 package com.pinball3d.zone.item;
 
-import java.util.List;
-
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.pinball3d.zone.TabZone;
+import com.pinball3d.zone.FluidHandler;
 
-import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.stats.StatList;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidActionResult;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
-public class ItemFluid extends Item {
-	protected final Block block;
+public class ItemFluid extends ZoneItem {
+	public ItemFluid() {
+		super("fluid");
 
-	public ItemFluid(IFluidBlock block) {
-		this.block = (Block) block;
-		setRegistryName("zone", this.block.getRegistryName().getResourcePath());
-		setCreativeTab(TabZone.tab);
 	}
 
-	@Override
-	public String getUnlocalizedName(ItemStack stack) {
-		return ((IFluidBlock) block).getFluid().getUnlocalizedName();
+	public static FluidStack getFluid(ItemStack container) {
+		return FluidStack.loadFluidStackFromNBT(container.getTagCompound());
 	}
 
-	@Override
-	public String getUnlocalizedName() {
-		return ((IFluidBlock) block).getFluid().getUnlocalizedName();
+	public static ItemStack createStack(Fluid fluid) {
+		return createStack(fluid, 1);
+	}
+
+	public static ItemStack createStack(Fluid fluid, int count) {
+		ItemStack stack = new ItemStack(FluidHandler.fluid);
+		stack.setTagCompound(new FluidStack(fluid, 1000).writeToNBT(new NBTTagCompound()));
+		stack.setCount(count);
+		return stack;
 	}
 
 	@Override
 	public String getItemStackDisplayName(ItemStack stack) {
-		return I18n.format(this.getUnlocalizedNameInefficiently(stack)).trim();
+		FluidStack fluidStack = getFluid(stack);
+		if (fluidStack == null) {
+			return super.getItemStackDisplayName(stack);
+		}
+		return fluidStack.getLocalizedName();
 	}
 
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
-			EnumFacing facing, float hitX, float hitY, float hitZ) {
-		IBlockState iblockstate = worldIn.getBlockState(pos);
-		Block block = iblockstate.getBlock();
-		if (!block.isReplaceable(worldIn, pos)) {
-			pos = pos.offset(facing);
+	public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
+		if (!this.isInCreativeTab(tab)) {
+			return;
 		}
-		ItemStack itemstack = player.getHeldItem(hand);
-		if (!itemstack.isEmpty() && player.canPlayerEdit(pos, facing, itemstack)
-				&& worldIn.mayPlace(this.block, pos, false, facing, player)) {
-			int i = this.getMetadata(itemstack.getMetadata());
-			IBlockState iblockstate1 = this.block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, i,
-					player, hand);
-			if (placeBlockAt(itemstack, player, worldIn, pos, facing, hitX, hitY, hitZ, iblockstate1)) {
-				iblockstate1 = worldIn.getBlockState(pos);
-				SoundType soundtype = iblockstate1.getBlock().getSoundType(iblockstate1, worldIn, pos, player);
-				worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS,
-						(soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-				itemstack.shrink(1);
+		for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
+			if (fluid != FluidRegistry.WATER && fluid != FluidRegistry.LAVA && !fluid.getName().equals("milk")) {
+				subItems.add(createStack(fluid, 1));
 			}
-			return EnumActionResult.SUCCESS;
-		} else {
-			return EnumActionResult.FAIL;
 		}
 	}
 
-	public static boolean setTileEntityNBT(World worldIn, @Nullable EntityPlayer player, BlockPos pos,
-			ItemStack stackIn) {
-		MinecraftServer minecraftserver = worldIn.getMinecraftServer();
-		if (minecraftserver == null) {
-			return false;
-		} else {
-			NBTTagCompound nbttagcompound = stackIn.getSubCompound("BlockEntityTag");
-			if (nbttagcompound != null) {
-				TileEntity tileentity = worldIn.getTileEntity(pos);
-				if (tileentity != null) {
-					if (!worldIn.isRemote && tileentity.onlyOpsCanSetNbt()
-							&& (player == null || !player.canUseCommandBlock())) {
-						return false;
-					}
-					NBTTagCompound nbttagcompound1 = tileentity.writeToNBT(new NBTTagCompound());
-					NBTTagCompound nbttagcompound2 = nbttagcompound1.copy();
-					nbttagcompound1.merge(nbttagcompound);
-					nbttagcompound1.setInteger("x", pos.getX());
-					nbttagcompound1.setInteger("y", pos.getY());
-					nbttagcompound1.setInteger("z", pos.getZ());
-					if (!nbttagcompound1.equals(nbttagcompound2)) {
-						tileentity.readFromNBT(nbttagcompound1);
-						tileentity.markDirty();
-						return true;
-					}
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+		ItemStack itemstack = player.getHeldItem(hand);
+		FluidStack fluidStack = getFluid(itemstack);
+		if (fluidStack == null) {
+			return ActionResult.newResult(EnumActionResult.PASS, itemstack);
+		}
+		RayTraceResult mop = this.rayTrace(world, player, false);
+		if (mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK) {
+			return ActionResult.newResult(EnumActionResult.PASS, itemstack);
+		}
+		BlockPos clickPos = mop.getBlockPos();
+		if (world.isBlockModifiable(player, clickPos)) {
+			BlockPos targetPos = clickPos.offset(mop.sideHit);
+			if (player.canPlayerEdit(targetPos, mop.sideHit, itemstack)) {
+				FluidActionResult result = FluidUtil.tryPlaceFluid(player, world, targetPos, itemstack, fluidStack);
+				if (result.isSuccess() && !player.capabilities.isCreativeMode) {
+					player.addStat(StatList.getObjectUseStats(this));
+					itemstack.shrink(1);
+					ItemStack drained = result.getResult();
+					return ActionResult.newResult(EnumActionResult.SUCCESS, drained);
 				}
 			}
-			return false;
 		}
+		return ActionResult.newResult(EnumActionResult.FAIL, itemstack);
+	}
+
+	@Nullable
+	@Override
+	public String getCreatorModId(@Nonnull ItemStack itemStack) {
+		FluidStack fluidStack = getFluid(itemStack);
+		String modId = FluidRegistry.getModId(fluidStack);
+		return modId != null ? modId : super.getCreatorModId(itemStack);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		super.addInformation(stack, worldIn, tooltip, flagIn);
-		block.addInformation(stack, worldIn, tooltip, flagIn);
+	public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, NBTTagCompound nbt) {
+		return new FluidWrapper(stack);
 	}
 
-	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
-			float hitX, float hitY, float hitZ, IBlockState newState) {
-		if (!world.setBlockState(pos, newState, 11))
-			return false;
-		IBlockState state = world.getBlockState(pos);
-		if (state.getBlock() == block) {
-			setTileEntityNBT(world, player, pos, stack);
-			block.onBlockPlacedBy(world, pos, state, player, stack);
-			if (player instanceof EntityPlayerMP)
-				CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP) player, pos, stack);
+	public static class FluidWrapper implements IFluidHandlerItem, ICapabilityProvider {
+		protected ItemStack stack;
+
+		public FluidWrapper(ItemStack stack) {
+			this.stack = stack;
 		}
-		return true;
+
+		@Override
+		public IFluidTankProperties[] getTankProperties() {
+			return new FluidTankProperties[] { new FluidTankProperties(ItemFluid.getFluid(stack), 1000) };
+		}
+
+		@Override
+		public int fill(FluidStack resource, boolean doFill) {
+			return 0;
+		}
+
+		@Override
+		public FluidStack drain(FluidStack resource, boolean doDrain) {
+			if (resource == null || resource.amount < 1000) {
+				return null;
+			}
+			FluidStack fs = ItemFluid.getFluid(stack);
+			if (fs != null && fs.isFluidEqual(resource)) {
+				if (doDrain) {
+					stack.shrink(1);
+				}
+				return fs;
+			}
+			return null;
+		}
+
+		@Override
+		public FluidStack drain(int maxDrain, boolean doDrain) {
+			if (maxDrain < 1000) {
+				return null;
+			}
+			FluidStack fs = ItemFluid.getFluid(stack);
+			if (fs != null) {
+				if (doDrain) {
+					stack.shrink(1);
+				}
+				return fs;
+			}
+			return null;
+		}
+
+		@Override
+		public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+			return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
+		}
+
+		@Override
+		public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+			if (capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY) {
+				return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.cast(this);
+			}
+			return null;
+		}
+
+		@Override
+		public ItemStack getContainer() {
+			return stack;
+		}
 	}
 }

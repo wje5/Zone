@@ -89,6 +89,10 @@ public class MapRenderManager implements IWorldEventListener {
 				.sendToServer(new MessageUpdateCameraPos(mc.player, new BlockPos(cameraX, cameraY, cameraZ)));
 	}
 
+	public World getWorld() {
+		return world;
+	}
+
 	public void doRender(int width, int height, int mouseX, int mouseY, float partialTicks) {
 		int j = Math.min(Minecraft.getDebugFPS(), mc.gameSettings.limitFramerate);
 		j = Math.max(j, 60);
