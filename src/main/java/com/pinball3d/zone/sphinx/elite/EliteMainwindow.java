@@ -44,6 +44,8 @@ public class EliteMainwindow extends GuiScreen {
 	private List<Set<PanelGroup>> draggingPanels;
 	private PanelGroup focusPanel;
 
+	public boolean enableDebugMode;
+
 	public static EliteMainwindow getWindow() {
 		GuiScreen s = Minecraft.getMinecraft().currentScreen;
 		if (s instanceof EliteMainwindow) {
@@ -225,17 +227,20 @@ public class EliteMainwindow extends GuiScreen {
 			}
 		} else if (dropDownList != null) {
 			dropDownList.keyTyped(typedChar, keyCode);
+		} else if (focus != null) {
+			focus.keyTyped(typedChar, keyCode);
 		} else {
+			// process hotkey
+			if (typedChar == 'g') {
+				enableDebugMode = !enableDebugMode;
+			}
 			if (Loader.isModLoaded("jei")) {
 				if (typedChar == 'a') {
 //					JEIHandler.showJEI(new ItemStack(ItemLoader.advenced_circuit_board), true);
 				}
 			}
-			if (focus != null) {
-				focus.keyTyped(typedChar, keyCode);
-			}
-
 		}
+
 	}
 
 	public void setFocus(IFocus focus) {

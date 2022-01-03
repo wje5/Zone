@@ -10,7 +10,8 @@ import com.pinball3d.zone.sphinx.elite.ui.core.ILayout;
 
 public class PosLayout implements ILayout {
 	@Override
-	public Map<Component, Pos2i> arrange(Map<Component, List<Object>> origin, int width) {
+	public Map<Component, Pos2i> arrange(Map<Component, List<Object>> origin, int width, int height,
+			boolean isPreArrange) {
 		Map<Component, Pos2i> m = new HashMap<Component, Pos2i>();
 		origin.forEach((c, list) -> {
 			Pos2i pos = new Pos2i(0, 0);

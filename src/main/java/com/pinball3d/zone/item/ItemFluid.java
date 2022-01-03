@@ -1,7 +1,6 @@
 package com.pinball3d.zone.item;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.pinball3d.zone.FluidHandler;
 
@@ -36,8 +35,11 @@ public class ItemFluid extends ZoneItem {
 
 	}
 
-	public static FluidStack getFluid(ItemStack container) {
-		return FluidStack.loadFluidStackFromNBT(container.getTagCompound());
+	public static FluidStack getFluid(ItemStack stack) {
+		if (!stack.hasTagCompound()) {
+			stack.setTagCompound(new NBTTagCompound());
+		}
+		return FluidStack.loadFluidStackFromNBT(stack.getTagCompound().getCompoundTag("fluid"));
 	}
 
 	public static ItemStack createStack(Fluid fluid) {
@@ -46,9 +48,22 @@ public class ItemFluid extends ZoneItem {
 
 	public static ItemStack createStack(Fluid fluid, int count) {
 		ItemStack stack = new ItemStack(FluidHandler.fluid);
-		stack.setTagCompound(new FluidStack(fluid, 1000).writeToNBT(new NBTTagCompound()));
+		if (!stack.hasTagCompound()) {
+			stack.setTagCompound(new NBTTagCompound());
+		}
+		NBTTagCompound tag = fluid == null ? new NBTTagCompound()
+				: new FluidStack(fluid, 1000).writeToNBT(new NBTTagCompound());
+		stack.getTagCompound().setTag("fluid", tag);
 		stack.setCount(count);
 		return stack;
+	}
+
+	@Override
+	public int getItemBurnTime(ItemStack itemStack) {
+		if (getFluid(itemStack).getFluid() == FluidRegistry.LAVA) {
+			return 20000;
+		}
+		return super.getItemBurnTime(itemStack);
 	}
 
 	@Override
@@ -61,14 +76,12 @@ public class ItemFluid extends ZoneItem {
 	}
 
 	@Override
-	public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		if (!this.isInCreativeTab(tab)) {
 			return;
 		}
 		for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-			if (fluid != FluidRegistry.WATER && fluid != FluidRegistry.LAVA && !fluid.getName().equals("milk")) {
-				subItems.add(createStack(fluid, 1));
-			}
+			subItems.add(createStack(fluid, 1));
 		}
 	}
 
@@ -99,7 +112,6 @@ public class ItemFluid extends ZoneItem {
 		return ActionResult.newResult(EnumActionResult.FAIL, itemstack);
 	}
 
-	@Nullable
 	@Override
 	public String getCreatorModId(@Nonnull ItemStack itemStack) {
 		FluidStack fluidStack = getFluid(itemStack);

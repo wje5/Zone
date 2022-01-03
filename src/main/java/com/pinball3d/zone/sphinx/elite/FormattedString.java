@@ -16,7 +16,7 @@ public class FormattedString {
 	public FormattedString(String text, boolean isEscape) {
 		boolean underLine = false, italic = false, bold = false, alt = false;
 		Color color = null;
-		char[] a = text.toCharArray();
+		char[] a = text == null ? new char[] {} : text.toCharArray();
 		List<StringComponent> l = new ArrayList<StringComponent>();
 		String s = "";
 		for (int i = 0; i < a.length; i++) {

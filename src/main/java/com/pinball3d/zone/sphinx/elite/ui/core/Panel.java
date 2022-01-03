@@ -16,19 +16,21 @@ public class Panel {
 	private FormattedString name;
 	private Subpanel root;
 
+	public static int marginLeft = 6;
+
 	public Panel(EliteMainwindow parent, PanelGroup parentGroup, FormattedString name) {
 		this.parent = parent;
 		this.parentGroup = parentGroup;
 		this.name = name;
-		root = new Subpanel(parent, null, 0, 0, new BoxLayout()) {
+		root = new Subpanel(parent, null, marginLeft, 0, new BoxLayout(true)) {
 			@Override
 			public Pos2i getPos() {
-				return new Pos2i(getX(), getY());
+				return new Pos2i(getX() + marginLeft, getY());
 			}
 
 			@Override
 			public int getWidth() {
-				return Panel.this.getWidth();
+				return Panel.this.getWidth() - marginLeft;
 			}
 
 			@Override
@@ -38,12 +40,12 @@ public class Panel {
 
 			@Override
 			public int getRenderWidth() {
-				return Panel.this.getWidth();
+				return Panel.this.getWidth() - marginLeft;
 			}
 
 			@Override
 			public int getMinWidth() {
-				return Panel.this.getWidth();
+				return Panel.this.getWidth() - marginLeft;
 			}
 
 			@Override
@@ -56,22 +58,34 @@ public class Panel {
 
 	public void doRenderPre(int mouseX, int mouseY, float partialTicks) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(getX(), parent.getHeight() - (getY() + root.getHeight()), root.getWidth(), root.getHeight());
+		GL11.glScissor(root.getPos().x, parent.getHeight() - (root.getPos().y + root.getHeight()), root.getWidth(),
+				root.getHeight());
+		GL11.glPushMatrix();
+		GL11.glTranslatef(root.getPos().x - getX(), root.getPos().y - getY(), 0);
 		root.doRenderPre(mouseX, mouseY, partialTicks);
+		GL11.glPopMatrix();
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 
 	public void doRender(int mouseX, int mouseY, float partialTicks) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(getX(), parent.getHeight() - (getY() + root.getHeight()), root.getWidth(), root.getHeight());
+		GL11.glScissor(root.getPos().x, parent.getHeight() - (root.getPos().y + root.getHeight()), root.getWidth(),
+				root.getHeight());
+		GL11.glPushMatrix();
+		GL11.glTranslatef(root.getPos().x - getX(), root.getPos().y - getY(), 0);
 		root.doRender(mouseX, mouseY, partialTicks);
+		GL11.glPopMatrix();
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 
 	public void doRenderPost(int mouseX, int mouseY, float partialTicks) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(getX(), parent.getHeight() - (getY() + root.getHeight()), root.getWidth(), root.getHeight());
+		GL11.glScissor(root.getPos().x, parent.getHeight() - (root.getPos().y + root.getHeight()), root.getWidth(),
+				root.getHeight());
+		GL11.glPushMatrix();
+		GL11.glTranslatef(root.getPos().x - getX(), root.getPos().y - getY(), 0);
 		root.doRenderPost(mouseX, mouseY, partialTicks);
+		GL11.glPopMatrix();
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 

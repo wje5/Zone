@@ -14,20 +14,20 @@ public class Label extends Component {
 	private Supplier<FormattedString> text;
 	private Color color;
 
+	public Label(EliteMainwindow parent, Subpanel parentPanel, FormattedString text, Color color) {
+		this(parent, parentPanel, () -> text, color);
+	}
+
 	public Label(EliteMainwindow parent, Subpanel parentPanel, Supplier<FormattedString> text, Color color) {
 		super(parent, parentPanel, FontHandler.getStringWidth(text.get()), FontHandler.HEIGHT);
 		this.text = text;
 		this.color = color;
 	}
 
-	public Label(EliteMainwindow parent, Subpanel parentPanel, FormattedString text, Color color) {
-		this(parent, parentPanel, () -> text, color);
-	}
-
 	@Override
 	public void doRender(int mouseX, int mouseY, float partialTicks) {
 		super.doRender(mouseX, mouseY, partialTicks);
-		FontHandler.renderText(0, 0, text.get(), color, getRenderWidth());
+		FontHandler.renderText(0, 0, getText(), color, getRenderWidth());
 	}
 
 	public FormattedString getText() {
@@ -48,7 +48,7 @@ public class Label extends Component {
 
 	@Override
 	public int getWidth() {
-		return FontHandler.getStringWidth(text.get());
+		return FontHandler.getStringWidth(getText());
 	}
 
 	@Override

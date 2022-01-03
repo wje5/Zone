@@ -37,6 +37,18 @@ public class EliteRenderHelper {
 		GlStateManager.disableBlend();
 	}
 
+	public static void drawTexture(TextureLocation loc, int x, int y) {
+		drawTexture(loc, x, y, 1.0F);
+	}
+
+	public static void drawTexture(TextureLocation loc, int x, int y, float scale) {
+		drawTexture(loc, x, y, scale * loc.uWidth, scale * loc.vHeight);
+	}
+
+	public static void drawTexture(TextureLocation loc, int x, int y, float width, float height) {
+		drawTexture(loc.location, x, y, width, height, loc.u, loc.v, loc.uWidth, loc.vHeight);
+	}
+
 	public static void drawTexture(ResourceLocation texture, int x, int y, float u, float v, float uWidth,
 			float vHeight) {
 		drawTexture(texture, x, y, u, v, uWidth, vHeight, 1.0F);

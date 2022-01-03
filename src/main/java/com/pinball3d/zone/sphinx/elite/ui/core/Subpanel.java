@@ -27,6 +27,7 @@ public class Subpanel extends Component {
 	private ILayout layout;
 	private int scrollingDistance;
 	private int width;
+	private Runnable onClick;
 
 	public Subpanel(EliteMainwindow parent, Subpanel parentPanel, ILayout layout) {
 		this(parent, parentPanel, 1000000, 1000000, layout);
@@ -39,6 +40,10 @@ public class Subpanel extends Component {
 
 	public void setLayout(ILayout layout) {
 		this.layout = layout;
+	}
+
+	public void setOnClick(Runnable onClick) {
+		this.onClick = onClick;
 	}
 
 	public void addComponent(Component c, Object... layoutData) {
@@ -86,10 +91,10 @@ public class Subpanel extends Component {
 		componentsOrigin.forEach((c, pos) -> {
 			c.refresh();
 		});
-		components = layout.arrange(componentsOrigin, 1000000);
+		components = layout.arrange(componentsOrigin, 1000000, 1000000, true);
 		width = components.isEmpty() ? 0
 				: components.entrySet().stream().mapToInt(e -> e.getKey().getWidth() + e.getValue().x).max().getAsInt();
-		components = layout.arrange(componentsOrigin, getRenderWidth());
+		components = layout.arrange(componentsOrigin, getRenderWidth(), getLength(), false);
 	}
 
 	@Override
@@ -170,6 +175,10 @@ public class Subpanel extends Component {
 					return drag;
 				}
 			}
+		}
+		if (onClick != null) {
+			onClick.run();
+			return new Drag(mouseButton);
 		}
 		return super.mouseClicked(mouseX, mouseY, mouseButton);
 	}

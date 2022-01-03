@@ -33,7 +33,9 @@ public class Component {
 	}
 
 	public void doRenderPost(int mouseX, int mouseY, float partialTicks) {
-		EliteRenderHelper.drawBorder(0, 0, getRenderWidth(), getHeight(), 1, Color.RED);
+		if (parent.enableDebugMode) {
+			EliteRenderHelper.drawBorder(0, 0, getRenderWidth(), getHeight(), 1, Color.RED);
+		}
 	}
 
 	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton) {
