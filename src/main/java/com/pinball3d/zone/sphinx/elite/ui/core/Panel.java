@@ -16,21 +16,19 @@ public class Panel {
 	private FormattedString name;
 	private Subpanel root;
 
-	public static int marginLeft = 6;
-
 	public Panel(EliteMainwindow parent, PanelGroup parentGroup, FormattedString name) {
 		this.parent = parent;
 		this.parentGroup = parentGroup;
 		this.name = name;
-		root = new Subpanel(parent, null, marginLeft, 0, new BoxLayout(true)) {
+		root = new Subpanel(parent, null, 0, 0, new BoxLayout(true)) {
 			@Override
 			public Pos2i getPos() {
-				return new Pos2i(getX() + marginLeft, getY());
+				return new Pos2i(getX(), getY());
 			}
 
 			@Override
 			public int getWidth() {
-				return Panel.this.getWidth() - marginLeft;
+				return Panel.this.getWidth();
 			}
 
 			@Override
@@ -40,12 +38,12 @@ public class Panel {
 
 			@Override
 			public int getRenderWidth() {
-				return Panel.this.getWidth() - marginLeft;
+				return Panel.this.getWidth();
 			}
 
 			@Override
 			public int getMinWidth() {
-				return Panel.this.getWidth() - marginLeft;
+				return Panel.this.getWidth();
 			}
 
 			@Override

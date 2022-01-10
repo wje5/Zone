@@ -24,16 +24,16 @@ public class FoldablePanel extends Subpanel {
 		super(parent, parentPanel, new BoxLayout(true));
 		Subpanel p1 = new Subpanel(parent, this, new BoxLayout(false));
 		p1.setOnClick(() -> setFold(!isFold()));
-		p1.addComponent(
-				new ImageLabel(parent, p1,
-						() -> new Pair<TextureLocation, Float>(
-								new TextureLocation(EliteMainwindow.ELITE, isFold() ? 8 : 0, 145, 8, 8), 1F)),
+		p1.addComponent(new ImageLabel(parent, p1,
+				() -> new Pair<TextureLocation, Float>(
+						new TextureLocation(EliteMainwindow.ELITE, isFold() ? 8 : 0, 145, 8, 8), 1F)).setMarginRight(3),
 				BoxLayout.Type.CENTER);
 		p1.addComponent(new Label(parent, p1, text, Color.TEXT_LIGHT));
 		addComponent(p1);
 
 		panel = new Subpanel(parent, this, layout);
-		addComponent(panel, new BoxLayout.Type(5));
+		panel.setMarginLeft(5);
+		addComponent(panel, BoxLayout.Type.WEST);
 	}
 
 	public boolean isFold() {

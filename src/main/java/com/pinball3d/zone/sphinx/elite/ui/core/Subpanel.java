@@ -21,12 +21,11 @@ import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class Subpanel extends Component {
-	Map<Component, Pos2i> components = new HashMap<Component, Pos2i>();
-	private Map<Component, List<Object>> componentsOrigin = new LinkedHashMap<Component, List<Object>>();
+	public Map<Component, Pos2i> components = new HashMap<Component, Pos2i>();
+	protected Map<Component, List<Object>> componentsOrigin = new LinkedHashMap<Component, List<Object>>();
 	private Component focus;
 	private ILayout layout;
-	private int scrollingDistance;
-	private int width;
+	private int width, scrollingDistance, length;
 	private Runnable onClick;
 
 	public Subpanel(EliteMainwindow parent, Subpanel parentPanel, ILayout layout) {
@@ -61,9 +60,12 @@ public class Subpanel extends Component {
 	}
 
 	public int getLength() {
-		return components.isEmpty() ? 0
-				: components.entrySet().stream().mapToInt(e -> e.getKey().getHeight() + e.getValue().y).max()
-						.getAsInt();
+		return length;
+
+	}
+
+	public void setLength(int length) {
+		this.length = length;
 	}
 
 	public int getScrollingDistance() {
@@ -80,6 +82,10 @@ public class Subpanel extends Component {
 		return width;
 	}
 
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
 	@Override
 	public int getHeight() {
 		return getLength();
@@ -88,13 +94,11 @@ public class Subpanel extends Component {
 	@Override
 	public void refresh() {
 		super.refresh();
-		componentsOrigin.forEach((c, pos) -> {
+		componentsOrigin.forEach((c, data) -> {
 			c.refresh();
 		});
-		components = layout.arrange(componentsOrigin, 1000000, 1000000, true);
-		width = components.isEmpty() ? 0
-				: components.entrySet().stream().mapToInt(e -> e.getKey().getWidth() + e.getValue().x).max().getAsInt();
-		components = layout.arrange(componentsOrigin, getRenderWidth(), getLength(), false);
+		components = layout.arrange(this, componentsOrigin, 1000000, 1000000, true);
+		components = layout.arrange(this, componentsOrigin, getRenderWidth(), getLength(), false);
 	}
 
 	@Override

@@ -11,7 +11,7 @@ import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 public class Component {
 	protected EliteMainwindow parent;
 	protected Subpanel parentPanel;
-	private int width, height, renderWidth;
+	private int width, height, renderWidth, marginLeft, marginRight, marginTop, marginDown;
 
 	public Component(EliteMainwindow parent, Subpanel parentPanel, int width, int height) {
 		this.parent = parent;
@@ -70,9 +70,46 @@ public class Component {
 		return height;
 	}
 
-	public void resize(int width, int height) {
+	public Component resize(int width, int height) {
 		this.width = width;
 		this.height = height;
+		return this;
+	}
+
+	public Component setMarginLeft(int marginLeft) {
+		this.marginLeft = marginLeft;
+		return this;
+	}
+
+	public Component setMarginRight(int marginRight) {
+		this.marginRight = marginRight;
+		return this;
+	}
+
+	public Component setMarginTop(int marginTop) {
+		this.marginTop = marginTop;
+		return this;
+	}
+
+	public Component setMarginDown(int marginDown) {
+		this.marginDown = marginDown;
+		return this;
+	}
+
+	public int getMarginLeft() {
+		return marginLeft;
+	}
+
+	public int getMarginRight() {
+		return marginRight;
+	}
+
+	public int getMarginTop() {
+		return marginTop;
+	}
+
+	public int getMarginDown() {
+		return marginDown;
 	}
 
 	public Pos2i getPos() {

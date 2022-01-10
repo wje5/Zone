@@ -8,17 +8,14 @@ import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
 import com.pinball3d.zone.sphinx.elite.FormattedString;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
-import com.pinball3d.zone.sphinx.elite.TextureLocation;
 import com.pinball3d.zone.sphinx.elite.map.MapRenderManager;
-import com.pinball3d.zone.sphinx.elite.ui.component.ImageLabel;
-import com.pinball3d.zone.sphinx.elite.ui.component.ItemShow;
+import com.pinball3d.zone.sphinx.elite.ui.component.BlockShow;
 import com.pinball3d.zone.sphinx.elite.ui.component.Label;
 import com.pinball3d.zone.sphinx.elite.ui.core.FoldablePanel;
 import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
 import com.pinball3d.zone.sphinx.elite.ui.core.PanelHolder;
 import com.pinball3d.zone.sphinx.elite.ui.core.Subpanel;
 import com.pinball3d.zone.sphinx.elite.ui.core.layout.BoxLayout;
-import com.pinball3d.zone.util.Pair;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -119,31 +116,35 @@ public class PanelInfo extends Panel {
 
 			{
 				Subpanel p1 = new Subpanel(parent, holder, new BoxLayout(false));
-				p1.addComponent(new ItemShow(parent, p1, () -> stack));
+				p1.setMarginLeft(5).setMarginRight(5).setMarginTop(11).setMarginDown(11);
+//				p1.addComponent(new ItemShow(parent, p1, () -> stack).setMarginRight(6));
+				p1.addComponent(new BlockShow(parent, p1, () -> pos).setMarginRight(6));
 
 				Subpanel p2 = new Subpanel(parent, p1, new BoxLayout(true));
 				p2.addComponent(new Label(parent, p2, () -> new FormattedString(blockName), Color.TEXT_LIGHT));
 				p2.addComponent(new Label(parent, p2, () -> new FormattedString(modName), Color.TEXT_LIGHT));
 				p1.addComponent(p2, BoxLayout.Type.CENTER);
 
-				holder.addComponent(p1, false);
+				holder.addComponent(p1, true);
 			}
-			FoldablePanel p1 = new FoldablePanel(parent, holder, new FormattedString("信息"), new BoxLayout(true));
+			{
+				FoldablePanel p1 = new FoldablePanel(parent, holder,
+						new FormattedString(I18n.format("elite.panel.info.block.base_properties")),
+						new BoxLayout(true));
+				p1.setMarginTop(3).setMarginDown(3);
+				Subpanel p2 = new Subpanel(parent, p1.panel, new BoxLayout(true));
 
-			p1.panel.addComponent(new ImageLabel(parent, p1.panel, new Pair<TextureLocation, Float>(
-					new TextureLocation(EliteMainwindow.ELITE, 0, 152, 13, 13), 1.0F)));
-			Subpanel p2 = new Subpanel(parent, p1.panel, new BoxLayout(true));
+				p2.addComponent(new Label(parent, p2,
+						() -> new FormattedString("X:" + (pos == null ? "" : pos.getX() + "")), Color.TEXT_LIGHT));
+				p2.addComponent(new Label(parent, p2,
+						() -> new FormattedString("Y:" + (pos == null ? "" : pos.getY() + "")), Color.TEXT_LIGHT));
+				p2.addComponent(new Label(parent, p2,
+						() -> new FormattedString("Z:" + (pos == null ? "" : pos.getZ() + "")), Color.TEXT_LIGHT));
 
-			p2.addComponent(new Label(parent, p2,
-					() -> new FormattedString("X:" + (pos == null ? "" : pos.getX() + "")), Color.TEXT_LIGHT));
-			p2.addComponent(new Label(parent, p2,
-					() -> new FormattedString("Y:" + (pos == null ? "" : pos.getY() + "")), Color.TEXT_LIGHT));
-			p2.addComponent(new Label(parent, p2,
-					() -> new FormattedString("Z:" + (pos == null ? "" : pos.getZ() + "")), Color.TEXT_LIGHT));
+				p1.panel.addComponent(p2);
 
-			p1.panel.addComponent(p2);
-
-			holder.addComponent(p1, true);
+				holder.addComponent(p1, true);
+			}
 
 			addComponent(holder);
 			this.manager = manager;
