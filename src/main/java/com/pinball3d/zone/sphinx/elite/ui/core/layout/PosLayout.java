@@ -15,6 +15,9 @@ public class PosLayout implements ILayout {
 			boolean isPreArrange) {
 		Map<Component, Pos2i> m = new LinkedHashMap<Component, Pos2i>();
 		origin.forEach((c, list) -> {
+			if (c.isHide()) {
+				return;
+			}
 			Pos2i pos = new Pos2i(0, 0);
 			for (Object o : list) {
 				if (o instanceof Pos2i) {

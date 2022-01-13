@@ -1,5 +1,9 @@
 package com.pinball3d.zone.sphinx.elite.panels;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.pinball3d.zone.FluidHandler;
@@ -16,13 +20,16 @@ import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
 import com.pinball3d.zone.sphinx.elite.ui.core.PanelHolder;
 import com.pinball3d.zone.sphinx.elite.ui.core.Subpanel;
 import com.pinball3d.zone.sphinx.elite.ui.core.layout.BoxLayout;
+import com.pinball3d.zone.sphinx.elite.ui.core.layout.LinearLayout;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 
@@ -109,6 +116,9 @@ public class PanelInfo extends Panel {
 		private ItemStack stack;
 		private String blockName, modName;
 		private BlockPos pos;
+		private int skylight, blocklight, luminous;
+		private Subpanel blockstatePanel;
+		private Map<String, String> blockstates = new LinkedHashMap<String, String>();
 
 		public PanelBlockData(EliteMainwindow parent, Subpanel parentPanel, MapRenderManager manager) {
 			super(parent, parentPanel, new BoxLayout(true));
@@ -116,34 +126,30 @@ public class PanelInfo extends Panel {
 
 			{
 				Subpanel p1 = new Subpanel(parent, holder, new BoxLayout(false));
-				p1.setMarginLeft(5).setMarginRight(5).setMarginTop(11).setMarginDown(11);
+				p1.setMarginLeft(6).setMarginRight(6).setMarginTop(11).setMarginDown(11);
 //				p1.addComponent(new ItemShow(parent, p1, () -> stack).setMarginRight(6));
 				p1.addComponent(new BlockShow(parent, p1, () -> pos).setMarginRight(6));
-
 				Subpanel p2 = new Subpanel(parent, p1, new BoxLayout(true));
 				p2.addComponent(new Label(parent, p2, () -> new FormattedString(blockName), Color.TEXT_LIGHT));
 				p2.addComponent(new Label(parent, p2, () -> new FormattedString(modName), Color.TEXT_LIGHT));
 				p1.addComponent(p2, BoxLayout.Type.CENTER);
-
-				holder.addComponent(p1, true);
+				holder.addComponent(p1);
 			}
 			{
 				FoldablePanel p1 = new FoldablePanel(parent, holder,
-						new FormattedString(I18n.format("elite.panel.info.block.base_properties")),
-						new BoxLayout(true));
-				p1.setMarginTop(3).setMarginDown(3);
+						new FormattedString(I18n.format("elite.panel.info.block.common")), new BoxLayout(true))
+								.setFold(false);
+				p1.setMarginLeft(6).setMarginRight(6).setMarginTop(3).setMarginDown(3);
 				Subpanel p2 = new Subpanel(parent, p1.panel, new BoxLayout(true));
-
-				p2.addComponent(new Label(parent, p2,
-						() -> new FormattedString("X:" + (pos == null ? "" : pos.getX() + "")), Color.TEXT_LIGHT));
-				p2.addComponent(new Label(parent, p2,
-						() -> new FormattedString("Y:" + (pos == null ? "" : pos.getY() + "")), Color.TEXT_LIGHT));
-				p2.addComponent(new Label(parent, p2,
-						() -> new FormattedString("Z:" + (pos == null ? "" : pos.getZ() + "")), Color.TEXT_LIGHT));
-
+				p2.addComponent(new CustomTextPanel(parent, p2, () -> new FormattedString("X:"),
+						() -> new FormattedString(pos == null ? "" : pos.getX() + "")));
+				p2.addComponent(new CustomTextPanel(parent, p2, () -> new FormattedString("Y:"),
+						() -> new FormattedString(pos == null ? "" : pos.getY() + "")));
+				p2.addComponent(new CustomTextPanel(parent, p2, () -> new FormattedString("Z:"),
+						() -> new FormattedString(pos == null ? "" : pos.getZ() + "")));
 				p1.panel.addComponent(p2);
-
-				holder.addComponent(p1, true);
+				p1.panel.addComponent(blockstatePanel = new Subpanel(parent, p1.panel, new BoxLayout(true)));
+				holder.addComponent(p1);
 			}
 
 			addComponent(holder);
@@ -169,8 +175,33 @@ public class PanelInfo extends Panel {
 				blockName = stack.getDisplayName();
 				String modid = stack.getItem().getCreatorModId(stack);
 				modName = Loader.instance().getIndexedModList().get(modid).getName();
+				skylight = world.getLightFor(EnumSkyBlock.SKY, pos);
+				blocklight = world.getLightFor(EnumSkyBlock.BLOCK, pos);
+				blockstatePanel.clearComponents();
+				for (Entry<IProperty<?>, Comparable<?>> entry : blockstate.getProperties().entrySet()) {
+					String name = entry.getKey().getName();
+					String value = entry.getValue().toString();
+					blockstatePanel.addComponent(new CustomTextPanel(parent, blockstatePanel,
+							() -> new FormattedString(name + ":"), () -> new FormattedString(value)));
+				}
+
 			}
 			super.refresh();
+		}
+	}
+
+	public static class CustomTextPanel extends Subpanel {
+		public CustomTextPanel(EliteMainwindow parent, Subpanel parentPanel, Supplier<FormattedString> text,
+				Supplier<FormattedString> text2) {
+			super(parent, parentPanel, new LinearLayout(false));
+			setExpand(true);
+			addComponent(new Label(parent, this, text, Color.TEXT_LIGHT));
+			addComponent(new Label(parent, this, text2, Color.TEXT_LIGHT), BoxLayout.Type.EAST);
+		}
+
+		@Override
+		public int getMarginLeft() {
+			return parentPanel.getRenderWidth() / 2;
 		}
 	}
 }

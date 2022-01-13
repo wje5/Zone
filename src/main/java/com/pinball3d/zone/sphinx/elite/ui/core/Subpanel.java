@@ -27,6 +27,7 @@ public class Subpanel extends Component {
 	private ILayout layout;
 	private int width, scrollingDistance, length;
 	private Runnable onClick;
+	private boolean expand;
 
 	public Subpanel(EliteMainwindow parent, Subpanel parentPanel, ILayout layout) {
 		this(parent, parentPanel, 1000000, 1000000, layout);
@@ -37,12 +38,14 @@ public class Subpanel extends Component {
 		this.layout = layout;
 	}
 
-	public void setLayout(ILayout layout) {
+	public Subpanel setLayout(ILayout layout) {
 		this.layout = layout;
+		return this;
 	}
 
-	public void setOnClick(Runnable onClick) {
+	public Subpanel setOnClick(Runnable onClick) {
 		this.onClick = onClick;
+		return this;
 	}
 
 	public void addComponent(Component c, Object... layoutData) {
@@ -79,7 +82,7 @@ public class Subpanel extends Component {
 
 	@Override
 	public int getWidth() {
-		return width;
+		return expand ? 10000 : width;
 	}
 
 	public void setWidth(int width) {
@@ -91,14 +94,37 @@ public class Subpanel extends Component {
 		return getLength();
 	}
 
+	public Subpanel setExpand(boolean expand) {
+		this.expand = expand;
+		return this;
+	}
+
 	@Override
 	public void refresh() {
 		super.refresh();
 		componentsOrigin.forEach((c, data) -> {
 			c.refresh();
 		});
-		components = layout.arrange(this, componentsOrigin, 1000000, 1000000, true);
-		components = layout.arrange(this, componentsOrigin, getRenderWidth(), getLength(), false);
+		arrange(true);
+		arrange(false);
+	}
+
+	public void arrange(boolean isPreArrange) {
+		if (isPreArrange) {
+			componentsOrigin.forEach((c, data) -> {
+				if (c instanceof Subpanel) {
+					((Subpanel) c).arrange(isPreArrange);
+				}
+			});
+			components = layout.arrange(this, componentsOrigin, 1000000, 1000000, true);
+		} else {
+			components = layout.arrange(this, componentsOrigin, getRenderWidth(), getLength(), false);
+			componentsOrigin.forEach((c, data) -> {
+				if (c instanceof Subpanel) {
+					((Subpanel) c).arrange(isPreArrange);
+				}
+			});
+		}
 	}
 
 	@Override

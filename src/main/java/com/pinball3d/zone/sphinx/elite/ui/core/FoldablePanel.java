@@ -23,7 +23,7 @@ public class FoldablePanel extends Subpanel {
 	public FoldablePanel(EliteMainwindow parent, Subpanel parentPanel, Supplier<FormattedString> text, ILayout layout) {
 		super(parent, parentPanel, new BoxLayout(true));
 		Subpanel p1 = new Subpanel(parent, this, new BoxLayout(false));
-		p1.setOnClick(() -> setFold(!isFold()));
+		p1.setOnClick(() -> setFold(!isFold())).setExpand(true);
 		p1.addComponent(new ImageLabel(parent, p1,
 				() -> new Pair<TextureLocation, Float>(
 						new TextureLocation(EliteMainwindow.ELITE, isFold() ? 8 : 0, 145, 8, 8), 1F)).setMarginRight(3),
@@ -31,7 +31,12 @@ public class FoldablePanel extends Subpanel {
 		p1.addComponent(new Label(parent, p1, text, Color.TEXT_LIGHT));
 		addComponent(p1);
 
-		panel = new Subpanel(parent, this, layout);
+		panel = new Subpanel(parent, this, layout) {
+			@Override
+			public boolean isHide() {
+				return super.isHide() || fold;
+			}
+		};
 		panel.setMarginLeft(5);
 		addComponent(panel, BoxLayout.Type.WEST);
 	}
@@ -40,7 +45,8 @@ public class FoldablePanel extends Subpanel {
 		return fold;
 	}
 
-	public void setFold(boolean fold) {
+	public FoldablePanel setFold(boolean fold) {
 		this.fold = fold;
+		return this;
 	}
 }

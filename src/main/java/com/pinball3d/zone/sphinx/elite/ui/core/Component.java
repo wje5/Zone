@@ -12,6 +12,7 @@ public class Component {
 	protected EliteMainwindow parent;
 	protected Subpanel parentPanel;
 	private int width, height, renderWidth, marginLeft, marginRight, marginTop, marginDown;
+	private boolean hide;
 
 	public Component(EliteMainwindow parent, Subpanel parentPanel, int width, int height) {
 		this.parent = parent;
@@ -70,12 +71,6 @@ public class Component {
 		return height;
 	}
 
-	public Component resize(int width, int height) {
-		this.width = width;
-		this.height = height;
-		return this;
-	}
-
 	public Component setMarginLeft(int marginLeft) {
 		this.marginLeft = marginLeft;
 		return this;
@@ -110,6 +105,15 @@ public class Component {
 
 	public int getMarginDown() {
 		return marginDown;
+	}
+
+	public boolean isHide() {
+		return hide;
+	}
+
+	public Component setHide(boolean hide) {
+		this.hide = hide;
+		return this;
 	}
 
 	public Pos2i getPos() {

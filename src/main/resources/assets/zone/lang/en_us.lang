@@ -357,7 +357,13 @@ elite.menu.help=§aHelp
 elite.panel.map=Map
 
 elite.panel.info=Info
-elite.panel.info.block.base_properties=Base Properties
+elite.panel.info.block.common=Common
+elite.panel.info.block.material=Material
+elite.panel.info.block.material.material=Material
+elite.panel.info.block.material.combustible=Combustible
+elite.panel.info.block.material.harvest_level=Harvest Level
+elite.panel.info.block.material.hardness=Hardness
+elite.panel.info.block.material.resistance=Resistance
 
 elite.choose_network.title=Sphinx Elite Launcher
 elite.choose_network.text1=§lSelect a network to connect

@@ -23,6 +23,10 @@ public class BoxLayout implements ILayout {
 		Map<Component, Pos2i> m = new LinkedHashMap<Component, Pos2i>();
 		int offset = 0;
 		for (Entry<Component, List<Object>> e : origin.entrySet()) {
+			Component c = e.getKey();
+			if (c.isHide()) {
+				continue;
+			}
 			Type type = Type.NW;
 			for (Object o : e.getValue()) {
 				if (o instanceof Type) {
@@ -31,7 +35,7 @@ public class BoxLayout implements ILayout {
 			}
 			if (isVertical) {
 				type = type.getHorizontal();
-				Component c = e.getKey();
+
 				offset += c.getMarginTop();
 				if (type == Type.WEST) {
 					c.setRenderWidth(width - c.getMarginLeft() >= c.getMinWidth()
@@ -40,26 +44,28 @@ public class BoxLayout implements ILayout {
 					m.put(c, new Pos2i(c.getMarginLeft(), offset));
 				} else if (type == Type.CENTER) {
 					c.setRenderWidth(width >= c.getMinWidth() ? Math.min(c.getWidth(), width) : 0);
-					m.put(c, new Pos2i(isPreArrange ? 0 : (width - c.getRenderWidth()) / 2, offset));
+					m.put(c, new Pos2i(isPreArrange ? c.getMarginLeft() : (width - c.getRenderWidth()) / 2, offset));
 				} else {
 					c.setRenderWidth(width - c.getMarginRight() >= c.getMinWidth()
 							? Math.min(c.getWidth(), width - c.getMarginRight())
 							: 0);
-					m.put(c, new Pos2i(isPreArrange ? 0 : width - c.getRenderWidth() - c.getMarginRight(), offset));
+					m.put(c, new Pos2i(
+							isPreArrange ? c.getMarginLeft() : width - c.getRenderWidth() - c.getMarginRight(),
+							offset));
 				}
 				offset += c.getHeight() + c.getMarginDown();
 			} else {
 				type = type.getVertical();
-				Component c = e.getKey();
 				offset += c.getMarginLeft();
 				c.setRenderWidth(width - offset >= c.getMinWidth() ? Math.min(c.getWidth(), width - offset) : 0);
 
 				if (type == Type.NORTH) {
 					m.put(c, new Pos2i(offset, c.getMarginTop()));
 				} else if (type == Type.CENTER) {
-					m.put(c, new Pos2i(offset, isPreArrange ? 0 : (height - c.getHeight()) / 2));
+					m.put(c, new Pos2i(offset, isPreArrange ? c.getMarginTop() : (height - c.getHeight()) / 2));
 				} else {
-					m.put(c, new Pos2i(offset, isPreArrange ? 0 : height - c.getHeight()));
+					m.put(c, new Pos2i(offset,
+							isPreArrange ? c.getMarginTop() : height - c.getHeight() - c.getMarginDown()));
 				}
 				offset += c.getWidth() + c.getMarginRight();
 			}
