@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx.elite.ui.component;
+package com.pinball3d.zone.sphinx.elite.ui.components;
 
 import java.util.function.Supplier;
 

@@ -1,7 +1,5 @@
 package com.pinball3d.zone.sphinx.elite.panels;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -13,8 +11,8 @@ import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
 import com.pinball3d.zone.sphinx.elite.FormattedString;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
 import com.pinball3d.zone.sphinx.elite.map.MapRenderManager;
-import com.pinball3d.zone.sphinx.elite.ui.component.BlockShow;
-import com.pinball3d.zone.sphinx.elite.ui.component.Label;
+import com.pinball3d.zone.sphinx.elite.ui.components.BlockShow;
+import com.pinball3d.zone.sphinx.elite.ui.components.Label;
 import com.pinball3d.zone.sphinx.elite.ui.core.FoldablePanel;
 import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
 import com.pinball3d.zone.sphinx.elite.ui.core.PanelHolder;
@@ -29,7 +27,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 
@@ -116,9 +113,7 @@ public class PanelInfo extends Panel {
 		private ItemStack stack;
 		private String blockName, modName;
 		private BlockPos pos;
-		private int skylight, blocklight, luminous;
 		private Subpanel blockstatePanel;
-		private Map<String, String> blockstates = new LinkedHashMap<String, String>();
 
 		public PanelBlockData(EliteMainwindow parent, Subpanel parentPanel, MapRenderManager manager) {
 			super(parent, parentPanel, new BoxLayout(true));
@@ -175,8 +170,6 @@ public class PanelInfo extends Panel {
 				blockName = stack.getDisplayName();
 				String modid = stack.getItem().getCreatorModId(stack);
 				modName = Loader.instance().getIndexedModList().get(modid).getName();
-				skylight = world.getLightFor(EnumSkyBlock.SKY, pos);
-				blocklight = world.getLightFor(EnumSkyBlock.BLOCK, pos);
 				blockstatePanel.clearComponents();
 				for (Entry<IProperty<?>, Comparable<?>> entry : blockstate.getProperties().entrySet()) {
 					String name = entry.getKey().getName();

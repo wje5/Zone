@@ -6,8 +6,8 @@ import com.pinball3d.zone.sphinx.elite.Color;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.FormattedString;
 import com.pinball3d.zone.sphinx.elite.TextureLocation;
-import com.pinball3d.zone.sphinx.elite.ui.component.ImageLabel;
-import com.pinball3d.zone.sphinx.elite.ui.component.Label;
+import com.pinball3d.zone.sphinx.elite.ui.components.ImageLabel;
+import com.pinball3d.zone.sphinx.elite.ui.components.Label;
 import com.pinball3d.zone.sphinx.elite.ui.core.layout.BoxLayout;
 import com.pinball3d.zone.util.Pair;
 
