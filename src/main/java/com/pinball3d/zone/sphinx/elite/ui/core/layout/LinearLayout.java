@@ -25,7 +25,7 @@ public class LinearLayout implements ILayout {
 			boolean isPreArrange) {
 		Map<Component, Type> map = new LinkedHashMap<Component, Type>();
 		for (Entry<Component, List<Object>> e : origin.entrySet()) {
-			if (e.getKey().isHide()) {
+			if (e.getKey().isHide() || width <= 0) {
 				continue;
 			}
 			Type type = Type.NW;
@@ -60,19 +60,19 @@ public class LinearLayout implements ILayout {
 					offset += c.getMarginLeft();
 					c.setRenderWidth(c.getWidth());
 					m.put(c, new Pos2i(offset, c.getMarginTop()));
-					offset += c.getWidth() + c.getMarginRight();
+					offset += c.getRenderWidth() + c.getMarginRight();
 				}
 				for (Component c : center) {
 					offset += c.getMarginLeft();
 					c.setRenderWidth(c.getWidth());
 					m.put(c, new Pos2i(offset, c.getMarginTop()));
-					offset += c.getWidth() + c.getMarginRight();
+					offset += c.getRenderWidth() + c.getMarginRight();
 				}
 				for (Component c : east) {
 					offset += c.getMarginLeft();
 					c.setRenderWidth(c.getWidth());
 					m.put(c, new Pos2i(offset, c.getMarginTop()));
-					offset += c.getWidth() + c.getMarginRight();
+					offset += c.getRenderWidth() + c.getMarginRight();
 				}
 			} else {
 				int westTotal = west.stream().mapToInt(e -> e.getMarginLeft() + e.getWidth() + e.getMarginRight())
@@ -81,7 +81,8 @@ public class LinearLayout implements ILayout {
 						.sum();
 				int eastTotal = east.stream().mapToInt(e -> e.getMarginLeft() + e.getWidth() + e.getMarginRight())
 						.sum();
-				if (westTotal + centerTotal + eastTotal <= width) {
+				int total = westTotal + centerTotal + eastTotal;
+				if (total <= width) {
 					for (Component c : west) {
 						offset += c.getMarginLeft();
 						Type v = map.get(c).getVertical();
@@ -97,17 +98,35 @@ public class LinearLayout implements ILayout {
 						offset += c.getMarginLeft();
 						c.setRenderWidth(c.getWidth());
 						m.put(c, new Pos2i(offset, c.getMarginTop()));
-						offset += c.getWidth() + c.getMarginRight();
+						offset += c.getRenderWidth() + c.getMarginRight();
 					}
 					offset = width - eastTotal;
 					for (Component c : east) {
 						offset += c.getMarginLeft();
 						c.setRenderWidth(c.getWidth());
 						m.put(c, new Pos2i(offset, c.getMarginTop()));
-						offset += c.getWidth() + c.getMarginRight();
+						offset += c.getRenderWidth() + c.getMarginRight();
 					}
 				} else {
-					// TODO
+					float scale = width * 1.0F / total;
+					for (Component c : west) {
+						offset += c.getMarginLeft();
+						c.setRenderWidth((int) (c.getWidth() * scale));
+						m.put(c, new Pos2i(offset, c.getMarginTop()));
+						offset += c.getRenderWidth() + c.getMarginRight();
+					}
+					for (Component c : center) {
+						offset += c.getMarginLeft();
+						c.setRenderWidth((int) (c.getWidth() * scale));
+						m.put(c, new Pos2i(offset, c.getMarginTop()));
+						offset += c.getRenderWidth() + c.getMarginRight();
+					}
+					for (Component c : east) {
+						offset += c.getMarginLeft();
+						c.setRenderWidth((int) (c.getWidth() * scale));
+						m.put(c, new Pos2i(offset, c.getMarginTop()));
+						offset += c.getRenderWidth() + c.getMarginRight();
+					}
 				}
 			}
 		}

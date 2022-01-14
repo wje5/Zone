@@ -360,7 +360,7 @@ elite.panel.info=Info
 elite.panel.info.block.common=Common
 elite.panel.info.block.material=Material
 elite.panel.info.block.material.material=Material
-elite.panel.info.block.material.combustible=Combustible
+elite.panel.info.block.material.flammability=Flammability
 elite.panel.info.block.material.harvest_level=Harvest Level
 elite.panel.info.block.material.hardness=Hardness
 elite.panel.info.block.material.resistance=Resistance
@@ -370,6 +370,9 @@ elite.choose_network.text1=§lSelect a network to connect
 elite.choose_network.text2=Connect to use terminal for network operations
 elite.choose_network.text3=Network:
 elite.choose_network.text4=§aUse this as the default and do not ask again
+
+elite.util.true=True
+elite.util.false=False
 
 sound.grinder=Grinder:Work
 sound.drainer=Drainer:Work

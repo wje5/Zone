@@ -19,12 +19,14 @@ import com.pinball3d.zone.sphinx.elite.ui.core.PanelHolder;
 import com.pinball3d.zone.sphinx.elite.ui.core.Subpanel;
 import com.pinball3d.zone.sphinx.elite.ui.core.layout.BoxLayout;
 import com.pinball3d.zone.sphinx.elite.ui.core.layout.LinearLayout;
+import com.pinball3d.zone.util.VanillaTranslateHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -113,7 +115,9 @@ public class PanelInfo extends Panel {
 		private ItemStack stack;
 		private String blockName, modName;
 		private BlockPos pos;
+		private IBlockState blockstate;
 		private Subpanel blockstatePanel;
+		private boolean flammability;
 
 		public PanelBlockData(EliteMainwindow parent, Subpanel parentPanel, MapRenderManager manager) {
 			super(parent, parentPanel, new BoxLayout(true));
@@ -146,6 +150,22 @@ public class PanelInfo extends Panel {
 				p1.panel.addComponent(blockstatePanel = new Subpanel(parent, p1.panel, new BoxLayout(true)));
 				holder.addComponent(p1);
 			}
+			{
+				FoldablePanel p1 = new FoldablePanel(parent, holder,
+						new FormattedString(I18n.format("elite.panel.info.block.material")), new BoxLayout(true))
+								.setFold(false);
+				p1.setMarginLeft(6).setMarginRight(6).setMarginTop(3).setMarginDown(3);
+				Subpanel p2 = new Subpanel(parent, p1.panel, new BoxLayout(true));
+				p2.addComponent(new CustomTextPanel(parent, p2,
+						() -> new FormattedString(I18n.format("elite.panel.info.block.material.material") + ":"),
+						() -> new FormattedString(blockstate == null ? "" : blockstate.getMaterial() + "")));
+				p2.addComponent(new CustomTextPanel(parent, p2,
+						() -> new FormattedString(I18n.format("elite.panel.info.block.material.flammability") + ":"),
+						() -> new FormattedString(
+								flammability ? I18n.format("elite.util.true") : I18n.format("elite.util.false"))));
+				p1.panel.addComponent(p2);
+				holder.addComponent(p1);
+			}
 
 			addComponent(holder);
 			this.manager = manager;
@@ -161,7 +181,7 @@ public class PanelInfo extends Panel {
 			} else {
 				World world = manager.getWorld();
 				pos = result.getBlockPos();
-				IBlockState blockstate = world.getBlockState(result.getBlockPos());
+				blockstate = world.getBlockState(result.getBlockPos());
 				Block block = blockstate.getBlock();
 				stack = FluidHandler.getFluidFromBlock(block);
 				if (stack.isEmpty()) {
@@ -172,10 +192,14 @@ public class PanelInfo extends Panel {
 				modName = Loader.instance().getIndexedModList().get(modid).getName();
 				blockstatePanel.clearComponents();
 				for (Entry<IProperty<?>, Comparable<?>> entry : blockstate.getProperties().entrySet()) {
-					String name = entry.getKey().getName();
-					String value = entry.getValue().toString();
+					String name = VanillaTranslateHandler.getTranslated(entry.getKey().getName());
+					String value = VanillaTranslateHandler.getTranslated(entry.getValue().toString());
 					blockstatePanel.addComponent(new CustomTextPanel(parent, blockstatePanel,
 							() -> new FormattedString(name + ":"), () -> new FormattedString(value)));
+				}
+				flammability = false;
+				for (EnumFacing facing : EnumFacing.values()) {
+					flammability |= block.isFlammable(world, pos, facing);
 				}
 
 			}

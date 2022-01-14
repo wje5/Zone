@@ -360,7 +360,7 @@ elite.panel.info=信息
 elite.panel.info.block.common=通常
 elite.panel.info.block.material=材质
 elite.panel.info.block.material.material=材质
-elite.panel.info.block.material.combustible=可燃
+elite.panel.info.block.material.flammability=可燃
 elite.panel.info.block.material.harvest_level=挖掘等级
 elite.panel.info.block.material.hardness=硬度
 elite.panel.info.block.material.resistance=爆炸抗性
@@ -370,6 +370,11 @@ elite.choose_network.text1=§l选择要连接的网络
 elite.choose_network.text2=连接以使用终端进行网络操作
 elite.choose_network.text3=选择网络:
 elite.choose_network.text4=不再询问(§aU)
+
+elite.util.true=是
+elite.util.false=否
+
+elite.translate.snowy=积雪
 
 sound.grinder=磨粉机：工作
 sound.drainer=收集器：工作

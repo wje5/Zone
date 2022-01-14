@@ -43,7 +43,7 @@ public class PanelHolder extends Subpanel {
 			for (int i = 0; i < list.size(); i++) {
 				Entry<Component, List<Object>> e = list.get(i);
 				Component c = e.getKey();
-				if (c.isHide()) {
+				if (c.isHide() || width <= 0) {
 					continue;
 				}
 				Type type = Type.NW;

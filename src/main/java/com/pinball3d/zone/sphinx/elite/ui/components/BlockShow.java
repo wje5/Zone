@@ -2,6 +2,7 @@ package com.pinball3d.zone.sphinx.elite.ui.components;
 
 import java.util.function.Supplier;
 
+import com.pinball3d.zone.FluidHandler;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.ui.core.Component;
 import com.pinball3d.zone.sphinx.elite.ui.core.Subpanel;
@@ -11,9 +12,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -48,6 +52,16 @@ public class BlockShow extends Component {
 			return;
 		}
 		IBlockState state = world.getBlockState(pos);
+		ItemStack stack = FluidHandler.getFluidFromBlock(state.getBlock());
+		if (!stack.isEmpty()) {
+			RenderItem ir = Minecraft.getMinecraft().getRenderItem();
+			RenderHelper.enableGUIStandardItemLighting();
+			GlStateManager.pushMatrix();
+			GlStateManager.scale(4, 4, 1);
+			ir.renderItemAndEffectIntoGUI(stack, 0, 0);
+			GlStateManager.popMatrix();
+			return;
+		}
 		if (state.getRenderType() == EnumBlockRenderType.MODEL) {
 			if (state.getRenderType() != EnumBlockRenderType.INVISIBLE) {
 				Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -56,10 +70,6 @@ public class BlockShow extends Component {
 				BufferBuilder bufferbuilder = tessellator.getBuffer();
 
 				bufferbuilder.begin(7, DefaultVertexFormats.BLOCK);
-//				GL11.glDisable(GL11.GL_SCISSOR_TEST);
-//				BlockPos blockpos = new BlockPos(entity.posX, entity.getEntityBoundingBox().maxY, entity.posZ);
-//				GlStateManager.disableDepth();
-//				RenderHelper.enableGUIStandardItemLighting();
 				GlStateManager.disableLighting();
 				GlStateManager.enableAlpha();
 

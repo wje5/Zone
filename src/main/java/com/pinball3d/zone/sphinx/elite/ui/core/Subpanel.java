@@ -110,6 +110,9 @@ public class Subpanel extends Component {
 	}
 
 	public void arrange(boolean isPreArrange) {
+		if (isHide()) {
+			return;
+		}
 		if (isPreArrange) {
 			componentsOrigin.forEach((c, data) -> {
 				if (c instanceof Subpanel) {

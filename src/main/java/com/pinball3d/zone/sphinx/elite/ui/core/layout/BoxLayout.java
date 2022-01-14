@@ -24,7 +24,7 @@ public class BoxLayout implements ILayout {
 		int offset = 0;
 		for (Entry<Component, List<Object>> e : origin.entrySet()) {
 			Component c = e.getKey();
-			if (c.isHide()) {
+			if (c.isHide() || width <= 0) {
 				continue;
 			}
 			Type type = Type.NW;
