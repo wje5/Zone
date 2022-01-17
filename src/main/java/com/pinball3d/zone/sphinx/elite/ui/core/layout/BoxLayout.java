@@ -35,20 +35,15 @@ public class BoxLayout implements ILayout {
 			}
 			if (isVertical) {
 				type = type.getHorizontal();
-
 				offset += c.getMarginTop();
+				c.setRenderWidth(width - c.getMarginLeft() - c.getMarginRight() >= c.getMinWidth()
+						? Math.min(c.getWidth(), width - c.getMarginLeft() - c.getMarginRight())
+						: 0);
 				if (type == Type.WEST) {
-					c.setRenderWidth(width - c.getMarginLeft() >= c.getMinWidth()
-							? Math.min(c.getWidth(), width - c.getMarginLeft())
-							: 0);
 					m.put(c, new Pos2i(c.getMarginLeft(), offset));
 				} else if (type == Type.CENTER) {
-					c.setRenderWidth(width >= c.getMinWidth() ? Math.min(c.getWidth(), width) : 0);
 					m.put(c, new Pos2i(isPreArrange ? c.getMarginLeft() : (width - c.getRenderWidth()) / 2, offset));
 				} else {
-					c.setRenderWidth(width - c.getMarginRight() >= c.getMinWidth()
-							? Math.min(c.getWidth(), width - c.getMarginRight())
-							: 0);
 					m.put(c, new Pos2i(
 							isPreArrange ? c.getMarginLeft() : width - c.getRenderWidth() - c.getMarginRight(),
 							offset));
@@ -57,8 +52,9 @@ public class BoxLayout implements ILayout {
 			} else {
 				type = type.getVertical();
 				offset += c.getMarginLeft();
-				c.setRenderWidth(width - offset >= c.getMinWidth() ? Math.min(c.getWidth(), width - offset) : 0);
-
+				c.setRenderWidth(width - offset - c.getMarginRight() >= c.getMinWidth()
+						? Math.min(c.getWidth(), width - offset - c.getMarginRight())
+						: 0);
 				if (type == Type.NORTH) {
 					m.put(c, new Pos2i(offset, c.getMarginTop()));
 				} else if (type == Type.CENTER) {
@@ -67,7 +63,7 @@ public class BoxLayout implements ILayout {
 					m.put(c, new Pos2i(offset,
 							isPreArrange ? c.getMarginTop() : height - c.getHeight() - c.getMarginDown()));
 				}
-				offset += c.getWidth() + c.getMarginRight();
+				offset += c.getRenderWidth() + c.getMarginRight();
 			}
 		}
 		if (isPreArrange) {

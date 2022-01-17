@@ -53,20 +53,16 @@ public class PanelHolder extends Subpanel {
 					}
 				}
 				type = type.getHorizontal();
-
+				type = type.getHorizontal();
 				offset += c.getMarginTop();
+				c.setRenderWidth(width - c.getMarginLeft() - c.getMarginRight() >= c.getMinWidth()
+						? Math.min(c.getWidth(), width - c.getMarginLeft() - c.getMarginRight())
+						: 0);
 				if (type == Type.WEST) {
-					c.setRenderWidth(width - c.getMarginLeft() >= c.getMinWidth()
-							? Math.min(c.getWidth(), width - c.getMarginLeft())
-							: 0);
 					m.put(c, new Pos2i(c.getMarginLeft(), offset));
 				} else if (type == Type.CENTER) {
-					c.setRenderWidth(width >= c.getMinWidth() ? Math.min(c.getWidth(), width) : 0);
 					m.put(c, new Pos2i(isPreArrange ? c.getMarginLeft() : (width - c.getRenderWidth()) / 2, offset));
 				} else {
-					c.setRenderWidth(width - c.getMarginRight() >= c.getMinWidth()
-							? Math.min(c.getWidth(), width - c.getMarginRight())
-							: 0);
 					m.put(c, new Pos2i(
 							isPreArrange ? c.getMarginLeft() : width - c.getRenderWidth() - c.getMarginRight(),
 							offset));

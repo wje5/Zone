@@ -114,6 +114,7 @@ public class PanelInfo extends Panel {
 		private MapRenderManager manager;
 		private ItemStack stack;
 		private String blockName, modName;
+		private World world;
 		private BlockPos pos;
 		private IBlockState blockstate;
 		private Subpanel blockstatePanel;
@@ -158,11 +159,24 @@ public class PanelInfo extends Panel {
 				Subpanel p2 = new Subpanel(parent, p1.panel, new BoxLayout(true));
 				p2.addComponent(new CustomTextPanel(parent, p2,
 						() -> new FormattedString(I18n.format("elite.panel.info.block.material.material") + ":"),
-						() -> new FormattedString(blockstate == null ? "" : blockstate.getMaterial() + "")));
+						() -> new FormattedString(blockstate == null ? ""
+								: VanillaTranslateHandler.getMaterialName(blockstate.getMaterial()))));
 				p2.addComponent(new CustomTextPanel(parent, p2,
 						() -> new FormattedString(I18n.format("elite.panel.info.block.material.flammability") + ":"),
 						() -> new FormattedString(
 								flammability ? I18n.format("elite.util.true") : I18n.format("elite.util.false"))));
+				p2.addComponent(new CustomTextPanel(parent, p2,
+						() -> new FormattedString(I18n.format("elite.panel.info.block.material.harvest_level") + ":"),
+						() -> new FormattedString(
+								blockstate == null ? "" : blockstate.getBlock().getHarvestLevel(blockstate) + "")));
+				p2.addComponent(new CustomTextPanel(parent, p2,
+						() -> new FormattedString(I18n.format("elite.panel.info.block.material.hardness") + ":"),
+						() -> new FormattedString(
+								blockstate == null ? "" : blockstate.getBlockHardness(world, pos) + "")));
+				p2.addComponent(new CustomTextPanel(parent, p2,
+						() -> new FormattedString(I18n.format("elite.panel.info.block.material.resistance") + ":"),
+						() -> new FormattedString(
+								blockstate == null ? "" : blockstate.getBlock().getExplosionResistance(null) + "")));
 				p1.panel.addComponent(p2);
 				holder.addComponent(p1);
 			}
@@ -179,7 +193,7 @@ public class PanelInfo extends Panel {
 				blockName = null;
 				modName = null;
 			} else {
-				World world = manager.getWorld();
+				world = manager.getWorld();
 				pos = result.getBlockPos();
 				blockstate = world.getBlockState(result.getBlockPos());
 				Block block = blockstate.getBlock();
@@ -210,7 +224,7 @@ public class PanelInfo extends Panel {
 	public static class CustomTextPanel extends Subpanel {
 		public CustomTextPanel(EliteMainwindow parent, Subpanel parentPanel, Supplier<FormattedString> text,
 				Supplier<FormattedString> text2) {
-			super(parent, parentPanel, new LinearLayout(false));
+			super(parent, parentPanel, new LinearLayout());
 			setExpand(true);
 			addComponent(new Label(parent, this, text, Color.TEXT_LIGHT));
 			addComponent(new Label(parent, this, text2, Color.TEXT_LIGHT), BoxLayout.Type.EAST);

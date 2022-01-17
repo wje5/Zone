@@ -111,7 +111,7 @@ public class FontHandler {
 					return FormattedString.EMPTY;
 				}
 				StringComponent[] a = new StringComponent[text.getComponentsSize()];
-				for (int i = 0; i < text.getComponentsSize() - 2; i++) {
+				for (int i = 0; i < text.getComponentsSize() - 1; i++) {
 					a[i] = text.get(i);
 				}
 				a[text.getComponentsSize() - 1] = new StringComponent(s, c.color, c.bold, c.italic, c.underline);
