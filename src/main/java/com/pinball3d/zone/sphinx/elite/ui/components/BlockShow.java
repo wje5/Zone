@@ -22,6 +22,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeModContainer;
 
 public class BlockShow extends Component {
 	private Supplier<BlockPos> pos;
@@ -66,9 +67,9 @@ public class BlockShow extends Component {
 			if (state.getRenderType() != EnumBlockRenderType.INVISIBLE) {
 				Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 				GlStateManager.pushMatrix();
-				Tessellator tessellator = Tessellator.getInstance();
-				BufferBuilder bufferbuilder = tessellator.getBuffer();
 
+				Tessellator tess = Tessellator.getInstance();
+				BufferBuilder bufferbuilder = tess.getBuffer();
 				bufferbuilder.begin(7, DefaultVertexFormats.BLOCK);
 				GlStateManager.disableLighting();
 				GlStateManager.enableAlpha();
@@ -82,11 +83,18 @@ public class BlockShow extends Component {
 						(0F - pos.getZ()) * scale);
 				GlStateManager.scale(scale, -scale, scale);
 
+				GlStateManager.disableColorLogic();
 				BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+				boolean old = ForgeModContainer.forgeLightPipelineEnabled;
+				ForgeModContainer.forgeLightPipelineEnabled = false;
+				int ao = Minecraft.getMinecraft().gameSettings.ambientOcclusion;
+				Minecraft.getMinecraft().gameSettings.ambientOcclusion = 0;
 				blockrendererdispatcher.getBlockModelRenderer().renderModel(world,
 						blockrendererdispatcher.getModelForState(state), state, pos, bufferbuilder, false,
 						MathHelper.getPositionRandom(pos));
-				tessellator.draw();
+				ForgeModContainer.forgeLightPipelineEnabled = old;
+				Minecraft.getMinecraft().gameSettings.ambientOcclusion = ao;
+				tess.draw();
 				GlStateManager.popMatrix();
 			}
 		}

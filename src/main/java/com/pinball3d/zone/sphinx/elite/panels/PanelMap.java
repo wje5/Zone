@@ -106,7 +106,9 @@ public class PanelMap extends Panel {
 	@Override
 	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
 		if (isMouseInPanel(mouseX, mouseY)) {
-			renderManager.scale += distance / 120F;
+			if (renderManager != null) {
+				renderManager.scale += distance / 120F;
+			}
 		}
 	}
 
@@ -148,7 +150,6 @@ public class PanelMap extends Panel {
 		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 			renderManager.cameraY -= speed;
 		}
-		PanelGroup group = getParentGroup();
 		renderManager.doRender(getWidth(), getHeight(), mouseX, mouseY, partialTicks);
 
 		FontHandler.renderText(10, 0, new FormattedString("(123中(文测试）AaBbCc"), Color.TEXT_LIGHT,
