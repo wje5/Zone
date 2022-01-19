@@ -355,6 +355,8 @@ elite.menu.window=窗口(§aW)
 elite.menu.help=帮助(§aH)
 
 elite.panel.map=地图
+elite.panel.map.droplist.connect_to_network=连接到网络
+elite.panel.map.droplist.disconnect=断开连接
 
 elite.panel.info=信息
 elite.panel.info.block.common=通常

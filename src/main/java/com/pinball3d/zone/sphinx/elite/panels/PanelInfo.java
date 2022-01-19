@@ -127,7 +127,6 @@ public class PanelInfo extends Panel {
 			{
 				Subpanel p1 = new Subpanel(parent, holder, new BoxLayout(false));
 				p1.setMarginLeft(6).setMarginRight(6).setMarginTop(11).setMarginDown(11);
-//				p1.addComponent(new ItemShow(parent, p1, () -> stack).setMarginRight(6));
 				p1.addComponent(new BlockShow(parent, p1, () -> pos).setMarginRight(6));
 				Subpanel p2 = new Subpanel(parent, p1, new BoxLayout(true));
 				p2.addComponent(new Label(parent, p2, () -> new FormattedString(blockName), Color.TEXT_LIGHT));

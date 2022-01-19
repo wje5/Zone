@@ -355,6 +355,8 @@ elite.menu.window=§aWindow
 elite.menu.help=§aHelp
 
 elite.panel.map=Map
+elite.panel.map.droplist.connect_to_network=Connect to Network
+elite.panel.map.droplist.disconnect=Disconnect
 
 elite.panel.info=Info
 elite.panel.info.block.common=Common

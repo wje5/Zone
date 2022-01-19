@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import com.pinball3d.zone.core.LoadingPluginZone;
 import com.pinball3d.zone.sphinx.elite.Color;
 import com.pinball3d.zone.sphinx.elite.Drag;
+import com.pinball3d.zone.sphinx.elite.DropDownList;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
 import com.pinball3d.zone.sphinx.elite.FontHandler;
@@ -75,7 +76,8 @@ public class PanelMap extends Panel {
 				}
 			});
 		} else if (mouseButton == 1) {
-			return new Drag(mouseButton);// TODO
+			getParent().setDropDownList(createDropDownList(mouseX, mouseY));
+			return new Drag(mouseButton);
 		} else if (mouseButton == 2) {
 			boolean flag = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 			return isMouseInPanel(mouseX, mouseY) ? new Drag(mouseButton, (x, y, moveX, moveY) -> {
@@ -101,6 +103,14 @@ public class PanelMap extends Panel {
 		} else {
 			return new Drag(mouseButton);
 		}
+	}
+
+	public DropDownList createDropDownList(int mouseX, int mouseY) {
+		DropDownList list = new DropDownList(getParent(), null, getX() + mouseX, getY() + mouseY);
+		list.addBar(new DropDownList.ButtonBar(
+				new FormattedString(I18n.format("elite.panel.map.droplist.connect_to_network")),
+				new FormattedString("")));
+		return list;
 	}
 
 	@Override
