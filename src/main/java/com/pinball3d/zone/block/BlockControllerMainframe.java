@@ -1,9 +1,6 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
-import com.pinball3d.zone.Zone;
-import com.pinball3d.zone.inventory.GuiElementLoader;
-import com.pinball3d.zone.sphinx.log.LogSphinxOpen;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
@@ -46,18 +43,20 @@ public class BlockControllerMainframe extends Block {
 		if (block instanceof BlockProcessingCenter && ((BlockProcessingCenter) block).isFullStructure(center)) {
 			if (!worldIn.isRemote) {
 				TEProcessingCenter te = (TEProcessingCenter) center.getTileEntity();
-				if (te.getWorkingState() == WorkingState.WORKING && te.isAdmin(playerIn)) {
-					playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_CONTROLLER, worldIn, pos.getX(), pos.getY(),
-							pos.getZ());
+				if (te.getWorkingState() == WorkingState.WORKING) {
+					if (te.isAdmin(playerIn)) {
+//						playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_CONTROLLER, worldIn, pos.getX(), pos.getY(),
+//						pos.getZ());//TODO
+					}
 				} else {
 					if (te.getUsers().isEmpty()) {
 						te.addUser(new UserData(playerIn, true, false, true));
 					}
 					if (te.isAdmin(playerIn)) {
 						te.open();
-						playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_LOAD, worldIn, pos.getX(), pos.getY(),
-								pos.getZ());
-						te.fireLog(new LogSphinxOpen(te.getNextLogId(), playerIn));
+//						playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_LOAD, worldIn, pos.getX(), pos.getY(),
+//								pos.getZ());
+//						te.fireLog(new LogSphinxOpen(te.getNextLogId(), playerIn));//TODO
 					}
 				}
 			}

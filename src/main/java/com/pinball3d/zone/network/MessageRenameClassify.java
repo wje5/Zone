@@ -1,7 +1,6 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.sphinx.ClassifyGroup;
-import com.pinball3d.zone.sphinx.log.LogRenameClassify;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -36,7 +35,7 @@ public class MessageRenameClassify extends MessageSphinx {
 		if (g != null) {
 			g.setName(newName);
 		}
-		te.fireLog(new LogRenameClassify(te.getNextLogId(), getPlayer(ctx), id, oldName, newName));
+//		te.fireLog(new LogRenameClassify(te.getNextLogId(), getPlayer(ctx), id, oldName, newName));//TODO
 	}
 
 	public static class Handler implements IMessageHandler<MessageRenameClassify, IMessage> {

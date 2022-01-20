@@ -16,24 +16,10 @@ public class NetworkHandler {
 	public NetworkHandler() {
 		registerMessage(MessageShutdownSphinx.Handler.class, MessageShutdownSphinx.class, Side.SERVER);
 		registerMessage(MessageChangeName.Handler.class, MessageChangeName.class, Side.SERVER);
-		registerMessage(MessageOpenIOPanelGui.Handler.class, MessageOpenIOPanelGui.class, Side.SERVER);
 		registerMessage(MessageIOPanelRequest.Handler.class, MessageIOPanelRequest.class, Side.SERVER);
-		registerMessage(MessageIOPanelSendItemToStorage.Handler.class, MessageIOPanelSendItemToStorage.class,
-				Side.SERVER);
 		registerMessage(MessageDisconnect.Handler.class, MessageDisconnect.class, Side.SERVER);
 		registerMessage(MessageTerminalDisconnect.Handler.class, MessageTerminalDisconnect.class, Side.SERVER);
 		registerMessage(MessagePlaySoundAtPos.Handler.class, MessagePlaySoundAtPos.class, Side.CLIENT);
-		registerMessage(MessageTryConnectToNetwork.Handler.class, MessageTryConnectToNetwork.class, Side.SERVER);
-		registerMessage(MessageConnectNetworkCallback.Handler.class, MessageConnectNetworkCallback.class, Side.CLIENT);
-		registerMessage(MessageRequestNeedNetworkInfo.Handler.class, MessageRequestNeedNetworkInfo.class, Side.SERVER);
-		registerMessage(MessageSendNeedNetworkInfoToClient.Handler.class, MessageSendNeedNetworkInfoToClient.class,
-				Side.CLIENT);
-		registerMessage(MessageComputeLogisticTime.Handler.class, MessageComputeLogisticTime.class, Side.SERVER);
-		registerMessage(MessageSendLogisticTimeToClient.Handler.class, MessageSendLogisticTimeToClient.class,
-				Side.CLIENT);
-		registerMessage(MessageIOPanelTransferPlayerInventory.Handler.class,
-				MessageIOPanelTransferPlayerInventory.class, Side.SERVER);
-		registerMessage(MessageErrorStorageFull.Handler.class, MessageErrorStorageFull.class, Side.CLIENT);
 		registerMessage(MessageConnectionUpdate.Handler.class, MessageConnectionUpdate.class, Side.CLIENT);
 		registerMessage(MessageConnectionRequest.Handler.class, MessageConnectionRequest.class, Side.SERVER);
 		registerMessage(MessageConnectionNeedNetworkRequest.Handler.class, MessageConnectionNeedNetworkRequest.class,
@@ -53,9 +39,6 @@ public class NetworkHandler {
 				Side.SERVER);
 		registerMessage(MessageRescanRecipesFinish.Handler.class, MessageRescanRecipesFinish.class, Side.CLIENT);
 		registerMessage(MessageDeleteOreDictionary.Handler.class, MessageDeleteOreDictionary.class, Side.SERVER);
-		registerMessage(MessageNewOreDictionary.Handler.class, MessageNewOreDictionary.class, Side.SERVER);
-		registerMessage(MessageNewOreDictionaryCallback.Handler.class, MessageNewOreDictionaryCallback.class,
-				Side.CLIENT);
 		registerMessage(MessageUpdateCameraPos.Handler.class, MessageUpdateCameraPos.class, Side.SERVER);
 
 		// ELITE

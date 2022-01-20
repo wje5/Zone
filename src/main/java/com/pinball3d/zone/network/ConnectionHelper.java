@@ -16,7 +16,6 @@ import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.INeedNetwork;
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.SphinxUtil;
-import com.pinball3d.zone.sphinx.log.Log;
 import com.pinball3d.zone.tileentity.TEBeaconCore;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
@@ -248,7 +247,7 @@ public class ConnectionHelper {
 
 	public static enum Type {
 		NETWORKUUID, ITEMS, NETWORKPOS, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
-		NETWORKUUIDFROMCONTROLLER, NAME, LOADTICK, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY, USERS, LOGS,
+		NETWORKUUIDFROMCONTROLLER, NAME, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY, USERS, LOGS,
 		NEEDNETWORKSERIAL, ENERGY, OREDICTIONARY;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
@@ -321,11 +320,6 @@ public class ConnectionHelper {
 					tag.setString(name(), te.getName());
 				}
 				break;
-			case LOADTICK:
-				if (te != null) {
-					tag.setInteger(name(), te.getLoadTick());
-				}
-				break;
 			case ON:
 				if (te != null) {
 					tag.setBoolean(name(), te.isOn());
@@ -374,10 +368,10 @@ public class ConnectionHelper {
 			case LOGS:
 				if (te != null && connect.logRefreshColddown <= 0) {
 					NBTTagList list = new NBTTagList();
-					for (Log e : te.getLogCache()) {
-						e.check(te);
-						list.appendTag(e.writeToNBT(new NBTTagCompound()));
-					}
+//					for (Log e : te.getLogCache()) {
+//						e.check(te);
+//						list.appendTag(e.writeToNBT(new NBTTagCompound()));
+//					}//TODO
 					tag.setTag(name(), list);
 					connect.logRefreshColddown += ConfigLoader.logUpdateRate;
 				}

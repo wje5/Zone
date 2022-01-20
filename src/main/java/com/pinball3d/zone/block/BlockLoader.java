@@ -32,9 +32,9 @@ public class BlockLoader {
 			forming_press_light, pump, pump_light;
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
-			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module, storage_panel,
-			storage_chest, io_panel, production_panel, beacon_amplifier_matrix, beacon_core, piano, powered_piston,
-			powered_piston_sticky, powered_piston_moving, powered_piston_head;
+			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module,
+			beacon_amplifier_matrix, beacon_core, powered_piston, powered_piston_sticky, powered_piston_moving,
+			powered_piston_head;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -87,10 +87,6 @@ public class BlockLoader {
 		register(registry, truss = new BlockTruss());
 		register(registry, dynavolt_restrainer = new BlockDynavoltRestrainer());
 		register(registry, transmission_module = new BlockTransmissionModule());
-		register(registry, storage_panel = new BlockStoragePanel());
-		register(registry, storage_chest = new BlockStorageChest());
-		register(registry, io_panel = new BlockIOPanel());
-		register(registry, production_panel = new BlockProductionPanel());
 		register(registry, beacon_amplifier_matrix = new BlockBeaconAmplifierMatrix());
 		register(registry, beacon_core = new BlockBeaconCore());
 //		register(registry, piano = new BlockPiano());
@@ -146,13 +142,8 @@ public class BlockLoader {
 		registerItem(registry, truss);
 		registerItem(registry, dynavolt_restrainer);
 		registerItem(registry, transmission_module);
-		registerItem(registry, storage_panel);
-		registerItem(registry, storage_chest);
-		registerItem(registry, io_panel);
-		registerItem(registry, production_panel);
 		registerItem(registry, beacon_amplifier_matrix);
 		registerItem(registry, beacon_core);
-//		registerItem(registry, piano);
 		registerItem(registry, powered_piston);
 		registerItem(registry, powered_piston_sticky);
 	}

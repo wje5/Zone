@@ -1,6 +1,5 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.sphinx.log.LogSphinxShutdown;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -27,7 +26,7 @@ public class MessageShutdownSphinx extends MessageSphinxAdmin {
 	public void run(MessageContext ctx) {
 		TEProcessingCenter te = getProcessingCenter();
 		te.shutdown();
-		te.fireLog(new LogSphinxShutdown(te.getNextLogId(), getPlayer(ctx)));
+//		te.fireLog(new LogSphinxShutdown(te.getNextLogId(), getPlayer(ctx)));//TODO
 
 	}
 

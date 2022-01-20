@@ -44,11 +44,7 @@ public class BlockProcessingCenter extends BlockContainer {
 		BlockPos pos = worldPos.getPos();
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
-				if (i == 0 && j == 0) {
-					if (world.getBlockState(pos.add(i, -2, j)).getBlock() != BlockLoader.dynavolt_restrainer) {
-						return false;
-					}
-				} else if (world.getBlockState(pos.add(i, -2, j)).getBlock() != BlockLoader.construct_block_all) {
+				if (world.getBlockState(pos.add(i, -2, j)).getBlock() != BlockLoader.construct_block_all) {
 					return false;
 				}
 			}

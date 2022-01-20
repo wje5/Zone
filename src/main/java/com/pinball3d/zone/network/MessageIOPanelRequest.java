@@ -1,7 +1,6 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.sphinx.SerialNumber;
-import com.pinball3d.zone.sphinx.log.LogIOPanelRequest;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -31,8 +30,8 @@ public class MessageIOPanelRequest extends MessageSphinxNeedNetwork {
 		SerialNumber serial = getProcessingCenter().getSerialNumberFromPos(pos);
 		StorageWrapper wrapper = new StorageWrapper(tag.getCompoundTag("req"));
 		int time = getProcessingCenter().requestItems(wrapper.copy(), pos, true);
-		getProcessingCenter().fireLog(new LogIOPanelRequest(getProcessingCenter().getNextLogId(), getPlayer(), serial,
-				new StorageWrapper((NBTTagCompound) tag.getTag("req")), time));
+//		getProcessingCenter().fireLog(new LogIOPanelRequest(getProcessingCenter().getNextLogId(), getPlayer(), serial,
+//				new StorageWrapper((NBTTagCompound) tag.getTag("req")), time));//TODO
 		getProcessingCenter().requestItems(wrapper, pos, false);
 	}
 

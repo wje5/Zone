@@ -2,7 +2,6 @@ package com.pinball3d.zone.network;
 
 import java.util.UUID;
 
-import com.pinball3d.zone.sphinx.log.LogApprovePermission;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.WorldPos;
@@ -34,7 +33,7 @@ public class MessageReviewUser extends MessageSphinxAdmin {
 		if (data != null) {
 			data.reviewing = false;
 		}
-		te.fireLog(new LogApprovePermission(te.getNextLogId(), getPlayer(ctx), data.uuid, data.name));
+//		te.fireLog(new LogApprovePermission(te.getNextLogId(), getPlayer(ctx), data.uuid, data.name));//TODO
 	}
 
 	public static class Handler implements IMessageHandler<MessageReviewUser, IMessage> {

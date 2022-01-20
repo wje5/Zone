@@ -3,7 +3,6 @@ package com.pinball3d.zone.network;
 import java.util.Iterator;
 
 import com.pinball3d.zone.sphinx.ClassifyGroup;
-import com.pinball3d.zone.sphinx.log.LogManageClassify;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.ItemType;
 import com.pinball3d.zone.util.WorldPos;
@@ -44,7 +43,7 @@ public class MessageManageClassify extends MessageSphinx {
 		}
 		int added = group.getItems().get().size() - intersection;
 		int removed = origin.getItems().get().size() - intersection;
-		te.fireLog(new LogManageClassify(te.getNextLogId(), getPlayer(ctx), id, group.getName(), removed, added));
+//		te.fireLog(new LogManageClassify(te.getNextLogId(), getPlayer(ctx), id, group.getName(), removed, added));// TODO
 		te.getClassifyGroups().put(id, group);
 	}
 

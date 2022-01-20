@@ -1,14 +1,10 @@
 package com.pinball3d.zone.gui;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import com.pinball3d.zone.gui.component.Component;
-import com.pinball3d.zone.network.ConnectionHelper.Type;
-import com.pinball3d.zone.sphinx.container.GuiContainerNetworkBase;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.Minecraft;
@@ -110,13 +106,7 @@ public class Subscreen implements IHasComponents {
 	}
 
 	public void init() {
-		if (!getDataTypes().isEmpty() && parent instanceof GuiContainerNetworkBase) {
-			((GuiContainerNetworkBase) parent).sendReq();
-		}
-	}
 
-	public Set<Type> getDataTypes() {
-		return new HashSet<Type>();
 	}
 
 	public boolean onClickScreen(int mouseX, int mouseY, boolean isLeft, boolean isClick) {
@@ -206,9 +196,7 @@ public class Subscreen implements IHasComponents {
 	}
 
 	public void close() {
-		if (!getDataTypes().isEmpty() && parent instanceof GuiContainerNetworkBase) {
-			((GuiContainerNetworkBase) parent).sendReq();
-		}
+
 	}
 
 	public void keyTyped(char typedChar, int keyCode) {

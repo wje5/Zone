@@ -1,7 +1,6 @@
 package com.pinball3d.zone.network;
 
 import com.pinball3d.zone.sphinx.ClassifyGroup;
-import com.pinball3d.zone.sphinx.log.LogDeleteClassify;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -31,7 +30,7 @@ public class MessageDeleteClassify extends MessageSphinx {
 		TEProcessingCenter te = getProcessingCenter();
 		ClassifyGroup g = te.getClassifyGroups().get(id);
 		te.getClassifyGroups().remove(id);
-		te.fireLog(new LogDeleteClassify(te.getNextLogId(), getPlayer(ctx), id, g.getName()));
+//		te.fireLog(new LogDeleteClassify(te.getNextLogId(), getPlayer(ctx), id, g.getName()));//TODO
 	}
 
 	public static class Handler implements IMessageHandler<MessageDeleteClassify, IMessage> {

@@ -1,9 +1,0 @@
-{
-    "parent": "block/orientable",
-    "textures": {
-        "top": "zone:blocks/elec_hull_top",
-        "front": "zone:blocks/io_panel",
-        "side": "zone:blocks/elec_hull",
-        "down": "zone:blocks/elec_hull"
-    }
-}

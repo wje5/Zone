@@ -22,19 +22,6 @@ import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem3;
 import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem4;
 import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem5;
 import com.pinball3d.zone.manual.GuiContainerManualToolAndMaterial;
-import com.pinball3d.zone.sphinx.INeedNetwork;
-import com.pinball3d.zone.sphinx.container.ContainerIOPanel;
-import com.pinball3d.zone.sphinx.container.ContainerSphinxController;
-import com.pinball3d.zone.sphinx.container.ContainerSphinxLoad;
-import com.pinball3d.zone.sphinx.container.ContainerSphinxNeedNetwork;
-import com.pinball3d.zone.sphinx.container.ContainerSphinxTerminal;
-import com.pinball3d.zone.sphinx.container.GuiContainerIOPanel;
-import com.pinball3d.zone.sphinx.container.GuiContainerNeedNetwork;
-import com.pinball3d.zone.sphinx.container.GuiContainerNeedNetworkIOPanel;
-import com.pinball3d.zone.sphinx.container.GuiContainerSphinxController;
-import com.pinball3d.zone.sphinx.container.GuiContainerSphinxLoad;
-import com.pinball3d.zone.sphinx.container.GuiContainerTerminal;
-import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -56,12 +43,6 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int FORMING_PRESS = 11;
 	public static final int PUMP = 12;
 	public static final int MANUAL = 13;
-	public static final int SPHINX_TERMINAL = 14;
-	public static final int SPHINX_CONTROLLER = 15;
-	public static final int SPHINX_NEED_NETWORK = 16;
-	public static final int SPHINX_NEED_NETWORK_IO_PANEL = 17;
-	public static final int SPHINX_IO_PANEL = 18;
-	public static final int SPHINX_LOAD = 19;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -111,18 +92,6 @@ public class GuiElementLoader implements IGuiHandler {
 			default:
 				return new ContainerManual(player);
 			}
-		case SPHINX_TERMINAL:
-			return new ContainerSphinxTerminal(player);
-		case SPHINX_CONTROLLER:
-			return new ContainerSphinxController(player, new WorldPos(x, y, z, world));
-		case SPHINX_NEED_NETWORK:
-			return new ContainerSphinxNeedNetwork(player, (INeedNetwork) world.getTileEntity(new BlockPos(x, y, z)));
-		case SPHINX_NEED_NETWORK_IO_PANEL:
-			return new ContainerSphinxNeedNetwork(player, (INeedNetwork) world.getTileEntity(new BlockPos(x, y, z)));
-		case SPHINX_IO_PANEL:
-			return new ContainerIOPanel(player, world.getTileEntity(new BlockPos(x, y, z)));
-		case SPHINX_LOAD:
-			return new ContainerSphinxLoad(player, new WorldPos(x, y, z, world));
 		}
 		return null;
 	}
@@ -193,24 +162,6 @@ public class GuiElementLoader implements IGuiHandler {
 			case 13:
 				return new GuiContainerManualSphinxSystem5(new ContainerManual(player));
 			}
-		case SPHINX_TERMINAL:
-			return new GuiContainerTerminal(new ContainerSphinxTerminal(player));
-		case SPHINX_CONTROLLER:
-			return new GuiContainerSphinxController(
-					new ContainerSphinxController(player, new WorldPos(x, y, z, world)));
-		case SPHINX_NEED_NETWORK:
-			return new GuiContainerNeedNetwork(
-					new ContainerSphinxNeedNetwork(player, (INeedNetwork) world.getTileEntity(new BlockPos(x, y, z))),
-					new WorldPos(x, y, z, world));
-		case SPHINX_NEED_NETWORK_IO_PANEL:
-			return new GuiContainerNeedNetworkIOPanel(
-					new ContainerSphinxNeedNetwork(player, (INeedNetwork) world.getTileEntity(new BlockPos(x, y, z))),
-					new WorldPos(x, y, z, world));
-		case SPHINX_IO_PANEL:
-			return new GuiContainerIOPanel(new ContainerIOPanel(player, world.getTileEntity(new BlockPos(x, y, z))),
-					new WorldPos(x, y, z, world));
-		case SPHINX_LOAD:
-			return new GuiContainerSphinxLoad(new ContainerSphinxLoad(player, new WorldPos(x, y, z, world)));
 		}
 		return null;
 	}

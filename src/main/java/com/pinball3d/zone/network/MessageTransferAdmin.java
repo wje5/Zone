@@ -3,7 +3,6 @@ package com.pinball3d.zone.network;
 import java.util.Map;
 import java.util.UUID;
 
-import com.pinball3d.zone.sphinx.log.LogTransferAdmin;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.util.WorldPos;
@@ -38,7 +37,7 @@ public class MessageTransferAdmin extends MessageSphinxAdmin {
 		if (data != null && data2 != null) {
 			data2.admin = false;
 			data.admin = true;
-			te.fireLog(new LogTransferAdmin(te.getNextLogId(), getPlayer(ctx), data.uuid, data.name));
+//			te.fireLog(new LogTransferAdmin(te.getNextLogId(), getPlayer(ctx), data.uuid, data.name));// TODO
 		}
 	}
 

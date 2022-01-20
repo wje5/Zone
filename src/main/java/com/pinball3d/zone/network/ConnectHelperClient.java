@@ -6,22 +6,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
 import com.google.common.collect.Sets;
-import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.SerialNumber;
 import com.pinball3d.zone.sphinx.crafting.OreDictionaryData;
-import com.pinball3d.zone.sphinx.log.Log;
-import com.pinball3d.zone.sphinx.map.MapHandler;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
-import com.pinball3d.zone.util.LimitedQueue;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -45,12 +40,12 @@ public class ConnectHelperClient {
 	private Map<WorldPos, String> playerValidNetworks = new HashMap<WorldPos, String>();
 	private Map<WorldPos, String> needNetworkValidNetworks = new HashMap<WorldPos, String>();
 	private String name = "";
-	private int loadTick, usedStorage, maxStorage, energy;
+	private int usedStorage, maxStorage, energy;
 	private boolean on, inited;
 	private WorkingState workingState;
 	private Map<Integer, ClassifyGroup> classify = new TreeMap<Integer, ClassifyGroup>();
 	private List<UserData> users = new ArrayList<UserData>();
-	private Queue<Log> logs = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);
+//	private Queue<Log> logs = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);//TODO
 	private SerialNumber needNetworkSerial;
 	private Map<Integer, OreDictionaryData> oreDictionarys = new TreeMap<Integer, OreDictionaryData>();
 
@@ -87,11 +82,11 @@ public class ConnectHelperClient {
 					break;
 				case MAP:
 					NBTTagCompound tag = data.getCompoundTag(e.name());
-					MapHandler.setData(networkPos, tag.getCompoundTag("units"), tag.getIntArray("lines"));
+//					MapHandler.setData(networkPos, tag.getCompoundTag("units"), tag.getIntArray("lines"));//TODO
 					break;
 				case PACK:
 					tag = data.getCompoundTag(e.name());
-					MapHandler.setPackData(networkPos, tag);
+//					MapHandler.setPackData(networkPos, tag);//TODO
 					break;
 				case NEEDNETWORKVALIDNETWORK:
 					taglist = data.getTagList(e.name(), 10);
@@ -109,9 +104,6 @@ public class ConnectHelperClient {
 					break;
 				case NAME:
 					name = data.getString(e.name());
-					break;
-				case LOADTICK:
-					loadTick = data.getInteger(e.name());
 					break;
 				case ON:
 					on = data.getBoolean(e.name());
@@ -144,11 +136,11 @@ public class ConnectHelperClient {
 					break;
 				case LOGS:
 					if (data.hasKey(e.name())) {
-						logs.clear();
-						NBTTagList logsList = data.getTagList(e.name(), 10);
-						logsList.forEach(k -> {
-							logs.add(Log.readLogFromNBT((NBTTagCompound) k));
-						});
+//						logs.clear();
+//						NBTTagList logsList = data.getTagList(e.name(), 10);
+//						logsList.forEach(k -> {
+//							logs.add(Log.readLogFromNBT((NBTTagCompound) k));
+//						});//TODO
 					}
 					break;
 				case NEEDNETWORKSERIAL:
@@ -179,7 +171,6 @@ public class ConnectHelperClient {
 		playerValidNetworks.clear();
 		needNetworkValidNetworks.clear();
 		name = "";
-		loadTick = 0;
 		on = false;
 		workingState = null;
 		inited = false;
@@ -192,9 +183,9 @@ public class ConnectHelperClient {
 
 	public void clearHuges() {
 		items = new StorageWrapper();
-		MapHandler.clear();
+//		MapHandler.clear();
 		classify.clear();
-		logs.clear();
+//		logs.clear();
 		oreDictionarys.clear();
 	}
 
@@ -305,10 +296,6 @@ public class ConnectHelperClient {
 		return name;
 	}
 
-	public int getLoadTick() {
-		return loadTick;
-	}
-
 	public boolean isOn() {
 		return on;
 	}
@@ -341,9 +328,9 @@ public class ConnectHelperClient {
 		return types;
 	}
 
-	public Queue<Log> getLogs() {
-		return logs;
-	}
+//	public Queue<Log> getLogs() {
+//		return logs;
+//	}//TODO
 
 	public SerialNumber getNeedNetworkSerial() {
 		return needNetworkSerial;

@@ -73,6 +73,7 @@ public class BlockShow extends Component {
 				bufferbuilder.begin(7, DefaultVertexFormats.BLOCK);
 				GlStateManager.disableLighting();
 				GlStateManager.enableAlpha();
+				GlStateManager.enableBlend();
 
 				int scale = 40;
 

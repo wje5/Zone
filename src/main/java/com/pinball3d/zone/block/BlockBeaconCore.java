@@ -1,8 +1,6 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
-import com.pinball3d.zone.Zone;
-import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.tileentity.TEBeaconCore;
 
@@ -38,8 +36,8 @@ public class BlockBeaconCore extends BlockContainer {
 			return false;
 		}
 		if (!worldIn.isRemote) {
-			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_NEED_NETWORK, worldIn, pos.getX(), pos.getY(),
-					pos.getZ());
+//			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_NEED_NETWORK, worldIn, pos.getX(), pos.getY(),
+//					pos.getZ());//TODO
 		}
 		return true;
 	}

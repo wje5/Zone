@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -20,7 +19,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.Sets;
 import com.pinball3d.zone.ChunkHandler;
 import com.pinball3d.zone.ChunkHandler.IChunkLoader;
-import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
@@ -40,21 +38,7 @@ import com.pinball3d.zone.sphinx.crafting.CraftingIngredentItem;
 import com.pinball3d.zone.sphinx.crafting.OreDictionaryData;
 import com.pinball3d.zone.sphinx.crafting.RecipeType;
 import com.pinball3d.zone.sphinx.crafting.SphinxRecipe;
-import com.pinball3d.zone.sphinx.log.Log;
-import com.pinball3d.zone.sphinx.log.LogConnectToNetwork;
-import com.pinball3d.zone.sphinx.log.LogDisconnectFromNetwork;
-import com.pinball3d.zone.sphinx.log.LogNeedNetworkDestroyed;
-import com.pinball3d.zone.sphinx.log.LogPackLost;
-import com.pinball3d.zone.sphinx.log.LogRecvPack;
-import com.pinball3d.zone.sphinx.log.LogRecvPackFull;
-import com.pinball3d.zone.sphinx.log.LogRescanRecipesFinish;
-import com.pinball3d.zone.sphinx.log.LogSendPack;
-import com.pinball3d.zone.sphinx.log.LogSphinxOpenFinish;
-import com.pinball3d.zone.sphinx.log.LogSphinxShutdownEnergy;
-import com.pinball3d.zone.sphinx.log.LogSphinxShutdownStructure;
-import com.pinball3d.zone.sphinx.log.LogStorageFull;
 import com.pinball3d.zone.util.HugeItemStack;
-import com.pinball3d.zone.util.LimitedQueue;
 import com.pinball3d.zone.util.StorageWrapper;
 import com.pinball3d.zone.util.Util;
 import com.pinball3d.zone.util.WorldPos;
@@ -86,7 +70,6 @@ import net.minecraftforge.oredict.OreIngredient;
 public class TEProcessingCenter extends TileEntity implements ITickable, IChunkLoader {
 	private boolean on, inited;
 	private String name = "Name Undone";
-	private int loadTick;
 	private int energyTick;
 	private int energy;
 	private boolean loaded;
@@ -119,7 +102,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	private boolean mapDirty;
 	private Map<WorldPos, List<Path>> dijkstraCache = new HashMap<WorldPos, List<Path>>();
 	private Map<UUID, UserData> users = new HashMap<UUID, UserData>();
-	private Queue<Log> logCache = new LimitedQueue<Log>(ConfigLoader.sphinxLogCache);
 	private int logId, nodeId, storageId, deviceId, productionId, packId, classifyGroupId, warningStorageFullCD,
 			recipeTypeId = 100, recipeId, oreDictionaryId;
 
@@ -139,7 +121,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public void shutdown() {
 		on = false;
 		BlockProcessingCenter.setState(false, world, pos);
-		loadTick = 0;
 		energyTick = 0;
 	}
 
@@ -147,17 +128,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return name;
 	}
 
-	public boolean isLoading() {
-		return loadTick > 0;
-	}
-
-	public int getLoadTick() {
-		return loadTick;
-	}
-
 	public void open() {
-		if (!on && loadTick <= 0) {
-			loadTick = 256;
+		if (!on) {
+			on = true;
 			BlockProcessingCenter.setState(true, world, pos);
 			markDirty();
 		}
@@ -231,7 +204,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			((INeedNetwork) te).connect(getUUID());
 		}
 		if (number != null) {
-			fireLog(new LogConnectToNetwork(getNextLogId(), player, number, pos));
+//			fireLog(new LogConnectToNetwork(getNextLogId(), player, number, pos));//TODO
 		}
 		refreshMap();
 		markDirty();
@@ -252,9 +225,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		productions.remove(number);
 		serialNumberToPos.remove(number);
 		if (player != null) {
-			fireLog(new LogDisconnectFromNetwork(getNextLogId(), player, number, pos));
+//			fireLog(new LogDisconnectFromNetwork(getNextLogId(), player, number, pos));//TODO
 		} else {
-			fireLog(new LogNeedNetworkDestroyed(getNextLogId(), number, pos));
+//			fireLog(new LogNeedNetworkDestroyed(getNextLogId(), number, pos));//TODO
 		}
 		refreshMap();
 		markDirty();
@@ -282,10 +255,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 
 	public UUID getUUID() {
 		return uuid;
-	}
-
-	public Queue<Log> getLogCache() {
-		return logCache;
 	}
 
 	public void setUUID(UUID uuid) {
@@ -333,6 +302,9 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public boolean consumeEnergy(int amount) {
+		if (1 == 1) {
+			return true;// XXX
+		}
 		BlockPos p = pos.add(0, -3, 0);
 		if (world.getBlockState(p).getBlock() == BlockLoader.transmission_module) {
 			TETransmissionModule te = (TETransmissionModule) world.getTileEntity(p);
@@ -367,7 +339,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			SerialNumber j = getSerialNumberFromPos(pack.routes.get(index));
 			p.add(j);
 		}
-		fireLog(new LogSendPack(getNextLogId(), pack.getId(), pack.items, start, end, p, (int) path.distance));
+//		fireLog(new LogSendPack(getNextLogId(), pack.getId(), pack.items, start, end, p, (int) path.distance));//TODO
 	}
 
 	public int requestItems(StorageWrapper wrapper, WorldPos target, boolean isSimulate) {
@@ -427,7 +399,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		});
 		if (!wrapper.isEmpty()) {
 			if (warningStorageFullCD <= 0) {
-				fireLog(new LogStorageFull(getNextLogId()));
+//				fireLog(new LogStorageFull(getNextLogId()));//TODO
 				warningStorageFullCD = 300;
 			}
 		}
@@ -602,9 +574,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public WorkingState getWorkingState() {
-		if (loadTick > 0) {
-			return WorkingState.STARTING;
-		}
 		if (!on) {
 			return WorkingState.OFF;
 		}
@@ -1017,8 +986,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			LogisticPack i = it.next();
 			if (!isPointInRange(i.dim, i.x, i.y, i.z)) {
 				List<SerialNumber> l = i.path.stream().map(this::getSerialNumberFromPos).collect(Collectors.toList());
-				fireLog(new LogPackLost(getNextLogId(), i.getId(), i.items, l.get(0), l.subList(1, l.size()),
-						new WorldPos((int) i.x, (int) i.y, (int) i.z, i.dim)));
+//				fireLog(new LogPackLost(getNextLogId(), i.getId(), i.items, l.get(0), l.subList(1, l.size()),
+//						new WorldPos((int) i.x, (int) i.y, (int) i.z, i.dim)));//TODO
 				it.remove();
 				continue;
 			}
@@ -1051,8 +1020,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 					if (!wrapper.isEmpty()) {
 						deads.put(new LogisticPack(-1, new ArrayList<WorldPos>(), wrapper, i.x, i.y, i.z, i.dim), i);
 					} else {
-						fireLog(new LogRecvPack(getNextLogId(), i.getId(), i.items, l.get(0), l.get(l.size() - 1),
-								l.subList(1, l.size() - 1), packId));
+//						fireLog(new LogRecvPack(getNextLogId(), i.getId(), i.items, l.get(0), l.get(l.size() - 1),
+//								l.subList(1, l.size() - 1), packId));TODO
 					}
 				} else if (te != null) {
 					StorageWrapper wrapper = insertToItemHandler(i.items.copy(),
@@ -1070,8 +1039,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 					if (!wrapper.isEmpty()) {
 						deads.put(new LogisticPack(-1, new ArrayList<WorldPos>(), wrapper, i.x, i.y, i.z, i.dim), i);
 					} else {
-						fireLog(new LogRecvPack(getNextLogId(), i.getId(), i.items, l.get(0), l.get(l.size() - 1),
-								l.subList(1, l.size() - 1), packId));
+//						fireLog(new LogRecvPack(getNextLogId(), i.getId(), i.items, l.get(0), l.get(l.size() - 1),
+//								l.subList(1, l.size() - 1), packId));//TODO
 					}
 				} else {
 					// ??????
@@ -1084,12 +1053,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			StorageWrapper w = dispenseItems(k.items.copy(), new WorldPos((int) k.x, (int) k.y, (int) k.z, k.dim));
 			if (!w.isEmpty()) {
 				List<SerialNumber> l = v.path.stream().map(this::getSerialNumberFromPos).collect(Collectors.toList());
-				fireLog(new LogRecvPackFull(getNextLogId(), v.getId(), v.items, l.get(0), l.get(l.size() - 1),
-						l.subList(1, l.size() - 1), packId, k.items));
+//				fireLog(new LogRecvPackFull(getNextLogId(), v.getId(), v.items, l.get(0), l.get(l.size() - 1),
+//						l.subList(1, l.size() - 1), packId, k.items));//TODO
 			} else {
 				List<SerialNumber> l = v.path.stream().map(this::getSerialNumberFromPos).collect(Collectors.toList());
-				fireLog(new LogRecvPack(getNextLogId(), v.getId(), v.items, l.get(0), l.get(l.size() - 1),
-						l.subList(1, l.size() - 1), packId));
+//				fireLog(new LogRecvPack(getNextLogId(), v.getId(), v.items, l.get(0), l.get(l.size() - 1),
+//						l.subList(1, l.size() - 1), packId));//TODO
 			}
 		});
 	}
@@ -1098,8 +1067,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		mapDirty = true;
 	}
 
-	public void fireLog(Log log) {
-		logCache.add(log);
+	public void fireLog(String log) {
+//		logCache.add(log);//TODO
 	}
 
 	public int getNextLogId() {
@@ -1151,7 +1120,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				}
 			}
 		}
-		fireLog(new LogRescanRecipesFinish(getNextLogId(), recipeAdd, d[0], d[1]));
+//		fireLog(new LogRescanRecipesFinish(getNextLogId(), recipeAdd, d[0], d[1]));//TODO
 		return new int[] { recipeAdd, d[0], d[1] };
 	}
 
@@ -1267,9 +1236,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		load();
 		markDirty();
 		if (world.isRemote) {
-			if (loadTick > 0) {
-				loadTick--;
-			}
 			return;
 		}
 		WorldPos worldPos = new WorldPos(pos, world);
@@ -1277,27 +1243,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			initSphinx();
 			inited = true;
 		}
-		if (!((BlockProcessingCenter) blockType).isFullStructure(worldPos) && (on || loadTick > 0)) {
+		if (!((BlockProcessingCenter) blockType).isFullStructure(worldPos) && on) {
 			shutdown();
-			fireLog(new LogSphinxShutdownStructure(getNextLogId()));
+//			fireLog(new LogSphinxShutdownStructure(getNextLogId()));// TODO
 			return;
 		}
 		if (uuid == null) {
 			setUUID(GlobalNetworkData.getUUID(worldPos));
-		}
-		if (loadTick > 0) {
-			if (consumeEnergy(1)) {
-				loadTick--;
-				if (loadTick == 0) {
-					loadTick = -1;
-					on = true;
-					fireLog(new LogSphinxOpenFinish(getNextLogId()));
-				}
-			} else {
-				shutdown();
-				fireLog(new LogSphinxShutdownEnergy(getNextLogId()));
-			}
-			return;
 		}
 		if (!on) {
 			Iterator<LogisticPack> it = packs.iterator();
@@ -1306,8 +1258,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				it.remove();
 				List<SerialNumber> l = pack.path.stream().map(this::getSerialNumberFromPos)
 						.collect(Collectors.toList());
-				fireLog(new LogPackLost(getNextLogId(), pack.getId(), pack.items, l.get(0), l.subList(1, l.size()),
-						new WorldPos((int) pack.x, (int) pack.y, (int) pack.z, pack.dim)));
+//				fireLog(new LogPackLost(getNextLogId(), pack.getId(), pack.items, l.get(0), l.subList(1, l.size()),
+//						new WorldPos((int) pack.x, (int) pack.y, (int) pack.z, pack.dim)));//TODO
 			}
 			return;
 		}
@@ -1316,7 +1268,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 				energyTick += 10;
 			} else {
 				shutdown();
-				fireLog(new LogSphinxShutdownEnergy(getNextLogId()));
+//				fireLog(new LogSphinxShutdownEnergy(getNextLogId()));// TODO
 				return;
 			}
 		}
@@ -1334,7 +1286,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		name = compound.getString("name");
-		loadTick = compound.getInteger("loadTick");
 		energyTick = compound.getInteger("energyTick");
 		on = compound.getBoolean("on");
 		logId = compound.getInteger("logId");
@@ -1406,17 +1357,17 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 						ex);
 			}
 		});
-		logCache.clear();
-		list = compound.getTagList("logs", 10);
-		list.forEach(e -> {
-			try {
-				logCache.add(Log.readLogFromNBT((NBTTagCompound) e));
-			} catch (Exception ex) {
-				Zone.logger.error("Log " + Util.DATA_CORRUPTION
-						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
-						ex);
-			}
-		});
+//		logCache.clear();//TODO
+//		list = compound.getTagList("logs", 10);
+//		list.forEach(e -> {
+//			try {
+//				logCache.add(Log.readLogFromNBT((NBTTagCompound) e));
+//			} catch (Exception ex) {
+//				Zone.logger.error("Log " + Util.DATA_CORRUPTION
+//						+ " has throw an exception trying to read state. It's network data will be removed. Tag:{}", e,
+//						ex);
+//			}
+//		});
 		recipeTypes.clear();
 		list = compound.getTagList("recipeTypes", 10);
 		list.forEach(e -> {
@@ -1461,7 +1412,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		if (name != null) {
 			compound.setString("name", name);
 		}
-		compound.setInteger("loadTick", loadTick);
 		compound.setInteger("energyTick", energyTick);
 		compound.setBoolean("on", on);
 		compound.setInteger("logId", logId);
@@ -1555,21 +1505,21 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		});
 		compound.setTag("users", usersList);
 		NBTTagList logsList = new NBTTagList();
-		logCache.forEach(e -> {
-			try {
-				logsList.appendTag(e.writeToNBT(new NBTTagCompound()));
-			} catch (Exception ex) {
-				String name = Util.DATA_CORRUPTION;
-				try {
-					name = e.getId() + "";
-				} catch (Exception ex2) {
-
-				}
-				Zone.logger.error(
-						"Log {} has throw an exception trying to write state. It's network data will be removed.", name,
-						ex);
-			}
-		});
+//		logCache.forEach(e -> {
+//			try {
+//				logsList.appendTag(e.writeToNBT(new NBTTagCompound()));
+//			} catch (Exception ex) {
+//				String name = Util.DATA_CORRUPTION;
+//				try {
+//					name = e.getId() + "";
+//				} catch (Exception ex2) {
+//
+//				}
+//				Zone.logger.error(
+//						"Log {} has throw an exception trying to write state. It's network data will be removed.", name,
+//						ex);
+//			}
+//		});//TODO
 		compound.setTag("logs", logsList);
 		NBTTagList recipeTypeList = new NBTTagList();
 		recipeTypes.forEach((k, v) -> {
@@ -1675,7 +1625,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public static enum WorkingState {
-		WORKING("sphinx.working"), OFF("sphinx.off"), STARTING("sphinx.starting");
+		WORKING("sphinx.working"), OFF("sphinx.off");
 
 		String key;
 

@@ -1,6 +1,5 @@
 package com.pinball3d.zone.network;
 
-import com.pinball3d.zone.sphinx.log.LogChangeName;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -28,7 +27,7 @@ public class MessageChangeName extends MessageSphinxAdmin {
 	public void run(MessageContext ctx) {
 		TEProcessingCenter te = getProcessingCenter();
 		String name = tag.getString("name");
-		te.fireLog(new LogChangeName(te.getNextLogId(), name, getPlayer(ctx)));
+//		te.fireLog(new LogChangeName(te.getNextLogId(), name, getPlayer(ctx)));//TODO
 		te.setName(name);
 	}
 
