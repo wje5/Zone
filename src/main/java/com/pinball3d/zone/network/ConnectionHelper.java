@@ -10,8 +10,6 @@ import java.util.UUID;
 
 import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.block.BlockControllerMainframe;
-import com.pinball3d.zone.block.BlockLoader;
-import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.INeedNetwork;
 import com.pinball3d.zone.sphinx.SerialNumber;
@@ -23,7 +21,6 @@ import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -53,63 +50,7 @@ public class ConnectionHelper {
 				continue;
 			}
 			c.update();
-		}
-	}
-
-	public static void requestControllerConnect(UUID uuid, WorldPos controller, Type... types) {
-		if (types.length == 0) {
-			pool.remove(uuid);
-			return;
-		}
-		EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-				.getPlayerByUUID(uuid);
-		if (controller.isAreaLoaded(5) && controller.getBlockState().getBlock() == BlockLoader.controller_mainframe) {
-			WorldPos center = BlockControllerMainframe.getProcessingCenterPos(controller);
-			if (!center.isOrigin()) {
-				TEProcessingCenter te = (TEProcessingCenter) center.getTileEntity();
-				Connect connect = new Connect(player, te.getUUID(), WorldPos.ORIGIN, ConnectType.CONTROLLER, types);
-				if (connect.isValid()) {
-					pool.put(uuid, connect);
-				}
-			}
-		}
-	}
-
-	public static void requestTerminalConnect(UUID uuid, Type... types) {
-		if (types.length == 0) {
-			pool.remove(uuid);
-			return;
-		}
-		EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-				.getPlayerByUUID(uuid);
-		ItemStack stack = player.getHeldItemMainhand();
-		if (stack.getItem() != ItemLoader.terminal) {
-			stack = player.getHeldItemOffhand();
-		}
-		if (stack.getItem() == ItemLoader.terminal && stack.getItemDamage() == 0) {
-			WorldPos pos = SphinxUtil.getNetworkPosFromTerminal(player);
-			if (!pos.isOrigin()) {
-				TileEntity tileentity = pos.getTileEntity();
-				if (tileentity instanceof TEProcessingCenter) {
-					TEProcessingCenter te = ((TEProcessingCenter) tileentity);
-					Connect connect;
-					if (te.isPointInRange(player.dimension, player.posX, player.posY, player.posZ)
-							&& te.getWorkingState() == WorkingState.WORKING) {
-						connect = new Connect(player, te.getUUID(), WorldPos.ORIGIN, ConnectType.TERMINAL, types);
-					} else {
-						connect = new Connect(player, null, WorldPos.ORIGIN, ConnectType.TERMINAL, types);
-					}
-					if (connect.isValid()) {
-						pool.put(uuid, connect);
-						return;
-					}
-				}
-			}
-			Connect connect = new Connect(player, null, WorldPos.ORIGIN, ConnectType.TERMINAL, types);
-			if (connect.isValid()) {
-				pool.put(uuid, connect);
-				return;
-			}
+			System.out.println(c);
 		}
 	}
 
@@ -120,30 +61,17 @@ public class ConnectionHelper {
 		}
 		EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
 				.getPlayerByUUID(uuid);
-		TileEntity tileentity = needNetwork.getTileEntity();
-		if (tileentity instanceof INeedNetwork) {
-			INeedNetwork te = (INeedNetwork) tileentity;
-			UUID network = te.getNetwork();
-			if (network != null) {
-				WorldPos pos = GlobalNetworkData.getPos(network);
-				if (!pos.isOrigin()) {
-					tileentity = pos.getTileEntity();
-					if (tileentity instanceof TEProcessingCenter) {
-						TEProcessingCenter pc = ((TEProcessingCenter) tileentity);
-						Connect connect = new Connect(player, pc.getUUID(), needNetwork, ConnectType.NEEDNETWORK,
-								types);
-						if (connect.isValid()) {
-							pool.put(uuid, connect);
-							return;
-						}
-					}
+		WorldPos pos = GlobalNetworkData.getPos(uuid);
+		if (!pos.isOrigin()) {
+			TileEntity tileentity = pos.getTileEntity();
+			if (tileentity instanceof TEProcessingCenter) {
+				TEProcessingCenter pc = ((TEProcessingCenter) tileentity);
+				Connect connect = new Connect(player, pc.getUUID(), needNetwork, types);
+				if (connect.isValid()) {
+					pool.put(uuid, connect);
+					return;
 				}
 			}
-		}
-		Connect connect = new Connect(player, null, needNetwork, ConnectType.NEEDNETWORK, types);
-		if (connect.isValid()) {
-			pool.put(uuid, connect);
-			return;
 		}
 	}
 
@@ -156,75 +84,35 @@ public class ConnectionHelper {
 		public UUID network;
 		public WorldPos needNetwork;
 		public Set<Type> reqDataType;
-		public ConnectType connectType;
 		public int mapRefreshColddown, packRefreshColddown, itemRefreshColddown, classifyRefreshColddown,
 				logRefreshColddown, oreDictionaryRefreshColddown;
 
-		private Connect(EntityPlayer player, UUID network, WorldPos needNetwork, ConnectType connectType,
-				Type... types) {
+		private Connect(EntityPlayer player, UUID network, WorldPos needNetwork, Type... types) {
 			uuid = player.getUniqueID();
 			this.network = network;
 			this.needNetwork = needNetwork;
-			this.connectType = connectType;
 			reqDataType = new HashSet<Type>(Arrays.asList(types));
 		}
 
 		public boolean isValid() {
 			EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
 					.getPlayerByUUID(uuid);
-			if (player == null) {
+			if (player == null || network == null) {
 				return false;
 			}
-			switch (connectType) {
-			case CONTROLLER:
-				if (network != null) {
-					WorldPos pos = GlobalNetworkData.getPos(network);
-					if (pos.isOrigin()) {
-						return false;
-					}
-					TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-					if (te.isAdmin(player)) {
-						break;
-					}
-				}
+
+			WorldPos pos = GlobalNetworkData.getPos(network);
+			if (pos.isOrigin()) {
+				network = null;
 				return false;
-			case TERMINAL:
-				network = SphinxUtil.getNetworkUUIDFromTerminal(player);
-				if (network != null) {
-					WorldPos pos = GlobalNetworkData.getPos(network);
-					if (pos.isOrigin()) {
-						network = null;
-					} else {
-						TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-						if (!te.isPointInRange(player.dimension, player.posX, player.posY, player.posZ)
-								|| te.getWorkingState() != WorkingState.WORKING) {
-							network = null;
-						}
-						if (!te.isUser(player)) {
-							network = null;
-						}
-					}
+			} else {
+				TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
+				if (!te.isPointInRange(player.dimension, needNetwork.getPos().getX(), needNetwork.getPos().getY(),
+						needNetwork.getPos().getZ()) || te.getWorkingState() != WorkingState.WORKING
+						|| !te.isUser(player)) {
+					network = null;
+					return false;
 				}
-				break;
-			case NEEDNETWORK:
-				network = SphinxUtil.getNetworkUUIDFromNeedNetwork(needNetwork);
-				if (network != null) {
-					WorldPos pos = GlobalNetworkData.getPos(network);
-					if (pos.isOrigin()) {
-						network = null;
-					} else {
-						TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-						if (!te.isPointInRange(player.dimension, needNetwork.getPos().getX(),
-								needNetwork.getPos().getY(), needNetwork.getPos().getZ())
-								|| te.getWorkingState() != WorkingState.WORKING) {
-							network = null;
-						}
-						if (!te.isUser(player)) {
-							network = null;
-						}
-					}
-				}
-				break;
 			}
 			return true;
 		}
@@ -239,10 +127,6 @@ public class ConnectionHelper {
 			NetworkHandler.instance
 					.sendTo(new MessageConnectionUpdate(network, data, reqDataType.toArray(new Type[] {})), player);
 		}
-	}
-
-	public static enum ConnectType {
-		CONTROLLER, TERMINAL, NEEDNETWORK;
 	}
 
 	public static enum Type {

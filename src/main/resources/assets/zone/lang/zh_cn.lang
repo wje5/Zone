@@ -50,7 +50,6 @@ item.energy_grid.name=能量格栅
 
 item.energy.name=能量
 item.construct_block.name=结构方块
-item.terminal.name=终端
 item.fc.name=FC
 item.drill.name=冲击钻
 item.drill_head.name=钻头
@@ -173,6 +172,7 @@ tile.beacon_amplifier_matrix.name=信标增幅矩阵
 tile.beacon_core.name=信标核心
 tile.powered_piston.name=动力活塞
 tile.powered_piston_sticky.name=动力粘性活塞
+tile.terminal.name=终端
 
 container.drainer=收集器
 container.grinder=研磨机

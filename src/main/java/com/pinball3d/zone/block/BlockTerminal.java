@@ -1,14 +1,18 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
-import com.pinball3d.zone.tileentity.TENode;
+import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.network.elite.MessageRequestNetworks;
+import com.pinball3d.zone.tileentity.TETerminal;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -18,21 +22,49 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJModel;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockNode extends BlockContainer {
+public class BlockTerminal extends BlockContainer {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+	public static final PropertyBool WORKING = PropertyBool.create("working");
 
-	public BlockNode() {
+	public BlockTerminal() {
 		super(Material.IRON);
 		setHardness(300.0F);
 		setResistance(7500.0F);
-		setRegistryName("zone:node");
-		setUnlocalizedName("node");
+		setRegistryName("zone:terminal");
+		setUnlocalizedName("terminal");
 		setCreativeTab(TabZone.tab);
-		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+	}
+
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (worldIn.isRemote) {
+			openScreen();
+		}
+		return true;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void openScreen() {
+		NetworkHandler.instance.sendToServer(new MessageRequestNetworks(new WorldPos(Minecraft.getMinecraft().player)));
+	}
+
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state) {
+		return EnumBlockRenderType.MODEL;
+	}
+
+	@Override
+	public boolean isFullCube(IBlockState state) {
+		return false;
+	}
+
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
 	}
 
 	@Override
@@ -58,36 +90,32 @@ public class BlockNode extends BlockContainer {
 			} else if (enumfacing == EnumFacing.EAST && iblockstate3.isFullBlock() && !iblockstate2.isFullBlock()) {
 				enumfacing = EnumFacing.WEST;
 			}
-
 			worldIn.setBlockState(pos, state.withProperty(FACING, enumfacing), 2);
 		}
 	}
 
 	@Override
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, FACING, WORKING);
+	}
+
+	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing facing = EnumFacing.getHorizontal(meta % 4);
-		return this.getDefaultState().withProperty(FACING, facing);
+		boolean isWorking = meta >= 4;
+		return this.getDefaultState().withProperty(FACING, facing).withProperty(WORKING, isWorking);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		return state.getValue(FACING).getHorizontalIndex();
+		return state.getValue(FACING).getHorizontalIndex() + (state.getValue(WORKING) ? 4 : 0);
 	}
 
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
 			float hitZ, int meta, EntityLivingBase placer) {
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
-	}
-
-	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (!worldIn.isRemote) {
-//			playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_NEED_NETWORK, worldIn, pos.getX(), pos.getY(),
-//					pos.getZ());//TODO
-		}
-		return true;
+		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite())
+				.withProperty(WORKING, false);
 	}
 
 	@Override
@@ -97,35 +125,7 @@ public class BlockNode extends BlockContainer {
 	}
 
 	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state) {
-		return EnumBlockRenderType.MODEL;
-	}
-
-	@Override
-	public boolean isFullCube(IBlockState state) {
-		return false;
-	}
-
-	@Override
-	public boolean isOpaqueCube(IBlockState state) {
-		return false;
-	}
-
-	@Override
-	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		((TENode) worldIn.getTileEntity(pos)).unload();
-		super.breakBlock(worldIn, pos, state);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	protected BlockStateContainer createBlockState() {
-		return new ExtendedBlockState(this, new IProperty<?>[] { FACING },
-				new IUnlistedProperty<?>[] { OBJModel.OBJProperty.INSTANCE });
-	}
-
-	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TENode();
+		return new TETerminal();
 	}
 }

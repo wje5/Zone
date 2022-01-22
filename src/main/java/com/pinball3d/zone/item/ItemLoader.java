@@ -27,8 +27,8 @@ public class ItemLoader {
 			amplify_unit, network_adapter, interference_crystal, half_interference_unit, sagger, fire_brick, clay_mold,
 			ceramic_mold, redstone_crystal_lens, tar, paddle, impeller, energy_grid;
 
-	public static Item energy, construct_block, terminal, fc, drill, drill_heavy, drill_head, drill_heavy_head,
-			drill_empty, crucible_spoon, crucible_spoon_filled, manual, crucible, casting_table, hybrid_fuel, pipette;
+	public static Item energy, construct_block, fc, drill, drill_heavy, drill_head, drill_heavy_head, drill_empty,
+			crucible_spoon, crucible_spoon_filled, manual, crucible, casting_table, hybrid_fuel, pipette;
 
 	public static Item crushed_iron_ore, crushed_gold_ore, crushed_diamond_ore, crushed_emerald_ore,
 			crushed_redstone_ore, crushed_coal_ore, crushed_lapis_ore, crushed_quartz_ore;
@@ -104,7 +104,6 @@ public class ItemLoader {
 		register(registry, energy_grid = new ZoneItem("energy_grid"));
 
 		register(registry, energy = new ZoneItem("energy"));
-		register(registry, terminal = new ItemTerminal(), false);
 		register(registry, fc = new ItemFC());
 		register(registry, crucible_spoon = new ItemCrucibleSpoon(false));
 		register(registry, crucible_spoon_filled = new ItemCrucibleSpoon(true));
@@ -178,10 +177,10 @@ public class ItemLoader {
 		register(registry, truss_z = new ZoneItem("truss_z").setCreativeTab(null));
 		register(registry, processing_center_light = new ZoneItem("processing_center_light").setCreativeTab(null));
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
-			ModelLoader.setCustomModelResourceLocation(terminal, 0,
-					new ModelResourceLocation("zone:terminal", "inventory"));
-			ModelLoader.setCustomModelResourceLocation(terminal, 1,
-					new ModelResourceLocation("zone:terminal_2", "inventory"));
+//			ModelLoader.setCustomModelResourceLocation(terminal, 0,
+//					new ModelResourceLocation("zone:terminal", "inventory"));
+//			ModelLoader.setCustomModelResourceLocation(terminal, 1,
+//					new ModelResourceLocation("zone:terminal_2", "inventory"));
 		}
 		FluidHandler.registerFluidItems(registry);
 		OreDictionary.registerOre("plateIron", iron_plate);

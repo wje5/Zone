@@ -192,33 +192,11 @@ public class ConnectHelperClient {
 	public void disconnect() {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player != null) {
-			NetworkHandler.instance.sendToServer(new MessageConnectionRequest(player));
+//			NetworkHandler.instance.sendToServer(new MessageConnectionRequest(player));//TODO disconnect
 		}
 		clear();
 		clearHuges();
 		this.types.clear();
-		hasData = false;
-	}
-
-	public void requestTerminal(Type... types) {
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		if (player != null) {
-			NetworkHandler.instance.sendToServer(new MessageConnectionRequest(player, types));
-		}
-		clear();
-		clearHuges();
-		this.types = Sets.newHashSet(types);
-		hasData = false;
-	}
-
-	public void requestController(WorldPos controller, Type... types) {
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		if (player != null) {
-			NetworkHandler.instance.sendToServer(new MessageConnectionControllerRequest(player, controller, types));
-		}
-		clear();
-		clearHuges();
-		this.types = Sets.newHashSet(types);
 		hasData = false;
 	}
 

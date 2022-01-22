@@ -50,7 +50,6 @@ item.energy_grid.name=Energy Grid
 
 item.energy.name=Energy
 item.construct_block.name=Construct Block
-item.terminal.name=Terminal
 item.fc.name=FC
 item.drill.name=Drill
 item.drill_head.name=Drill Head
@@ -173,6 +172,7 @@ tile.beacon_amplifier_matrix.name=Beacon Amplifier Matrix
 tile.beacon_core.name=Beacon Core
 tile.powered_piston.name=Powered Piston
 tile.powered_piston_sticky.name=Powered Sticky Piston
+tile.terminal.name=Terminal
 
 container.drainer=Drainer
 container.grinder=Grinder

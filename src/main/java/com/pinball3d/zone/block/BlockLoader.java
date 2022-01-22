@@ -34,7 +34,7 @@ public class BlockLoader {
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module,
 			beacon_amplifier_matrix, beacon_core, powered_piston, powered_piston_sticky, powered_piston_moving,
-			powered_piston_head;
+			powered_piston_head, terminal;
 
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -89,11 +89,11 @@ public class BlockLoader {
 		register(registry, transmission_module = new BlockTransmissionModule());
 		register(registry, beacon_amplifier_matrix = new BlockBeaconAmplifierMatrix());
 		register(registry, beacon_core = new BlockBeaconCore());
-//		register(registry, piano = new BlockPiano());
 		register(registry, powered_piston = new BlockPoweredPiston(false));
 		register(registry, powered_piston_sticky = new BlockPoweredPiston(true));
 		register(registry, powered_piston_moving = new BlockPoweredPistonMoving());
 		register(registry, powered_piston_head = new BlockPoweredPistonHead());
+		register(registry, terminal = new BlockTerminal());
 	}
 
 	private static Block setName(Block block, String name) {
@@ -146,6 +146,7 @@ public class BlockLoader {
 		registerItem(registry, beacon_core);
 		registerItem(registry, powered_piston);
 		registerItem(registry, powered_piston_sticky);
+		registerItem(registry, terminal);
 	}
 
 	private static void registerItem(IForgeRegistry<Item> registry, Block block) {

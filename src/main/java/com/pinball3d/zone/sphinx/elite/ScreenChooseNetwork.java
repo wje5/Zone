@@ -224,8 +224,8 @@ public class ScreenChooseNetwork extends GuiScreen {
 				mc.displayGuiScreen(null);
 			}
 		} else if (mouseX >= x + 425 && mouseX <= x + 515 && mouseY >= y + 275 && mouseY <= y + 300) {
-			if (pressedButton == 2) {
-				mc.displayGuiScreen(new EliteMainwindow());
+			if (pressedButton == 2 && !data.isEmpty()) {
+				mc.displayGuiScreen(new EliteMainwindow(data.get(chosenIndex).value()));
 			}
 		} else if (mouseX >= x + 523 && mouseX <= x + 613 && mouseY >= y + 275 && mouseY <= y + 300) {
 			if (pressedButton == 3) {

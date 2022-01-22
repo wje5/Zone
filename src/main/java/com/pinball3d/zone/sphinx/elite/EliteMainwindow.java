@@ -11,6 +11,8 @@ import java.util.Set;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import com.pinball3d.zone.network.ConnectHelperClient;
+import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
 import com.pinball3d.zone.sphinx.elite.DropDownList.DividerBar;
 import com.pinball3d.zone.sphinx.elite.DropDownList.FolderBar;
@@ -22,6 +24,7 @@ import com.pinball3d.zone.sphinx.elite.PanelGroup.Side;
 import com.pinball3d.zone.sphinx.elite.panels.PanelInfo;
 import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
+import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -45,6 +48,10 @@ public class EliteMainwindow extends GuiScreen {
 	private PanelGroup focusPanel;
 
 	public boolean enableDebugMode;
+
+	public EliteMainwindow(WorldPos pos) {
+		ConnectHelperClient.getInstance().requestNeedNetwork(pos, Type.NETWORKUUID, Type.NETWORKPOS);
+	}
 
 	public static EliteMainwindow getWindow() {
 		GuiScreen s = Minecraft.getMinecraft().currentScreen;

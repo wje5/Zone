@@ -43,19 +43,12 @@ public class BlockControllerMainframe extends Block {
 		if (block instanceof BlockProcessingCenter && ((BlockProcessingCenter) block).isFullStructure(center)) {
 			if (!worldIn.isRemote) {
 				TEProcessingCenter te = (TEProcessingCenter) center.getTileEntity();
-				if (te.getWorkingState() == WorkingState.WORKING) {
-					if (te.isAdmin(playerIn)) {
-//						playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_CONTROLLER, worldIn, pos.getX(), pos.getY(),
-//						pos.getZ());//TODO
-					}
-				} else {
+				if (te.getWorkingState() == WorkingState.OFF) {
 					if (te.getUsers().isEmpty()) {
 						te.addUser(new UserData(playerIn, true, false, true));
 					}
 					if (te.isAdmin(playerIn)) {
 						te.open();
-//						playerIn.openGui(Zone.instance, GuiElementLoader.SPHINX_LOAD, worldIn, pos.getX(), pos.getY(),
-//								pos.getZ());
 //						te.fireLog(new LogSphinxOpen(te.getNextLogId(), playerIn));//TODO
 					}
 				}

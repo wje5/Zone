@@ -18,13 +18,9 @@ public class NetworkHandler {
 		registerMessage(MessageChangeName.Handler.class, MessageChangeName.class, Side.SERVER);
 		registerMessage(MessageIOPanelRequest.Handler.class, MessageIOPanelRequest.class, Side.SERVER);
 		registerMessage(MessageDisconnect.Handler.class, MessageDisconnect.class, Side.SERVER);
-		registerMessage(MessageTerminalDisconnect.Handler.class, MessageTerminalDisconnect.class, Side.SERVER);
 		registerMessage(MessagePlaySoundAtPos.Handler.class, MessagePlaySoundAtPos.class, Side.CLIENT);
 		registerMessage(MessageConnectionUpdate.Handler.class, MessageConnectionUpdate.class, Side.CLIENT);
-		registerMessage(MessageConnectionRequest.Handler.class, MessageConnectionRequest.class, Side.SERVER);
 		registerMessage(MessageConnectionNeedNetworkRequest.Handler.class, MessageConnectionNeedNetworkRequest.class,
-				Side.SERVER);
-		registerMessage(MessageConnectionControllerRequest.Handler.class, MessageConnectionControllerRequest.class,
 				Side.SERVER);
 		registerMessage(MessageNewClass.Handler.class, MessageNewClass.class, Side.SERVER);
 		registerMessage(MessageManageClassify.Handler.class, MessageManageClassify.class, Side.SERVER);
