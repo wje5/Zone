@@ -27,6 +27,8 @@ public class TileEntityLoader {
 		registerTileEntity(TEBeaconCore.class, "TEBeaconCore");
 		registerTileEntity(TEPoweredPiston.class, "TEPoweredPiston");
 		registerTileEntity(TETerminal.class, "TETerminal");
+
+		registerTileEntity(TECapacitor.class, "TECapacitor");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

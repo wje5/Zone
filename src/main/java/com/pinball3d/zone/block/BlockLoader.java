@@ -29,7 +29,7 @@ public class BlockLoader {
 	public static Block drainer, grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter,
 			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light, crucible,
 			burning_box, burning_box_light, casting_table, boiler, boiler_light, lathe, lathe_light, forming_press,
-			forming_press_light, pump, pump_light;
+			forming_press_light, pump, pump_light, capacitor;
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module,
@@ -78,6 +78,8 @@ public class BlockLoader {
 		register(registry, forming_press_light = new BlockFormingPress(true));
 		register(registry, pump = new BlockPump(false));
 		register(registry, pump_light = new BlockPump(true));
+		register(registry, capacitor = new BlockCapacitor());
+
 		register(registry, construct_block = new BlockConstructBlock());
 		register(registry, construct_block_all = new BlockConstructBlockAll());
 		register(registry, cluster_operation_module = new BlockClusterOperationModule());
@@ -135,6 +137,8 @@ public class BlockLoader {
 		registerItem(registry, lathe);
 		registerItem(registry, forming_press);
 		registerItem(registry, pump);
+		registerItem(registry, capacitor);
+
 		registerItem(registry, ItemLoader.construct_block = new ItemConstructBlock());
 		registerItem(registry, cluster_operation_module);
 		registerItem(registry, controller_mainframe);

@@ -17,6 +17,6 @@
         	"true": {"textures": {"#m_0": "zone:blocks/terminal_on"}},
         	"false": {"textures": {"#m_0": "zone:blocks/terminal"}}
         },
-        "inventory": [{"transform": {"scale": 1,"translation": [0, -0.35, 0],"rotation": {"y": 180}}}]
+        "inventory": [{"textures": {"#m_0": "zone:blocks/terminal_on"},"transform": {"scale": 1,"translation": [-0.5F, -0.1F, 0],"rotation": {"y": 180}}}]
     }
 }

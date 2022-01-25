@@ -23,6 +23,7 @@ import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.recipe.IFocus.Mode;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
+import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
 import mezz.jei.gui.Focus;
 import net.minecraft.item.ItemStack;
 
@@ -43,6 +44,7 @@ public class JEIHandler implements IModPlugin {
 
 	@Override
 	public void register(IModRegistry registry) {
+		registry.addRecipeCatalyst(new ItemStack(BlockLoader.elec_furnace), VanillaRecipeCategoryUid.SMELTING);
 		registry.addRecipes(RecipeHandler.getRecipes(Type.GRINDER), "zone:grinder");
 		registry.handleRecipes(RecipeGrinder.class, recipe -> new RecipeWrapperGrinder(recipe), "zone:grinder");
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.grinder), "zone:grinder");

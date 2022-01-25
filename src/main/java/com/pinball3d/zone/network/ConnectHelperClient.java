@@ -204,6 +204,7 @@ public class ConnectHelperClient {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player != null) {
 			NetworkHandler.instance.sendToServer(new MessageConnectionNeedNetworkRequest(player, needNetwork, types));
+
 		}
 		clear();
 		clearHuges();
