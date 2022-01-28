@@ -265,6 +265,8 @@ public class RecipeHandler {
 					return false;
 				}
 			}
+		} else {
+			return false;
 		}
 		return true;
 	}

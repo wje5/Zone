@@ -52,12 +52,16 @@ public class JEIHandler implements IModPlugin {
 		registry.addRecipes(RecipeHandler.getRecipes(Type.ALLOY_SMELTER), "zone:alloy_smelter");
 		registry.handleRecipes(RecipeAlloySmelter.class, recipe -> new RecipeWrapperAlloySmelter(recipe),
 				"zone:alloy_smelter");
-		registry.addRecipeCatalyst(new ItemStack(BlockLoader.alloy_smelter), "zone:alloy_smelter");
+		registry.addRecipeCatalyst(new ItemStack(BlockLoader.alloy_smelter_1), "zone:alloy_smelter");
+		registry.addRecipeCatalyst(new ItemStack(BlockLoader.alloy_smelter_2), "zone:alloy_smelter");
+		registry.addRecipeCatalyst(new ItemStack(BlockLoader.alloy_smelter_3), "zone:alloy_smelter");
 		registry.addRecipeClickArea(GuiContainerAlloySmelter.class, 80, 35, 22, 15, "zone:alloy_smelter");
 		registry.addRecipes(RecipeHandler.getRecipes(Type.CENTRIFUGE), "zone:centrifuge");
 		registry.handleRecipes(RecipeCentrifuge.class, recipe -> new RecipeWrapperCentrifuge(recipe),
 				"zone:centrifuge");
-		registry.addRecipeCatalyst(new ItemStack(BlockLoader.centrifuge), "zone:centrifuge");
+		registry.addRecipeCatalyst(new ItemStack(BlockLoader.centrifuge_1), "zone:centrifuge");
+		registry.addRecipeCatalyst(new ItemStack(BlockLoader.centrifuge_2), "zone:centrifuge");
+		registry.addRecipeCatalyst(new ItemStack(BlockLoader.centrifuge_3), "zone:centrifuge");
 		registry.addRecipeClickArea(GuiContainerCentrifuge.class, 63, 35, 22, 15, "zone:centrifuge");
 		registry.addRecipes(RecipeHandler.getRecipes(Type.CRYSTALLIZER), "zone:crystallizer");
 		registry.handleRecipes(RecipeCrystallizer.class, recipe -> new RecipeWrapperCrystallizer(recipe),

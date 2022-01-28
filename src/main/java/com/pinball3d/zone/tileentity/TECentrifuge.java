@@ -3,7 +3,7 @@ package com.pinball3d.zone.tileentity;
 import java.util.Arrays;
 
 import com.pinball3d.zone.ConfigLoader;
-import com.pinball3d.zone.block.BlockCentrifuge;
+import com.pinball3d.zone.block.BlockTieredMachineLightable;
 import com.pinball3d.zone.network.MessagePlaySoundAtPos;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.recipe.Recipe;
@@ -18,15 +18,18 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class TECentrifuge extends ZoneMachine {
-	protected int tick, totalTick, energyTick;
-	protected ItemStackHandler input, output, expectOutput;
+public class TECentrifuge extends ZoneTieredMachine {
+	protected int tick, totalTick;
+	protected ItemStackHandler input = new ItemStackHandler();
+	protected ItemStackHandler output = new ItemStackHandler(3);
+	protected ItemStackHandler expectOutput = new ItemStackHandler(3);
 
 	public TECentrifuge() {
-		super(1);
-		input = new ItemStackHandler();
-		output = new ItemStackHandler(3);
-		expectOutput = new ItemStackHandler(3);
+		super();
+	}
+
+	public TECentrifuge(Tier tier) {
+		super(tier, 8000);
 	}
 
 	@Override
@@ -35,48 +38,50 @@ public class TECentrifuge extends ZoneMachine {
 		if (world.isRemote) {
 			return;
 		}
-		boolean flag = energyTick > 0;
-		tick = tick < 1 ? 0 : tick - 1;
-		if (tick <= 0) {
-			output.insertItem(0, expectOutput.getStackInSlot(0), false);
-			output.insertItem(1, expectOutput.getStackInSlot(1), false);
-			output.insertItem(2, expectOutput.getStackInSlot(2), false);
-			expectOutput.setStackInSlot(0, ItemStack.EMPTY);
-			expectOutput.setStackInSlot(1, ItemStack.EMPTY);
-			expectOutput.setStackInSlot(2, ItemStack.EMPTY);
-			Recipe recipe = RecipeHandler.getRecipe(Type.CENTRIFUGE,
-					Arrays.asList(new ItemStack[] { input.getStackInSlot(0) }));
-			if (recipe != null) {
-				if (tryUseEnergy(true) || energyTick >= recipe.getTime()) {
-					if (output.insertItem(0, recipe.getOutput(0), true).isEmpty()
-							&& output.insertItem(1, recipe.getOutput(1), true).isEmpty()
-							&& output.insertItem(2, recipe.getOutput(2), true).isEmpty()) {
+		boolean flag = tick > 0;
+		int work = getTier().getMultiple();
+		while (work > 0) {
+			if (tick > 0) {
+				int m = Math.min(work, tick);
+				if (energy.extractEnergy(m * 20, false) < m * 20) {
+					tick = 0;
+					expectOutput.setStackInSlot(0, ItemStack.EMPTY);
+					break;
+				} else {
+					tick -= m;
+					work -= m;
+				}
+			}
+			if (tick <= 0) {
+				output.insertItem(0, expectOutput.getStackInSlot(0), false);
+				output.insertItem(1, expectOutput.getStackInSlot(1), false);
+				output.insertItem(2, expectOutput.getStackInSlot(2), false);
+				expectOutput.setStackInSlot(0, ItemStack.EMPTY);
+				expectOutput.setStackInSlot(1, ItemStack.EMPTY);
+				expectOutput.setStackInSlot(2, ItemStack.EMPTY);
+				Recipe recipe = RecipeHandler.getRecipe(Type.CENTRIFUGE,
+						Arrays.asList(new ItemStack[] { input.getStackInSlot(0) }));
+				if (recipe != null && energy.extractEnergy(20 * recipe.getTime(), true) == 20 * recipe.getTime()) {
+					if (output.insertItem(0, recipe.getOutput(0), true).isEmpty()) {
 						input.extractItem(0, recipe.getInput(0).getCount(), false);
 						expectOutput.setStackInSlot(0, recipe.getOutput(0));
 						expectOutput.setStackInSlot(1, recipe.getOutput(1));
 						expectOutput.setStackInSlot(2, recipe.getOutput(2));
 						tick = recipe.getTime();
-						totalTick = recipe.getTime();
+						totalTick = tick;
 						if (!ConfigLoader.disableMachineSound) {
-							NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 4),
+							NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 2),
 									new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
 											pos.getZ() + 0.5F, 16));
 						}
 					}
+				} else {
+					break;
 				}
 			}
 		}
-		energyTick = energyTick < 1 ? 0 : energyTick - 1;
-		if (energyTick <= 0 && tick > 0) {
-			if (tryUseEnergy(false)) {
-				energyTick += 100;
-			} else {
-				tick = 0;
-				expectOutput.setStackInSlot(0, ItemStack.EMPTY);
-			}
-		}
-		if (energyTick > 0 != flag) {
-			BlockCentrifuge.setState(energyTick > 0, world, pos);
+		if (tick > 0 != flag) {
+			BlockTieredMachineLightable.setState(tick > 0, world, pos);
 		}
 	}
 
@@ -86,10 +91,6 @@ public class TECentrifuge extends ZoneMachine {
 
 	public int getTotalTick() {
 		return totalTick;
-	}
-
-	public int getEnergyTick() {
-		return energyTick;
 	}
 
 	@Override
@@ -104,14 +105,10 @@ public class TECentrifuge extends ZoneMachine {
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
-			switch (facing) {
-			case UP:
-				return (T) input;
-			case DOWN:
+			if (facing == EnumFacing.DOWN) {
 				return (T) output;
-			default:
-				return (T) energy;
 			}
+			return (T) input;
 		}
 		return super.getCapability(capability, facing);
 	}
@@ -124,7 +121,6 @@ public class TECentrifuge extends ZoneMachine {
 		expectOutput.deserializeNBT(compound.getCompoundTag("expectOutput"));
 		tick = compound.getInteger("tick");
 		totalTick = compound.getInteger("totalTick");
-		energyTick = compound.getInteger("energyTick");
 	}
 
 	@Override
@@ -135,7 +131,6 @@ public class TECentrifuge extends ZoneMachine {
 		compound.setTag("expectOutput", expectOutput.serializeNBT());
 		compound.setInteger("tick", tick);
 		compound.setInteger("totalTick", totalTick);
-		compound.setInteger("energyTick", energyTick);
 		return compound;
 	}
 }

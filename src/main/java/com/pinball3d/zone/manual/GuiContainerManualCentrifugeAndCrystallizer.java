@@ -17,7 +17,7 @@ public class GuiContainerManualCentrifugeAndCrystallizer extends GuiContainerMan
 		super.addComponents();
 		int x = width / 2 - 146;
 		int y = height / 2 - 90;
-		components.add(new BlockShow(this, x + 40, y + 30, 4F, new ItemStack(BlockLoader.centrifuge)));
+//		components.add(new BlockShow(this, x + 40, y + 30, 4F, new ItemStack(BlockLoader.centrifuge)));
 		components.add(new BlockShow(this, x + 186, y + 30, 4F, new ItemStack(BlockLoader.crystallizer)));
 	}
 

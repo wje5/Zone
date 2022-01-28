@@ -26,7 +26,7 @@ public class RecipeCategoryAlloySmelter implements IRecipeCategory<RecipeWrapper
 				IDrawableAnimated.StartDirection.LEFT, false);
 		energy = helper.drawableBuilder(GuiContainerAlloySmelter.TEXTURE, 176, 0, 14, 14).buildAnimated(200,
 				IDrawableAnimated.StartDirection.TOP, true);
-		icon = helper.createDrawableIngredient(new ItemStack(BlockLoader.alloy_smelter));
+		icon = helper.createDrawableIngredient(new ItemStack(BlockLoader.alloy_smelter_1));
 	}
 
 	@Override

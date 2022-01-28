@@ -4,8 +4,10 @@ import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.item.ItemConstructBlock;
 import com.pinball3d.zone.item.ItemLoader;
+import com.pinball3d.zone.tileentity.TEAlloySmelter;
 import com.pinball3d.zone.tileentity.TEBoiler;
 import com.pinball3d.zone.tileentity.TECapacitor;
+import com.pinball3d.zone.tileentity.TECentrifuge;
 import com.pinball3d.zone.tileentity.TEDrainer;
 import com.pinball3d.zone.tileentity.ZoneTieredMachine.Tier;
 
@@ -29,12 +31,15 @@ public class BlockLoader {
 			clarity_glass_pane, etherium_frame, reinforced_glass_pane, charged_glass, charged_glass_pane, firm_glass,
 			firm_glass_pane, reinforced_stone;
 
-	public static Block grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter, alloy_smelter_light,
-			centrifuge, centrifuge_light, node, crystallizer, crystallizer_light, crucible, burning_box,
-			burning_box_light, casting_table, boiler, boiler_light, lathe, lathe_light, forming_press,
-			forming_press_light, pump, pump_light;
+	public static Block grinder, grinder_light, elec_furnace, elec_furnace_light, node, crystallizer,
+			crystallizer_light, crucible, burning_box, burning_box_light, casting_table, lathe, lathe_light,
+			forming_press, forming_press_light, pump, pump_light;
 
-	public static Block drainer_1, drainer_2, drainer_3, capacitor_1, capacitor_2, capacitor_3;
+	public static Block drainer_1, drainer_2, drainer_3, boiler_1, boiler_1_light, boiler_2, boiler_2_light, boiler_3,
+			boiler_3_light, capacitor_1, capacitor_2, capacitor_3, alloy_smelter_1, alloy_smelter_1_light,
+			alloy_smelter_2, alloy_smelter_2_light, alloy_smelter_3, alloy_smelter_3_light, centrifuge_1,
+			centrifuge_1_light, centrifuge_2, centrifuge_2_light, centrifuge_3, centrifuge_3_light;
+
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module,
 			beacon_amplifier_matrix, beacon_core, powered_piston, powered_piston_sticky, powered_piston_moving,
@@ -63,19 +68,9 @@ public class BlockLoader {
 		register(registry, grinder_light = new BlockGrinder(true));
 		register(registry, elec_furnace = new BlockElecFurnace(false));
 		register(registry, elec_furnace_light = new BlockElecFurnace(true));
-		register(registry, alloy_smelter = new BlockAlloySmelter(false));
-		register(registry, alloy_smelter_light = new BlockAlloySmelter(true));
-		register(registry, centrifuge = new BlockCentrifuge(false));
-		register(registry, centrifuge_light = new BlockCentrifuge(true));
 		register(registry, node = new BlockNode());
 		register(registry, crystallizer = new BlockCrystallizer(false));
 		register(registry, crystallizer_light = new BlockCrystallizer(true));
-//		register(registry, boiler = new BlockBoiler(false));
-//		register(registry, boiler_light = new BlockBoiler(true));
-		register(registry, boiler = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
-				t -> new TEBoiler(t), Tier.T1, false, () -> boiler, () -> boiler_light));
-		register(registry, boiler_light = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
-				t -> new TEBoiler(t), Tier.T1, true, () -> boiler, () -> boiler_light));
 
 		register(registry, lathe = new BlockLathe(false));
 		register(registry, lathe_light = new BlockLathe(true));
@@ -91,12 +86,63 @@ public class BlockLoader {
 		register(registry, drainer_3 = new BlockTieredMachine("drainer", GuiElementLoader.DRAINER,
 				t -> new TEDrainer(t), Tier.T3));
 
+		register(registry, boiler_1 = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
+				t -> new TEBoiler(t), Tier.T1, false, () -> boiler_1, () -> boiler_1_light));
+		register(registry, boiler_1_light = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
+				t -> new TEBoiler(t), Tier.T1, true, () -> boiler_1, () -> boiler_1_light));
+		register(registry, boiler_2 = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
+				t -> new TEBoiler(t), Tier.T2, false, () -> boiler_2, () -> boiler_2_light));
+		register(registry, boiler_2_light = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
+				t -> new TEBoiler(t), Tier.T2, true, () -> boiler_2, () -> boiler_2_light));
+		register(registry, boiler_3 = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
+				t -> new TEBoiler(t), Tier.T3, false, () -> boiler_3, () -> boiler_3_light));
+		register(registry, boiler_3_light = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
+				t -> new TEBoiler(t), Tier.T3, true, () -> boiler_3, () -> boiler_3_light));
+
 		register(registry, capacitor_1 = new BlockTieredMachine("capacitor", GuiElementLoader.DRAINER, // TODO GUI
 				t -> new TECapacitor(t), Tier.T1));
 		register(registry, capacitor_2 = new BlockTieredMachine("capacitor", GuiElementLoader.DRAINER,
 				t -> new TECapacitor(t), Tier.T2));
 		register(registry, capacitor_3 = new BlockTieredMachine("capacitor", GuiElementLoader.DRAINER,
 				t -> new TECapacitor(t), Tier.T3));
+
+		register(registry,
+				alloy_smelter_1 = new BlockTieredMachineLightable("alloy_smelter", GuiElementLoader.ALLOY_SMELTER,
+						t -> new TEAlloySmelter(t), Tier.T1, false, () -> alloy_smelter_1,
+						() -> alloy_smelter_1_light));
+		register(registry,
+				alloy_smelter_1_light = new BlockTieredMachineLightable("alloy_smelter", GuiElementLoader.ALLOY_SMELTER,
+						t -> new TEAlloySmelter(t), Tier.T1, true, () -> alloy_smelter_1, () -> alloy_smelter_1_light));
+		register(registry,
+				alloy_smelter_2 = new BlockTieredMachineLightable("alloy_smelter", GuiElementLoader.ALLOY_SMELTER,
+						t -> new TEAlloySmelter(t), Tier.T2, false, () -> alloy_smelter_2,
+						() -> alloy_smelter_2_light));
+		register(registry,
+				alloy_smelter_2_light = new BlockTieredMachineLightable("alloy_smelter", GuiElementLoader.ALLOY_SMELTER,
+						t -> new TEAlloySmelter(t), Tier.T2, true, () -> alloy_smelter_2, () -> alloy_smelter_2_light));
+		register(registry,
+				alloy_smelter_3 = new BlockTieredMachineLightable("alloy_smelter", GuiElementLoader.ALLOY_SMELTER,
+						t -> new TEAlloySmelter(t), Tier.T3, false, () -> alloy_smelter_3,
+						() -> alloy_smelter_3_light));
+		register(registry,
+				alloy_smelter_3_light = new BlockTieredMachineLightable("alloy_smelter", GuiElementLoader.ALLOY_SMELTER,
+						t -> new TEAlloySmelter(t), Tier.T3, true, () -> alloy_smelter_3, () -> alloy_smelter_3_light));
+
+		register(registry, centrifuge_1 = new BlockTieredMachineLightable("centrifuge", GuiElementLoader.CENTRIFUGE,
+				t -> new TECentrifuge(t), Tier.T1, false, () -> centrifuge_1, () -> centrifuge_1_light));
+		register(registry,
+				centrifuge_1_light = new BlockTieredMachineLightable("centrifuge", GuiElementLoader.CENTRIFUGE,
+						t -> new TECentrifuge(t), Tier.T1, true, () -> centrifuge_1, () -> centrifuge_1_light));
+		register(registry, centrifuge_2 = new BlockTieredMachineLightable("centrifuge", GuiElementLoader.CENTRIFUGE,
+				t -> new TECentrifuge(t), Tier.T2, false, () -> centrifuge_2, () -> centrifuge_2_light));
+		register(registry,
+				centrifuge_2_light = new BlockTieredMachineLightable("centrifuge", GuiElementLoader.CENTRIFUGE,
+						t -> new TECentrifuge(t), Tier.T2, true, () -> centrifuge_2, () -> centrifuge_2_light));
+		register(registry, centrifuge_3 = new BlockTieredMachineLightable("centrifuge", GuiElementLoader.CENTRIFUGE,
+				t -> new TECentrifuge(t), Tier.T3, false, () -> centrifuge_3, () -> centrifuge_3_light));
+		register(registry,
+				centrifuge_3_light = new BlockTieredMachineLightable("centrifuge", GuiElementLoader.CENTRIFUGE,
+						t -> new TECentrifuge(t), Tier.T3, true, () -> centrifuge_3, () -> centrifuge_3_light));
 
 		register(registry, construct_block = new BlockConstructBlock());
 		register(registry, construct_block_all = new BlockConstructBlockAll());
@@ -144,11 +190,8 @@ public class BlockLoader {
 
 		registerItem(registry, grinder);
 		registerItem(registry, elec_furnace);
-		registerItem(registry, alloy_smelter);
-		registerItem(registry, centrifuge);
 		registerItem(registry, node);
 		registerItem(registry, crystallizer);
-		registerItem(registry, boiler);
 		registerItem(registry, lathe);
 		registerItem(registry, forming_press);
 		registerItem(registry, pump);
@@ -156,9 +199,18 @@ public class BlockLoader {
 		registerItem(registry, drainer_1);
 		registerItem(registry, drainer_2);
 		registerItem(registry, drainer_3);
+		registerItem(registry, boiler_1);
+		registerItem(registry, boiler_2);
+		registerItem(registry, boiler_3);
 		registerItem(registry, capacitor_1);
 		registerItem(registry, capacitor_2);
 		registerItem(registry, capacitor_3);
+		registerItem(registry, alloy_smelter_1);
+		registerItem(registry, alloy_smelter_2);
+		registerItem(registry, alloy_smelter_3);
+		registerItem(registry, centrifuge_1);
+		registerItem(registry, centrifuge_2);
+		registerItem(registry, centrifuge_3);
 
 		registerItem(registry, ItemLoader.construct_block = new ItemConstructBlock());
 		registerItem(registry, cluster_operation_module);

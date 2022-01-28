@@ -26,7 +26,7 @@ public class RecipeCategoryCentrifuge implements IRecipeCategory<RecipeWrapperCe
 				IDrawableAnimated.StartDirection.LEFT, false);
 		energy = helper.drawableBuilder(GuiContainerCentrifuge.TEXTURE, 176, 0, 14, 14).buildAnimated(100,
 				IDrawableAnimated.StartDirection.TOP, true);
-		icon = helper.createDrawableIngredient(new ItemStack(BlockLoader.centrifuge));
+		icon = helper.createDrawableIngredient(new ItemStack(BlockLoader.centrifuge_1));
 	}
 
 	@Override

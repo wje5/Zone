@@ -57,7 +57,7 @@ public class ContainerAlloySmelter extends Container {
 		super.detectAndSendChanges();
 		tick = tileEntity.getTick();
 		totalTick = tileEntity.getTotalTick();
-		energyTick = tileEntity.getEnergyTick();
+//		energyTick = tileEntity.getEnergyTick();
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 0, tick);
 			i.sendWindowProperty(this, 1, totalTick);

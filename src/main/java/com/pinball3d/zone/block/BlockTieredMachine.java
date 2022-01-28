@@ -38,8 +38,8 @@ public class BlockTieredMachine extends BlockContainer {
 		this.gui = gui;
 		this.createTE = createTE;
 		this.tier = tier;
-		setHardness(5.0F);
-		setResistance(10.0F);
+		setHardness(tier.getHardness());
+		setResistance(tier.getResistance());
 		if (!hasCustomName) {
 			setRegistryName("zone:" + name + tier.getTier());
 		}
@@ -64,7 +64,7 @@ public class BlockTieredMachine extends BlockContainer {
 				IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
 				if (handler != null) {
 					for (int i = handler.getSlots() - 1; i >= 0; --i) {
-						if (handler.getStackInSlot(i) != null) {
+						if (!handler.getStackInSlot(i).isEmpty()) {
 							Block.spawnAsEntity(worldIn, pos, handler.getStackInSlot(i));
 							((IItemHandlerModifiable) handler).setStackInSlot(i, ItemStack.EMPTY);
 						}

@@ -32,9 +32,7 @@ public class ZoneMachineNew extends TileEntity implements ITickable {
 						TileEntity te = world.getTileEntity(getPos().offset(facing));
 						if (te != null && te.hasCapability(CapabilityEnergy.ENERGY, facing)) {
 							IEnergyStorage s = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
-							System.out.println(amount);
 							amount = s.receiveEnergy(amount, false);
-							System.out.println(amount + "|");
 							energy.extractEnergy(amount, false);
 						}
 					}
