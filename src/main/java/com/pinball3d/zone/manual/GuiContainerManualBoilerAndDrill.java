@@ -3,7 +3,6 @@ package com.pinball3d.zone.manual;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.inventory.GuiElementLoader;
-import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.manual.component.BlockShow;
 
 import net.minecraft.item.ItemStack;
@@ -19,7 +18,7 @@ public class GuiContainerManualBoilerAndDrill extends GuiContainerManualBase {
 		int x = width / 2 - 146;
 		int y = height / 2 - 90;
 		components.add(new BlockShow(this, x + 40, y + 30, 4F, new ItemStack(BlockLoader.boiler)));
-		components.add(new BlockShow(this, x + 186, y + 30, 4F, new ItemStack(ItemLoader.drill_empty)));
+//		components.add(new BlockShow(this, x + 186, y + 30, 4F, new ItemStack(ItemLoader.drill_empty)));
 	}
 
 	@Override

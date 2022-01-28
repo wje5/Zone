@@ -17,9 +17,6 @@ public class TileEntityLoader {
 		registerTileEntity(TETransmissionModule.class, "TransmissionModule");
 		registerTileEntity(TEStorageChest.class, "TEStorageChest");
 		registerTileEntity(TEIOPanel.class, "TEIOPanel");
-		registerTileEntity(TECrucible.class, "TECrucible");
-		registerTileEntity(TEBurningBox.class, "TEBurningBox");
-		registerTileEntity(TECastingTable.class, "TECastingTable");
 		registerTileEntity(TEBoiler.class, "TEBoiler");
 		registerTileEntity(TELathe.class, "TELathe");
 		registerTileEntity(TEFormingPress.class, "TEFormingPress");

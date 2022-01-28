@@ -1,18 +1,20 @@
 package com.pinball3d.zone.tileentity;
 
+import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.SoundUtil;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.CapabilityItemHandler;
 
-public class TEDrainer extends ZoneMachine {
+public class TEDrainer extends ZoneTieredMachine {
 	protected int tick;
 
 	public TEDrainer() {
-		super(1);
+		super();
+	}
+
+	public TEDrainer(Tier tier) {
+		super(tier, 8000);
 	}
 
 	@Override
@@ -20,45 +22,22 @@ public class TEDrainer extends ZoneMachine {
 		super.update();
 		tick++;
 		if (world.isRemote) {
-			if (tick % 200 == 0) {
+			if (tick % 200 == 0 && !ConfigLoader.disableMachineSound) {
 				world.playSound(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F,
 						SoundUtil.getSoundEventFromId(1), SoundCategory.BLOCKS, 1.0F, 1.0F, false);
 			}
 			return;
 		}
-		if (tick >= 1200) {
-			tick -= 1200;
-			addEnergy(1);
-		}
+		energy.receiveEnergy(10 * getTier().getMultiple(), false);
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability) && facing == EnumFacing.DOWN) {
-			return true;
-		}
-		return super.hasCapability(capability, facing);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability) && facing == EnumFacing.DOWN) {
-			return (T) energy;
-		}
-		return super.getCapability(capability, facing);
+	public boolean activeOutput(EnumFacing facing) {
+		return true;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		super.readFromNBT(compound);
-		tick = compound.getInteger("tick");
-	}
-
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		super.writeToNBT(compound);
-		compound.setInteger("tick", tick);
-		return compound;
+	public boolean canReceiveEnergy(EnumFacing facing) {
+		return false;
 	}
 }

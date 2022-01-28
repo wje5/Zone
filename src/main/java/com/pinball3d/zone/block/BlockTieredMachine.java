@@ -1,9 +1,10 @@
 package com.pinball3d.zone.block;
 
+import java.util.function.Function;
+
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.Zone;
-import com.pinball3d.zone.inventory.GuiElementLoader;
-import com.pinball3d.zone.tileentity.TEDrainer;
+import com.pinball3d.zone.tileentity.ZoneTieredMachine.Tier;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -16,19 +17,33 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class BlockDrainer extends BlockContainer {
-	public BlockDrainer() {
+public class BlockTieredMachine extends BlockContainer {
+	private int gui;
+	public final Tier tier;
+	private Function<Tier, TileEntity> createTE;
+	protected static boolean keepInventory;
+
+	public BlockTieredMachine(String name, int gui, Function<Tier, TileEntity> createTE, Tier tier) {
+		this(name, gui, createTE, tier, false);
+	}
+
+	public BlockTieredMachine(String name, int gui, Function<Tier, TileEntity> createTE, Tier tier,
+			boolean hasCustomName) {
 		super(Material.IRON);
+		this.gui = gui;
+		this.createTE = createTE;
+		this.tier = tier;
 		setHardness(5.0F);
 		setResistance(10.0F);
-		setRegistryName("zone:drainer");
-		setUnlocalizedName("drainer");
+		if (!hasCustomName) {
+			setRegistryName("zone:" + name + tier.getTier());
+		}
+		setUnlocalizedName(name + tier.getTier());
 		setCreativeTab(TabZone.tab);
 	}
 
@@ -36,28 +51,28 @@ public class BlockDrainer extends BlockContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
-			playerIn.openGui(Zone.instance, GuiElementLoader.DRAINER, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(Zone.instance, gui, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		}
 		return true;
 	}
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		TEDrainer te = (TEDrainer) worldIn.getTileEntity(pos);
-		IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-		for (int i = handler.getSlots() - 1; i >= 0; --i) {
-			if (handler.getStackInSlot(i) != null) {
-				Block.spawnAsEntity(worldIn, pos, handler.getStackInSlot(i));
-				((IItemHandlerModifiable) handler).setStackInSlot(i, ItemStack.EMPTY);
+		if (!keepInventory) {
+			TileEntity te = worldIn.getTileEntity(pos);
+			for (EnumFacing facing : EnumFacing.VALUES) {
+				IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
+				if (handler != null) {
+					for (int i = handler.getSlots() - 1; i >= 0; --i) {
+						if (handler.getStackInSlot(i) != null) {
+							Block.spawnAsEntity(worldIn, pos, handler.getStackInSlot(i));
+							((IItemHandlerModifiable) handler).setStackInSlot(i, ItemStack.EMPTY);
+						}
+					}
+				}
 			}
 		}
 		super.breakBlock(worldIn, pos, state);
-	}
-
-	@Override
-	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4.0F, true, true);
-		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
 	}
 
 	@Override
@@ -67,6 +82,6 @@ public class BlockDrainer extends BlockContainer {
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TEDrainer();
+		return createTE.apply(tier);
 	}
 }

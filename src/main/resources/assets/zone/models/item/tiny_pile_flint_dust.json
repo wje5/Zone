@@ -1,6 +1,0 @@
-{
-    "parent": "builtin/generated",
-    "textures": {
-        "layer0": "zone:items/tiny_pile_flint_dust"
-    }
-}

@@ -65,8 +65,6 @@ public class GuiElementLoader implements IGuiHandler {
 			return new ContainerCrystallizer(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case TRANSMISSION_MODULE:
 			return new ContainerTransmissionModule(player, world.getTileEntity(new BlockPos(x, y, z)));
-		case BURNING_BOX:
-			return new ContainerBurningBox(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case BOILER:
 			return new ContainerBoiler(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case LATHE:
@@ -118,9 +116,6 @@ public class GuiElementLoader implements IGuiHandler {
 		case TRANSMISSION_MODULE:
 			return new GuiContainerTransmissionModule(
 					new ContainerTransmissionModule(player, world.getTileEntity(new BlockPos(x, y, z))));
-		case BURNING_BOX:
-			return new GuiContainerBurningBox(
-					new ContainerBurningBox(player, world.getTileEntity(new BlockPos(x, y, z))));
 		case BOILER:
 			return new GuiContainerBoiler(new ContainerBoiler(player, world.getTileEntity(new BlockPos(x, y, z))));
 		case LATHE:

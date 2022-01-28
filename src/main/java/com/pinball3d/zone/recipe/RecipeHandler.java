@@ -124,7 +124,6 @@ public class RecipeHandler {
 				new ItemStack(ItemLoader.small_pile_clay_dust, 14), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, 32767),
 				new ItemStack(ItemLoader.small_pile_clay_dust, 14), 200));
-		register(new RecipeGrinder(new ItemStack(Items.FLINT), new ItemStack(ItemLoader.tiny_pile_flint_dust, 8), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.PRISMARINE),
 				new ItemStack(ItemLoader.small_pile_prismarine_dust, 14), 200));
 		register(new RecipeGrinder(new ItemStack(Blocks.PRISMARINE, 1, 1), new ItemStack(ItemLoader.prismarine_dust, 8),
@@ -195,7 +194,6 @@ public class RecipeHandler {
 		register(new RecipeLathe(new ItemStack(ItemLoader.redstone_crystal),
 				new ItemStack(ItemLoader.redstone_crystal_lens), 400));
 		register(new RecipeLathe(new ItemStack(ItemLoader.etherium, 3), new ItemStack(ItemLoader.etherium_rod), 50));
-		register(new RecipeLathe(new ItemStack(ItemLoader.etherium_rod, 3), new ItemStack(ItemLoader.drill_head), 50));
 
 		register(new RecipeFormingPress(new ItemStack(Items.IRON_INGOT), new ItemStack(Items.IRON_INGOT),
 				new ItemStack(ItemLoader.iron_plate), 50));
@@ -209,8 +207,6 @@ public class RecipeHandler {
 				new ItemStack(ItemLoader.gold_plate_riveted), 50));
 		register(new RecipeFormingPress(new ItemStack(ItemLoader.etherium_plate), new ItemStack(ItemLoader.rivet),
 				new ItemStack(ItemLoader.etherium_plate_riveted), 50));
-		register(new RecipeFormingPress(new ItemStack(ItemLoader.etherium_plate, 3),
-				new ItemStack(ItemLoader.etherium_rod, 2), new ItemStack(ItemLoader.drill_heavy_head), 50));
 	}
 
 	public static void register(Recipe recipe) {

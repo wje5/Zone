@@ -1,10 +1,13 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
-import com.pinball3d.zone.item.ItemCastingTable;
+import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.item.ItemConstructBlock;
-import com.pinball3d.zone.item.ItemCrucible;
 import com.pinball3d.zone.item.ItemLoader;
+import com.pinball3d.zone.tileentity.TEBoiler;
+import com.pinball3d.zone.tileentity.TECapacitor;
+import com.pinball3d.zone.tileentity.TEDrainer;
+import com.pinball3d.zone.tileentity.ZoneTieredMachine.Tier;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -26,11 +29,12 @@ public class BlockLoader {
 			clarity_glass_pane, etherium_frame, reinforced_glass_pane, charged_glass, charged_glass_pane, firm_glass,
 			firm_glass_pane, reinforced_stone;
 
-	public static Block drainer, grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter,
-			alloy_smelter_light, centrifuge, centrifuge_light, node, crystallizer, crystallizer_light, crucible,
-			burning_box, burning_box_light, casting_table, boiler, boiler_light, lathe, lathe_light, forming_press,
-			forming_press_light, pump, pump_light, capacitor;
+	public static Block grinder, grinder_light, elec_furnace, elec_furnace_light, alloy_smelter, alloy_smelter_light,
+			centrifuge, centrifuge_light, node, crystallizer, crystallizer_light, crucible, burning_box,
+			burning_box_light, casting_table, boiler, boiler_light, lathe, lathe_light, forming_press,
+			forming_press_light, pump, pump_light;
 
+	public static Block drainer_1, drainer_2, drainer_3, capacitor_1, capacitor_2, capacitor_3;
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module,
 			beacon_amplifier_matrix, beacon_core, powered_piston, powered_piston_sticky, powered_piston_moving,
@@ -54,7 +58,7 @@ public class BlockLoader {
 		register(registry, firm_glass = new BlockFirmGlass());
 		register(registry, firm_glass_pane = new BlockFirmGlassPane());
 		register(registry, reinforced_stone = new BlockReinforcedStone());
-		register(registry, drainer = new BlockDrainer());
+
 		register(registry, grinder = new BlockGrinder(false));
 		register(registry, grinder_light = new BlockGrinder(true));
 		register(registry, elec_furnace = new BlockElecFurnace(false));
@@ -66,19 +70,33 @@ public class BlockLoader {
 		register(registry, node = new BlockNode());
 		register(registry, crystallizer = new BlockCrystallizer(false));
 		register(registry, crystallizer_light = new BlockCrystallizer(true));
-		register(registry, crucible = new BlockCrucible());
-		register(registry, burning_box = new BlockBurningBox(false));
-		register(registry, burning_box_light = new BlockBurningBox(true));
-		register(registry, casting_table = new BlockCastingTable());
-		register(registry, boiler = new BlockBoiler(false));
-		register(registry, boiler_light = new BlockBoiler(true));
+//		register(registry, boiler = new BlockBoiler(false));
+//		register(registry, boiler_light = new BlockBoiler(true));
+		register(registry, boiler = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
+				t -> new TEBoiler(t), Tier.T1, false, () -> boiler, () -> boiler_light));
+		register(registry, boiler_light = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
+				t -> new TEBoiler(t), Tier.T1, true, () -> boiler, () -> boiler_light));
+
 		register(registry, lathe = new BlockLathe(false));
 		register(registry, lathe_light = new BlockLathe(true));
 		register(registry, forming_press = new BlockFormingPress(false));
 		register(registry, forming_press_light = new BlockFormingPress(true));
 		register(registry, pump = new BlockPump(false));
 		register(registry, pump_light = new BlockPump(true));
-		register(registry, capacitor = new BlockCapacitor());
+
+		register(registry, drainer_1 = new BlockTieredMachine("drainer", GuiElementLoader.DRAINER,
+				t -> new TEDrainer(t), Tier.T1));
+		register(registry, drainer_2 = new BlockTieredMachine("drainer", GuiElementLoader.DRAINER,
+				t -> new TEDrainer(t), Tier.T2));
+		register(registry, drainer_3 = new BlockTieredMachine("drainer", GuiElementLoader.DRAINER,
+				t -> new TEDrainer(t), Tier.T3));
+
+		register(registry, capacitor_1 = new BlockTieredMachine("capacitor", GuiElementLoader.DRAINER, // TODO GUI
+				t -> new TECapacitor(t), Tier.T1));
+		register(registry, capacitor_2 = new BlockTieredMachine("capacitor", GuiElementLoader.DRAINER,
+				t -> new TECapacitor(t), Tier.T2));
+		register(registry, capacitor_3 = new BlockTieredMachine("capacitor", GuiElementLoader.DRAINER,
+				t -> new TECapacitor(t), Tier.T3));
 
 		register(registry, construct_block = new BlockConstructBlock());
 		register(registry, construct_block_all = new BlockConstructBlockAll());
@@ -123,21 +141,24 @@ public class BlockLoader {
 		registerItem(registry, firm_glass);
 		registerItem(registry, firm_glass_pane);
 		registerItem(registry, reinforced_stone);
-		registerItem(registry, drainer);
+
 		registerItem(registry, grinder);
 		registerItem(registry, elec_furnace);
 		registerItem(registry, alloy_smelter);
 		registerItem(registry, centrifuge);
 		registerItem(registry, node);
 		registerItem(registry, crystallizer);
-		registerItem(registry, ItemLoader.crucible = new ItemCrucible());
-		registerItem(registry, burning_box);
-		registerItem(registry, ItemLoader.casting_table = new ItemCastingTable());
 		registerItem(registry, boiler);
 		registerItem(registry, lathe);
 		registerItem(registry, forming_press);
 		registerItem(registry, pump);
-		registerItem(registry, capacitor);
+
+		registerItem(registry, drainer_1);
+		registerItem(registry, drainer_2);
+		registerItem(registry, drainer_3);
+		registerItem(registry, capacitor_1);
+		registerItem(registry, capacitor_2);
+		registerItem(registry, capacitor_3);
 
 		registerItem(registry, ItemLoader.construct_block = new ItemConstructBlock());
 		registerItem(registry, cluster_operation_module);

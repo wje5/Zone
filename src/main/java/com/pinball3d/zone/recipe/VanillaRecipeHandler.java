@@ -7,7 +7,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.registries.GameData;
 
 public class VanillaRecipeHandler {
 	public static void init() {
@@ -22,11 +21,5 @@ public class VanillaRecipeHandler {
 		GameRegistry.addSmelting(new ItemStack(ItemLoader.etherium_dust), new ItemStack(ItemLoader.etherium), 0.5F);
 		GameRegistry.addSmelting(new ItemStack(ItemLoader.clarity_glass_dust), new ItemStack(BlockLoader.clarity_glass),
 				0.1F);
-		GameRegistry.addSmelting(new ItemStack(ItemLoader.sagger), new ItemStack(ItemLoader.fire_brick), 0.5F);
-		GameRegistry.addSmelting(new ItemStack(ItemLoader.clay_mold), new ItemStack(ItemLoader.ceramic_mold), 0.5F);
-		GameData.register_impl(new RecipeDrillTear());
-		GameData.register_impl(new RecipeDrillHeavyTear());
-		GameData.register_impl(new RecipeDrillInstall());
-		GameData.register_impl(new RecipeDrillHeavyInstall());
 	}
 }
