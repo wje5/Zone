@@ -27,6 +27,11 @@ public class ItemLoader {
 			amplify_unit, network_adapter, interference_crystal, half_interference_unit, redstone_crystal_lens, tar,
 			paddle, impeller, energy_grid;
 
+	//233
+	public static Item basic_circuit_board, iron_impeller, motor, cable_cutters, iron_rivet, iron_rod, steel_plate,
+			steel_ingot, garton_metal_plate, garton_metal_ingot, steel_nugget, steel_rivet, garton_metal_nugget,
+			garton_metal_rivet, steel_rod, garton_metal_rod, gold_wire;
+
 	public static Item energy, construct_block, fc, manual, crucible, casting_table, hybrid_fuel, pipette;
 
 	public static Item crushed_iron_ore, crushed_gold_ore, crushed_diamond_ore, crushed_emerald_ore,
@@ -165,6 +170,27 @@ public class ItemLoader {
 		register(registry, truss_x = new ZoneItem("truss_x").setCreativeTab(null));
 		register(registry, truss_z = new ZoneItem("truss_z").setCreativeTab(null));
 		register(registry, processing_center_light = new ZoneItem("processing_center_light").setCreativeTab(null));
+
+		//233
+		register(registry, basic_circuit_board = new ZoneItem("basic_circuit_board"));
+		register(registry, iron_impeller = new ZoneItem("iron_impeller"));
+		register(registry, motor = new ZoneItem("motor"));
+		register(registry, cable_cutters = new ZoneItem("cable_cutters"));
+		register(registry, iron_rivet = new ZoneItem("iron_rivet"));
+		register(registry, iron_rod = new ZoneItem("iron_rod"));
+		register(registry, steel_ingot = new ZoneItem("steel_ingot"));
+		register(registry, steel_plate = new ZoneItem("steel_plate"));
+//		register(registry, iron_nugget = new ZoneItem("iron_nugget"));
+		register(registry, garton_metal_plate = new ZoneItem("garton_metal_plate"));
+		register(registry, garton_metal_ingot = new ZoneItem("garton_metal_ingot"));
+		register(registry, steel_nugget = new ZoneItem("steel_nugget"));
+		register(registry, steel_rivet = new ZoneItem("steel_rivet"));
+		register(registry, garton_metal_nugget = new ZoneItem("garton_metal_nugget"));
+		register(registry, garton_metal_rivet = new ZoneItem("garton_metal_rivet"));
+		register(registry, steel_rod = new ZoneItem("steel_rod"));
+		register(registry, garton_metal_rod = new ZoneItem("garton_metal_rod"));
+		register(registry, gold_wire = new ZoneItem("gold_wire"));
+
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 //			ModelLoader.setCustomModelResourceLocation(terminal, 0,
 //					new ModelResourceLocation("zone:terminal", "inventory"));

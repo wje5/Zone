@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "YY ",
+    "#*Y",
+    "  X"
+  ],
+  "key": {
+    "Y": {
+      "item": "zone:iron_plate"
+    },
+    "X": {
+      "item": "zone:basic_circuit_board"
+    },
+    "#": {
+      "item": "zone:iron_impeller"
+    },
+    "*": {
+      "item": "zone:motor"
+    }
+  },
+  "result": {
+    "item": "zone:pipette"
+  }
+}
