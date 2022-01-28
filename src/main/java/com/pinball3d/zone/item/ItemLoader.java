@@ -28,9 +28,9 @@ public class ItemLoader {
 			paddle, impeller, energy_grid;
 
 	//233
-	public static Item basic_circuit_board, iron_impeller, motor, cable_cutters, iron_nails, iron_pole, steel_plate,
-			steel_ingot, iron_grain, garton_metal_plate, garton_metal_ingot, steel_grain, steel_nails, garton_metal_grain,
-			garton_metal_nails, steel_pole, garton_metal_pole, gold_wire;
+	public static Item basic_circuit_board, iron_impeller, motor, cable_cutters, iron_rivet, iron_rod, steel_plate,
+			steel_ingot, iron_grain, garton_metal_plate, garton_metal_ingot, steel_grain, steel_rivet, garton_metal_grain,
+			garton_metal_rivet, steel_rod, garton_metal_rod, gold_wire;
 
 	public static Item energy, construct_block, fc, manual, crucible, casting_table, hybrid_fuel, pipette;
 
@@ -176,19 +176,19 @@ public class ItemLoader {
 		register(registry, iron_impeller = new ZoneItem("iron_impeller"));
 		register(registry, motor = new ZoneItem("motor"));
 		register(registry, cable_cutters = new ZoneItem("cable_cutters"));
-		register(registry, iron_nails = new ZoneItem("iron_nails"));
-		register(registry, iron_pole = new ZoneItem("iron_pole"));
+		register(registry, iron_rivet = new ZoneItem("iron_rivet"));
+		register(registry, iron_rod = new ZoneItem("iron_rod"));
 		register(registry, steel_ingot = new ZoneItem("steel_ingot"));
 		register(registry, steel_plate = new ZoneItem("steel_plate"));
 		register(registry, iron_grain = new ZoneItem("iron_grain"));
 		register(registry, garton_metal_plate = new ZoneItem("garton_metal_plate"));
 		register(registry, garton_metal_ingot = new ZoneItem("garton_metal_ingot"));
 		register(registry, steel_grain = new ZoneItem("steel_grain"));
-		register(registry, steel_nails = new ZoneItem("steel_nails"));
+		register(registry, steel_rivet = new ZoneItem("steel_rivet"));
 		register(registry, garton_metal_grain = new ZoneItem("garton_metal_grain"));
-		register(registry, garton_metal_nails = new ZoneItem("garton_metal_nails"));
-		register(registry, steel_pole = new ZoneItem("steel_pole"));
-		register(registry, garton_metal_pole = new ZoneItem("garton_metal_pole"));
+		register(registry, garton_metal_rivet = new ZoneItem("garton_metal_rivet"));
+		register(registry, steel_rod = new ZoneItem("steel_rod"));
+		register(registry, garton_metal_rod = new ZoneItem("garton_metal_rod"));
 		register(registry, gold_wire = new ZoneItem("gold_wire"));
 
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {

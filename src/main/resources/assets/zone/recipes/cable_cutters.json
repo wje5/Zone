@@ -10,10 +10,10 @@
       "item": "zone:iron_plate"
     },
     "X": {
-      "item": "zone:iron_nails"
+      "item": "zone:iron_rivets"
     },
     "Z": {
-      "item": "zone:iron_pole"
+      "item": "zone:iron_rod"
     },
     "#": {
       "item": "zone:hammer",
