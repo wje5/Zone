@@ -44,6 +44,24 @@ item.paddle.name=Paddle
 item.impeller.name=Impeller
 item.energy_grid.name=Energy Grid
 
+item.basic_circuit_board.name=Basic Circuit Board
+item.iron_impeller.name=Iron Impeller
+item.motor.name=Motor
+item.cable_cutters.name=Cable Cutters
+item.iron_rivet.name=Iron Rivet
+item.iron_rod.name=Iron Rod
+item.steel_ingot.name=Steel Ingot
+item.steel_plate.name=Steel Plate
+item.garton_metal_plate.name=Garton Metal Plate
+item.garton_metal_ingot.name=Garton Metal Ingot
+item.steel_nugget.name=Steel Nugget
+item.steel_rivet.name=Steel Rivet
+item.garton_metal_nugget.name=Garton Metal Nugget
+item.garton_metal_rivet.name=Garton Metal Rivet
+item.steel_rod.name=Steel Rod
+item.garton_metal_rod.name=Garton Metal Rod
+item.gold_wire.name=Gold Wire
+
 item.energy.name=Energy
 item.construct_block.name=Construct Block
 item.fc.name=FC
