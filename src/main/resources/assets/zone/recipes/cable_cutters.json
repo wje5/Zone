@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "YXY",
+    "#Y*",
+    "ZXZ"
+  ],
+  "key": {
+    "Y": {
+      "item": "zone:iron_plate"
+    },
+    "X": {
+      "item": "zone:iron_nails"
+    },
+    "Z": {
+      "item": "zone:iron_pole"
+    },
+    "#": {
+      "item": "zone:hammer",
+      "data":32767
+    },
+    "*": {
+      "item": "zone:file",
+      "data": 32767
+    }
+  },
+  "result": {
+    "item": "zone:cable_cutters"
+  }
+}

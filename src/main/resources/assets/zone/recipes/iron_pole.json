@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "Y  ",
+    " X ",
+    ""
+  ],
+  "key": {
+    "Y": {
+      "item": "zone:file",
+      "data": 32767
+    },
+    "X": {
+      "item": "zone:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "zone:iron_pole"
+  }
+}

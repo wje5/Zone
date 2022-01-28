@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#",
+    "*",
+    "*"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:hammer",
+      "data":32767
+    },
+    "*": {
+      "item": "zone:garton_metal_ingot"
+    }
+  },
+  "result": {
+    "item": "zone:garton_metal_plate"
+  }
+}
