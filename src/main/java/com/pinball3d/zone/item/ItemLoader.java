@@ -30,7 +30,7 @@ public class ItemLoader {
 	//233
 	public static Item basic_circuit_board, iron_impeller, motor, cable_cutters, iron_rivet, iron_rod, steel_plate,
 			steel_ingot, garton_metal_plate, garton_metal_ingot, steel_nugget, steel_rivet, garton_metal_nugget,
-			garton_metal_rivet, steel_rod, garton_metal_rod, gold_wire;
+			garton_metal_rivet, steel_rod, garton_metal_rod, gold_wire, etherium_wire, glass_fibre, energy_glass_plate;
 
 	public static Item energy, construct_block, fc, manual, crucible, casting_table, hybrid_fuel, pipette;
 
@@ -190,6 +190,9 @@ public class ItemLoader {
 		register(registry, steel_rod = new ZoneItem("steel_rod"));
 		register(registry, garton_metal_rod = new ZoneItem("garton_metal_rod"));
 		register(registry, gold_wire = new ZoneItem("gold_wire"));
+		register(registry, etherium_wire = new ZoneItem("etherium_wire"));
+		register(registry, glass_fibre = new ZoneItem("glass_fibre"));
+		register(registry, energy_glass_plate = new ZoneItem("energy_glass_plate"));
 
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 //			ModelLoader.setCustomModelResourceLocation(terminal, 0,
