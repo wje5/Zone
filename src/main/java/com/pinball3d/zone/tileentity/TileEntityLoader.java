@@ -6,26 +6,28 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class TileEntityLoader {
 	public static void init() {
+
+		registerTileEntity(TEProcessingCenter.class, "ProcessingCenter");
+		registerTileEntity(TENode.class, "Node");
+		registerTileEntity(TETransmissionModule.class, "TransmissionModule");
+		registerTileEntity(TEStorageChest.class, "StorageChest");
+		registerTileEntity(TEBeaconCore.class, "BeaconCore");
+		registerTileEntity(TEPoweredPiston.class, "PoweredPiston");
+		registerTileEntity(TETerminal.class, "Terminal");
+
 		registerTileEntity(TEDrainer.class, "Drainer");
-		registerTileEntity(TEGrinder.class, "Grinder");
-		registerTileEntity(TEElecFurnace.class, "ElecFurnace");
+		registerTileEntity(TEBoiler.class, "Boiler");
+		registerTileEntity(TECapacitor.class, "Capacitor");
 		registerTileEntity(TEAlloySmelter.class, "AlloySmelter");
 		registerTileEntity(TECentrifuge.class, "Centrifuge");
-		registerTileEntity(TENode.class, "Node");
+		registerTileEntity(TECharger.class, "Charger");
 		registerTileEntity(TECrystallizer.class, "Crystallizer");
-		registerTileEntity(TEProcessingCenter.class, "ProcessingCenter");
-		registerTileEntity(TETransmissionModule.class, "TransmissionModule");
-		registerTileEntity(TEStorageChest.class, "TEStorageChest");
-		registerTileEntity(TEIOPanel.class, "TEIOPanel");
-		registerTileEntity(TEBoiler.class, "TEBoiler");
-		registerTileEntity(TELathe.class, "TELathe");
-		registerTileEntity(TEFormingPress.class, "TEFormingPress");
+		registerTileEntity(TEElecFurnace.class, "ElecFurnace");
+		registerTileEntity(TEExtruder.class, "Extruder");
+		registerTileEntity(TEFormingPress.class, "FormingPress");
+		registerTileEntity(TEGrinder.class, "Grinder");
 		registerTileEntity(TEPump.class, "TEPump");
-		registerTileEntity(TEBeaconCore.class, "TEBeaconCore");
-		registerTileEntity(TEPoweredPiston.class, "TEPoweredPiston");
-		registerTileEntity(TETerminal.class, "TETerminal");
-
-		registerTileEntity(TECapacitor.class, "TECapacitor");
+		// MINER
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

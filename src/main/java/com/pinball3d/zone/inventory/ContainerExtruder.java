@@ -1,7 +1,7 @@
 package com.pinball3d.zone.inventory;
 
 import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.tileentity.TEElecFurnace;
+import com.pinball3d.zone.tileentity.TEExtruder;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -16,13 +16,13 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ContainerElecFurnace extends Container {
+public class ContainerExtruder extends Container {
 	private IItemHandler energy, input, output;
-	private int tick, energyTick;
-	protected TEElecFurnace tileEntity;
+	private int tick, totalTick, energyTick;
+	protected TEExtruder tileEntity;
 
-	public ContainerElecFurnace(EntityPlayer player, TileEntity tileEntity) {
-		this.tileEntity = (TEElecFurnace) tileEntity;
+	public ContainerExtruder(EntityPlayer player, TileEntity tileEntity) {
+		this.tileEntity = (TEExtruder) tileEntity;
 		energy = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
 		input = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 		output = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
@@ -54,10 +54,12 @@ public class ContainerElecFurnace extends Container {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 		tick = tileEntity.getTick();
+		totalTick = tileEntity.getTotalTick();
 //		energyTick = tileEntity.getEnergyTick();
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 0, tick);
-			i.sendWindowProperty(this, 1, energyTick);
+			i.sendWindowProperty(this, 1, totalTick);
+			i.sendWindowProperty(this, 2, energyTick);
 		}
 	}
 
@@ -70,6 +72,9 @@ public class ContainerElecFurnace extends Container {
 			tick = data;
 			break;
 		case 1:
+			totalTick = data;
+			break;
+		case 2:
 			energyTick = data;
 			break;
 		}
@@ -90,7 +95,7 @@ public class ContainerElecFurnace extends Container {
 			if (!isMerged) {
 				isMerged = mergeItemStack(newStack, 30, 39, false);
 			}
-		} else if (index >= 30) {
+		} else if (index >= 30 && index < 39) {
 			isMerged = mergeItemStack(newStack, 0, 2, false);
 			if (!isMerged) {
 				isMerged = mergeItemStack(newStack, 4, 30, false);
@@ -110,6 +115,10 @@ public class ContainerElecFurnace extends Container {
 
 	public int getTick() {
 		return tick;
+	}
+
+	public int getTotalTick() {
+		return totalTick;
 	}
 
 	public int getEnergyTick() {

@@ -41,7 +41,6 @@ public class TEAlloySmelter extends ZoneTieredMachine {
 		boolean flag = tick > 0;
 		int work = getTier().getMultiple();
 		while (work > 0) {
-			System.out.println(work);
 			if (tick > 0) {
 				int m = Math.min(work, tick);
 				if (energy.extractEnergy(m * 20, false) < m * 20) {
@@ -71,6 +70,8 @@ public class TEAlloySmelter extends ZoneTieredMachine {
 									new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
 											pos.getZ() + 0.5F, 16));
 						}
+					} else {
+						break;
 					}
 				} else {
 					break;
@@ -80,7 +81,6 @@ public class TEAlloySmelter extends ZoneTieredMachine {
 		if (tick > 0 != flag) {
 			BlockTieredMachineLightable.setState(tick > 0, world, pos);
 		}
-		System.out.println(work + "end");
 	}
 
 	public int getTick() {

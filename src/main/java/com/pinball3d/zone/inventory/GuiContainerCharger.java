@@ -8,12 +8,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiContainerLathe extends GuiContainer {
+public class GuiContainerCharger extends GuiContainer {
 	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/grinder.png");
 
-	protected ContainerLathe container;
+	protected ContainerCharger container;
 
-	public GuiContainerLathe(ContainerLathe container) {
+	public GuiContainerCharger(ContainerCharger container) {
 		super(container);
 		this.container = container;
 		xSize = 176;
@@ -36,7 +36,7 @@ public class GuiContainerLathe extends GuiContainer {
 			this.drawTexturedModalRect(offsetX + 79, offsetY + 34, 176, 14, textureWidth, 17);
 		}
 		if (container.getEnergyTick() > 0) {
-			int textureHeight = (int) Math.ceil(14F * container.getEnergyTick() / 50F);
+			int textureHeight = (int) Math.ceil(14F * container.getEnergyTick() / 100F);
 			this.drawTexturedModalRect(offsetX + 57, offsetY + 50 - textureHeight, 176, 14 - textureHeight, 14,
 					textureHeight);
 		}
@@ -51,7 +51,7 @@ public class GuiContainerLathe extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		String title = I18n.format("container.lathe");
+		String title = I18n.format("container.charger");
 		fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
 	}
 }

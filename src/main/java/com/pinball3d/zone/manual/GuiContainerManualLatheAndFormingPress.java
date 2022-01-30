@@ -1,11 +1,7 @@
 package com.pinball3d.zone.manual;
 
 import com.pinball3d.zone.Zone;
-import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.inventory.GuiElementLoader;
-import com.pinball3d.zone.manual.component.BlockShow;
-
-import net.minecraft.item.ItemStack;
 
 public class GuiContainerManualLatheAndFormingPress extends GuiContainerManualBase {
 	public GuiContainerManualLatheAndFormingPress(ContainerManual container) {
@@ -17,8 +13,8 @@ public class GuiContainerManualLatheAndFormingPress extends GuiContainerManualBa
 		super.addComponents();
 		int x = width / 2 - 146;
 		int y = height / 2 - 90;
-		components.add(new BlockShow(this, x + 40, y + 30, 4F, new ItemStack(BlockLoader.lathe)));
-		components.add(new BlockShow(this, x + 186, y + 30, 4F, new ItemStack(BlockLoader.forming_press)));
+//		components.add(new BlockShow(this, x + 40, y + 30, 4F, new ItemStack(BlockLoader.lathe)));
+//		components.add(new BlockShow(this, x + 186, y + 30, 4F, new ItemStack(BlockLoader.forming_press)));
 	}
 
 	@Override

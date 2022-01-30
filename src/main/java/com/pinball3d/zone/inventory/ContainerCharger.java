@@ -1,7 +1,7 @@
 package com.pinball3d.zone.inventory;
 
 import com.pinball3d.zone.item.ItemLoader;
-import com.pinball3d.zone.tileentity.TELathe;
+import com.pinball3d.zone.tileentity.TECharger;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -16,13 +16,13 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ContainerLathe extends Container {
+public class ContainerCharger extends Container {
 	private IItemHandler energy, input, output;
 	private int tick, totalTick, energyTick;
-	protected TELathe tileEntity;
+	protected TECharger tileEntity;
 
-	public ContainerLathe(EntityPlayer player, TileEntity tileEntity) {
-		this.tileEntity = (TELathe) tileEntity;
+	public ContainerCharger(EntityPlayer player, TileEntity tileEntity) {
+		this.tileEntity = (TECharger) tileEntity;
 		energy = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
 		input = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 		output = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
@@ -55,7 +55,7 @@ public class ContainerLathe extends Container {
 		super.detectAndSendChanges();
 		tick = tileEntity.getTick();
 		totalTick = tileEntity.getTotalTick();
-		energyTick = tileEntity.getEnergyTick();
+//		energyTick = tileEntity.getEnergyTick();
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 0, tick);
 			i.sendWindowProperty(this, 1, totalTick);

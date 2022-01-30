@@ -1,7 +1,7 @@
 package com.pinball3d.zone.jei;
 
 import com.pinball3d.zone.block.BlockLoader;
-import com.pinball3d.zone.inventory.GuiContainerCrystallizer;
+import com.pinball3d.zone.inventory.GuiContainerCharger;
 
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -14,29 +14,29 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
-public class RecipeCategoryCrystallizer implements IRecipeCategory<RecipeWrapperCrystallizer> {
+public class RecipeCategoryCharger implements IRecipeCategory<RecipeWrapperCharger> {
 	private final IDrawable icon;
 	private final IDrawable background;
 	private final IDrawableAnimated arrow;
 	private final IDrawableAnimated energy;
 
-	public RecipeCategoryCrystallizer(IGuiHelper helper) {
-		background = helper.createDrawable(GuiContainerCrystallizer.TEXTURE, 55, 16, 82, 54);
-		arrow = helper.drawableBuilder(GuiContainerCrystallizer.TEXTURE, 176, 14, 24, 17).buildAnimated(400,
+	public RecipeCategoryCharger(IGuiHelper helper) {
+		background = helper.createDrawable(GuiContainerCharger.TEXTURE, 55, 16, 82, 54);
+		arrow = helper.drawableBuilder(GuiContainerCharger.TEXTURE, 176, 14, 24, 17).buildAnimated(400,
 				IDrawableAnimated.StartDirection.LEFT, false);
-		energy = helper.drawableBuilder(GuiContainerCrystallizer.TEXTURE, 176, 0, 14, 14).buildAnimated(100,
+		energy = helper.drawableBuilder(GuiContainerCharger.TEXTURE, 176, 0, 14, 14).buildAnimated(100,
 				IDrawableAnimated.StartDirection.TOP, true);
-		icon = helper.createDrawableIngredient(new ItemStack(BlockLoader.crystallizer_1));
+		icon = helper.createDrawableIngredient(new ItemStack(BlockLoader.charger_1));
 	}
 
 	@Override
 	public String getUid() {
-		return "zone:crystallizer";
+		return "zone:charger";
 	}
 
 	@Override
 	public String getTitle() {
-		return I18n.format("container.crystallizer");
+		return I18n.format("container.charger");
 	}
 
 	@Override
@@ -61,8 +61,7 @@ public class RecipeCategoryCrystallizer implements IRecipeCategory<RecipeWrapper
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, RecipeWrapperCrystallizer recipeWrapper,
-			IIngredients ingredients) {
+	public void setRecipe(IRecipeLayout recipeLayout, RecipeWrapperCharger recipeWrapper, IIngredients ingredients) {
 		IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
 		guiItemStacks.init(0, true, 0, 0);
 		guiItemStacks.init(1, false, 60, 18);

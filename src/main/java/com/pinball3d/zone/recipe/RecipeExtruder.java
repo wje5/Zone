@@ -7,10 +7,10 @@ import com.pinball3d.zone.recipe.RecipeHandler.Type;
 
 import net.minecraft.item.ItemStack;
 
-public class RecipeLathe extends Recipe {
+public class RecipeExtruder extends Recipe {
 	private ItemStack input, output;
 
-	public RecipeLathe(ItemStack input, ItemStack output, int time) {
+	public RecipeExtruder(ItemStack input, ItemStack output, int time) {
 		this.input = input;
 		this.output = output;
 		this.time = time;
@@ -18,7 +18,7 @@ public class RecipeLathe extends Recipe {
 
 	@Override
 	public Type getType() {
-		return Type.LATHE;
+		return Type.EXTRUDER;
 	}
 
 	@Override

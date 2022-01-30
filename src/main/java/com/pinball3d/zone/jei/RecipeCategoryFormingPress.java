@@ -26,7 +26,7 @@ public class RecipeCategoryFormingPress implements IRecipeCategory<RecipeWrapper
 				IDrawableAnimated.StartDirection.LEFT, false);
 		energy = helper.drawableBuilder(GuiContainerFormingPress.TEXTURE, 176, 0, 14, 14).buildAnimated(50,
 				IDrawableAnimated.StartDirection.TOP, true);
-		icon = helper.createDrawableIngredient(new ItemStack(BlockLoader.forming_press));
+		icon = helper.createDrawableIngredient(new ItemStack(BlockLoader.forming_press_1));
 	}
 
 	@Override

@@ -1,9 +1,19 @@
 {
-    "parent": "block/orientable",
+    "parent": "block/cube",
+    "display": {
+        "firstperson_righthand": {
+            "rotation": [ 0, 135, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 0.40, 0.40, 0.40 ]
+        }
+    },
     "textures": {
-        "top": "zone:blocks/grinder_top",
-        "front": "zone:blocks/grinder",
-        "side": "zone:blocks/iron_hull",
-        "down": "zone:blocks/iron_hull"
+        "particle": "zone:blocks/miner_front_off_1",
+        "down": "zone:blocks/miner_buttom_off_1",
+        "up": "zone:blocks/miner_top_1",
+        "north": "zone:blocks/miner_front_off_1",
+        "east": "zone:blocks/miner_left_off_1",
+        "south": "zone:blocks/miner_back_1",
+        "west": "zone:blocks/miner_right_off_1"
     }
 }

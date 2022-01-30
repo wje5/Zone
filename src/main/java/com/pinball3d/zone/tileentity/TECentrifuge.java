@@ -74,6 +74,8 @@ public class TECentrifuge extends ZoneTieredMachine {
 									new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
 											pos.getZ() + 0.5F, 16));
 						}
+					} else {
+						break;
 					}
 				} else {
 					break;

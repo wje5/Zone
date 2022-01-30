@@ -26,7 +26,7 @@ public class RecipeCategoryGrinder implements IRecipeCategory<RecipeWrapperGrind
 				IDrawableAnimated.StartDirection.LEFT, false);
 		energy = helper.drawableBuilder(GuiContainerGrinder.TEXTURE, 176, 0, 14, 14).buildAnimated(400,
 				IDrawableAnimated.StartDirection.TOP, true);
-		icon = helper.createDrawableIngredient(new ItemStack(BlockLoader.grinder));
+		icon = helper.createDrawableIngredient(new ItemStack(BlockLoader.grinder_1));
 	}
 
 	@Override

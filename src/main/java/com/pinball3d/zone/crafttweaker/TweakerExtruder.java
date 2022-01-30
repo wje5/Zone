@@ -3,9 +3,9 @@ package com.pinball3d.zone.crafttweaker;
 import java.util.Arrays;
 
 import com.pinball3d.zone.recipe.Recipe;
+import com.pinball3d.zone.recipe.RecipeExtruder;
 import com.pinball3d.zone.recipe.RecipeHandler;
 import com.pinball3d.zone.recipe.RecipeHandler.Type;
-import com.pinball3d.zone.recipe.RecipeLathe;
 
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
@@ -16,8 +16,8 @@ import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 @ZenRegister
-@ZenClass("mods.zone.lathe")
-public class TweakerLathe {
+@ZenClass("mods.zone.extruder")
+public class TweakerExtruder {
 	@ZenMethod
 	public static void addRecipe(IItemStack input, IItemStack output, int time) {
 		ItemStack i = CraftTweakerMC.getItemStack(input);
@@ -28,7 +28,7 @@ public class TweakerLathe {
 		if (o.isEmpty()) {
 			CraftTweakerAPI.logError("Output was Empty.");
 		}
-		RecipeHandler.register(new RecipeLathe(i, o, time));
+		RecipeHandler.register(new RecipeExtruder(i, o, time));
 	}
 
 	@ZenMethod
@@ -37,7 +37,7 @@ public class TweakerLathe {
 		if (i.isEmpty()) {
 			CraftTweakerAPI.logError("Input was Empty.");
 		}
-		Recipe r = RecipeHandler.getRecipe(Type.LATHE, Arrays.asList(i));
+		Recipe r = RecipeHandler.getRecipe(Type.EXTRUDER, Arrays.asList(i));
 		if (r != null) {
 			RecipeHandler.removeRecipe(r);
 		}
@@ -45,6 +45,6 @@ public class TweakerLathe {
 
 	@ZenMethod
 	public static void removeAll() {
-		RecipeHandler.removeAll(Type.LATHE);
+		RecipeHandler.removeAll(Type.EXTRUDER);
 	}
 }

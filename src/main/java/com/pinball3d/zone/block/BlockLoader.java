@@ -8,7 +8,13 @@ import com.pinball3d.zone.tileentity.TEAlloySmelter;
 import com.pinball3d.zone.tileentity.TEBoiler;
 import com.pinball3d.zone.tileentity.TECapacitor;
 import com.pinball3d.zone.tileentity.TECentrifuge;
+import com.pinball3d.zone.tileentity.TECharger;
+import com.pinball3d.zone.tileentity.TECrystallizer;
 import com.pinball3d.zone.tileentity.TEDrainer;
+import com.pinball3d.zone.tileentity.TEElecFurnace;
+import com.pinball3d.zone.tileentity.TEExtruder;
+import com.pinball3d.zone.tileentity.TEFormingPress;
+import com.pinball3d.zone.tileentity.TEGrinder;
 import com.pinball3d.zone.tileentity.ZoneTieredMachine.Tier;
 
 import net.minecraft.block.Block;
@@ -31,14 +37,19 @@ public class BlockLoader {
 			clarity_glass_pane, etherium_frame, reinforced_glass_pane, charged_glass, charged_glass_pane, firm_glass,
 			firm_glass_pane, reinforced_stone;
 
-	public static Block grinder, grinder_light, elec_furnace, elec_furnace_light, node, crystallizer,
-			crystallizer_light, crucible, burning_box, burning_box_light, casting_table, lathe, lathe_light,
-			forming_press, forming_press_light, pump, pump_light;
+	public static Block node, crucible, burning_box, burning_box_light, casting_table, pump, pump_light;
 
 	public static Block drainer_1, drainer_2, drainer_3, boiler_1, boiler_1_light, boiler_2, boiler_2_light, boiler_3,
 			boiler_3_light, capacitor_1, capacitor_2, capacitor_3, alloy_smelter_1, alloy_smelter_1_light,
 			alloy_smelter_2, alloy_smelter_2_light, alloy_smelter_3, alloy_smelter_3_light, centrifuge_1,
-			centrifuge_1_light, centrifuge_2, centrifuge_2_light, centrifuge_3, centrifuge_3_light;
+			centrifuge_1_light, centrifuge_2, centrifuge_2_light, centrifuge_3, centrifuge_3_light, charger_1,
+			charger_1_light, charger_2, charger_2_light, charger_3, charger_3_light, crystallizer_1,
+			crystallizer_1_light, crystallizer_2, crystallizer_2_light, crystallizer_3, crystallizer_3_light,
+			elec_furnace_1, elec_furnace_1_light, elec_furnace_2, elec_furnace_2_light, elec_furnace_3,
+			elec_furnace_3_light, extruder_1, extruder_1_light, extruder_2, extruder_2_light, extruder_3,
+			extruder_3_light, forming_press_1, forming_press_1_light, forming_press_2, forming_press_2_light,
+			forming_press_3, forming_press_3_light, grinder_1, grinder_1_light, grinder_2, grinder_2_light, grinder_3,
+			grinder_3_light;
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module,
@@ -64,18 +75,7 @@ public class BlockLoader {
 		register(registry, firm_glass_pane = new BlockFirmGlassPane());
 		register(registry, reinforced_stone = new BlockReinforcedStone());
 
-		register(registry, grinder = new BlockGrinder(false));
-		register(registry, grinder_light = new BlockGrinder(true));
-		register(registry, elec_furnace = new BlockElecFurnace(false));
-		register(registry, elec_furnace_light = new BlockElecFurnace(true));
 		register(registry, node = new BlockNode());
-		register(registry, crystallizer = new BlockCrystallizer(false));
-		register(registry, crystallizer_light = new BlockCrystallizer(true));
-
-		register(registry, lathe = new BlockLathe(false));
-		register(registry, lathe_light = new BlockLathe(true));
-		register(registry, forming_press = new BlockFormingPress(false));
-		register(registry, forming_press_light = new BlockFormingPress(true));
 		register(registry, pump = new BlockPump(false));
 		register(registry, pump_light = new BlockPump(true));
 
@@ -144,6 +144,105 @@ public class BlockLoader {
 				centrifuge_3_light = new BlockTieredMachineLightable("centrifuge", GuiElementLoader.CENTRIFUGE,
 						t -> new TECentrifuge(t), Tier.T3, true, () -> centrifuge_3, () -> centrifuge_3_light));
 
+		register(registry, charger_1 = new BlockTieredMachineLightable("charger", GuiElementLoader.CHARGER,
+				t -> new TECharger(t), Tier.T1, false, () -> charger_1, () -> charger_1_light));
+		register(registry, charger_1_light = new BlockTieredMachineLightable("charger", GuiElementLoader.CHARGER,
+				t -> new TECharger(t), Tier.T1, true, () -> charger_1, () -> charger_1_light));
+		register(registry, charger_2 = new BlockTieredMachineLightable("charger", GuiElementLoader.CHARGER,
+				t -> new TECharger(t), Tier.T2, false, () -> charger_2, () -> charger_2_light));
+		register(registry, charger_2_light = new BlockTieredMachineLightable("charger", GuiElementLoader.CHARGER,
+				t -> new TECharger(t), Tier.T2, true, () -> charger_2, () -> charger_2_light));
+		register(registry, charger_3 = new BlockTieredMachineLightable("charger", GuiElementLoader.CHARGER,
+				t -> new TECharger(t), Tier.T3, false, () -> charger_3, () -> charger_3_light));
+		register(registry, charger_3_light = new BlockTieredMachineLightable("charger", GuiElementLoader.CHARGER,
+				t -> new TECharger(t), Tier.T3, true, () -> charger_3, () -> charger_3_light));
+
+		register(registry,
+				crystallizer_1 = new BlockTieredMachineLightable("crystallizer", GuiElementLoader.CRYSTALLIZER,
+						t -> new TECrystallizer(t), Tier.T1, false, () -> crystallizer_1, () -> crystallizer_1_light));
+		register(registry,
+				crystallizer_1_light = new BlockTieredMachineLightable("crystallizer", GuiElementLoader.CRYSTALLIZER,
+						t -> new TECrystallizer(t), Tier.T1, true, () -> crystallizer_1, () -> crystallizer_1_light));
+		register(registry,
+				crystallizer_2 = new BlockTieredMachineLightable("crystallizer", GuiElementLoader.CRYSTALLIZER,
+						t -> new TECrystallizer(t), Tier.T2, false, () -> crystallizer_2, () -> crystallizer_2_light));
+		register(registry,
+				crystallizer_2_light = new BlockTieredMachineLightable("crystallizer", GuiElementLoader.CRYSTALLIZER,
+						t -> new TECrystallizer(t), Tier.T2, true, () -> crystallizer_2, () -> crystallizer_2_light));
+		register(registry,
+				crystallizer_3 = new BlockTieredMachineLightable("crystallizer", GuiElementLoader.CRYSTALLIZER,
+						t -> new TECrystallizer(t), Tier.T3, false, () -> crystallizer_3, () -> crystallizer_3_light));
+		register(registry,
+				crystallizer_3_light = new BlockTieredMachineLightable("crystallizer", GuiElementLoader.CRYSTALLIZER,
+						t -> new TECrystallizer(t), Tier.T3, true, () -> crystallizer_3, () -> crystallizer_3_light));
+
+		register(registry,
+				elec_furnace_1 = new BlockTieredMachineLightable("elec_furnace", GuiElementLoader.ELEC_FURNACE,
+						t -> new TEElecFurnace(t), Tier.T1, false, () -> elec_furnace_1, () -> elec_furnace_1_light));
+		register(registry,
+				elec_furnace_1_light = new BlockTieredMachineLightable("elec_furnace", GuiElementLoader.ELEC_FURNACE,
+						t -> new TEElecFurnace(t), Tier.T1, true, () -> elec_furnace_1, () -> elec_furnace_1_light));
+		register(registry,
+				elec_furnace_2 = new BlockTieredMachineLightable("elec_furnace", GuiElementLoader.ELEC_FURNACE,
+						t -> new TEElecFurnace(t), Tier.T2, false, () -> elec_furnace_2, () -> elec_furnace_2_light));
+		register(registry,
+				elec_furnace_2_light = new BlockTieredMachineLightable("elec_furnace", GuiElementLoader.ELEC_FURNACE,
+						t -> new TEElecFurnace(t), Tier.T2, true, () -> elec_furnace_2, () -> elec_furnace_2_light));
+		register(registry,
+				elec_furnace_3 = new BlockTieredMachineLightable("elec_furnace", GuiElementLoader.ELEC_FURNACE,
+						t -> new TEElecFurnace(t), Tier.T3, false, () -> elec_furnace_3, () -> elec_furnace_3_light));
+		register(registry,
+				elec_furnace_3_light = new BlockTieredMachineLightable("elec_furnace", GuiElementLoader.ELEC_FURNACE,
+						t -> new TEElecFurnace(t), Tier.T3, true, () -> elec_furnace_3, () -> elec_furnace_3_light));
+
+		register(registry, extruder_1 = new BlockTieredMachineLightable("extruder", GuiElementLoader.EXTRUDER,
+				t -> new TEExtruder(t), Tier.T1, false, () -> extruder_1, () -> extruder_1_light));
+		register(registry, extruder_1_light = new BlockTieredMachineLightable("extruder", GuiElementLoader.EXTRUDER,
+				t -> new TEExtruder(t), Tier.T1, true, () -> extruder_1, () -> extruder_1_light));
+		register(registry, extruder_2 = new BlockTieredMachineLightable("extruder", GuiElementLoader.EXTRUDER,
+				t -> new TEExtruder(t), Tier.T2, false, () -> extruder_2, () -> extruder_2_light));
+		register(registry, extruder_2_light = new BlockTieredMachineLightable("extruder", GuiElementLoader.EXTRUDER,
+				t -> new TEExtruder(t), Tier.T2, true, () -> extruder_2, () -> extruder_2_light));
+		register(registry, extruder_3 = new BlockTieredMachineLightable("extruder", GuiElementLoader.EXTRUDER,
+				t -> new TEExtruder(t), Tier.T3, false, () -> extruder_3, () -> extruder_3_light));
+		register(registry, extruder_3_light = new BlockTieredMachineLightable("extruder", GuiElementLoader.EXTRUDER,
+				t -> new TEExtruder(t), Tier.T3, true, () -> extruder_3, () -> extruder_3_light));
+
+		register(registry,
+				forming_press_1 = new BlockTieredMachineLightable("forming_press", GuiElementLoader.FORMING_PRESS,
+						t -> new TEFormingPress(t), Tier.T1, false, () -> forming_press_1,
+						() -> forming_press_1_light));
+		register(registry,
+				forming_press_1_light = new BlockTieredMachineLightable("forming_press", GuiElementLoader.FORMING_PRESS,
+						t -> new TEFormingPress(t), Tier.T1, true, () -> forming_press_1, () -> forming_press_1_light));
+		register(registry,
+				forming_press_2 = new BlockTieredMachineLightable("forming_press", GuiElementLoader.FORMING_PRESS,
+						t -> new TEFormingPress(t), Tier.T2, false, () -> forming_press_2,
+						() -> forming_press_2_light));
+		register(registry,
+				forming_press_2_light = new BlockTieredMachineLightable("forming_press", GuiElementLoader.FORMING_PRESS,
+						t -> new TEFormingPress(t), Tier.T2, true, () -> forming_press_2, () -> forming_press_2_light));
+		register(registry,
+				forming_press_3 = new BlockTieredMachineLightable("forming_press", GuiElementLoader.FORMING_PRESS,
+						t -> new TEFormingPress(t), Tier.T3, false, () -> forming_press_3,
+						() -> forming_press_3_light));
+		register(registry,
+				forming_press_3_light = new BlockTieredMachineLightable("forming_press", GuiElementLoader.FORMING_PRESS,
+						t -> new TEFormingPress(t), Tier.T3, true, () -> forming_press_3, () -> forming_press_3_light));
+
+		register(registry, grinder_1 = new BlockTieredMachineLightable("grinder", GuiElementLoader.GRINDER,
+				t -> new TEGrinder(t), Tier.T1, false, () -> grinder_1, () -> grinder_1_light));
+		register(registry, grinder_1_light = new BlockTieredMachineLightable("grinder", GuiElementLoader.GRINDER,
+				t -> new TEGrinder(t), Tier.T1, true, () -> grinder_1, () -> grinder_1_light));
+		register(registry, grinder_2 = new BlockTieredMachineLightable("grinder", GuiElementLoader.GRINDER,
+				t -> new TEGrinder(t), Tier.T2, false, () -> grinder_2, () -> grinder_2_light));
+		register(registry, grinder_2_light = new BlockTieredMachineLightable("grinder", GuiElementLoader.GRINDER,
+				t -> new TEGrinder(t), Tier.T2, true, () -> grinder_2, () -> grinder_2_light));
+		register(registry, grinder_3 = new BlockTieredMachineLightable("grinder", GuiElementLoader.GRINDER,
+				t -> new TEGrinder(t), Tier.T3, false, () -> grinder_3, () -> grinder_3_light));
+		register(registry, grinder_3_light = new BlockTieredMachineLightable("grinder", GuiElementLoader.GRINDER,
+				t -> new TEGrinder(t), Tier.T3, true, () -> grinder_3, () -> grinder_3_light));
+
 		register(registry, construct_block = new BlockConstructBlock());
 		register(registry, construct_block_all = new BlockConstructBlockAll());
 		register(registry, cluster_operation_module = new BlockClusterOperationModule());
@@ -188,12 +287,7 @@ public class BlockLoader {
 		registerItem(registry, firm_glass_pane);
 		registerItem(registry, reinforced_stone);
 
-		registerItem(registry, grinder);
-		registerItem(registry, elec_furnace);
 		registerItem(registry, node);
-		registerItem(registry, crystallizer);
-		registerItem(registry, lathe);
-		registerItem(registry, forming_press);
 		registerItem(registry, pump);
 
 		registerItem(registry, drainer_1);
@@ -211,6 +305,24 @@ public class BlockLoader {
 		registerItem(registry, centrifuge_1);
 		registerItem(registry, centrifuge_2);
 		registerItem(registry, centrifuge_3);
+		registerItem(registry, charger_1);
+		registerItem(registry, charger_2);
+		registerItem(registry, charger_3);
+		registerItem(registry, crystallizer_1);
+		registerItem(registry, crystallizer_2);
+		registerItem(registry, crystallizer_3);
+		registerItem(registry, elec_furnace_1);
+		registerItem(registry, elec_furnace_2);
+		registerItem(registry, elec_furnace_3);
+		registerItem(registry, extruder_1);
+		registerItem(registry, extruder_2);
+		registerItem(registry, extruder_3);
+		registerItem(registry, forming_press_1);
+		registerItem(registry, forming_press_2);
+		registerItem(registry, forming_press_3);
+		registerItem(registry, grinder_1);
+		registerItem(registry, grinder_2);
+		registerItem(registry, grinder_3);
 
 		registerItem(registry, ItemLoader.construct_block = new ItemConstructBlock());
 		registerItem(registry, cluster_operation_module);

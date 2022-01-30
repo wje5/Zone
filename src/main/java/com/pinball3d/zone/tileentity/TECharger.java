@@ -1,12 +1,16 @@
 package com.pinball3d.zone.tileentity;
 
+import java.util.Arrays;
+
 import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.block.BlockTieredMachineLightable;
 import com.pinball3d.zone.network.MessagePlaySoundAtPos;
 import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.recipe.Recipe;
+import com.pinball3d.zone.recipe.RecipeHandler;
+import com.pinball3d.zone.recipe.RecipeHandler.Type;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -14,18 +18,18 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class TEElecFurnace extends ZoneTieredMachine {
-	protected int tick;
+public class TECharger extends ZoneTieredMachine {
+	protected int tick, totalTick;
 	protected ItemStackHandler input = new ItemStackHandler();
 	protected ItemStackHandler output = new ItemStackHandler();
 	protected ItemStackHandler expectOutput = new ItemStackHandler();
 
-	public TEElecFurnace() {
+	public TECharger() {
 		super();
 	}
 
-	public TEElecFurnace(Tier tier) {
-		super(tier, 8000);
+	public TECharger(Tier tier) {
+		super(tier, 16000);
 	}
 
 	@Override
@@ -39,7 +43,7 @@ public class TEElecFurnace extends ZoneTieredMachine {
 		while (work > 0) {
 			if (tick > 0) {
 				int m = Math.min(work, tick);
-				if (energy.extractEnergy(m * 20, false) < m * 20) {
+				if (energy.extractEnergy(m * 40, false) < m * 40) {
 					tick = 0;
 					expectOutput.setStackInSlot(0, ItemStack.EMPTY);
 					break;
@@ -51,12 +55,14 @@ public class TEElecFurnace extends ZoneTieredMachine {
 			if (tick <= 0) {
 				output.insertItem(0, expectOutput.getStackInSlot(0), false);
 				expectOutput.setStackInSlot(0, ItemStack.EMPTY);
-				ItemStack stack = FurnaceRecipes.instance().getSmeltingResult(input.getStackInSlot(0)).copy();
-				if (!stack.isEmpty() && energy.extractEnergy(2000, true) == 2000) {
-					if (output.insertItem(0, stack, true).isEmpty()) {
-						input.extractItem(0, 1, false);
-						expectOutput.setStackInSlot(0, stack);
-						tick = 100;
+				Recipe recipe = RecipeHandler.getRecipe(Type.CHARGER,
+						Arrays.asList(new ItemStack[] { input.getStackInSlot(0) }));
+				if (recipe != null && energy.extractEnergy(40 * recipe.getTime(), true) == 40 * recipe.getTime()) {
+					if (output.insertItem(0, recipe.getOutput(0), true).isEmpty()) {
+						input.extractItem(0, recipe.getInput(0).getCount(), false);
+						expectOutput.setStackInSlot(0, recipe.getOutput(0));
+						tick = recipe.getTime();
+						totalTick = tick;
 						if (!ConfigLoader.disableMachineSound) {
 							NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 2),
 									new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
@@ -80,7 +86,7 @@ public class TEElecFurnace extends ZoneTieredMachine {
 	}
 
 	public int getTotalTick() {
-		return 100;
+		return totalTick;
 	}
 
 	@Override
@@ -110,6 +116,7 @@ public class TEElecFurnace extends ZoneTieredMachine {
 		output.deserializeNBT(compound.getCompoundTag("output"));
 		expectOutput.deserializeNBT(compound.getCompoundTag("expectOutput"));
 		tick = compound.getInteger("tick");
+		totalTick = compound.getInteger("totalTick");
 	}
 
 	@Override
@@ -119,6 +126,7 @@ public class TEElecFurnace extends ZoneTieredMachine {
 		compound.setTag("output", output.serializeNBT());
 		compound.setTag("expectOutput", expectOutput.serializeNBT());
 		compound.setInteger("tick", tick);
+		compound.setInteger("totalTick", totalTick);
 		return compound;
 	}
 }

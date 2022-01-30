@@ -177,6 +177,8 @@ public class RecipeHandler {
 				new ItemStack(ItemLoader.small_pile_garton_metal_dust),
 				new ItemStack(ItemLoader.tiny_pile_blaze_powder), new ItemStack(ItemLoader.small_pile_gold_dust), 100));
 
+		register(new RecipeCharger(new ItemStack(Items.REDSTONE, 16), new ItemStack(ItemLoader.redstone_crystal), 400));
+
 		register(new RecipeCrystallizer(new ItemStack(Items.REDSTONE, 16), new ItemStack(ItemLoader.redstone_crystal),
 				400));
 		register(new RecipeCrystallizer(new ItemStack(Items.BLAZE_POWDER, 16), new ItemStack(ItemLoader.blaze_crystal),
@@ -190,10 +192,10 @@ public class RecipeHandler {
 		register(new RecipeCrystallizer(new ItemStack(ItemLoader.prismarine_dust, 8),
 				new ItemStack(Items.PRISMARINE_CRYSTALS), 400));
 
-		register(new RecipeLathe(new ItemStack(Items.IRON_NUGGET), new ItemStack(ItemLoader.rivet), 50));
-		register(new RecipeLathe(new ItemStack(ItemLoader.redstone_crystal),
+		register(new RecipeExtruder(new ItemStack(Items.IRON_NUGGET), new ItemStack(ItemLoader.rivet), 50));
+		register(new RecipeExtruder(new ItemStack(ItemLoader.redstone_crystal), // XXX need remove
 				new ItemStack(ItemLoader.redstone_crystal_lens), 400));
-		register(new RecipeLathe(new ItemStack(ItemLoader.etherium, 3), new ItemStack(ItemLoader.etherium_rod), 50));
+		register(new RecipeExtruder(new ItemStack(ItemLoader.etherium, 3), new ItemStack(ItemLoader.etherium_rod), 50));
 
 		register(new RecipeFormingPress(new ItemStack(Items.IRON_INGOT), new ItemStack(Items.IRON_INGOT),
 				new ItemStack(ItemLoader.iron_plate), 50));
@@ -272,6 +274,6 @@ public class RecipeHandler {
 	}
 
 	public static enum Type {
-		GRINDER, ALLOY_SMELTER, CENTRIFUGE, CRYSTALLIZER, LATHE, FORMING_PRESS;
+		ALLOY_SMELTER, CENTRIFUGE, CHARGER, CRYSTALLIZER, EXTRUDER, FORMING_PRESS, GRINDER;
 	}
 }
