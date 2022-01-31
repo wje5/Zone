@@ -27,7 +27,7 @@ public class TileEntityLoader {
 		registerTileEntity(TEFormingPress.class, "FormingPress");
 		registerTileEntity(TEGrinder.class, "Grinder");
 		registerTileEntity(TEPump.class, "TEPump");
-		// MINER
+		registerTileEntity(TEMiner.class, "TEMiner");
 	}
 
 	private static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {

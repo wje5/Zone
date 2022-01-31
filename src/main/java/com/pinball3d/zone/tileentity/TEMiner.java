@@ -1,11 +1,13 @@
 package com.pinball3d.zone.tileentity;
 
-import com.pinball3d.zone.FluidHandler;
+import java.util.List;
+
 import com.pinball3d.zone.block.BlockTieredMachineLightable;
 import com.pinball3d.zone.network.MessagePlaySoundAtPos;
 import com.pinball3d.zone.network.NetworkHandler;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -16,19 +18,20 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class TEPump extends ZoneTieredMachine {
+public class TEMiner extends ZoneTieredMachine {
 	protected int tick;
 	protected ItemStackHandler storage = new ItemStackHandler();
 	protected BlockPos target;
 
-	public TEPump() {
+	public TEMiner() {
 		super();
 	}
 
-	public TEPump(Tier tier) {
+	public TEMiner(Tier tier) {
 		super(tier, 8000);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void update() {
 		super.update();
@@ -50,27 +53,33 @@ public class TEPump extends ZoneTieredMachine {
 			}
 			if (tick <= 0) {
 				if (target != null) {
-					ItemStack stack = FluidHandler.tryDrainFluidFromWorld(world, target);
-					if (!stack.isEmpty()) {
-						stack = storage.insertItem(0, stack, false);
-						if (!stack.isEmpty()) {
-							Block.spawnAsEntity(world, pos.add(0, 1, 0), stack);
+					IBlockState state = world.getBlockState(target);
+					Block block = state.getBlock();
+					if (!world.isAirBlock(target) && state.getBlockHardness(world, target) >= 0) {
+						List<ItemStack> list = block.getDrops(world, target, state, 0);
+						for (ItemStack stack : list) {
+							stack = storage.insertItem(0, stack, false);
+							if (!stack.isEmpty()) {
+								Block.spawnAsEntity(world, pos.add(0, 1, 0), stack);
+							}
 						}
-						tick = 10;
-						NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 9),
-								new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F, pos.getY() + 0.5F,
-										pos.getZ() + 0.5F, 16));
+						world.setBlockToAir(target);
 					}
 					target = null;
 				}
-				if (pos.getY() > 0 && energy.extractEnergy(200, true) == 200) {
+				if (pos.getY() > 3 && energy.extractEnergy(200, true) == 200) {
 					Chunk chunk = world.getChunkFromBlockCoords(pos);
-					for (int i = pos.getY() - 1; i >= 0; i--) {
+					for (int i = pos.getY() - 4; i >= 0; i--) {
 						for (int j = -16; j <= 31; j++) {
 							for (int k = -16; k <= 31; k++) {
 								BlockPos p = new BlockPos((chunk.x << 4) + j, i, (chunk.z << 4) + k);
-								if (FluidHandler.canDrain(world, p)) {
+								IBlockState state = world.getBlockState(p);
+								if (!world.isAirBlock(p) && state.getBlockHardness(world, p) >= 0) {
 									target = p;
+									tick = 10;
+									NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 9),
+											new TargetPoint(world.provider.getDimension(), pos.getX() + 0.5F,
+													pos.getY() + 0.5F, pos.getZ() + 0.5F, 16));
 									continue label;
 								}
 							}

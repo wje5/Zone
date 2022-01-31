@@ -1,7 +1,5 @@
 package com.pinball3d.zone;
 
-import java.util.function.Predicate;
-
 import com.pinball3d.zone.item.ItemFluid;
 import com.pinball3d.zone.item.ItemLoader;
 
@@ -38,7 +36,32 @@ public class FluidHandler {
 		return stack;
 	}
 
-	public static ItemStack tryDrainFluidFromWorld(World world, BlockPos pos, Predicate<ItemStack> doDrain) {
+	public static boolean canDrain(World world, BlockPos pos) {
+		IBlockState s = world.getBlockState(pos);
+		if (!s.getMaterial().isLiquid()) {
+			return false;
+		}
+		Block block = s.getBlock();
+		if ((block == Blocks.WATER || block == Blocks.FLOWING_WATER) && s.getValue(BlockLiquid.LEVEL).intValue() == 0) {
+			return true;
+		}
+		if ((block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) && s.getValue(BlockLiquid.LEVEL).intValue() == 0) {
+			return true;
+		}
+		if (block instanceof IFluidBlock) {
+			IFluidBlock f = (IFluidBlock) block;
+			FluidStack fluidstack = f.drain(world, pos, false);
+			if (fluidstack != null && fluidstack.amount >= 1000) {
+				ItemStack stack = getFluidFromBlock(block);
+				if (!stack.isEmpty()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static ItemStack tryDrainFluidFromWorld(World world, BlockPos pos) {
 		ItemStack stack = ItemStack.EMPTY;
 		IBlockState s = world.getBlockState(pos);
 		if (!s.getMaterial().isLiquid()) {
@@ -47,28 +70,17 @@ public class FluidHandler {
 		Block block = s.getBlock();
 		if ((block == Blocks.WATER || block == Blocks.FLOWING_WATER) && s.getValue(BlockLiquid.LEVEL).intValue() == 0) {
 			stack = ItemFluid.createStack(FluidRegistry.WATER);
-			if (doDrain.test(stack)) {
-				world.setBlockToAir(pos);
-			} else {
-				return ItemStack.EMPTY;
-			}
+			world.setBlockToAir(pos);
 		} else if ((block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)
 				&& s.getValue(BlockLiquid.LEVEL).intValue() == 0) {
 			stack = ItemFluid.createStack(FluidRegistry.LAVA);
-			if (doDrain.test(stack)) {
-				world.setBlockToAir(pos);
-			} else {
-				return ItemStack.EMPTY;
-			}
+			world.setBlockToAir(pos);
 		} else if (block instanceof IFluidBlock) {
-			System.out.println(block);
 			IFluidBlock f = (IFluidBlock) block;
 			FluidStack fluidstack = f.drain(world, pos, false);
-			System.out.println(fluidstack);
 			if (fluidstack != null && fluidstack.amount >= 1000) {
 				stack = getFluidFromBlock(block);
-				System.out.println(stack);
-				if (!stack.isEmpty() && doDrain.test(stack)) {
+				if (!stack.isEmpty()) {
 					f.drain(world, pos, true);
 					world.setBlockToAir(pos);
 					return stack;

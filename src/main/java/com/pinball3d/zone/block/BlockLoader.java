@@ -15,6 +15,7 @@ import com.pinball3d.zone.tileentity.TEElecFurnace;
 import com.pinball3d.zone.tileentity.TEExtruder;
 import com.pinball3d.zone.tileentity.TEFormingPress;
 import com.pinball3d.zone.tileentity.TEGrinder;
+import com.pinball3d.zone.tileentity.TEMiner;
 import com.pinball3d.zone.tileentity.TEPump;
 import com.pinball3d.zone.tileentity.ZoneTieredMachine.Tier;
 
@@ -50,7 +51,8 @@ public class BlockLoader {
 			elec_furnace_3_light, extruder_1, extruder_1_light, extruder_2, extruder_2_light, extruder_3,
 			extruder_3_light, forming_press_1, forming_press_1_light, forming_press_2, forming_press_2_light,
 			forming_press_3, forming_press_3_light, grinder_1, grinder_1_light, grinder_2, grinder_2_light, grinder_3,
-			grinder_3_light, pump_1, pump_1_light, pump_2, pump_2_light, pump_3, pump_3_light;
+			grinder_3_light, pump_1, pump_1_light, pump_2, pump_2_light, pump_3, pump_3_light, miner_1, miner_1_light,
+			miner_2, miner_2_light, miner_3, miner_3_light;
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module,
@@ -255,6 +257,20 @@ public class BlockLoader {
 		register(registry, pump_3_light = new BlockTieredMachineLightable("pump", GuiElementLoader.PUMP,
 				t -> new TEPump(t), Tier.T3, true, () -> pump_3, () -> pump_3_light));
 
+		register(registry,
+				miner_1 = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP, t -> new TEMiner(t), // GUI
+						Tier.T1, false, () -> miner_1, () -> miner_1_light));
+		register(registry, miner_1_light = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP,
+				t -> new TEMiner(t), Tier.T1, true, () -> miner_1, () -> miner_1_light));
+		register(registry, miner_2 = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP,
+				t -> new TEMiner(t), Tier.T2, false, () -> miner_2, () -> miner_2_light));
+		register(registry, miner_2_light = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP,
+				t -> new TEMiner(t), Tier.T2, true, () -> miner_2, () -> miner_2_light));
+		register(registry, miner_3 = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP,
+				t -> new TEMiner(t), Tier.T3, false, () -> miner_3, () -> miner_3_light));
+		register(registry, miner_3_light = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP,
+				t -> new TEMiner(t), Tier.T3, true, () -> miner_3, () -> miner_3_light));
+
 		register(registry, construct_block = new BlockConstructBlock());
 		register(registry, construct_block_all = new BlockConstructBlockAll());
 		register(registry, cluster_operation_module = new BlockClusterOperationModule());
@@ -337,6 +353,9 @@ public class BlockLoader {
 		registerItem(registry, pump_1);
 		registerItem(registry, pump_2);
 		registerItem(registry, pump_3);
+		registerItem(registry, miner_1);
+		registerItem(registry, miner_2);
+		registerItem(registry, miner_3);
 
 		registerItem(registry, ItemLoader.construct_block = new ItemConstructBlock());
 		registerItem(registry, cluster_operation_module);
