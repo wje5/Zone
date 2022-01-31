@@ -11,10 +11,10 @@
       "data":32767
     },
     "X": {
-      "item": "zone:gold_plate"
+      "item": "zone:etherium_plate"
     }
   },
   "result": {
-    "item": "zone:gold_wire"
+    "item": "zone:etherium_wire"
   }
 }

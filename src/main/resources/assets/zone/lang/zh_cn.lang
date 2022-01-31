@@ -61,6 +61,8 @@ item.garton_metal_rivet.name=戈顿金属钉
 item.steel_rod.name=钢杆
 item.garton_metal_rod.name=戈顿金属杆
 item.gold_wire.name=金线
+item.etherium_wire.name=乙金线
+item.glass_fibre.name=玻璃纤维
 
 item.energy.name=能量
 item.construct_block.name=结构方块

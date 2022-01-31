@@ -61,6 +61,8 @@ item.garton_metal_rivet.name=Garton Metal Rivet
 item.steel_rod.name=Steel Rod
 item.garton_metal_rod.name=Garton Metal Rod
 item.gold_wire.name=Gold Wire
+item.etherium_wire.name=Etherium Wire
+item.glass_fibre.name=Glass Fibre
 
 item.energy.name=Energy
 item.construct_block.name=Construct Block
