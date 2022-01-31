@@ -15,6 +15,7 @@ import com.pinball3d.zone.tileentity.TEElecFurnace;
 import com.pinball3d.zone.tileentity.TEExtruder;
 import com.pinball3d.zone.tileentity.TEFormingPress;
 import com.pinball3d.zone.tileentity.TEGrinder;
+import com.pinball3d.zone.tileentity.TEPump;
 import com.pinball3d.zone.tileentity.ZoneTieredMachine.Tier;
 
 import net.minecraft.block.Block;
@@ -37,7 +38,7 @@ public class BlockLoader {
 			clarity_glass_pane, etherium_frame, reinforced_glass_pane, charged_glass, charged_glass_pane, firm_glass,
 			firm_glass_pane, reinforced_stone;
 
-	public static Block node, crucible, burning_box, burning_box_light, casting_table, pump, pump_light;
+	public static Block node, crucible, burning_box, burning_box_light, casting_table;
 
 	public static Block drainer_1, drainer_2, drainer_3, boiler_1, boiler_1_light, boiler_2, boiler_2_light, boiler_3,
 			boiler_3_light, capacitor_1, capacitor_2, capacitor_3, alloy_smelter_1, alloy_smelter_1_light,
@@ -49,7 +50,7 @@ public class BlockLoader {
 			elec_furnace_3_light, extruder_1, extruder_1_light, extruder_2, extruder_2_light, extruder_3,
 			extruder_3_light, forming_press_1, forming_press_1_light, forming_press_2, forming_press_2_light,
 			forming_press_3, forming_press_3_light, grinder_1, grinder_1_light, grinder_2, grinder_2_light, grinder_3,
-			grinder_3_light;
+			grinder_3_light, pump_1, pump_1_light, pump_2, pump_2_light, pump_3, pump_3_light;
 
 	public static Block construct_block, construct_block_all, cluster_operation_module, controller_mainframe,
 			processing_center, processing_center_light, truss, dynavolt_restrainer, transmission_module,
@@ -76,8 +77,6 @@ public class BlockLoader {
 		register(registry, reinforced_stone = new BlockReinforcedStone());
 
 		register(registry, node = new BlockNode());
-		register(registry, pump = new BlockPump(false));
-		register(registry, pump_light = new BlockPump(true));
 
 		register(registry, drainer_1 = new BlockTieredMachine("drainer", GuiElementLoader.DRAINER,
 				t -> new TEDrainer(t), Tier.T1));
@@ -243,6 +242,19 @@ public class BlockLoader {
 		register(registry, grinder_3_light = new BlockTieredMachineLightable("grinder", GuiElementLoader.GRINDER,
 				t -> new TEGrinder(t), Tier.T3, true, () -> grinder_3, () -> grinder_3_light));
 
+		register(registry, pump_1 = new BlockTieredMachineLightable("pump", GuiElementLoader.PUMP, t -> new TEPump(t),
+				Tier.T1, false, () -> pump_1, () -> pump_1_light));
+		register(registry, pump_1_light = new BlockTieredMachineLightable("pump", GuiElementLoader.PUMP,
+				t -> new TEPump(t), Tier.T1, true, () -> pump_1, () -> pump_1_light));
+		register(registry, pump_2 = new BlockTieredMachineLightable("pump", GuiElementLoader.PUMP, t -> new TEPump(t),
+				Tier.T2, false, () -> pump_2, () -> pump_2_light));
+		register(registry, pump_2_light = new BlockTieredMachineLightable("pump", GuiElementLoader.PUMP,
+				t -> new TEPump(t), Tier.T2, true, () -> pump_2, () -> pump_2_light));
+		register(registry, pump_3 = new BlockTieredMachineLightable("pump", GuiElementLoader.PUMP, t -> new TEPump(t),
+				Tier.T3, false, () -> pump_3, () -> pump_3_light));
+		register(registry, pump_3_light = new BlockTieredMachineLightable("pump", GuiElementLoader.PUMP,
+				t -> new TEPump(t), Tier.T3, true, () -> pump_3, () -> pump_3_light));
+
 		register(registry, construct_block = new BlockConstructBlock());
 		register(registry, construct_block_all = new BlockConstructBlockAll());
 		register(registry, cluster_operation_module = new BlockClusterOperationModule());
@@ -288,7 +300,6 @@ public class BlockLoader {
 		registerItem(registry, reinforced_stone);
 
 		registerItem(registry, node);
-		registerItem(registry, pump);
 
 		registerItem(registry, drainer_1);
 		registerItem(registry, drainer_2);
@@ -323,6 +334,9 @@ public class BlockLoader {
 		registerItem(registry, grinder_1);
 		registerItem(registry, grinder_2);
 		registerItem(registry, grinder_3);
+		registerItem(registry, pump_1);
+		registerItem(registry, pump_2);
+		registerItem(registry, pump_3);
 
 		registerItem(registry, ItemLoader.construct_block = new ItemConstructBlock());
 		registerItem(registry, cluster_operation_module);

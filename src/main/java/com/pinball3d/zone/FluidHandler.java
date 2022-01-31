@@ -47,17 +47,36 @@ public class FluidHandler {
 		Block block = s.getBlock();
 		if ((block == Blocks.WATER || block == Blocks.FLOWING_WATER) && s.getValue(BlockLiquid.LEVEL).intValue() == 0) {
 			stack = ItemFluid.createStack(FluidRegistry.WATER);
+			if (doDrain.test(stack)) {
+				world.setBlockToAir(pos);
+			} else {
+				return ItemStack.EMPTY;
+			}
 		} else if ((block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)
 				&& s.getValue(BlockLiquid.LEVEL).intValue() == 0) {
 			stack = ItemFluid.createStack(FluidRegistry.LAVA);
+			if (doDrain.test(stack)) {
+				world.setBlockToAir(pos);
+			} else {
+				return ItemStack.EMPTY;
+			}
 		} else if (block instanceof IFluidBlock) {
+			System.out.println(block);
 			IFluidBlock f = (IFluidBlock) block;
 			FluidStack fluidstack = f.drain(world, pos, false);
+			System.out.println(fluidstack);
 			if (fluidstack != null && fluidstack.amount >= 1000) {
-				stack = new ItemStack(Item.getByNameOrId("zone:" + block.getRegistryName().getResourcePath()));
+				stack = getFluidFromBlock(block);
+				System.out.println(stack);
 				if (!stack.isEmpty() && doDrain.test(stack)) {
 					f.drain(world, pos, true);
+					world.setBlockToAir(pos);
+					return stack;
+				} else {
+					return ItemStack.EMPTY;
 				}
+			} else {
+				return ItemStack.EMPTY;
 			}
 		}
 		return stack;

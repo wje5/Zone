@@ -51,7 +51,7 @@ public class ContainerPump extends Container {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		energyTick = tileEntity.getEnergyTick();
+//		energyTick = tileEntity.getEnergyTick();
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 0, energyTick);
 		}
