@@ -632,4 +632,25 @@ public class Util {
 		bools[7] = (b & 1) == 1;
 		return bools;
 	}
+
+	public static int combineShort(short s1, short s2) {
+		return s1 << 16 | (s2 & 0xFFFF);
+	}
+
+	public static short[] retractIntToShort(int i) {
+		short s1 = (short) ((i & 0xFFFF0000) >> 16);
+		short s2 = (short) (i & 0xFFFF);
+		return new short[] { s1, s2 };
+	}
+
+	public static String formatEnergy(int i) {
+		if (i < 1000) {
+			return i + "";
+		} else if (i < 1000000) {
+			return String.format("%.2f kFE", i / 1000F);
+		} else if (i < 1000000000) {
+			return String.format("%.2f mFE", i / 1000000F);
+		}
+		return String.format("%.2f tFE", i / 1000000000F);
+	}
 }

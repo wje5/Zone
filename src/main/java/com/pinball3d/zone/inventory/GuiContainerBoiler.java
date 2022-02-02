@@ -1,5 +1,9 @@
 package com.pinball3d.zone.inventory;
 
+import java.util.Arrays;
+
+import com.pinball3d.zone.util.Util;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -25,22 +29,39 @@ public class GuiContainerBoiler extends GuiContainer {
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
 
 		mc.getTextureManager().bindTexture(TEXTURE);
-		int offsetX = (this.width - this.xSize) / 2, offsetY = (this.height - this.ySize) / 2;
+		int offsetX = (width - xSize) / 2, offsetY = (height - ySize) / 2;
 
-		drawTexturedModalRect(offsetX, offsetY, 0, 0, this.xSize, this.ySize);
+		drawTexturedModalRect(offsetX, offsetY, 0, 0, xSize, ySize);
 
 		if (container.getFuelTick() > 0) {
 			int textureHeight = (int) Math.ceil(14F * container.getFuelTick() / 1200F);
-			this.drawTexturedModalRect(offsetX + 81, offsetY + 50 - textureHeight, 176, 14 - textureHeight, 14,
+			drawTexturedModalRect(offsetX + 50, offsetY + 51 - textureHeight, 188, 14 - textureHeight, 14,
+					textureHeight);
+		}
+		if (container.getEnergy() > 0) {
+			int textureHeight = (int) Math.ceil(52F * container.getEnergy() / container.getMaxEnergy());
+			drawTexturedModalRect(offsetX + 88, offsetY + 69 - textureHeight, 176, 52 - textureHeight, 12,
 					textureHeight);
 		}
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		this.drawDefaultBackground();
+		drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		this.renderHoveredToolTip(mouseX, mouseY);
+		renderHoveredToolTip(mouseX, mouseY);
+	}
+
+	@Override
+	protected void renderHoveredToolTip(int x, int y) {
+		super.renderHoveredToolTip(x, y);
+		int offsetX = (width - xSize) / 2, offsetY = (height - ySize) / 2;
+		if (mc.player.inventory.getItemStack().isEmpty() && x - offsetX >= 88 && x - offsetX <= 100 && y - offsetY >= 17
+				&& y - offsetY <= 69) {
+			drawHoveringText(Arrays.asList(
+					Util.formatEnergy(container.getEnergy()) + "/" + Util.formatEnergy(container.getMaxEnergy())), x,
+					y);
+		}
 	}
 
 	@Override

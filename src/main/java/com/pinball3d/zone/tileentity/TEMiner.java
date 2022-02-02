@@ -2,6 +2,7 @@ package com.pinball3d.zone.tileentity;
 
 import java.util.List;
 
+import com.pinball3d.zone.FluidHandler;
 import com.pinball3d.zone.block.BlockTieredMachineLightable;
 import com.pinball3d.zone.network.MessagePlaySoundAtPos;
 import com.pinball3d.zone.network.NetworkHandler;
@@ -20,7 +21,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 public class TEMiner extends ZoneTieredMachine {
 	protected int tick;
-	protected ItemStackHandler storage = new ItemStackHandler();
+	protected ItemStackHandler storage = new ItemStackHandler(27);
 	protected BlockPos target;
 
 	public TEMiner() {
@@ -55,10 +56,16 @@ public class TEMiner extends ZoneTieredMachine {
 				if (target != null) {
 					IBlockState state = world.getBlockState(target);
 					Block block = state.getBlock();
-					if (!world.isAirBlock(target) && state.getBlockHardness(world, target) >= 0) {
+					if (!world.isAirBlock(target) && FluidHandler.getFluidFromBlock(block).isEmpty()
+							&& state.getBlockHardness(world, target) >= 0) {
 						List<ItemStack> list = block.getDrops(world, target, state, 0);
 						for (ItemStack stack : list) {
-							stack = storage.insertItem(0, stack, false);
+							for (int i = 0; i < 27; i++) {
+								stack = storage.insertItem(i, stack, false);
+								if (stack.isEmpty()) {
+									break;
+								}
+							}
 							if (!stack.isEmpty()) {
 								Block.spawnAsEntity(world, pos.add(0, 1, 0), stack);
 							}
@@ -74,7 +81,9 @@ public class TEMiner extends ZoneTieredMachine {
 							for (int k = -16; k <= 31; k++) {
 								BlockPos p = new BlockPos((chunk.x << 4) + j, i, (chunk.z << 4) + k);
 								IBlockState state = world.getBlockState(p);
-								if (!world.isAirBlock(p) && state.getBlockHardness(world, p) >= 0) {
+								Block block = state.getBlock();
+								if (!world.isAirBlock(p) && FluidHandler.getFluidFromBlock(block).isEmpty()
+										&& state.getBlockHardness(world, p) >= 0) {
 									target = p;
 									tick = 10;
 									NetworkHandler.instance.sendToAllAround(new MessagePlaySoundAtPos(pos, 9),

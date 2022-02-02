@@ -70,6 +70,14 @@ public class ZoneMachineNew extends TileEntity implements ITickable {
 		return false;
 	}
 
+	public int getEnergyStored() {
+		return energy.getEnergyStored();
+	}
+
+	public int getMaxEnergyStored() {
+		return energy.getMaxEnergyStored();
+	}
+
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);

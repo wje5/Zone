@@ -2,6 +2,7 @@ package com.pinball3d.zone.inventory;
 
 import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.tileentity.TEBoiler;
+import com.pinball3d.zone.util.Util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -17,32 +18,24 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class ContainerBoiler extends Container {
-	private IItemHandler energy, fuel;
-	private int fuelTick;
+	private IItemHandler fuel, battery;
+	private int fuelTick, energy, maxEnergy;
 	protected TEBoiler tileEntity;
+	private short energyData, maxEnergyData;
 
 	public ContainerBoiler(EntityPlayer player, TileEntity tileEntity) {
 		this.tileEntity = (TEBoiler) tileEntity;
-		energy = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+
 		fuel = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-		addSlotToContainer(new SlotItemHandler(energy, 0, 80, 17) {
-			@Override
-			public boolean isItemValid(ItemStack stack) {
-				return false;
-			}
-		});
-		addSlotToContainer(new SlotItemHandler(fuel, 0, 80, 53) {
-			@Override
-			public boolean isItemValid(ItemStack stack) {
-				return stack.getItem() == ItemLoader.hybrid_fuel;
-			}
-		});
+		battery = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+
+		addSlotToContainer(new SlotItemHandler(fuel, 0, 49, 53));
+		addSlotToContainer(new SlotItemHandler(battery, 0, 111, 53));
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
 				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
 			}
 		}
-
 		for (int i = 0; i < 9; ++i) {
 			addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 142));
 		}
@@ -52,8 +45,16 @@ public class ContainerBoiler extends Container {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 		fuelTick = tileEntity.getFuelTick();
+		energy = tileEntity.getEnergyStored();
+		maxEnergy = tileEntity.getMaxEnergyStored();
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 0, fuelTick);
+			short[] s = Util.retractIntToShort(energy);
+			i.sendWindowProperty(this, 1, s[0]);
+			i.sendWindowProperty(this, 2, s[1]);
+			s = Util.retractIntToShort(maxEnergy);
+			i.sendWindowProperty(this, 3, s[0]);
+			i.sendWindowProperty(this, 4, s[1]);
 		}
 	}
 
@@ -63,6 +64,14 @@ public class ContainerBoiler extends Container {
 		super.updateProgressBar(id, data);
 		if (id == 0) {
 			fuelTick = data;
+		} else if (id == 1) {
+			energyData = (short) data;
+		} else if (id == 2) {
+			energy = Util.combineShort(energyData, (short) data);
+		} else if (id == 3) {
+			maxEnergyData = (short) data;
+		} else if (id == 4) {
+			maxEnergy = Util.combineShort(maxEnergyData, (short) data);
 		}
 	}
 
@@ -97,6 +106,14 @@ public class ContainerBoiler extends Container {
 
 	public int getFuelTick() {
 		return fuelTick;
+	}
+
+	public int getEnergy() {
+		return energy;
+	}
+
+	public int getMaxEnergy() {
+		return maxEnergy;
 	}
 
 	@Override
