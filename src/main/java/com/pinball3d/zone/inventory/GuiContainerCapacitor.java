@@ -12,12 +12,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiContainerDrainer extends GuiContainer {
-	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/drainer.png");
+public class GuiContainerCapacitor extends GuiContainer {
+	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/capacitor.png");
 
-	protected ContainerDrainer container;
+	protected ContainerCapacitor container;
 
-	public GuiContainerDrainer(ContainerDrainer container) {
+	public GuiContainerCapacitor(ContainerCapacitor container) {
 		super(container);
 		this.container = container;
 		xSize = 176;
@@ -32,7 +32,7 @@ public class GuiContainerDrainer extends GuiContainer {
 		drawTexturedModalRect(offsetX, offsetY, 0, 0, xSize, ySize);
 		if (container.getEnergy() > 0) {
 			int textureHeight = (int) Math.ceil(52F * container.getEnergy() / container.getMaxEnergy());
-			drawTexturedModalRect(offsetX + 69, offsetY + 69 - textureHeight, 176, 52 - textureHeight, 12,
+			drawTexturedModalRect(offsetX + 112, offsetY + 69 - textureHeight, 176, 52 - textureHeight, 12,
 					textureHeight);
 		}
 	}
@@ -48,8 +48,8 @@ public class GuiContainerDrainer extends GuiContainer {
 	protected void renderHoveredToolTip(int x, int y) {
 		super.renderHoveredToolTip(x, y);
 		int offsetX = (width - xSize) / 2, offsetY = (height - ySize) / 2;
-		if (mc.player.inventory.getItemStack().isEmpty() && x - offsetX >= 69 && x - offsetX <= 81 && y - offsetY >= 17
-				&& y - offsetY <= 69) {
+		if (mc.player.inventory.getItemStack().isEmpty() && x - offsetX >= 112 && x - offsetX <= 124
+				&& y - offsetY >= 17 && y - offsetY <= 69) {
 			drawHoveringText(Arrays.asList(
 					Util.formatEnergy(container.getEnergy()) + "/" + Util.formatEnergy(container.getMaxEnergy())), x,
 					y);
@@ -58,7 +58,7 @@ public class GuiContainerDrainer extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		String title = I18n.format("tile.drainer_" + container.getTier() + ".name");
+		String title = I18n.format("tile.capacitor_" + container.getTier() + ".name");
 		fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
 	}
 }

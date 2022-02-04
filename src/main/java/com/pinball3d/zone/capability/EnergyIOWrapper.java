@@ -1,4 +1,4 @@
-package com.pinball3d.zone;
+package com.pinball3d.zone.capability;
 
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;

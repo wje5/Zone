@@ -27,12 +27,9 @@ public class GuiContainerBoiler extends GuiContainer {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
-
 		mc.getTextureManager().bindTexture(TEXTURE);
 		int offsetX = (width - xSize) / 2, offsetY = (height - ySize) / 2;
-
 		drawTexturedModalRect(offsetX, offsetY, 0, 0, xSize, ySize);
-
 		if (container.getFuelTick() > 0) {
 			int textureHeight = (int) Math.ceil(14F * container.getFuelTick() / 1200F);
 			drawTexturedModalRect(offsetX + 50, offsetY + 51 - textureHeight, 188, 14 - textureHeight, 14,
@@ -66,7 +63,7 @@ public class GuiContainerBoiler extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		String title = I18n.format("container.boiler");
+		String title = I18n.format("tile.boiler_" + container.getTier() + ".name");
 		fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
 	}
 }

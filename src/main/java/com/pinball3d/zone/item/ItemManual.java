@@ -1,8 +1,8 @@
 package com.pinball3d.zone.item;
 
-import com.pinball3d.zone.CapabilityLoader;
-import com.pinball3d.zone.IZonePlayerCapability;
 import com.pinball3d.zone.Zone;
+import com.pinball3d.zone.capability.CapabilityLoader;
+import com.pinball3d.zone.capability.IZonePlayerCapability;
 import com.pinball3d.zone.inventory.GuiElementLoader;
 
 import net.minecraft.entity.player.EntityPlayer;

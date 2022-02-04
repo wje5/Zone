@@ -26,19 +26,19 @@ public class GuiContainerAlloySmelter extends GuiContainer {
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
 
 		mc.getTextureManager().bindTexture(TEXTURE);
-		int offsetX = (this.width - this.xSize) / 2, offsetY = (this.height - this.ySize) / 2;
+		int offsetX = (width - xSize) / 2, offsetY = (height - ySize) / 2;
 
-		drawTexturedModalRect(offsetX, offsetY, 0, 0, this.xSize, this.ySize);
+		drawTexturedModalRect(offsetX, offsetY, 0, 0, xSize, ySize);
 
 		int tick = container.getTick();
 		int totalTick = container.getTotalTick();
 		if (container.getTick() > 0) {
 			int textureWidth = (int) Math.ceil(24.0D * (totalTick - tick) / totalTick);
-			this.drawTexturedModalRect(offsetX + 79, offsetY + 34, 176, 14, textureWidth, 17);
+			drawTexturedModalRect(offsetX + 79, offsetY + 34, 176, 14, textureWidth, 17);
 		}
-		if (container.getEnergyTick() > 0) {
-			int textureHeight = (int) Math.ceil(14F * container.getEnergyTick() / 200F);
-			this.drawTexturedModalRect(offsetX + 57, offsetY + 50 - textureHeight, 176, 14 - textureHeight, 14,
+		if (container.getEnergy() > 0) {
+			int textureHeight = (int) Math.ceil(14F * container.getEnergy() / container.getMaxEnergy());
+			drawTexturedModalRect(offsetX + 57, offsetY + 50 - textureHeight, 176, 14 - textureHeight, 14,
 					textureHeight);
 		}
 	}
@@ -52,7 +52,7 @@ public class GuiContainerAlloySmelter extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		String title = I18n.format("container.alloy_smelter");
+		String title = I18n.format("tile.alloy_smelter_" + container.getTier() + ".name");
 		fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
 	}
 }

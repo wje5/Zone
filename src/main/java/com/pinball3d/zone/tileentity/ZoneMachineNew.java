@@ -1,7 +1,7 @@
 package com.pinball3d.zone.tileentity;
 
-import com.pinball3d.zone.EnergyIOWrapper;
-import com.pinball3d.zone.ZoneEnergyStorage;
+import com.pinball3d.zone.capability.EnergyIOWrapper;
+import com.pinball3d.zone.capability.ZoneEnergyStorage;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

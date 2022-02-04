@@ -645,7 +645,7 @@ public class Util {
 
 	public static String formatEnergy(int i) {
 		if (i < 1000) {
-			return i + "";
+			return i + " FE";
 		} else if (i < 1000000) {
 			return String.format("%.2f kFE", i / 1000F);
 		} else if (i < 1000000000) {

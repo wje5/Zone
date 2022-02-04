@@ -1,4 +1,4 @@
-package com.pinball3d.zone;
+package com.pinball3d.zone.capability;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.energy.EnergyStorage;

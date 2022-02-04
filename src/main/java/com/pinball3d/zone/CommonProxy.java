@@ -1,5 +1,6 @@
 package com.pinball3d.zone;
 
+import com.pinball3d.zone.capability.CapabilityLoader;
 import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.recipe.RecipeHandler;

@@ -1,4 +1,8 @@
-package com.pinball3d.zone;
+package com.pinball3d.zone.capability;
+
+import com.pinball3d.zone.capability.CapabilityZonePlayerInfo.Implementation;
+import com.pinball3d.zone.capability.CapabilityZonePlayerInfo.ProviderPlayer;
+import com.pinball3d.zone.capability.CapabilityZonePlayerInfo.Storage;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

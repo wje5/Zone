@@ -1,14 +1,11 @@
 package com.pinball3d.zone.inventory;
 
-import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.tileentity.TEAlloySmelter;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -16,52 +13,31 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ContainerAlloySmelter extends Container {
-	private IItemHandler energy, input, output;
-	private int tick, totalTick, energyTick;
-	protected TEAlloySmelter tileEntity;
+public class ContainerAlloySmelter extends ContainerTieredMachine {
+	private IItemHandler battery, input, output;
+	private int tick, totalTick;
 
-	public ContainerAlloySmelter(EntityPlayer player, TileEntity tileEntity) {
-		this.tileEntity = (TEAlloySmelter) tileEntity;
-		energy = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
+	public ContainerAlloySmelter(EntityPlayer player, TEAlloySmelter tileEntity) {
+		super(player, tileEntity);
+		this.tileEntity = tileEntity;
 		input = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 		output = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-		addSlotToContainer(new SlotItemHandler(energy, 0, 56, 53) {
-			@Override
-			public boolean isItemValid(ItemStack stack) {
-				return stack.getItem() == ItemLoader.energy;
-			}
-		});
+		battery = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 		addSlotToContainer(new SlotItemHandler(input, 0, 38, 17));
 		addSlotToContainer(new SlotItemHandler(input, 1, 56, 17));
 		addSlotToContainer(new SlotItemHandler(input, 2, 74, 17));
-		addSlotToContainer(new SlotItemHandler(output, 0, 116, 35) {
-			@Override
-			public boolean isItemValid(ItemStack stack) {
-				return false;
-			}
-		});
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 9; ++j) {
-				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-			}
-		}
-
-		for (int i = 0; i < 9; ++i) {
-			addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 142));
-		}
+		addSlotToContainer(new SlotItemHandler(output, 0, 116, 35));
+		addSlotToContainer(new SlotItemHandler(battery, 0, 56, 53));
 	}
 
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		tick = tileEntity.getTick();
-		totalTick = tileEntity.getTotalTick();
-//		energyTick = tileEntity.getEnergyTick();
+		tick = ((TEAlloySmelter) tileEntity).getTick();
+		totalTick = ((TEAlloySmelter) tileEntity).getTotalTick();
 		for (IContainerListener i : listeners) {
-			i.sendWindowProperty(this, 0, tick);
-			i.sendWindowProperty(this, 1, totalTick);
-			i.sendWindowProperty(this, 2, energyTick);
+			i.sendWindowProperty(this, 5, tick);
+			i.sendWindowProperty(this, 6, totalTick);
 		}
 	}
 
@@ -70,14 +46,11 @@ public class ContainerAlloySmelter extends Container {
 	public void updateProgressBar(int id, int data) {
 		super.updateProgressBar(id, data);
 		switch (id) {
-		case 0:
+		case 5:
 			tick = data;
 			break;
-		case 1:
+		case 6:
 			totalTick = data;
-			break;
-		case 2:
-			energyTick = data;
 			break;
 		}
 	}
@@ -121,14 +94,5 @@ public class ContainerAlloySmelter extends Container {
 
 	public int getTotalTick() {
 		return totalTick;
-	}
-
-	public int getEnergyTick() {
-		return energyTick;
-	}
-
-	@Override
-	public boolean canInteractWith(EntityPlayer playerIn) {
-		return playerIn.getDistanceSq(tileEntity.getPos()) <= 64;
 	}
 }

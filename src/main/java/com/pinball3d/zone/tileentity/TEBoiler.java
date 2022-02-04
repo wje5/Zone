@@ -92,6 +92,11 @@ public class TEBoiler extends ZoneTieredMachine {
 		return true;
 	}
 
+	@Override
+	public boolean canReceiveEnergy(EnumFacing facing) {
+		return false;
+	}
+
 	public int getFuelTick() {
 		return fuelTick;
 	}

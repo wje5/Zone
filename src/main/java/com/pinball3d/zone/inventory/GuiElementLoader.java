@@ -22,6 +22,9 @@ import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem3;
 import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem4;
 import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem5;
 import com.pinball3d.zone.manual.GuiContainerManualToolAndMaterial;
+import com.pinball3d.zone.tileentity.TEAlloySmelter;
+import com.pinball3d.zone.tileentity.TEBoiler;
+import com.pinball3d.zone.tileentity.TEDrainer;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +35,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 public class GuiElementLoader implements IGuiHandler {
 	public static final int DRAINER = 1;
 	public static final int BOILER = 2;
-	// capacitor
+	public static final int CAPACITOR = 3;
 	public static final int ALLOY_SMELTER = 4;
 	public static final int CENTRIFUGE = 5;
 	public static final int CHARGER = 6;
@@ -54,11 +57,13 @@ public class GuiElementLoader implements IGuiHandler {
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		switch (ID) {
 		case DRAINER:
-			return new ContainerDrainer(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerDrainer(player, (TEDrainer) world.getTileEntity(new BlockPos(x, y, z)));
 		case BOILER:
-			return new ContainerBoiler(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerBoiler(player, (TEBoiler) world.getTileEntity(new BlockPos(x, y, z)));
+		case CAPACITOR:
+			return new ContainerCapacitor(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case ALLOY_SMELTER:
-			return new ContainerAlloySmelter(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerAlloySmelter(player, (TEAlloySmelter) world.getTileEntity(new BlockPos(x, y, z)));
 		case CENTRIFUGE:
 			return new ContainerCentrifuge(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case CHARGER:
@@ -102,12 +107,17 @@ public class GuiElementLoader implements IGuiHandler {
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		switch (ID) {
 		case DRAINER:
-			return new GuiContainerDrainer(new ContainerDrainer(player, world.getTileEntity(new BlockPos(x, y, z))));
+			return new GuiContainerDrainer(
+					new ContainerDrainer(player, (TEDrainer) world.getTileEntity(new BlockPos(x, y, z))));
 		case BOILER:
-			return new GuiContainerBoiler(new ContainerBoiler(player, world.getTileEntity(new BlockPos(x, y, z))));
+			return new GuiContainerBoiler(
+					new ContainerBoiler(player, (TEBoiler) world.getTileEntity(new BlockPos(x, y, z))));
+		case CAPACITOR:
+			return new GuiContainerCapacitor(
+					new ContainerCapacitor(player, world.getTileEntity(new BlockPos(x, y, z))));
 		case ALLOY_SMELTER:
 			return new GuiContainerAlloySmelter(
-					new ContainerAlloySmelter(player, world.getTileEntity(new BlockPos(x, y, z))));
+					new ContainerAlloySmelter(player, (TEAlloySmelter) world.getTileEntity(new BlockPos(x, y, z))));
 		case CENTRIFUGE:
 			return new GuiContainerCentrifuge(
 					new ContainerCentrifuge(player, world.getTileEntity(new BlockPos(x, y, z))));

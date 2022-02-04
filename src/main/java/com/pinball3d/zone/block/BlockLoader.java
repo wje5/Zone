@@ -100,11 +100,11 @@ public class BlockLoader {
 		register(registry, boiler_3_light = new BlockTieredMachineLightable("boiler", GuiElementLoader.BOILER,
 				t -> new TEBoiler(t), Tier.T3, true, () -> boiler_3, () -> boiler_3_light));
 
-		register(registry, capacitor_1 = new BlockTieredMachine("capacitor", GuiElementLoader.DRAINER, // TODO GUI
+		register(registry, capacitor_1 = new BlockTieredMachine("capacitor", GuiElementLoader.CAPACITOR,
 				t -> new TECapacitor(t), Tier.T1));
-		register(registry, capacitor_2 = new BlockTieredMachine("capacitor", GuiElementLoader.DRAINER,
+		register(registry, capacitor_2 = new BlockTieredMachine("capacitor", GuiElementLoader.CAPACITOR,
 				t -> new TECapacitor(t), Tier.T2));
-		register(registry, capacitor_3 = new BlockTieredMachine("capacitor", GuiElementLoader.DRAINER,
+		register(registry, capacitor_3 = new BlockTieredMachine("capacitor", GuiElementLoader.CAPACITOR,
 				t -> new TECapacitor(t), Tier.T3));
 
 		register(registry,
