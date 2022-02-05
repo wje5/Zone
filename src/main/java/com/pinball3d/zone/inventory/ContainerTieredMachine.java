@@ -30,9 +30,11 @@ public class ContainerTieredMachine extends Container {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		tier = tileEntity.getTier().getTier();
-		energy = tileEntity.getEnergyStored();
-		maxEnergy = tileEntity.getMaxEnergyStored();
+		if (!tileEntity.getWorld().isRemote) {
+			tier = tileEntity.getTier().getTier();
+			energy = tileEntity.getEnergyStored();
+			maxEnergy = tileEntity.getMaxEnergyStored();
+		}
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 0, tier);
 			short[] s = Util.retractIntToShort(energy);
@@ -58,6 +60,7 @@ public class ContainerTieredMachine extends Container {
 			maxEnergyData = (short) data;
 		} else if (id == 4) {
 			maxEnergy = Util.combineShort(maxEnergyData, (short) data);
+
 		}
 	}
 
