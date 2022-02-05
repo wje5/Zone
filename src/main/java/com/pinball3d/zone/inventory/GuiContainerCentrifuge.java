@@ -25,28 +25,28 @@ public class GuiContainerCentrifuge extends GuiContainer {
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
 
 		mc.getTextureManager().bindTexture(TEXTURE);
-		int offsetX = (this.width - this.xSize) / 2, offsetY = (this.height - this.ySize) / 2;
+		int offsetX = (width - xSize) / 2, offsetY = (height - ySize) / 2;
 
-		drawTexturedModalRect(offsetX, offsetY, 0, 0, this.xSize, this.ySize);
+		drawTexturedModalRect(offsetX, offsetY, 0, 0, xSize, ySize);
 
 		int tick = container.getTick();
 		int totalTick = container.getTotalTick();
 		if (container.getTick() > 0) {
 			int textureWidth = (int) Math.ceil(24.0D * (totalTick - tick) / totalTick);
-			this.drawTexturedModalRect(offsetX + 62, offsetY + 34, 176, 14, textureWidth, 17);
+			drawTexturedModalRect(offsetX + 62, offsetY + 34, 176, 14, textureWidth, 17);
 		}
-		if (container.getEnergyTick() > 0) {
-			int textureHeight = (int) Math.ceil(14F * container.getEnergyTick() / 100F);
-			this.drawTexturedModalRect(offsetX + 40, offsetY + 50 - textureHeight, 176, 14 - textureHeight, 14,
+		if (container.getEnergy() > 0) {
+			int textureHeight = (int) Math.ceil(14F * container.getEnergy() / container.getMaxEnergy());
+			drawTexturedModalRect(offsetX + 40, offsetY + 50 - textureHeight, 176, 14 - textureHeight, 14,
 					textureHeight);
 		}
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		this.drawDefaultBackground();
+		drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		this.renderHoveredToolTip(mouseX, mouseY);
+		renderHoveredToolTip(mouseX, mouseY);
 	}
 
 	@Override

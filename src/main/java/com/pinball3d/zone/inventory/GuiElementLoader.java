@@ -24,6 +24,9 @@ import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem5;
 import com.pinball3d.zone.manual.GuiContainerManualToolAndMaterial;
 import com.pinball3d.zone.tileentity.TEAlloySmelter;
 import com.pinball3d.zone.tileentity.TEBoiler;
+import com.pinball3d.zone.tileentity.TECapacitor;
+import com.pinball3d.zone.tileentity.TECentrifuge;
+import com.pinball3d.zone.tileentity.TECharger;
 import com.pinball3d.zone.tileentity.TEDrainer;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -61,13 +64,13 @@ public class GuiElementLoader implements IGuiHandler {
 		case BOILER:
 			return new ContainerBoiler(player, (TEBoiler) world.getTileEntity(new BlockPos(x, y, z)));
 		case CAPACITOR:
-			return new ContainerCapacitor(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerCapacitor(player, (TECapacitor) world.getTileEntity(new BlockPos(x, y, z)));
 		case ALLOY_SMELTER:
 			return new ContainerAlloySmelter(player, (TEAlloySmelter) world.getTileEntity(new BlockPos(x, y, z)));
 		case CENTRIFUGE:
-			return new ContainerCentrifuge(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerCentrifuge(player, (TECentrifuge) world.getTileEntity(new BlockPos(x, y, z)));
 		case CHARGER:
-			return new ContainerCharger(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerCharger(player, (TECharger) world.getTileEntity(new BlockPos(x, y, z)));
 		case CRYSTALLIZER:
 			return new ContainerCrystallizer(player, world.getTileEntity(new BlockPos(x, y, z)));
 		case ELEC_FURNACE:
@@ -114,15 +117,16 @@ public class GuiElementLoader implements IGuiHandler {
 					new ContainerBoiler(player, (TEBoiler) world.getTileEntity(new BlockPos(x, y, z))));
 		case CAPACITOR:
 			return new GuiContainerCapacitor(
-					new ContainerCapacitor(player, world.getTileEntity(new BlockPos(x, y, z))));
+					new ContainerCapacitor(player, (TECapacitor) world.getTileEntity(new BlockPos(x, y, z))));
 		case ALLOY_SMELTER:
 			return new GuiContainerAlloySmelter(
 					new ContainerAlloySmelter(player, (TEAlloySmelter) world.getTileEntity(new BlockPos(x, y, z))));
 		case CENTRIFUGE:
 			return new GuiContainerCentrifuge(
-					new ContainerCentrifuge(player, world.getTileEntity(new BlockPos(x, y, z))));
+					new ContainerCentrifuge(player, (TECentrifuge) world.getTileEntity(new BlockPos(x, y, z))));
 		case CHARGER:
-			return new GuiContainerCharger(new ContainerCharger(player, world.getTileEntity(new BlockPos(x, y, z))));
+			return new GuiContainerCharger(
+					new ContainerCharger(player, (TECharger) world.getTileEntity(new BlockPos(x, y, z))));
 		case CRYSTALLIZER:
 			return new GuiContainerCrystallizer(
 					new ContainerCrystallizer(player, world.getTileEntity(new BlockPos(x, y, z))));

@@ -68,7 +68,7 @@ public class JEIHandler implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.charger_1), "zone:charger");
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.charger_2), "zone:charger");
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.charger_3), "zone:charger");
-		registry.addRecipeClickArea(GuiContainerCharger.class, 63, 35, 22, 15, "zone:charger");
+		registry.addRecipeClickArea(GuiContainerCharger.class, 80, 35, 22, 15, "zone:charger");
 
 		registry.addRecipes(RecipeHandler.getRecipes(Type.CRYSTALLIZER), "zone:crystallizer");
 		registry.handleRecipes(RecipeCrystallizer.class, recipe -> new RecipeWrapperCrystallizer(recipe),

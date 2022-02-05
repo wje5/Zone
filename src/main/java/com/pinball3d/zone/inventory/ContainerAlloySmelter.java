@@ -23,11 +23,11 @@ public class ContainerAlloySmelter extends ContainerTieredMachine {
 		input = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 		output = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
 		battery = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		addSlotToContainer(new SlotItemHandler(battery, 0, 56, 53));
 		addSlotToContainer(new SlotItemHandler(input, 0, 38, 17));
 		addSlotToContainer(new SlotItemHandler(input, 1, 56, 17));
 		addSlotToContainer(new SlotItemHandler(input, 2, 74, 17));
 		addSlotToContainer(new SlotItemHandler(output, 0, 116, 35));
-		addSlotToContainer(new SlotItemHandler(battery, 0, 56, 53));
 	}
 
 	@Override
@@ -63,17 +63,17 @@ public class ContainerAlloySmelter extends ContainerTieredMachine {
 		}
 		ItemStack newStack = slot.getStack(), oldStack = newStack.copy();
 		boolean isMerged = false;
-		if (index <= 4) {
-			isMerged = mergeItemStack(newStack, 5, 41, true);
-		} else if (index >= 5 && index < 32) {
-			isMerged = mergeItemStack(newStack, 0, 4, false);
+		if (index >= 36) {
+			isMerged = mergeItemStack(newStack, 0, 36, true);
+		} else if (index < 27) {
+			isMerged = mergeItemStack(newStack, 36, 41, false);
 			if (!isMerged) {
-				isMerged = mergeItemStack(newStack, 32, 41, false);
+				isMerged = mergeItemStack(newStack, 27, 36, false);
 			}
-		} else if (index >= 32) {
-			isMerged = mergeItemStack(newStack, 0, 4, false);
+		} else if ((index >= 27) && (index < 36)) {
+			isMerged = mergeItemStack(newStack, 36, 41, false);
 			if (!isMerged) {
-				isMerged = mergeItemStack(newStack, 5, 32, false);
+				isMerged = mergeItemStack(newStack, 0, 27, false);
 			}
 		}
 		if (!isMerged) {
