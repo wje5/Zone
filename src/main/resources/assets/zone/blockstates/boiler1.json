@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "zone:boiler" },
+        "facing=south": { "model": "zone:boiler", "y": 180 },
+        "facing=west":  { "model": "zone:boiler", "y": 270 },
+        "facing=east":  { "model": "zone:boiler", "y": 90 }
+    }
+}
