@@ -51,7 +51,7 @@ public class GuiContainerCharger extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		String title = I18n.format("container.charger");
+		String title = I18n.format("tile.charger_" + container.getTier() + ".name");
 		fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
 	}
 }

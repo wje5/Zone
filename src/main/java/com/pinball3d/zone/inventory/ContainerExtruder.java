@@ -1,14 +1,11 @@
 package com.pinball3d.zone.inventory;
 
-import com.pinball3d.zone.item.ItemLoader;
 import com.pinball3d.zone.tileentity.TEExtruder;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -16,50 +13,30 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ContainerExtruder extends Container {
-	private IItemHandler energy, input, output;
-	private int tick, totalTick, energyTick;
-	protected TEExtruder tileEntity;
+public class ContainerExtruder extends ContainerTieredMachine {
+	private IItemHandler battery, input, output;
+	private int tick, totalTick;
 
-	public ContainerExtruder(EntityPlayer player, TileEntity tileEntity) {
-		this.tileEntity = (TEExtruder) tileEntity;
-		energy = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.WEST);
+	public ContainerExtruder(EntityPlayer player, TEExtruder tileEntity) {
+		super(player, tileEntity);
 		input = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 		output = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
-		addSlotToContainer(new SlotItemHandler(energy, 0, 56, 53) {
-			@Override
-			public boolean isItemValid(ItemStack stack) {
-				return stack.getItem() == ItemLoader.energy;
-			}
-		});
+		battery = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+		addSlotToContainer(new SlotItemHandler(battery, 0, 56, 53));
 		addSlotToContainer(new SlotItemHandler(input, 0, 56, 17));
-		addSlotToContainer(new SlotItemHandler(output, 0, 116, 35) {
-			@Override
-			public boolean isItemValid(ItemStack stack) {
-				return false;
-			}
-		});
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 9; ++j) {
-				addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-			}
-		}
-
-		for (int i = 0; i < 9; ++i) {
-			addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 142));
-		}
+		addSlotToContainer(new SlotItemHandler(output, 0, 116, 35));
 	}
 
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		tick = tileEntity.getTick();
-		totalTick = tileEntity.getTotalTick();
-//		energyTick = tileEntity.getEnergyTick();
+		if (!tileEntity.getWorld().isRemote) {
+			tick = ((TEExtruder) tileEntity).getTick();
+			totalTick = ((TEExtruder) tileEntity).getTotalTick();
+		}
 		for (IContainerListener i : listeners) {
-			i.sendWindowProperty(this, 0, tick);
-			i.sendWindowProperty(this, 1, totalTick);
-			i.sendWindowProperty(this, 2, energyTick);
+			i.sendWindowProperty(this, 5, tick);
+			i.sendWindowProperty(this, 6, totalTick);
 		}
 	}
 
@@ -68,14 +45,11 @@ public class ContainerExtruder extends Container {
 	public void updateProgressBar(int id, int data) {
 		super.updateProgressBar(id, data);
 		switch (id) {
-		case 0:
+		case 5:
 			tick = data;
 			break;
-		case 1:
+		case 6:
 			totalTick = data;
-			break;
-		case 2:
-			energyTick = data;
 			break;
 		}
 	}
@@ -88,17 +62,17 @@ public class ContainerExtruder extends Container {
 		}
 		ItemStack newStack = slot.getStack(), oldStack = newStack.copy();
 		boolean isMerged = false;
-		if (index <= 2) {
-			isMerged = mergeItemStack(newStack, 3, 39, true);
-		} else if (index >= 3 && index < 30) {
-			isMerged = mergeItemStack(newStack, 0, 2, false);
+		if (index >= 36) {
+			isMerged = mergeItemStack(newStack, 0, 36, true);
+		} else if (index < 27) {
+			isMerged = mergeItemStack(newStack, 36, 39, false);
 			if (!isMerged) {
-				isMerged = mergeItemStack(newStack, 30, 39, false);
+				isMerged = mergeItemStack(newStack, 27, 36, false);
 			}
-		} else if (index >= 30 && index < 39) {
-			isMerged = mergeItemStack(newStack, 0, 2, false);
+		} else if ((index >= 27) && (index < 36)) {
+			isMerged = mergeItemStack(newStack, 36, 39, false);
 			if (!isMerged) {
-				isMerged = mergeItemStack(newStack, 4, 30, false);
+				isMerged = mergeItemStack(newStack, 0, 27, false);
 			}
 		}
 		if (!isMerged) {
@@ -119,14 +93,5 @@ public class ContainerExtruder extends Container {
 
 	public int getTotalTick() {
 		return totalTick;
-	}
-
-	public int getEnergyTick() {
-		return energyTick;
-	}
-
-	@Override
-	public boolean canInteractWith(EntityPlayer playerIn) {
-		return playerIn.getDistanceSq(tileEntity.getPos()) <= 64;
 	}
 }

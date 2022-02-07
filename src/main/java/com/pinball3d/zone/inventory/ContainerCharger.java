@@ -30,8 +30,10 @@ public class ContainerCharger extends ContainerTieredMachine {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		tick = ((TECharger) tileEntity).getTick();
-		totalTick = ((TECharger) tileEntity).getTotalTick();
+		if (!tileEntity.getWorld().isRemote) {
+			tick = ((TECharger) tileEntity).getTick();
+			totalTick = ((TECharger) tileEntity).getTotalTick();
+		}
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 5, tick);
 			i.sendWindowProperty(this, 6, totalTick);

@@ -8,12 +8,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiContainerGrinder extends GuiContainer {
-	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/grinder.png");
+public class GuiContainerMiner extends GuiContainer {
+	public static final ResourceLocation TEXTURE = new ResourceLocation("zone:textures/gui/container/miner.png");
 
-	protected ContainerGrinder container;
+	protected ContainerMiner container;
 
-	public GuiContainerGrinder(ContainerGrinder container) {
+	public GuiContainerMiner(ContainerMiner container) {
 		super(container);
 		this.container = container;
 		xSize = 176;
@@ -29,15 +29,9 @@ public class GuiContainerGrinder extends GuiContainer {
 
 		drawTexturedModalRect(offsetX, offsetY, 0, 0, xSize, ySize);
 
-		int tick = container.getTick();
-		int totalTick = container.getTotalTick();
-		if (container.getTick() > 0) {
-			int textureWidth = (int) Math.ceil(24.0D * (totalTick - tick) / totalTick);
-			drawTexturedModalRect(offsetX + 79, offsetY + 34, 176, 14, textureWidth, 17);
-		}
 		if (container.getEnergy() > 0) {
 			int textureHeight = (int) Math.ceil(14F * container.getEnergy() / container.getMaxEnergy());
-			drawTexturedModalRect(offsetX + 57, offsetY + 50 - textureHeight, 176, 14 - textureHeight, 14,
+			drawTexturedModalRect(offsetX + 16, offsetY + 50 - textureHeight, 176, 14 - textureHeight, 14,
 					textureHeight);
 		}
 	}
@@ -47,12 +41,11 @@ public class GuiContainerGrinder extends GuiContainer {
 		drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		renderHoveredToolTip(mouseX, mouseY);
-
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		String title = I18n.format("tile.grinder_" + container.getTier() + ".name");
+		String title = I18n.format("tile.miner_" + container.getTier() + ".name");
 		fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
 	}
 }

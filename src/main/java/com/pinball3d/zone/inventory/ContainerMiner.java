@@ -1,6 +1,6 @@
 package com.pinball3d.zone.inventory;
 
-import com.pinball3d.zone.tileentity.TEPump;
+import com.pinball3d.zone.tileentity.TEMiner;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -10,18 +10,20 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class ContainerPump extends ContainerTieredMachine {
-	private IItemHandler battery, fluid;
+public class ContainerMiner extends ContainerTieredMachine {
+	private IItemHandler battery, storage;
+	protected TEMiner tileEntity;
 
-	public ContainerPump(EntityPlayer player, TEPump tileEntity) {
+	public ContainerMiner(EntityPlayer player, TEMiner tileEntity) {
 		super(player, tileEntity);
-		fluid = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+		storage = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
 		battery = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-		addSlotToContainer(new SlotItemHandler(battery, 0, 34, 44));
-		addSlotToContainer(new SlotItemHandler(fluid, 0, 71, 26));
-		addSlotToContainer(new SlotItemHandler(fluid, 1, 89, 26));
-		addSlotToContainer(new SlotItemHandler(fluid, 2, 71, 44));
-		addSlotToContainer(new SlotItemHandler(fluid, 3, 89, 44));
+		addSlotToContainer(new SlotItemHandler(battery, 0, 15, 53));
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 5; ++j) {
+				addSlotToContainer(new SlotItemHandler(storage, j + i * 5, 44 + j * 18, 17 + i * 18));
+			}
+		}
 	}
 
 	@Override
@@ -35,12 +37,12 @@ public class ContainerPump extends ContainerTieredMachine {
 		if (index >= 36) {
 			isMerged = mergeItemStack(newStack, 0, 36, true);
 		} else if (index < 27) {
-			isMerged = mergeItemStack(newStack, 36, 41, false);
+			isMerged = mergeItemStack(newStack, 36, 52, false);
 			if (!isMerged) {
 				isMerged = mergeItemStack(newStack, 27, 36, false);
 			}
 		} else if ((index >= 27) && (index < 36)) {
-			isMerged = mergeItemStack(newStack, 36, 41, false);
+			isMerged = mergeItemStack(newStack, 36, 52, false);
 			if (!isMerged) {
 				isMerged = mergeItemStack(newStack, 0, 27, false);
 			}

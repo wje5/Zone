@@ -257,18 +257,17 @@ public class BlockLoader {
 		register(registry, pump_3_light = new BlockTieredMachineLightable("pump", GuiElementLoader.PUMP,
 				t -> new TEPump(t), Tier.T3, true, () -> pump_3, () -> pump_3_light));
 
-		register(registry,
-				miner_1 = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP, t -> new TEMiner(t), // GUI
-						Tier.T1, false, () -> miner_1, () -> miner_1_light));
-		register(registry, miner_1_light = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP,
+		register(registry, miner_1 = new BlockTieredMachineLightable("miner", GuiElementLoader.MINER,
+				t -> new TEMiner(t), Tier.T1, false, () -> miner_1, () -> miner_1_light));
+		register(registry, miner_1_light = new BlockTieredMachineLightable("miner", GuiElementLoader.MINER,
 				t -> new TEMiner(t), Tier.T1, true, () -> miner_1, () -> miner_1_light));
-		register(registry, miner_2 = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP,
+		register(registry, miner_2 = new BlockTieredMachineLightable("miner", GuiElementLoader.MINER,
 				t -> new TEMiner(t), Tier.T2, false, () -> miner_2, () -> miner_2_light));
-		register(registry, miner_2_light = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP,
+		register(registry, miner_2_light = new BlockTieredMachineLightable("miner", GuiElementLoader.MINER,
 				t -> new TEMiner(t), Tier.T2, true, () -> miner_2, () -> miner_2_light));
-		register(registry, miner_3 = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP,
+		register(registry, miner_3 = new BlockTieredMachineLightable("miner", GuiElementLoader.MINER,
 				t -> new TEMiner(t), Tier.T3, false, () -> miner_3, () -> miner_3_light));
-		register(registry, miner_3_light = new BlockTieredMachineLightable("miner", GuiElementLoader.PUMP,
+		register(registry, miner_3_light = new BlockTieredMachineLightable("miner", GuiElementLoader.MINER,
 				t -> new TEMiner(t), Tier.T3, true, () -> miner_3, () -> miner_3_light));
 
 		register(registry, construct_block = new BlockConstructBlock());

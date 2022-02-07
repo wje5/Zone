@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import com.pinball3d.zone.ConfigLoader;
 import com.pinball3d.zone.block.BlockTieredMachineLightable;
+import com.pinball3d.zone.capability.ItemIOWrapper;
 import com.pinball3d.zone.network.MessagePlaySoundAtPos;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.recipe.Recipe;
@@ -14,6 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -23,6 +26,16 @@ public class TEGrinder extends ZoneTieredMachine {
 	protected ItemStackHandler input = new ItemStackHandler();
 	protected ItemStackHandler output = new ItemStackHandler();
 	protected ItemStackHandler expectOutput = new ItemStackHandler();
+	protected ItemStackHandler battery = new ItemStackHandler() {
+		@Override
+		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+			if (!stack.hasCapability(CapabilityEnergy.ENERGY, null)
+					|| !stack.getCapability(CapabilityEnergy.ENERGY, null).canExtract()) {
+				return stack;
+			}
+			return super.insertItem(slot, stack, simulate);
+		}
+	};
 
 	public TEGrinder() {
 		super();
@@ -37,6 +50,13 @@ public class TEGrinder extends ZoneTieredMachine {
 		super.update();
 		if (world.isRemote) {
 			return;
+		}
+		ItemStack stack = battery.getStackInSlot(0);
+		if (stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+			IEnergyStorage s = stack.getCapability(CapabilityEnergy.ENERGY, null);
+			int amount = s.extractEnergy(s.getEnergyStored(), true);
+			amount = energy.receiveEnergy(amount, false);
+			s.extractEnergy(amount, false);
 		}
 		boolean flag = tick > 0;
 		int work = getTier().getMultiple();
@@ -101,8 +121,11 @@ public class TEGrinder extends ZoneTieredMachine {
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
+			if (facing == null) {
+				return (T) battery;
+			}
 			if (facing == EnumFacing.DOWN) {
-				return (T) output;
+				return (T) new ItemIOWrapper(output, true, false);
 			}
 			return (T) input;
 		}
@@ -115,6 +138,7 @@ public class TEGrinder extends ZoneTieredMachine {
 		input.deserializeNBT(compound.getCompoundTag("input"));
 		output.deserializeNBT(compound.getCompoundTag("output"));
 		expectOutput.deserializeNBT(compound.getCompoundTag("expectOutput"));
+		battery.deserializeNBT(compound.getCompoundTag("battery"));
 		tick = compound.getInteger("tick");
 		totalTick = compound.getInteger("totalTick");
 	}
@@ -125,6 +149,7 @@ public class TEGrinder extends ZoneTieredMachine {
 		compound.setTag("input", input.serializeNBT());
 		compound.setTag("output", output.serializeNBT());
 		compound.setTag("expectOutput", expectOutput.serializeNBT());
+		compound.setTag("battery", battery.serializeNBT());
 		compound.setInteger("tick", tick);
 		compound.setInteger("totalTick", totalTick);
 		return compound;

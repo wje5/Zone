@@ -32,8 +32,10 @@ public class ContainerCentrifuge extends ContainerTieredMachine {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		tick = ((TECentrifuge) tileEntity).getTick();
-		totalTick = ((TECentrifuge) tileEntity).getTotalTick();
+		if (!tileEntity.getWorld().isRemote) {
+			tick = ((TECentrifuge) tileEntity).getTick();
+			totalTick = ((TECentrifuge) tileEntity).getTotalTick();
+		}
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 5, tick);
 			i.sendWindowProperty(this, 6, totalTick);

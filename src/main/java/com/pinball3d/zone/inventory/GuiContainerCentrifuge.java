@@ -51,7 +51,7 @@ public class GuiContainerCentrifuge extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		String title = I18n.format("container.centrifuge");
+		String title = I18n.format("tile.centrifuge_" + container.getTier() + ".name");
 		fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
 	}
 }

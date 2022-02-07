@@ -5,6 +5,7 @@ import com.pinball3d.zone.inventory.GuiContainerAlloySmelter;
 import com.pinball3d.zone.inventory.GuiContainerCentrifuge;
 import com.pinball3d.zone.inventory.GuiContainerCharger;
 import com.pinball3d.zone.inventory.GuiContainerCrystallizer;
+import com.pinball3d.zone.inventory.GuiContainerElecFurnace;
 import com.pinball3d.zone.inventory.GuiContainerExtruder;
 import com.pinball3d.zone.inventory.GuiContainerFormingPress;
 import com.pinball3d.zone.inventory.GuiContainerGrinder;
@@ -81,6 +82,7 @@ public class JEIHandler implements IModPlugin {
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.elec_furnace_1), VanillaRecipeCategoryUid.SMELTING);
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.elec_furnace_2), VanillaRecipeCategoryUid.SMELTING);
 		registry.addRecipeCatalyst(new ItemStack(BlockLoader.elec_furnace_3), VanillaRecipeCategoryUid.SMELTING);
+		registry.addRecipeClickArea(GuiContainerElecFurnace.class, 80, 35, 22, 15, VanillaRecipeCategoryUid.SMELTING);
 
 		registry.addRecipes(RecipeHandler.getRecipes(Type.EXTRUDER), "zone:extruder");
 		registry.handleRecipes(RecipeExtruder.class, recipe -> new RecipeWrapperExtruder(recipe), "zone:extruder");

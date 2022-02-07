@@ -25,27 +25,27 @@ public class GuiContainerPump extends GuiContainer {
 		GlStateManager.color(1.0F, 1.0F, 1.0F);
 
 		mc.getTextureManager().bindTexture(TEXTURE);
-		int offsetX = (this.width - this.xSize) / 2, offsetY = (this.height - this.ySize) / 2;
+		int offsetX = (width - xSize) / 2, offsetY = (height - ySize) / 2;
 
-		drawTexturedModalRect(offsetX, offsetY, 0, 0, this.xSize, this.ySize);
+		drawTexturedModalRect(offsetX, offsetY, 0, 0, xSize, ySize);
 
-		if (container.getEnergyTick() > 0) {
-			int textureHeight = (int) Math.ceil(14F * container.getEnergyTick() / 10F);
-			this.drawTexturedModalRect(offsetX + 81, offsetY + 50 - textureHeight, 176, 14 - textureHeight, 14,
+		if (container.getEnergy() > 0) {
+			int textureHeight = (int) Math.ceil(14F * container.getEnergy() / container.getMaxEnergy());
+			drawTexturedModalRect(offsetX + 35, offsetY + 41 - textureHeight, 176, 14 - textureHeight, 14,
 					textureHeight);
 		}
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-		this.drawDefaultBackground();
+		drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		this.renderHoveredToolTip(mouseX, mouseY);
+		renderHoveredToolTip(mouseX, mouseY);
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		String title = I18n.format("container.pump");
+		String title = I18n.format("tile.pump_" + container.getTier() + ".name");
 		fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 6, 0x404040);
 	}
 }

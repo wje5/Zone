@@ -28,7 +28,9 @@ public class ContainerBoiler extends ContainerTieredMachine {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		fuelTick = ((TEBoiler) tileEntity).getFuelTick();
+		if (!tileEntity.getWorld().isRemote) {
+			fuelTick = ((TEBoiler) tileEntity).getFuelTick();
+		}
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 5, fuelTick);
 		}

@@ -33,8 +33,10 @@ public class ContainerAlloySmelter extends ContainerTieredMachine {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		tick = ((TEAlloySmelter) tileEntity).getTick();
-		totalTick = ((TEAlloySmelter) tileEntity).getTotalTick();
+		if (!tileEntity.getWorld().isRemote) {
+			tick = ((TEAlloySmelter) tileEntity).getTick();
+			totalTick = ((TEAlloySmelter) tileEntity).getTotalTick();
+		}
 		for (IContainerListener i : listeners) {
 			i.sendWindowProperty(this, 5, tick);
 			i.sendWindowProperty(this, 6, totalTick);

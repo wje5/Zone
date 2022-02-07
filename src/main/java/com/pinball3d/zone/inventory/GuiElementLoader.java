@@ -27,7 +27,14 @@ import com.pinball3d.zone.tileentity.TEBoiler;
 import com.pinball3d.zone.tileentity.TECapacitor;
 import com.pinball3d.zone.tileentity.TECentrifuge;
 import com.pinball3d.zone.tileentity.TECharger;
+import com.pinball3d.zone.tileentity.TECrystallizer;
 import com.pinball3d.zone.tileentity.TEDrainer;
+import com.pinball3d.zone.tileentity.TEElecFurnace;
+import com.pinball3d.zone.tileentity.TEExtruder;
+import com.pinball3d.zone.tileentity.TEFormingPress;
+import com.pinball3d.zone.tileentity.TEGrinder;
+import com.pinball3d.zone.tileentity.TEMiner;
+import com.pinball3d.zone.tileentity.TEPump;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -48,7 +55,7 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int FORMING_PRESS = 10;
 	public static final int GRINDER = 11;
 	public static final int PUMP = 12;
-	// miner
+	public static final int MINER = 13;
 	public static final int MANUAL = 14;
 	public static final int TRANSMISSION_MODULE = 15;
 
@@ -72,17 +79,19 @@ public class GuiElementLoader implements IGuiHandler {
 		case CHARGER:
 			return new ContainerCharger(player, (TECharger) world.getTileEntity(new BlockPos(x, y, z)));
 		case CRYSTALLIZER:
-			return new ContainerCrystallizer(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerCrystallizer(player, (TECrystallizer) world.getTileEntity(new BlockPos(x, y, z)));
 		case ELEC_FURNACE:
-			return new ContainerElecFurnace(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerElecFurnace(player, (TEElecFurnace) world.getTileEntity(new BlockPos(x, y, z)));
 		case EXTRUDER:
-			return new ContainerExtruder(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerExtruder(player, (TEExtruder) world.getTileEntity(new BlockPos(x, y, z)));
 		case FORMING_PRESS:
-			return new ContainerFormingPress(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerFormingPress(player, (TEFormingPress) world.getTileEntity(new BlockPos(x, y, z)));
 		case GRINDER:
-			return new ContainerGrinder(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerGrinder(player, (TEGrinder) world.getTileEntity(new BlockPos(x, y, z)));
 		case PUMP:
-			return new ContainerPump(player, world.getTileEntity(new BlockPos(x, y, z)));
+			return new ContainerPump(player, (TEPump) world.getTileEntity(new BlockPos(x, y, z)));
+		case MINER:
+			return new ContainerMiner(player, (TEMiner) world.getTileEntity(new BlockPos(x, y, z)));
 		case MANUAL:
 			switch (z) {
 			case 1:
@@ -129,20 +138,25 @@ public class GuiElementLoader implements IGuiHandler {
 					new ContainerCharger(player, (TECharger) world.getTileEntity(new BlockPos(x, y, z))));
 		case CRYSTALLIZER:
 			return new GuiContainerCrystallizer(
-					new ContainerCrystallizer(player, world.getTileEntity(new BlockPos(x, y, z))));
+					new ContainerCrystallizer(player, (TECrystallizer) world.getTileEntity(new BlockPos(x, y, z))));
 		case ELEC_FURNACE:
 			return new GuiContainerElecFurnace(
-					new ContainerElecFurnace(player, world.getTileEntity(new BlockPos(x, y, z))));
+					new ContainerElecFurnace(player, (TEElecFurnace) world.getTileEntity(new BlockPos(x, y, z))));
 
 		case EXTRUDER:
-			return new GuiContainerExtruder(new ContainerExtruder(player, world.getTileEntity(new BlockPos(x, y, z))));
+			return new GuiContainerExtruder(
+					new ContainerExtruder(player, (TEExtruder) world.getTileEntity(new BlockPos(x, y, z))));
 		case FORMING_PRESS:
 			return new GuiContainerFormingPress(
-					new ContainerFormingPress(player, world.getTileEntity(new BlockPos(x, y, z))));
+					new ContainerFormingPress(player, (TEFormingPress) world.getTileEntity(new BlockPos(x, y, z))));
 		case GRINDER:
-			return new GuiContainerGrinder(new ContainerGrinder(player, world.getTileEntity(new BlockPos(x, y, z))));
+			return new GuiContainerGrinder(
+					new ContainerGrinder(player, (TEGrinder) world.getTileEntity(new BlockPos(x, y, z))));
 		case PUMP:
-			return new GuiContainerPump(new ContainerPump(player, world.getTileEntity(new BlockPos(x, y, z))));
+			return new GuiContainerPump(new ContainerPump(player, (TEPump) world.getTileEntity(new BlockPos(x, y, z))));
+		case MINER:
+			return new GuiContainerMiner(
+					new ContainerMiner(player, (TEMiner) world.getTileEntity(new BlockPos(x, y, z))));
 		case MANUAL:
 			switch (z) {
 			case 0:
