@@ -41,7 +41,7 @@ public class BlockTieredMachine extends BlockContainer {
 		setHardness(tier.getHardness());
 		setResistance(tier.getResistance());
 		if (!hasCustomName) {
-			setRegistryName("zone:" + name + tier.getTier());
+			setRegistryName("zone:" + name + "_" + tier.getTier());
 		}
 		setUnlocalizedName(name + tier.getTier());
 		setCreativeTab(TabZone.tab);
