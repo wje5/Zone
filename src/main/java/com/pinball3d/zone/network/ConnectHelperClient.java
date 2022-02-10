@@ -1,7 +1,6 @@
 package com.pinball3d.zone.network;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -32,13 +31,11 @@ public class ConnectHelperClient {
 	private static ConnectHelperClient instance = new ConnectHelperClient();
 	private Set<Type> types = new HashSet<Type>();
 	private boolean hasData;
-	private UUID network, networkFromController;
+	private UUID network;
 	private StorageWrapper items = new StorageWrapper();
 	private String password = "";
 	private String adminPassword = "";
 	private WorldPos networkPos = WorldPos.ORIGIN;
-	private Map<WorldPos, String> playerValidNetworks = new HashMap<WorldPos, String>();
-	private Map<WorldPos, String> needNetworkValidNetworks = new HashMap<WorldPos, String>();
 	private String name = "";
 	private int usedStorage, maxStorage, energy;
 	private boolean on, inited;
@@ -73,13 +70,6 @@ public class ConnectHelperClient {
 				case NETWORKPOS:
 					networkPos = new WorldPos(data.getCompoundTag(e.name()));
 					break;
-				case PLAYERVALIDNETWORK:
-					NBTTagList taglist = data.getTagList(e.name(), 10);
-					taglist.forEach(i -> {
-						playerValidNetworks.put(new WorldPos((NBTTagCompound) i),
-								((NBTTagCompound) i).getString("name"));
-					});
-					break;
 				case MAP:
 					NBTTagCompound tag = data.getCompoundTag(e.name());
 //					MapHandler.setData(networkPos, tag.getCompoundTag("units"), tag.getIntArray("lines"));//TODO
@@ -87,20 +77,6 @@ public class ConnectHelperClient {
 				case PACK:
 					tag = data.getCompoundTag(e.name());
 //					MapHandler.setPackData(networkPos, tag);//TODO
-					break;
-				case NEEDNETWORKVALIDNETWORK:
-					taglist = data.getTagList(e.name(), 10);
-					taglist.forEach(i -> {
-						needNetworkValidNetworks.put(new WorldPos((NBTTagCompound) i),
-								((NBTTagCompound) i).getString("name"));
-					});
-					break;
-				case NETWORKUUIDFROMCONTROLLER:
-					networkFromController = data.getUniqueId(e.name());
-					if (networkFromController.getMostSignificantBits() == 0
-							&& networkFromController.getLeastSignificantBits() == 0) {
-						networkFromController = null;
-					}
 					break;
 				case NAME:
 					name = data.getString(e.name());
@@ -143,9 +119,6 @@ public class ConnectHelperClient {
 //						});//TODO
 					}
 					break;
-				case NEEDNETWORKSERIAL:
-					needNetworkSerial = new SerialNumber(data.getCompoundTag(e.name()));
-					break;
 				case ENERGY:
 					energy = data.getInteger(e.name());
 					break;
@@ -168,8 +141,6 @@ public class ConnectHelperClient {
 		networkPos = WorldPos.ORIGIN;
 		password = "";
 		adminPassword = "";
-		playerValidNetworks.clear();
-		needNetworkValidNetworks.clear();
 		name = "";
 		on = false;
 		workingState = null;
@@ -200,11 +171,11 @@ public class ConnectHelperClient {
 		hasData = false;
 	}
 
-	public void requestNeedNetwork(WorldPos needNetwork, Type... types) {
+	public void requestTerminal(WorldPos terminalPos, UUID network, Type... types) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player != null) {
-			NetworkHandler.instance.sendToServer(new MessageConnectionNeedNetworkRequest(player, needNetwork, types));
-
+			NetworkHandler.instance
+					.sendToServer(new MessageConnectionNeedNetworkRequest(player, terminalPos, network, types));
 		}
 		clear();
 		clearHuges();
@@ -247,10 +218,6 @@ public class ConnectHelperClient {
 		return networkPos;
 	}
 
-	public Map<WorldPos, String> getPlayerValidNetworks() {
-		return playerValidNetworks;
-	}
-
 	public static ConnectHelperClient getInstance() {
 		return instance;
 	}
@@ -261,14 +228,6 @@ public class ConnectHelperClient {
 
 	public String getAdminPassword() {
 		return adminPassword;
-	}
-
-	public Map<WorldPos, String> getNeedNetworkValidNetworks() {
-		return needNetworkValidNetworks;
-	}
-
-	public UUID getNetworkFromController() {
-		return networkFromController;
 	}
 
 	public String getName() {

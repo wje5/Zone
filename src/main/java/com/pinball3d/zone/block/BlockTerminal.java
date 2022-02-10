@@ -12,22 +12,25 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockTerminal extends BlockContainer {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	public static final PropertyBool WORKING = PropertyBool.create("working");
+	public static final AxisAlignedBB X_AXIS_AABB = new AxisAlignedBB(0.4D, 0.0D, 0.0625D, 0.6D, 0.73D, 0.9375D);
+	public static final AxisAlignedBB Z_AXIS_AABB = new AxisAlignedBB(0.0625D, 0.0D, 0.4D, 0.9375D, 0.73D, 0.6D);
 
 	public BlockTerminal() {
 		super(Material.IRON);
@@ -39,17 +42,17 @@ public class BlockTerminal extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (worldIn.isRemote) {
-			openScreen();
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand,
+			EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (world.isRemote) {
+			openScreen(world, pos);
 		}
 		return true;
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void openScreen() {
-		NetworkHandler.instance.sendToServer(new MessageRequestNetworks(new WorldPos(Minecraft.getMinecraft().player)));
+	public void openScreen(World world, BlockPos pos) {
+		NetworkHandler.instance.sendToServer(new MessageRequestNetworks(new WorldPos(pos, world)));
 	}
 
 	@Override
@@ -68,9 +71,14 @@ public class BlockTerminal extends BlockContainer {
 	}
 
 	@Override
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		return state.getValue(FACING).getAxis() == EnumFacing.Axis.X ? X_AXIS_AABB : Z_AXIS_AABB;
+	}
+
+	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
 		super.onBlockAdded(worldIn, pos, state);
-		this.setDefaultFacing(worldIn, pos, state);
+		setDefaultFacing(worldIn, pos, state);
 	}
 
 	private void setDefaultFacing(World worldIn, BlockPos pos, IBlockState state) {
@@ -103,7 +111,7 @@ public class BlockTerminal extends BlockContainer {
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing facing = EnumFacing.getHorizontal(meta % 4);
 		boolean isWorking = meta >= 4;
-		return this.getDefaultState().withProperty(FACING, facing).withProperty(WORKING, isWorking);
+		return getDefaultState().withProperty(FACING, facing).withProperty(WORKING, isWorking);
 	}
 
 	@Override
@@ -114,14 +122,18 @@ public class BlockTerminal extends BlockContainer {
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
 			float hitZ, int meta, EntityLivingBase placer) {
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite())
-				.withProperty(WORKING, false);
+		return getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite()).withProperty(WORKING,
+				false);
 	}
 
-	@Override
-	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) {
-		world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 8.0F, true, true);
-		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
+	public static void setState(IBlockState state, World worldIn, BlockPos pos) {
+		TileEntity tileentity = worldIn.getTileEntity(pos);
+		worldIn.setBlockState(pos, state, Constants.BlockFlags.DEFAULT_AND_RERENDER);
+		worldIn.setBlockState(pos, state, Constants.BlockFlags.DEFAULT_AND_RERENDER);
+		if (tileentity != null) {
+			tileentity.validate();
+			worldIn.setTileEntity(pos, tileentity);
+		}
 	}
 
 	@Override

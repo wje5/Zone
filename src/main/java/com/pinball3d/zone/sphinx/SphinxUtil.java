@@ -19,21 +19,22 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class SphinxUtil {
-	public static List<WorldPos> getValidNetworks(int dim, double x, double y, double z) {
+	public static List<UUID> getValidNetworks(int dim, double x, double y, double z) {
 		World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim);
 		GlobalNetworkData data = GlobalNetworkData.getData(world);
 		Map<UUID, WorldPos> map = data.getNetworks();
-		List<WorldPos> list = new ArrayList<WorldPos>();
+		List<UUID> list = new ArrayList<UUID>();
 		map.forEach((uuid, pos) -> {
 			TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
 			if (te.getWorkingState() == WorkingState.WORKING && (te.isPointInRange(dim, x, y, z))) {
-				list.add(pos);
+				list.add(uuid);
 			}
 		});
-		Collections.sort(list, new Comparator<WorldPos>() {
+		Collections.sort(list, new Comparator<UUID>() {
 			@Override
-			public int compare(WorldPos o1, WorldPos o2) {
-				return Math.sqrt(o1.getPos().distanceSq(x, y, z)) > Math.sqrt(o2.getPos().distanceSq(x, y, z)) ? 1 : -1;
+			public int compare(UUID o1, UUID o2) {
+				return Math.sqrt(map.get(o1).getPos().distanceSq(x, y, z)) > Math
+						.sqrt(map.get(o2).getPos().distanceSq(x, y, z)) ? 1 : -1;
 			}
 		});
 		return list;
@@ -60,14 +61,17 @@ public class SphinxUtil {
 	}
 
 	public static NBTTagList getValidNetworkData(WorldPos pos, EntityPlayer player, boolean isPlayer) {
-		List<WorldPos> list = SphinxUtil.getValidNetworks(pos.getDim(), pos.getPos().getX(), pos.getPos().getY(),
+		List<UUID> list = SphinxUtil.getValidNetworks(pos.getDim(), pos.getPos().getX(), pos.getPos().getY(),
 				pos.getPos().getZ());
 		NBTTagList taglist = new NBTTagList();
+		World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(pos.getDim());
+		GlobalNetworkData data = GlobalNetworkData.getData(world);
+		Map<UUID, WorldPos> map = data.getNetworks();
 		list.forEach(e -> {
-			TEProcessingCenter te = (TEProcessingCenter) e.getTileEntity();
+			TEProcessingCenter te = (TEProcessingCenter) (map.get(e).getTileEntity());
 			NBTTagCompound t = new NBTTagCompound();
 			t.setString("name", te.getName());
-			e.writeToNBT(t);
+			t.setUniqueId("uuid", e);
 			taglist.appendTag(t);
 		});
 		return taglist;

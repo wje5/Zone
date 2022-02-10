@@ -16,24 +16,26 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageConnectionNeedNetworkRequest implements IMessage {
-	UUID uuid;
-	WorldPos needNetwork;
+	UUID playerUUID, networkUUID;
+	WorldPos terminal;
 	List<Type> types;
 
 	public MessageConnectionNeedNetworkRequest() {
 
 	}
 
-	public MessageConnectionNeedNetworkRequest(EntityPlayer player, WorldPos needNetwork, Type... types) {
-		uuid = player.getUniqueID();
-		this.needNetwork = needNetwork;
+	public MessageConnectionNeedNetworkRequest(EntityPlayer player, WorldPos terminal, UUID network, Type... types) {
+		playerUUID = player.getUniqueID();
+		this.terminal = terminal;
+		networkUUID = network;
 		this.types = Arrays.asList(types);
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		uuid = new UUID(buf.readLong(), buf.readLong());
-		needNetwork = WorldPos.readFromByte(buf);
+		playerUUID = new UUID(buf.readLong(), buf.readLong());
+		terminal = WorldPos.readFromByte(buf);
+		networkUUID = new UUID(buf.readLong(), buf.readLong());
 		types = new ArrayList<Type>();
 		for (Type i : Type.values()) {
 			if (buf.readBoolean()) {
@@ -44,9 +46,11 @@ public class MessageConnectionNeedNetworkRequest implements IMessage {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeLong(uuid.getMostSignificantBits());
-		buf.writeLong(uuid.getLeastSignificantBits());
-		needNetwork.writeToByte(buf);
+		buf.writeLong(playerUUID.getMostSignificantBits());
+		buf.writeLong(playerUUID.getLeastSignificantBits());
+		terminal.writeToByte(buf);
+		buf.writeLong(networkUUID.getMostSignificantBits());
+		buf.writeLong(networkUUID.getLeastSignificantBits());
 		for (Type i : Type.values()) {
 			buf.writeBoolean(types.contains(i));
 		}
@@ -56,7 +60,9 @@ public class MessageConnectionNeedNetworkRequest implements IMessage {
 		@Override
 		public IMessage onMessage(MessageConnectionNeedNetworkRequest message, MessageContext ctx) {
 			FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-				ConnectionHelper.requestNeedNetworkConnect(message.uuid, message.needNetwork,
+				EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
+						.getPlayerByUUID(message.playerUUID);
+				ConnectionHelper.requestTerminalConnect(player, message.terminal, message.networkUUID,
 						message.types.toArray(new Type[] {}));
 			});
 			return null;

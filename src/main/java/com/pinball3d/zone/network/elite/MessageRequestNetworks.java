@@ -2,11 +2,13 @@ package com.pinball3d.zone.network.elite;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.pinball3d.zone.network.MessageZone;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.sphinx.SphinxUtil;
 import com.pinball3d.zone.sphinx.elite.ScreenChooseNetwork;
+import com.pinball3d.zone.tileentity.TETerminal;
 import com.pinball3d.zone.util.Pair;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -15,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
@@ -44,18 +47,27 @@ public class MessageRequestNetworks extends MessageZone {
 	@Override
 	public void run(MessageContext ctx) {
 		EntityPlayerMP player = (EntityPlayerMP) getPlayer(ctx);
-		NBTTagList list = SphinxUtil.getValidNetworkData(terminalPos, player, false);
-		NetworkHandler.instance.sendTo(new PostBack(list), player);
+		TileEntity te = terminalPos.getTileEntity();
+		if (te instanceof TETerminal) {
+			if (((TETerminal) te).startWorking(player)) {
+				NBTTagList list = SphinxUtil.getValidNetworkData(terminalPos, player, false);
+				NetworkHandler.instance.sendTo(new PostBack(terminalPos, list), player);
+			} else {
+				System.out.println("Failed to Start");
+			}
+		}
 	}
 
 	public static class PostBack extends MessageZone {
 		private NBTTagList list;
+		private WorldPos terminalPos;
 
 		public PostBack() {
 
 		}
 
-		public PostBack(NBTTagList list) {
+		public PostBack(WorldPos terminalPos, NBTTagList list) {
+			this.terminalPos = terminalPos;
 			this.list = list;
 		}
 
@@ -63,6 +75,7 @@ public class MessageRequestNetworks extends MessageZone {
 		public void fromBytes(ByteBuf buf) {
 			super.fromBytes(buf);
 			list = ByteBufUtils.readTag(buf).getTagList("list", 10);
+			terminalPos = WorldPos.readFromByte(buf);
 		}
 
 		@Override
@@ -71,14 +84,15 @@ public class MessageRequestNetworks extends MessageZone {
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setTag("list", list);
 			ByteBufUtils.writeTag(buf, tag);
+			terminalPos.writeToByte(buf);
 		}
 
 		@Override
 		public void run(MessageContext ctx) {
-			List<Pair<String, WorldPos>> l = new ArrayList<Pair<String, WorldPos>>();
-			list.forEach(e -> l.add(new Pair<String, WorldPos>(((NBTTagCompound) e).getString("name"),
-					new WorldPos((NBTTagCompound) e))));
-			Minecraft.getMinecraft().displayGuiScreen(new ScreenChooseNetwork(l));
+			List<Pair<UUID, String>> l = new ArrayList<Pair<UUID, String>>();
+			list.forEach(e -> l.add(new Pair<UUID, String>((((NBTTagCompound) e).getUniqueId("uuid")),
+					((NBTTagCompound) e).getString("name"))));
+			Minecraft.getMinecraft().displayGuiScreen(new ScreenChooseNetwork(terminalPos, l));
 		}
 	}
 }

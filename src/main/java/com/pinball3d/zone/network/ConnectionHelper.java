@@ -9,14 +9,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.pinball3d.zone.ConfigLoader;
-import com.pinball3d.zone.block.BlockControllerMainframe;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.INeedNetwork;
-import com.pinball3d.zone.sphinx.SerialNumber;
-import com.pinball3d.zone.sphinx.SphinxUtil;
-import com.pinball3d.zone.tileentity.TEBeaconCore;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
+import com.pinball3d.zone.tileentity.TETerminal;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,21 +51,19 @@ public class ConnectionHelper {
 		}
 	}
 
-	public static void requestNeedNetworkConnect(UUID uuid, WorldPos needNetwork, Type... types) {
+	public static void requestTerminalConnect(EntityPlayer player, WorldPos terminal, UUID network, Type... types) {
 		if (types.length == 0) {
-			pool.remove(uuid);
+			pool.remove(player.getUniqueID());
 			return;
 		}
-		EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList()
-				.getPlayerByUUID(uuid);
-		WorldPos pos = GlobalNetworkData.getPos(uuid);
+		WorldPos pos = GlobalNetworkData.getPos(network);
 		if (!pos.isOrigin()) {
 			TileEntity tileentity = pos.getTileEntity();
 			if (tileentity instanceof TEProcessingCenter) {
 				TEProcessingCenter pc = ((TEProcessingCenter) tileentity);
-				Connect connect = new Connect(player, pc.getUUID(), needNetwork, types);
+				Connect connect = new Connect(player, pc.getUUID(), terminal, types);
 				if (connect.isValid()) {
-					pool.put(uuid, connect);
+					pool.put(player.getUniqueID(), connect);
 					return;
 				}
 			}
@@ -82,15 +77,15 @@ public class ConnectionHelper {
 	public static class Connect {
 		public final UUID uuid;
 		public UUID network;
-		public WorldPos needNetwork;
+		public WorldPos terminal;
 		public Set<Type> reqDataType;
 		public int mapRefreshColddown, packRefreshColddown, itemRefreshColddown, classifyRefreshColddown,
 				logRefreshColddown, oreDictionaryRefreshColddown;
 
-		private Connect(EntityPlayer player, UUID network, WorldPos needNetwork, Type... types) {
+		private Connect(EntityPlayer player, UUID network, WorldPos terminal, Type... types) {
 			uuid = player.getUniqueID();
 			this.network = network;
-			this.needNetwork = needNetwork;
+			this.terminal = terminal;
 			reqDataType = new HashSet<Type>(Arrays.asList(types));
 		}
 
@@ -100,16 +95,17 @@ public class ConnectionHelper {
 			if (player == null || network == null) {
 				return false;
 			}
-
 			WorldPos pos = GlobalNetworkData.getPos(network);
 			if (pos.isOrigin()) {
 				network = null;
 				return false;
 			} else {
 				TEProcessingCenter te = (TEProcessingCenter) pos.getTileEntity();
-				if (!te.isPointInRange(player.dimension, needNetwork.getPos().getX(), needNetwork.getPos().getY(),
-						needNetwork.getPos().getZ()) || te.getWorkingState() != WorkingState.WORKING
-						|| !te.isUser(player)) {
+				TileEntity tileentity = terminal.getTileEntity();
+				if (!te.isPointInRange(terminal.getDim(), terminal.getPos().getX(), terminal.getPos().getY(),
+						terminal.getPos().getZ()) || te.getWorkingState() != WorkingState.WORKING
+						|| !te.isUser(player) && tileentity instanceof TETerminal
+								&& ((TETerminal) tileentity).getPlayerUuid().equals(uuid)) {
 					network = null;
 					return false;
 				}
@@ -130,9 +126,8 @@ public class ConnectionHelper {
 	}
 
 	public static enum Type {
-		NETWORKUUID, ITEMS, NETWORKPOS, PLAYERVALIDNETWORK, MAP, PACK, NEEDNETWORKVALIDNETWORK,
-		NETWORKUUIDFROMCONTROLLER, NAME, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY, USERS, LOGS,
-		NEEDNETWORKSERIAL, ENERGY, OREDICTIONARY;
+		NETWORKUUID, ITEMS, NETWORKPOS, MAP, PACK, NAME, ON, WORKINGSTATE, USEDSTORAGE, MAXSTORAGE, CLASSIFY, USERS,
+		LOGS, ENERGY, OREDICTIONARY;
 
 		public void writeToNBT(NBTTagCompound tag, EntityPlayer player, Connect connect) {
 			WorldPos pos = WorldPos.ORIGIN;
@@ -142,10 +137,10 @@ public class ConnectionHelper {
 				pos = GlobalNetworkData.getPos(connect.network);
 				te = (TEProcessingCenter) pos.getTileEntity();
 			}
-			if (!connect.needNetwork.isOrigin()) {
-				TileEntity tileentity = connect.needNetwork.getTileEntity();
+			if (!connect.terminal.isOrigin()) {
+				TileEntity tileentity = connect.terminal.getTileEntity();
 				if (tileentity instanceof INeedNetwork) {
-					needNetwork = (INeedNetwork) tileentity;
+					needNetwork = (INeedNetwork) tileentity;// FIXME terminal
 				}
 			}
 			switch (this) {
@@ -165,9 +160,6 @@ public class ConnectionHelper {
 			case NETWORKPOS:
 				tag.setTag(name(), pos.writeToNBT(new NBTTagCompound()));
 				break;
-			case PLAYERVALIDNETWORK:
-				tag.setTag(name(), SphinxUtil.getValidNetworkData(new WorldPos(player), player, true));
-				break;
 			case MAP:
 				if (te != null && connect.mapRefreshColddown <= 0) {
 					tag.setTag(name(), te.genMapData(player, new NBTTagCompound()));
@@ -182,23 +174,6 @@ public class ConnectionHelper {
 				}
 				connect.packRefreshColddown = connect.packRefreshColddown - 1 < 0 ? 0 : connect.packRefreshColddown - 1;
 				break;
-			case NEEDNETWORKVALIDNETWORK:
-				if (needNetwork != null) {
-					if (needNetwork instanceof TEBeaconCore) {
-						tag.setTag(name(),
-								SphinxUtil.getValidNetworkDataWithoutRange(connect.needNetwork, player, false));
-					} else {
-						tag.setTag(name(), SphinxUtil.getValidNetworkData(connect.needNetwork, player, false));
-					}
-				}
-				break;
-			case NETWORKUUIDFROMCONTROLLER:
-				if (!connect.needNetwork.isOrigin()) {
-					WorldPos p = BlockControllerMainframe.getProcessingCenterPos(connect.needNetwork);
-					if (!p.isOrigin()) {
-						tag.setUniqueId(name(), ((TEProcessingCenter) p.getTileEntity()).getUUID());
-					}
-				}
 			case NAME:
 				if (te != null) {
 					tag.setString(name(), te.getName());
@@ -260,15 +235,6 @@ public class ConnectionHelper {
 					connect.logRefreshColddown += ConfigLoader.logUpdateRate;
 				}
 				connect.logRefreshColddown = connect.logRefreshColddown - 1 < 0 ? 0 : connect.logRefreshColddown - 1;
-				break;
-			case NEEDNETWORKSERIAL:
-				if (te != null && needNetwork != null) {
-					SerialNumber serial = te.getSerialNumberFromPos(connect.needNetwork);
-					if (serial != null) {
-						serial.check(te);
-						tag.setTag(name(), serial.writeToNBT(new NBTTagCompound()));
-					}
-				}
 				break;
 			case ENERGY:
 				if (te != null) {

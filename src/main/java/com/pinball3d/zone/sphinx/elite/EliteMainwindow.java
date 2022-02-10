@@ -7,12 +7,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
+import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.network.elite.MessageCloseElite;
 import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
 import com.pinball3d.zone.sphinx.elite.DropDownList.DividerBar;
 import com.pinball3d.zone.sphinx.elite.DropDownList.FolderBar;
@@ -24,6 +27,7 @@ import com.pinball3d.zone.sphinx.elite.PanelGroup.Side;
 import com.pinball3d.zone.sphinx.elite.panels.PanelInfo;
 import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
+import com.pinball3d.zone.tileentity.TETerminal;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.Minecraft;
@@ -46,11 +50,13 @@ public class EliteMainwindow extends GuiScreen {
 	private boolean inited, isAlt;
 	private List<Set<PanelGroup>> draggingPanels;
 	private PanelGroup focusPanel;
+	private WorldPos terminalPos;
 
 	public boolean enableDebugMode;
 
-	public EliteMainwindow(WorldPos pos) {
-		ConnectHelperClient.getInstance().requestNeedNetwork(pos, Type.NETWORKUUID, Type.NETWORKPOS);
+	public EliteMainwindow(WorldPos terminalPos, UUID network) {
+		this.terminalPos = terminalPos;
+		ConnectHelperClient.getInstance().requestTerminal(terminalPos, network, Type.NETWORKUUID, Type.NETWORKPOS);
 	}
 
 	public static EliteMainwindow getWindow() {
@@ -103,6 +109,12 @@ public class EliteMainwindow extends GuiScreen {
 
 	@Override
 	public void drawScreen(int mX, int mY, float partialTicks) {
+		if (terminalPos.getDim() != mc.player.dimension
+				|| mc.player.getDistance(terminalPos.getPos().getX() + 0.5F, terminalPos.getPos().getY() + 0.5F,
+						terminalPos.getPos().getZ() + 0.5F) > 16F
+				|| !(terminalPos.getTileEntity() instanceof TETerminal)) {
+			mc.displayGuiScreen(null);
+		}
 		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		updateMouse();
@@ -613,6 +625,7 @@ public class EliteMainwindow extends GuiScreen {
 		mc.renderGlobal.setWorldAndLoadRenderers(mc.world);
 		MouseHandler.changeMouse(null);
 		Keyboard.enableRepeatEvents(false);
+		NetworkHandler.instance.sendToServer(new MessageCloseElite(terminalPos));
 		super.onGuiClosed();
 	}
 

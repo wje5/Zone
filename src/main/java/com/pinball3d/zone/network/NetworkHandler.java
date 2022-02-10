@@ -1,5 +1,6 @@
 package com.pinball3d.zone.network;
 
+import com.pinball3d.zone.network.elite.MessageCloseElite;
 import com.pinball3d.zone.network.elite.MessageRequestNetworks;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -40,6 +41,7 @@ public class NetworkHandler {
 		// ELITE
 		registerMessage(MessageRequestNetworks.class, Side.SERVER);
 		registerMessage(MessageRequestNetworks.PostBack.class, Side.CLIENT);
+		registerMessage(MessageCloseElite.class, Side.SERVER);
 	}
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(

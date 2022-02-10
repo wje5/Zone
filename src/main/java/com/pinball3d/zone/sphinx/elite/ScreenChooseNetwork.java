@@ -2,11 +2,15 @@ package com.pinball3d.zone.sphinx.elite;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import com.pinball3d.zone.network.NetworkHandler;
+import com.pinball3d.zone.network.elite.MessageCloseElite;
+import com.pinball3d.zone.tileentity.TETerminal;
 import com.pinball3d.zone.util.Pair;
 import com.pinball3d.zone.util.WorldPos;
 
@@ -17,16 +21,24 @@ import net.minecraft.client.resources.I18n;
 public class ScreenChooseNetwork extends GuiScreen {
 	private int dropBoxState = 1, chooseBoxState, pressedButton, mousePrevX, mousePrevY, chosenIndex, hoverIndex,
 			pressIndex;
-	private boolean isPressInDropList, isAlt;
+	private boolean isPressInDropList, isAlt, startElite;
+	private WorldPos terminalPos;
 
-	private List<Pair<String, WorldPos>> data;
+	private List<Pair<UUID, String>> data;
 
-	public ScreenChooseNetwork(List<Pair<String, WorldPos>> data) {
+	public ScreenChooseNetwork(WorldPos terminalPos, List<Pair<UUID, String>> data) {
+		this.terminalPos = terminalPos;
 		this.data = data;
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		if (terminalPos.getDim() != mc.player.dimension
+				|| mc.player.getDistance(terminalPos.getPos().getX() + 0.5F, terminalPos.getPos().getY() + 0.5F,
+						terminalPos.getPos().getZ() + 0.5F) > 16F
+				|| !(terminalPos.getTileEntity() instanceof TETerminal)) {
+			mc.displayGuiScreen(null);
+		}
 		GlStateManager.matrixMode(GL11.GL_PROJECTION);
 		GlStateManager.pushMatrix();
 		GlStateManager.loadIdentity();
@@ -124,7 +136,7 @@ public class ScreenChooseNetwork extends GuiScreen {
 					new Color(0xFF0078D7));
 			EliteRenderHelper.drawRect(x + 90, y + 138, 422, length > 0 ? length : 17, Color.WHITE);
 			for (int i = 0; i < data.size(); i++) {
-				String s = data.get(i).key();
+				String s = data.get(i).value();
 				if (hoverIndex == i) {
 					EliteRenderHelper.drawRect(x + 90, y + 138 + i * 17, 422, 17, new Color(0xFF0078D7));
 					FontHandler.renderText(x + 93, y + 138 + i * 17, new FormattedString(s), Color.WHITE);
@@ -137,7 +149,7 @@ public class ScreenChooseNetwork extends GuiScreen {
 				dropBoxState == 0 ? new Color(0xFF7A7A7A) : new Color(0xFF0078D7));
 		EliteRenderHelper.drawRect(x + 90, y + 114, 422, 23, Color.WHITE);
 		if (!data.isEmpty()) {
-			FontHandler.renderText(x + 93, y + 117, new FormattedString(data.get(chosenIndex).key()), Color.BLACK);
+			FontHandler.renderText(x + 93, y + 117, new FormattedString(data.get(chosenIndex).value()), Color.BLACK);
 		}
 		if (mouseX >= x + 496 && mouseX <= x + 513 && mouseY >= y + 113 && mouseY <= y + 138) {
 			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + 496, y + 113, 168, 57, 17, 25);
@@ -225,7 +237,8 @@ public class ScreenChooseNetwork extends GuiScreen {
 			}
 		} else if (mouseX >= x + 425 && mouseX <= x + 515 && mouseY >= y + 275 && mouseY <= y + 300) {
 			if (pressedButton == 2 && !data.isEmpty()) {
-				mc.displayGuiScreen(new EliteMainwindow(data.get(chosenIndex).value()));
+				startElite = true;
+				mc.displayGuiScreen(new EliteMainwindow(terminalPos, data.get(chosenIndex).key()));
 			}
 		} else if (mouseX >= x + 523 && mouseX <= x + 613 && mouseY >= y + 275 && mouseY <= y + 300) {
 			if (pressedButton == 3) {
@@ -268,5 +281,13 @@ public class ScreenChooseNetwork extends GuiScreen {
 	@Override
 	public boolean doesGuiPauseGame() {
 		return false;
+	}
+
+	@Override
+	public void onGuiClosed() {
+		super.onGuiClosed();
+		if (!startElite) {
+			NetworkHandler.instance.sendToServer(new MessageCloseElite(terminalPos));
+		}
 	}
 }
