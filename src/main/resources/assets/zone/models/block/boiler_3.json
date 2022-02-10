@@ -1,0 +1,11 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "down": "zone:blocks/boiler_top_3",
+        "up": "zone:blocks/boiler_top_3",
+        "north": "zone:blocks/boiler_front_off_3",
+        "south": "zone:blocks/boiler_right_off_3",
+        "west": "zone:blocks/boiler_left_off_3",
+        "east": "zone:blocks/boiler_back_off_3"
+    }
+}

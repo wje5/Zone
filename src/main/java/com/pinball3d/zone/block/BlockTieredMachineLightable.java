@@ -29,7 +29,7 @@ public class BlockTieredMachineLightable extends BlockTieredMachine {
 		this.blockSupplier = blockSupplier;
 		this.lightBlockSupplier = lightBlockSupplier;
 		setLightLevel(isLight ? 1 : 0);
-		setRegistryName("zone:" + name + tier.getTier() + (isLight ? "_light" : ""));
+		setRegistryName("zone:" + name + "_" + tier.getTier() + (isLight ? "_on" : ""));
 	}
 
 	@Override
