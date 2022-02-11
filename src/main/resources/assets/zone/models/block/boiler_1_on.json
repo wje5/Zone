@@ -1,11 +1,11 @@
 {
     "parent": "block/orientable",
     "textures": {
-        "down": "zone:blocks/boiler_top_1",
-        "up": "zone:blocks/boiler_top_1",
-        "north": "zone:blocks/boiler_front_on_1",
-        "south": "zone:blocks/boiler_right_on_1",
-        "west": "zone:blocks/boiler_left_on_1",
-        "east": "zone:blocks/boiler_back_on_1"
+        "down": "zone:blocks/boiler_1_top",
+        "up": "zone:blocks/boiler_1_top",
+        "north": "zone:blocks/boiler_1_on_front",
+        "south": "zone:blocks/boiler_1_on_right",
+        "west": "zone:blocks/boiler_1_on_left",
+        "east": "zone:blocks/boiler_1_on_back"
     }
 }
