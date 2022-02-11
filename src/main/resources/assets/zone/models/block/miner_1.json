@@ -5,8 +5,8 @@
         "down": "zone:blocks/miner_1_bottom",
         "up": "zone:blocks/miner_1_top",
         "north": "zone:blocks/miner_1_off_front",
-        "south": "zone:blocks/miner_1_off_right",
+        "south": "zone:blocks/miner_1_back",
         "west": "zone:blocks/miner_1_off_left",
-        "east": "zone:blocks/miner_1_back"
+        "east": "zone:blocks/miner_1_off_right"
     }
 }

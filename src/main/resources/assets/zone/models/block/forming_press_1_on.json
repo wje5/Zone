@@ -2,11 +2,11 @@
     "parent": "block/orientable",
     "textures": {
         "particle": "zone:blocks/forming_press_1_top",
-        "down": "zone:blocks/machine_buttom_1",
+        "down": "zone:blocks/machine_1_bottom",
         "up": "zone:blocks/forming_press_1_top",
         "north": "zone:blocks/forming_press_1_on_front",
-        "south": "zone:blocks/forming_press_1_on_right",
+        "south": "zone:blocks/forming_press_1_back",
         "west": "zone:blocks/forming_press_1_on_left",
-        "east": "zone:blocks/forming_press_1_back"
+        "east": "zone:blocks/forming_press_1_on_right"
     }
 }

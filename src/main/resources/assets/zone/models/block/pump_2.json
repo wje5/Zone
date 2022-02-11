@@ -5,8 +5,8 @@
         "down": "zone:blocks/pump_2_bottom",
         "up": "zone:blocks/pump_2_top",
         "north": "zone:blocks/pump_2_front",
-        "south": "zone:blocks/pump_2_right",
+        "south": "zone:blocks/pump_2_back",
         "west": "zone:blocks/pump_2_left",
-        "east": "zone:blocks/pump_2_back"
+        "east": "zone:blocks/pump_2_right"
     }
 }

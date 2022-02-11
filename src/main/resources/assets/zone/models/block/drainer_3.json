@@ -2,7 +2,7 @@
     "parent": "block/cube",
     "textures": {
         "particle": "zone:blocks/drainer_3_top",
-        "down": "zone:blocks/machine_buttom_3",
+        "down": "zone:blocks/machine_3_bottom",
         "up": "zone:blocks/drainer_3_top",
         "side": "zone:blocks/drainer_3_side",
         "north": "zone:blocks/drainer_3_side",

@@ -2,11 +2,11 @@
     "parent": "block/orientable",
     "textures": {
         "particle": "zone:blocks/charger_3_off_top",
-        "down": "zone:blocks/machine_buttom_3",
+        "down": "zone:blocks/machine_3_bottom",
         "up": "zone:blocks/charger_3_off_top",
         "north": "zone:blocks/charger_3_off_front",
-        "south": "zone:blocks/charger_3_off_right",
+        "south": "zone:blocks/charger_3_off_back",
         "west": "zone:blocks/charger_3_off_left",
-        "east": "zone:blocks/charger_3_off_back"
+        "east": "zone:blocks/charger_3_off_left"
     }
 }

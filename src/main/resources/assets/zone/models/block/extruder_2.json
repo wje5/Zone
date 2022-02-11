@@ -5,8 +5,8 @@
         "down": "zone:blocks/extruder_2_bottom",
         "up": "zone:blocks/extruder_2_top",
         "north": "zone:blocks/extruder_2_off_front",
-        "south": "zone:blocks/extruder_2_off_right",
+        "south": "zone:blocks/extruder_2_back",
         "west": "zone:blocks/extruder_2_off_left",
-        "east": "zone:blocks/extruder_2_back"
+        "east": "zone:blocks/extruder_2_off_right"
     }
 }

@@ -5,8 +5,8 @@
         "down": "zone:blocks/crystallizer_2_off_bottom",
         "up": "zone:blocks/crystallizer_2_off_top",
         "north": "zone:blocks/crystallizer_2_off_front",
-        "south": "zone:blocks/crystallizer_2_off_right",
+        "south": "zone:blocks/crystallizer_2_off_back",
         "west": "zone:blocks/crystallizer_2_off_left",
-        "east": "zone:blocks/crystallizer_2_off_back"
+        "east": "zone:blocks/crystallizer_2_off_right"
     }
 }

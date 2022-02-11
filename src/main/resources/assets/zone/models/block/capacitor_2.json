@@ -2,7 +2,7 @@
     "parent": "block/orientable",
     "textures": {
         "particle": "zone:blocks/capacitor_2_top",
-        "down": "zone:blocks/machine_buttom_2",
+        "down": "zone:blocks/machine_2_bottom",
         "up": "zone:blocks/capacitor_2_top",
         "north": "zone:blocks/capacitor_2_side",
         "south": "zone:blocks/capacitor_2_side",

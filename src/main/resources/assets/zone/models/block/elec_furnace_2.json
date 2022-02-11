@@ -2,11 +2,11 @@
     "parent": "block/orientable",
     "textures": {
         "particle": "zone:blocks/elec_furnace2_top",
-        "down": "zone:blocks/machine_buttom2",
+        "down": "zone:blocks/machine_2_bottom",
         "up": "zone:blocks/elec_furnace2_top",
         "north": "zone:blocks/elec_furnace2_off_front",
-        "south": "zone:blocks/elec_furnace2_off_right",
+        "south": "zone:blocks/elec_furnace2_back",
         "west": "zone:blocks/elec_furnace2_off_left",
-        "east": "zone:blocks/elec_furnace2_back"
+        "east": "zone:blocks/elec_furnace2_off_left"
     }
 }
