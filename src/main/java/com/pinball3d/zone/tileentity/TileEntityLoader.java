@@ -14,6 +14,7 @@ public class TileEntityLoader {
 		registerTileEntity(TEBeaconCore.class, "BeaconCore");
 		registerTileEntity(TEPoweredPiston.class, "PoweredPiston");
 		registerTileEntity(TETerminal.class, "Terminal");
+		registerTileEntity(TECableBasic.class, "CableBasic");
 
 		registerTileEntity(TEDrainer.class, "Drainer");
 		registerTileEntity(TEBoiler.class, "Boiler");
