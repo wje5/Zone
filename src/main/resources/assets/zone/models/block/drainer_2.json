@@ -1,0 +1,13 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "zone:blocks/drainer_2_top",
+        "down": "zone:blocks/machine_buttom_2",
+        "up": "zone:blocks/drainer_2_top",
+        "side": "zone:blocks/drainer_2_side",
+        "north": "zone:blocks/drainer_2_side",
+        "east": "zone:blocks/drainer_2_side",
+        "south": "zone:blocks/drainer_2_side",
+        "west": "zone:blocks/drainer_2_side"
+    }
+}

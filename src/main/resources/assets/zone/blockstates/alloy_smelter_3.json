@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "zone:alloy_smelter_3" },
+        "facing=south": { "model": "zone:alloy_smelter_3", "y": 180 },
+        "facing=west":  { "model": "zone:alloy_smelter_3", "y": 270 },
+        "facing=east":  { "model": "zone:alloy_smelter_3", "y": 90 }
+    }
+}

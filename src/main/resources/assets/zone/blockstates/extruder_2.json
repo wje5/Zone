@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "zone:extruder_2" },
+        "facing=south": { "model": "zone:extruder_2", "y": 180 },
+        "facing=west":  { "model": "zone:extruder_2", "y": 270 },
+        "facing=east":  { "model": "zone:extruder_2", "y": 90 }
+    }
+}

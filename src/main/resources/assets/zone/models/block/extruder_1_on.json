@@ -1,0 +1,12 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "particle": "zone:blocks/extruder_1_top",
+        "down": "zone:blocks/extruder_1_bottom",
+        "up": "zone:blocks/extruder_1_top",
+        "north": "zone:blocks/extruder_1_on_front",
+        "south": "zone:blocks/extruder_1_on_right",
+        "west": "zone:blocks/extruder_1_on_left",
+        "east": "zone:blocks/extruder_1_back"
+    }
+}

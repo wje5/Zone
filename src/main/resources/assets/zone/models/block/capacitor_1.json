@@ -1,0 +1,12 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "particle": "zone:blocks/capacitor_1_top",
+        "down": "zone:blocks/machine_buttom_1",
+        "up": "zone:blocks/capacitor_1_top",
+        "north": "zone:blocks/capacitor_1_side",
+        "south": "zone:blocks/capacitor_1_side",
+        "west": "zone:blocks/capacitor_1_side",
+        "east": "zone:blocks/capacitor_1_side"
+    }
+}

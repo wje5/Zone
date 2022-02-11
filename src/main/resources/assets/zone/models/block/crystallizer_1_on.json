@@ -1,0 +1,12 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "particle": "zone:blocks/crystallizer_1_on_top",
+        "down": "zone:blocks/crystallizer_1_on_bottom",
+        "up": "zone:blocks/crystallizer_1_on_top",
+        "north": "zone:blocks/crystallizer_1_on_front",
+        "south": "zone:blocks/crystallizer_1_on_right",
+        "west": "zone:blocks/crystallizer_1_on_left",
+        "east": "zone:blocks/crystallizer_1_on_back"
+    }
+}

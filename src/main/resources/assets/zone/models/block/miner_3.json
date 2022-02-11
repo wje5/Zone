@@ -1,0 +1,12 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "particle": "zone:blocks/miner_3_off_top",
+        "down": "zone:blocks/miner_3_off_bottom",
+        "up": "zone:blocks/miner_3_off_top",
+        "north": "zone:blocks/miner_3_off_front",
+        "south": "zone:blocks/miner_3_off_right",
+        "west": "zone:blocks/miner_3_off_left",
+        "east": "zone:blocks/miner_3_off_back"
+    }
+}

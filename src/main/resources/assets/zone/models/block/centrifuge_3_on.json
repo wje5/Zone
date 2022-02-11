@@ -1,0 +1,12 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "particle": "zone:blocks/centrifuge_3_on_top",
+        "down": "zone:blocks/machine_buttom_3",
+        "up": "zone:blocks/centrifuge_3_on_top",
+        "north": "zone:blocks/centrifuge_3_on_front",
+        "south": "zone:blocks/centrifuge_3_on_right",
+        "west": "zone:blocks/centrifuge_3_on_left",
+        "east": "zone:blocks/centrifuge_3_on_back"
+    }
+}

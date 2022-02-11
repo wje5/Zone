@@ -1,0 +1,12 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "particle": "zone:blocks/grinder_1_top",
+        "down": "zone:blocks/grinder_1_bottom",
+        "up": "zone:blocks/grinder_1_top",
+        "north": "zone:blocks/grinder_1_off_front",
+        "south": "zone:blocks/grinder_1_off_right",
+        "west": "zone:blocks/grinder_1_off_left",
+        "east": "zone:blocks/grinder_1_back"
+    }
+}

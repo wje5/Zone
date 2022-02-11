@@ -1,0 +1,12 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "particle": "zone:blocks/alloy_smelter_1_off_top",
+        "down": "zone:blocks/machine_buttom_1",
+        "up": "zone:blocks/alloy_smelter_1_off_top",
+        "north": "zone:blocks/alloy_smelter_1_off_front",
+        "south": "zone:blocks/alloy_smelter_1_off_right",
+        "west": "zone:blocks/alloy_smelter_1_off_left",
+        "east": "zone:blocks/alloy_smelter_1_off_back"
+    }
+}
