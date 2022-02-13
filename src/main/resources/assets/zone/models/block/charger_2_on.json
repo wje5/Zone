@@ -5,7 +5,7 @@
         "down": "zone:blocks/machine_2_bottom",
         "up": "zone:blocks/charger_2_on_top",
         "north": "zone:blocks/charger_2_on_front",
-        "south": "zone:blocks/charger_2_on_right",
+        "south": "zone:blocks/charger_2_on_back",
         "west": "zone:blocks/charger_2_on_left",
         "east": "zone:blocks/charger_2_off_left"
     }

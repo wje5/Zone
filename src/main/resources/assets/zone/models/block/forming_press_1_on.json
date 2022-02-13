@@ -7,6 +7,6 @@
         "north": "zone:blocks/forming_press_1_on_front",
         "south": "zone:blocks/forming_press_1_back",
         "west": "zone:blocks/forming_press_1_on_left",
-        "east": "zone:blocks/forming_press_1_on_right"
+        "east": "zone:blocks/forming_press_1_on_left"
     }
 }
