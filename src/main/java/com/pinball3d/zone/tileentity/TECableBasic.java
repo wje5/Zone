@@ -3,6 +3,7 @@ package com.pinball3d.zone.tileentity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,10 +38,9 @@ public class TECableBasic extends TileEntity implements ITickable {
 		}
 		List<BlockPos> l = new ArrayList<BlockPos>();
 		Set<BlockPos> set = new HashSet<BlockPos>();
-		Map<TileEntity, Pair<List<EnumFacing>, List<EnumFacing>>> t = new HashMap<TileEntity, Pair<List<EnumFacing>, List<EnumFacing>>>(),
-				dynamos = new HashMap<TileEntity, Pair<List<EnumFacing>, List<EnumFacing>>>(),
-				capacitors = new HashMap<TileEntity, Pair<List<EnumFacing>, List<EnumFacing>>>(),
-				devices = new HashMap<TileEntity, Pair<List<EnumFacing>, List<EnumFacing>>>();
+		Map<TileEntity, DeviceWrapper> t = new HashMap<TileEntity, DeviceWrapper>();
+		Set<DeviceWrapper> dynamos = new HashSet<DeviceWrapper>(), capacitors = new HashSet<DeviceWrapper>(),
+				devices = new HashSet<DeviceWrapper>();
 		l.add(pos);
 		for (int i = 0; i < l.size(); i++) {
 			BlockPos p = l.get(i);
@@ -56,17 +56,26 @@ public class TECableBasic extends TileEntity implements ITickable {
 							IEnergyStorage s = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
 							boolean extract = s.canExtract(), receive = s.canReceive();
 							if (extract || receive) {
-								Pair<List<EnumFacing>, List<EnumFacing>> pair = t.get(te);
-								if (pair == null) {
-									pair = new Pair<List<EnumFacing>, List<EnumFacing>>(new ArrayList<>(),
-											new ArrayList<>());
-									t.put(te, pair);
+								DeviceWrapper wrapper = t.get(te);
+								if (wrapper == null) {
+									wrapper = new DeviceWrapper(te);
+									t.put(te, wrapper);
 								}
 								if (extract) {
-									pair.key().add(facing.getOpposite());
+									wrapper.output.add(new Pair<EnumFacing, Integer>(facing.getOpposite(),
+											s.extractEnergy(Integer.MAX_VALUE, true)));
+									int store = s.getEnergyStored();
+									if (store < wrapper.store) {
+										wrapper.store = store;
+									}
 								}
 								if (receive) {
-									pair.value().add(facing.getOpposite());
+									wrapper.input.add(new Pair<EnumFacing, Integer>(facing.getOpposite(),
+											s.receiveEnergy(Integer.MAX_VALUE, true)));
+									int need = s.getMaxEnergyStored() - s.getEnergyStored();
+									if (need < wrapper.store) {
+										wrapper.need = need;
+									}
 								}
 							}
 						}
@@ -76,20 +85,140 @@ public class TECableBasic extends TileEntity implements ITickable {
 				}
 			}
 		}
-		t.forEach((te, p) -> {
-			if (p.key().isEmpty()) {
-				devices.put(te, p);
-			} else if (p.value().isEmpty()) {
-				dynamos.put(te, p);
+		t.forEach((te, wrapper) -> {
+			if (wrapper.output.isEmpty()) {
+				devices.add(wrapper);
+				long temp = wrapper.input.stream().mapToLong(e -> e.value()).sum();
+				wrapper.maxInputSpeed = Math.min(wrapper.need,
+						temp >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) temp);
+			} else if (wrapper.input.isEmpty()) {
+				dynamos.add(wrapper);
+				long temp = wrapper.output.stream().mapToLong(e -> e.value()).sum();
+				wrapper.maxOutputSpeed = Math.min(wrapper.store,
+						temp >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) temp);
 			} else {
-				capacitors.put(te, p);
+				capacitors.add(wrapper);
+				long temp = wrapper.input.stream().mapToLong(e -> e.value()).sum();
+				wrapper.maxInputSpeed = Math.min(wrapper.need,
+						temp >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) temp);
+				temp = wrapper.output.stream().mapToLong(e -> e.value()).sum();
+				wrapper.maxOutputSpeed = Math.min(wrapper.need,
+						temp >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) temp);
 			}
 		});
-		int totalInput = 0, totalOutput = 0;
-		System.out.println("dynamos:" + dynamos);
-		System.out.println("capacitors:" + capacitors);
-		System.out.println("devices:" + devices);
-		System.out.println("#####" + pos);
+		long totalInput = dynamos.stream().mapToLong(e -> e.maxOutputSpeed).sum();
+		long totalOutput = devices.stream().mapToLong(e -> e.maxInputSpeed).sum();
+		long capacitorInput = capacitors.stream().mapToLong(e -> e.maxOutputSpeed).sum();
+		long capacitorOutput = capacitors.stream().mapToLong(e -> e.maxInputSpeed).sum();
+		if (totalInput >= totalOutput) {
+			long energy = Math.min(totalInput, totalOutput + capacitorOutput);
+			float avg = energy * 1.0F / dynamos.size();
+			Iterator<DeviceWrapper> it = dynamos.iterator();
+			while (it.hasNext()) {
+				DeviceWrapper w = it.next();
+				if (w.maxOutputSpeed < avg) {
+					energy -= w.extract(energy >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) energy);
+					it.remove();
+					if (energy <= 0) {
+						break;
+					}
+				}
+			}
+			it = dynamos.iterator();
+			while (it.hasNext()) {
+				DeviceWrapper w = it.next();
+				avg = energy * 1.0F / dynamos.size();
+				energy -= w.extract(Math.round(avg));
+				it.remove();
+				if (energy <= 0) {
+					break;
+				}
+			}
+			energy = Math.min(totalInput, totalOutput + capacitorOutput) - energy;
+			for (DeviceWrapper e : devices) {
+				energy -= e.receive(e.maxInputSpeed);
+				if (energy <= 0) {
+					break;
+				}
+			}
+			avg = energy * 1.0F / capacitors.size();
+			it = capacitors.iterator();
+			while (it.hasNext()) {
+				DeviceWrapper w = it.next();
+				if (w.maxInputSpeed < avg) {
+					energy -= w.extract(energy >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) energy);
+					it.remove();
+					if (energy <= 0) {
+						break;
+					}
+				}
+			}
+			it = capacitors.iterator();
+			while (it.hasNext()) {
+				DeviceWrapper w = it.next();
+				avg = energy * 1.0F / capacitors.size();
+				energy -= w.receive(Math.round(avg));
+				it.remove();
+				if (energy <= 0) {
+					break;
+				}
+			}
+		} else {
+			long energy = totalOutput;
+			for (DeviceWrapper e : dynamos) {
+				energy -= e.extract(e.maxOutputSpeed);
+				if (energy <= 0) {
+					break;
+				}
+			}
+			float avg = energy * 1.0F / capacitors.size();
+			Iterator<DeviceWrapper> it = capacitors.iterator();
+			while (it.hasNext()) {
+				DeviceWrapper w = it.next();
+				if (w.maxOutputSpeed < avg) {
+					energy -= w.extract(energy >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) energy);
+					it.remove();
+					if (energy <= 0) {
+						break;
+					}
+				}
+			}
+			it = capacitors.iterator();
+			while (it.hasNext()) {
+				DeviceWrapper w = it.next();
+				avg = energy * 1.0F / capacitors.size();
+				energy -= w.extract(Math.round(avg));
+				it.remove();
+				if (energy <= 0) {
+					break;
+				}
+			}
+			energy = totalOutput - energy;
+			it = devices.iterator();
+			while (it.hasNext()) {
+				DeviceWrapper w = it.next();
+				if (w.maxInputSpeed < avg) {
+					energy -= w.receive(energy >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) energy);
+					it.remove();
+					if (energy <= 0) {
+						break;
+					}
+				}
+			}
+			it = devices.iterator();
+			while (it.hasNext()) {
+				DeviceWrapper w = it.next();
+				avg = energy * 1.0F / devices.size();
+				energy -= w.receive(Math.round(avg));
+				it.remove();
+				if (energy <= 0) {
+					break;
+				}
+			}
+		}
+//		System.out.println("dynamos:" + totalInput + ":" + dynamos);
+//		System.out.println("capacitors:" + capacitorInput + ":" + capacitorOutput + ":" + capacitors);
+//		System.out.println("devices:" + totalOutput + ":" + devices);
 	}
 
 	public boolean isConnect(EnumFacing facing) {
@@ -147,11 +276,37 @@ public class TECableBasic extends TileEntity implements ITickable {
 
 	private static class DeviceWrapper {
 		public final TileEntity tileentity;
-		public final List<EnumFacing> input = new ArrayList<EnumFacing>();
-		public final List<EnumFacing> output = new ArrayList<EnumFacing>();
+		public final List<Pair<EnumFacing, Integer>> input = new ArrayList<Pair<EnumFacing, Integer>>();
+		public final List<Pair<EnumFacing, Integer>> output = new ArrayList<Pair<EnumFacing, Integer>>();
+		public int store = Integer.MAX_VALUE, need = Integer.MAX_VALUE;
+		public int maxInputSpeed, maxOutputSpeed;
 
 		public DeviceWrapper(TileEntity tileentity) {
 			this.tileentity = tileentity;
+		}
+
+		public int receive(int amount) {
+			int received = 0;
+			for (Pair<EnumFacing, Integer> p : input) {
+				IEnergyStorage s = tileentity.getCapability(CapabilityEnergy.ENERGY, p.key());
+				received += s.receiveEnergy(amount - received, false);
+				if (amount <= received) {
+					return received;
+				}
+			}
+			return received;
+		}
+
+		public int extract(int amount) {
+			int extracted = 0;
+			for (Pair<EnumFacing, Integer> p : output) {
+				IEnergyStorage s = tileentity.getCapability(CapabilityEnergy.ENERGY, p.key());
+				extracted += s.extractEnergy(amount - extracted, false);
+				if (amount <= extracted) {
+					return extracted;
+				}
+			}
+			return extracted;
 		}
 	}
 }

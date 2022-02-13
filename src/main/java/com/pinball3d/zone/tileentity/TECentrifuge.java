@@ -107,6 +107,11 @@ public class TECentrifuge extends ZoneTieredMachine {
 		}
 	}
 
+	@Override
+	public boolean canExtractEnergy(EnumFacing facing) {
+		return false;
+	}
+
 	public int getTick() {
 		return tick;
 	}
