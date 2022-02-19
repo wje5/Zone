@@ -1,8 +1,5 @@
 {
     "variants": {
-        "facing=north": { "model": "zone:capacitor_1" },
-        "facing=south": { "model": "zone:capacitor_1", "y": 180 },
-        "facing=west":  { "model": "zone:capacitor_1", "y": 270 },
-        "facing=east":  { "model": "zone:capacitor_1", "y": 90 }
+        "normal": { "model": "zone:capacitor_1" }
     }
 }
