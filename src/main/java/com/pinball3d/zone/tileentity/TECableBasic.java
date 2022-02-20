@@ -10,7 +10,6 @@ import java.util.Set;
 
 import com.pinball3d.zone.util.Pair;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -23,6 +22,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 public class TECableBasic extends TileEntity implements ITickable {
 	protected EnergyStorage energy = new EnergyStorage(0);
 	private long skipped;
+	public long networkEnergy, networkMaxEnergy, networkInput, networkOutput;
 
 	public TECableBasic() {
 
@@ -108,7 +108,6 @@ public class TECableBasic extends TileEntity implements ITickable {
 		});
 		long totalInput = dynamos.stream().mapToLong(e -> e.maxOutputSpeed).sum();
 		long totalOutput = devices.stream().mapToLong(e -> e.maxInputSpeed).sum();
-		long capacitorInput = capacitors.stream().mapToLong(e -> e.maxOutputSpeed).sum();
 		long capacitorOutput = capacitors.stream().mapToLong(e -> e.maxInputSpeed).sum();
 		if (totalInput >= totalOutput) {
 			long energy = Math.min(totalInput, totalOutput + capacitorOutput);
@@ -135,6 +134,7 @@ public class TECableBasic extends TileEntity implements ITickable {
 				}
 			}
 			energy = Math.min(totalInput, totalOutput + capacitorOutput) - energy;
+			networkInput = energy;
 			for (DeviceWrapper e : devices) {
 				energy -= e.receive(e.maxInputSpeed);
 				if (energy <= 0) {
@@ -153,6 +153,7 @@ public class TECableBasic extends TileEntity implements ITickable {
 					}
 				}
 			}
+			networkOutput = networkInput - energy;
 			it = capacitors.iterator();
 			while (it.hasNext()) {
 				DeviceWrapper w = it.next();
@@ -171,6 +172,7 @@ public class TECableBasic extends TileEntity implements ITickable {
 					break;
 				}
 			}
+			networkInput = totalOutput - energy;
 			float avg = energy * 1.0F / capacitors.size();
 			Iterator<DeviceWrapper> it = capacitors.iterator();
 			while (it.hasNext()) {
@@ -194,6 +196,7 @@ public class TECableBasic extends TileEntity implements ITickable {
 				}
 			}
 			energy = totalOutput - energy;
+			networkOutput = energy;
 			it = devices.iterator();
 			while (it.hasNext()) {
 				DeviceWrapper w = it.next();
@@ -215,14 +218,15 @@ public class TECableBasic extends TileEntity implements ITickable {
 					break;
 				}
 			}
+			networkOutput -= energy;
 		}
-//		System.out.println("dynamos:" + totalInput + ":" + dynamos);
-//		System.out.println("capacitors:" + capacitorInput + ":" + capacitorOutput + ":" + capacitors);
-//		System.out.println("devices:" + totalOutput + ":" + devices);
 	}
 
 	public boolean isConnect(EnumFacing facing) {
 		TileEntity te = world.getTileEntity(getPos().offset(facing));
+		if (te instanceof TECableBasic) {
+			return true;
+		}
 		if (te != null && te.hasCapability(CapabilityEnergy.ENERGY, facing.getOpposite())) {
 			IEnergyStorage s = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
 			if (s.canExtract() || s.canReceive()) {
@@ -259,19 +263,6 @@ public class TECableBasic extends TileEntity implements ITickable {
 
 	public boolean activeOutput(EnumFacing facing) {
 		return false;
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		super.readFromNBT(compound);
-
-	}
-
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		super.writeToNBT(compound);
-
-		return compound;
 	}
 
 	private static class DeviceWrapper {

@@ -24,6 +24,7 @@ import com.pinball3d.zone.manual.GuiContainerManualSphinxSystem5;
 import com.pinball3d.zone.manual.GuiContainerManualToolAndMaterial;
 import com.pinball3d.zone.tileentity.TEAlloySmelter;
 import com.pinball3d.zone.tileentity.TEBoiler;
+import com.pinball3d.zone.tileentity.TECableGeneral;
 import com.pinball3d.zone.tileentity.TECapacitor;
 import com.pinball3d.zone.tileentity.TECentrifuge;
 import com.pinball3d.zone.tileentity.TECharger;
@@ -37,6 +38,7 @@ import com.pinball3d.zone.tileentity.TEMiner;
 import com.pinball3d.zone.tileentity.TEPump;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -58,6 +60,12 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int MINER = 13;
 	public static final int MANUAL = 14;
 	public static final int TRANSMISSION_MODULE = 15;
+	public static final int CABLE_2_DOWN = 16;
+	public static final int CABLE_2_UP = 17;
+	public static final int CABLE_2_NORTH = 18;
+	public static final int CABLE_2_SOUTH = 19;
+	public static final int CABLE_2_WEST = 20;
+	public static final int CABLE_2_EAST = 21;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -111,6 +119,14 @@ public class GuiElementLoader implements IGuiHandler {
 			}
 		case TRANSMISSION_MODULE:
 			return new ContainerTransmissionModule(player, world.getTileEntity(new BlockPos(x, y, z)));
+		case CABLE_2_DOWN:
+		case CABLE_2_UP:
+		case CABLE_2_NORTH:
+		case CABLE_2_SOUTH:
+		case CABLE_2_WEST:
+		case CABLE_2_EAST:
+			return new ContainerCable2(player, (TECableGeneral) world.getTileEntity(new BlockPos(x, y, z)),
+					EnumFacing.VALUES[ID - CABLE_2_DOWN]);
 		}
 		return null;
 	}
@@ -192,7 +208,16 @@ public class GuiElementLoader implements IGuiHandler {
 		case TRANSMISSION_MODULE:
 			return new GuiContainerTransmissionModule(
 					new ContainerTransmissionModule(player, world.getTileEntity(new BlockPos(x, y, z))));
+		case CABLE_2_DOWN:
+		case CABLE_2_UP:
+		case CABLE_2_NORTH:
+		case CABLE_2_SOUTH:
+		case CABLE_2_WEST:
+		case CABLE_2_EAST:
+			return new GuiContainerCable2(new ContainerCable2(player,
+					(TECableGeneral) world.getTileEntity(new BlockPos(x, y, z)), EnumFacing.VALUES[ID - CABLE_2_DOWN]));
 		}
+
 		return null;
 	}
 }

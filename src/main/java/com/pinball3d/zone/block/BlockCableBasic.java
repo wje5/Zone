@@ -6,14 +6,20 @@ import com.pinball3d.zone.tileentity.ZoneTieredMachine.Tier;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties.PropertyAdapter;
 
 public class BlockCableBasic extends BlockContainer {
@@ -24,29 +30,29 @@ public class BlockCableBasic extends BlockContainer {
 	public static final UnlistedPropertyBool WEST = new UnlistedPropertyBool("west");
 	public static final UnlistedPropertyBool EAST = new UnlistedPropertyBool("east");
 
-	public BlockCableBasic() {
+	public BlockCableBasic(Tier tier) {
 		super(Material.IRON);
-		setHardness(Tier.T1.getHardness());
-		setResistance(Tier.T1.getHardness());
-		setRegistryName("zone:cable_1");
-		setUnlocalizedName("cable_1");
+		setHardness(tier.getHardness());
+		setResistance(tier.getHardness());
+		setRegistryName("zone:cable_" + tier.getTier());
+		setUnlocalizedName("cable_" + tier.getTier());
 		setCreativeTab(TabZone.tab);
 	}
 
-//	@Override
-//	protected BlockStateContainer createBlockState() {
-//		return new ExtendedBlockState(this, new IProperty[] {},
-//				new IUnlistedProperty[] { DOWN, UP, NORTH, SOUTH, WEST, EAST });
-//	}
+	@Override
+	protected BlockStateContainer createBlockState() {
+		return new ExtendedBlockState(this, new IProperty[] {},
+				new IUnlistedProperty[] { DOWN, UP, NORTH, SOUTH, WEST, EAST });
+	}
 
-//	@Override
-//	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-//		TECableBasic te = (TECableBasic) world.getTileEntity(pos);
-//		return ((IExtendedBlockState) state).withProperty(DOWN, te.isConnect(EnumFacing.DOWN))
-//				.withProperty(UP, te.isConnect(EnumFacing.UP)).withProperty(NORTH, te.isConnect(EnumFacing.NORTH))
-//				.withProperty(SOUTH, te.isConnect(EnumFacing.SOUTH)).withProperty(WEST, te.isConnect(EnumFacing.WEST))
-//				.withProperty(EAST, te.isConnect(EnumFacing.EAST));
-//	}
+	@Override
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+		TECableBasic te = (TECableBasic) world.getTileEntity(pos);
+		return ((IExtendedBlockState) state).withProperty(DOWN, te.isConnect(EnumFacing.DOWN))
+				.withProperty(UP, te.isConnect(EnumFacing.UP)).withProperty(NORTH, te.isConnect(EnumFacing.NORTH))
+				.withProperty(SOUTH, te.isConnect(EnumFacing.SOUTH)).withProperty(WEST, te.isConnect(EnumFacing.WEST))
+				.withProperty(EAST, te.isConnect(EnumFacing.EAST));
+	}
 
 	@Override
 	public boolean isOpaqueCube(IBlockState state) {
