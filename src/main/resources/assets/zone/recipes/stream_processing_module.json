@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "+-+",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:transistor"
+    },
+    "*": {
+      "item": "zone:energy_glass_plate"
+    },
+    "+": {
+      "item": "zone:glass_fibre"
+    },
+    "-": {
+      "item": "zone:arithmetic_element"
+    }
+  },
+  "result": {
+    "item": "zone:stream_processing_module"
+  }
+}

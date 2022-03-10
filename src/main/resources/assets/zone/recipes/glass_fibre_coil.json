@@ -1,20 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "###",
     "#*#",
-    "###"
+    "#*#",
+    "#*#"
   ],
   "key": {
     "#": {
-      "item": "zone:iron_plate"
+      "item": "zone:glass_fibre"
     },
     "*": {
-      "item": "zone:spanner",
-      "data": 32767
+      "item": "zone:energy_alloy_plate"
     }
   },
   "result": {
-    "item": "zone:iron_casing"
+    "item": "zone:gold_coil"
   }
 }

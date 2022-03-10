@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "#+#",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:etherium_wire"
+    },
+    "*": {
+      "item": "zone:steel_plate"
+    },
+    "+": {
+      "item": "zone:steel_ingot"
+    }
+  },
+  "result": {
+    "item": "zone:etherium_coil"
+  }
+}

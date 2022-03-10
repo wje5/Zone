@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#*#",
+    "#+#",
+    "#*#"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:gold_wire"
+    },
+    "*": {
+      "item": "zone:iron_plate"
+    },
+    "+": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "zone:gold_coil"
+  }
+}

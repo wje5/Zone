@@ -32,7 +32,8 @@ public class ItemLoader {
 			steel_ingot, garton_metal_plate, garton_metal_ingot, steel_nugget, steel_rivet, garton_metal_nugget,
 			garton_metal_rivet, steel_rod, garton_metal_rod, gold_wire, etherium_wire, glass_fibre, energy_glass_plate,
 	//2022/3/3
-	        iron_casing, steel_casing, energy_alloy_casing, energy_alloy_plate, parallel_processor
+	        iron_casing, steel_casing, energy_alloy_casing, energy_alloy_plate, parallel_processor, arithmetic_element,
+	        stream_processing_module, gold_coil, etherium_coil, glass_fibre_coil, etherium_coil_group, energy_amplifier
 	;
 
 	public static Item energy, construct_block, fc, manual, crucible, casting_table, hybrid_fuel, pipette;
@@ -201,6 +202,13 @@ public class ItemLoader {
 		register(registry, energy_alloy_casing = new ZoneItem("energy_alloy_casing"));
 		register(registry, energy_alloy_plate = new ZoneItem("energy_alloy_plate"));
 		register(registry, parallel_processor = new ZoneItem("parallel_processor"));
+		register(registry, arithmetic_element = new ZoneItem("arithmetic_element"));
+		register(registry, stream_processing_module = new ZoneItem("stream_processing_module"));
+		register(registry, gold_coil = new ZoneItem("gold_coil"));
+		register(registry, etherium_coil = new ZoneItem("etherium_coil"));
+		register(registry, glass_fibre_coil = new ZoneItem("glass_fibre_coil"));
+		register(registry, etherium_coil_group = new ZoneItem("etherium_coil_group"));
+		register(registry, energy_amplifier = new ZoneItem("energy_amplifier"));
 
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 //			ModelLoader.setCustomModelResourceLocation(terminal, 0,
