@@ -638,19 +638,38 @@ public class Util {
 	}
 
 	public static short[] retractIntToShort(int i) {
-		short s1 = (short) ((i & 0xFFFF0000) >> 16);
-		short s2 = (short) (i & 0xFFFF);
+		short s1 = (short) (i >> 16);
+		short s2 = (short) i;
 		return new short[] { s1, s2 };
 	}
 
-	public static String formatEnergy(int i) {
+	public static long combineShort(short s1, short s2, short s3, short s4) {
+		return (((long) s1) << 48) | ((((long) s2) & 0xFFFF) << 32) | (((long) s3 & 0xFFFF) << 16) | (s4 & 0xFFFF);
+	}
+
+	public static short[] retractLongToShort(long l) {
+		short s1 = (short) (l >> 48);
+		short s2 = (short) (l >> 32);
+		short s3 = (short) (l >> 16);
+		short s4 = (short) l;
+		return new short[] { s1, s2, s3, s4 };
+	}
+
+	public static String formatEnergy(long i) {
 		if (i < 1000) {
 			return i + " FE";
 		} else if (i < 1000000) {
-			return String.format("%.2f kFE", i / 1000F);
+			return String.format("%.2f KFE", i / 1000F);
 		} else if (i < 1000000000) {
-			return String.format("%.2f mFE", i / 1000000F);
+			return String.format("%.2f MFE", i / 1000_000F);
+		} else if (i < 1000_000_000_000L) {
+			return String.format("%.2f BFE", i / 1000_000_000F);
+		} else if (i < 1000_000_000_000_000L) {
+			return String.format("%.2f TFE", i / 1000_000_000_000F);
+		} else if (i < 1000_000_000_000_000_000L) {
+			return String.format("%.2f QaFE", i / 1000_000_000_000_000F);
+		} else {
+			return String.format("%.2f QiFE", i / 1000_000_000_000_000_000F);
 		}
-		return String.format("%.2f tFE", i / 1000000000F);
 	}
 }

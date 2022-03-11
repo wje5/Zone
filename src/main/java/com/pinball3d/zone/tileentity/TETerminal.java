@@ -18,7 +18,6 @@ public class TETerminal extends TileEntity implements ITickable {
 		if (world.isRemote) {
 			return;
 		}
-		System.out.println(uuid + "|" + this);
 		if (isWorking()) {
 			BlockPos pos = getPos();
 			EntityPlayer player = world.getPlayerEntityByUUID(uuid);

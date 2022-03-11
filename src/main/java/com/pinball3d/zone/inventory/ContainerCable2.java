@@ -2,11 +2,13 @@ package com.pinball3d.zone.inventory;
 
 import com.pinball3d.zone.tileentity.TECableGeneral;
 import com.pinball3d.zone.tileentity.TECableGeneral.CableConfig;
+import com.pinball3d.zone.tileentity.TECableGeneral.CableConfig.ItemIOType;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
@@ -17,10 +19,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 public class ContainerCable2 extends Container {
-	private int tier, energy, maxEnergy;
-	private short energyData, maxEnergyData;
+	private short[] tempData = new short[3];
 	protected TECableGeneral tileEntity;
 	public final EnumFacing facing;
+	public long networkEnergy, networkMaxEnergy, networkInput, networkOutput;
+	public boolean energyTransmit;
+	public ItemIOType itemIOType;
 
 	public ContainerCable2(EntityPlayer player, TECableGeneral tileEntity, EnumFacing facing) {
 		this.tileEntity = tileEntity;
@@ -33,12 +37,14 @@ public class ContainerCable2 extends Container {
 		for (int i = 0; i < 9; ++i) {
 			addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 142));
 		}
+		CableConfig config = tileEntity.getConfig(facing);
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 5; ++j) {
-				addSlotToContainer(new TagSlot(tileEntity.getConfig(facing), j + i * 5, 80 + j * 18, 17 + i * 18));
+				addSlotToContainer(new TagSlot(config, j + i * 5, 80 + j * 18, 17 + i * 18));
 			}
 		}
-		// 一个问题 叠加的物品右键拖过多个物品格的时候会试图在每个空格子里放进一个
+		energyTransmit = config.isEnergyTransmit();
+		itemIOType = config.getItemIOType();
 	}
 
 	@Override
@@ -142,50 +148,65 @@ public class ContainerCable2 extends Container {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-//		if (!tileEntity.getWorld().isRemote) {
-//			tier = tileEntity.getTier().getTier();
-//			energy = tileEntity.getEnergyStored();
-//			maxEnergy = tileEntity.getMaxEnergyStored();
-//		}
-//		for (IContainerListener i : listeners) {
-//			i.sendWindowProperty(this, 0, tier);
-//			short[] s = Util.retractIntToShort(energy);
-//			i.sendWindowProperty(this, 1, s[0]);
-//			i.sendWindowProperty(this, 2, s[1]);
-//			s = Util.retractIntToShort(maxEnergy);
-//			i.sendWindowProperty(this, 3, s[0]);
-//			i.sendWindowProperty(this, 4, s[1]);
-//		}
+		if (!tileEntity.getWorld().isRemote) {
+			networkEnergy = tileEntity.networkEnergy;
+			networkMaxEnergy = tileEntity.networkMaxEnergy;
+			networkInput = tileEntity.networkInput;
+			networkOutput = tileEntity.networkOutput;
+		}
+		for (IContainerListener i : listeners) {
+			short[] s = Util.retractLongToShort(networkEnergy);
+			i.sendWindowProperty(this, 0, s[0]);
+			i.sendWindowProperty(this, 1, s[1]);
+			i.sendWindowProperty(this, 2, s[2]);
+			i.sendWindowProperty(this, 3, s[3]);
+			s = Util.retractLongToShort(networkMaxEnergy);
+			i.sendWindowProperty(this, 4, s[0]);
+			i.sendWindowProperty(this, 5, s[1]);
+			i.sendWindowProperty(this, 6, s[2]);
+			i.sendWindowProperty(this, 7, s[3]);
+			s = Util.retractLongToShort(networkInput);
+			i.sendWindowProperty(this, 8, s[0]);
+			i.sendWindowProperty(this, 9, s[1]);
+			i.sendWindowProperty(this, 10, s[2]);
+			i.sendWindowProperty(this, 11, s[3]);
+			s = Util.retractLongToShort(networkOutput);
+			i.sendWindowProperty(this, 12, s[0]);
+			i.sendWindowProperty(this, 13, s[1]);
+			i.sendWindowProperty(this, 14, s[2]);
+			i.sendWindowProperty(this, 15, s[3]);
+
+			i.sendWindowProperty(this, 16, energyTransmit ? 1 : 0);
+			i.sendWindowProperty(this, 17, itemIOType.ordinal());
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void updateProgressBar(int id, int data) {
 		super.updateProgressBar(id, data);
-		if (id == 0) {
-			tier = data;
-		} else if (id == 1) {
-			energyData = (short) data;
-		} else if (id == 2) {
-			energy = Util.combineShort(energyData, (short) data);
-		} else if (id == 3) {
-			maxEnergyData = (short) data;
-		} else if (id == 4) {
-			maxEnergy = Util.combineShort(maxEnergyData, (short) data);
-
+		if (id == 16) {
+			energyTransmit = data > 0;
+		} else if (id == 17) {
+			itemIOType = ItemIOType.values()[data];
+		} else if (id % 4 != 3) {
+			tempData[id % 4] = (short) data;
+		} else {
+			switch (id) {
+			case 3:
+				networkEnergy = Util.combineShort(tempData[0], tempData[1], tempData[2], (short) data);
+				break;
+			case 7:
+				networkMaxEnergy = Util.combineShort(tempData[0], tempData[1], tempData[2], (short) data);
+				break;
+			case 11:
+				networkInput = Util.combineShort(tempData[0], tempData[1], tempData[2], (short) data);
+				break;
+			case 15:
+				networkOutput = Util.combineShort(tempData[0], tempData[1], tempData[2], (short) data);
+				break;
+			}
 		}
-	}
-
-	public int getTier() {
-		return tier;
-	}
-
-	public int getEnergy() {
-		return energy;
-	}
-
-	public int getMaxEnergy() {
-		return maxEnergy;
 	}
 
 	@Override

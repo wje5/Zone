@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL11;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.tileentity.TECableGeneral;
+import com.pinball3d.zone.tileentity.TECableGeneral.CableConfig;
 import com.pinball3d.zone.tileentity.ZoneTieredMachine.Tier;
 
 import net.minecraft.block.state.IBlockState;
@@ -139,6 +140,8 @@ public class BlockCableGeneral extends BlockCableBasic {
 			}
 		}
 		System.out.println(xGrid + "|" + yGrid + "|" + facing);
+		CableConfig config = ((TECableGeneral) world.getTileEntity(pos)).getConfig(facing);
+		System.out.println("SERVER:" + config.isEnergyTransmit() + "|" + config.getItemIOType());
 		player.openGui(Zone.instance, GuiElementLoader.CABLE_2_DOWN + facing.getIndex(), world, pos.getX(), pos.getY(),
 				pos.getZ());
 		return true;

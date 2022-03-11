@@ -81,6 +81,8 @@ public class TECableGeneral extends TECableBasic {
 
 	public static class CableConfig {
 		private ItemStack[] whitelist = new ItemStack[15];
+		private boolean energyTransmit = true;
+		private ItemIOType itemIOType = ItemIOType.INPUT;
 
 		public CableConfig() {
 			Arrays.fill(whitelist, ItemStack.EMPTY);
@@ -88,6 +90,22 @@ public class TECableGeneral extends TECableBasic {
 
 		public ItemStack[] getWhitelist() {
 			return whitelist;
+		}
+
+		public boolean isEnergyTransmit() {
+			return energyTransmit;
+		}
+
+		public void setEnergyTransmit(boolean energyTransmit) {
+			this.energyTransmit = energyTransmit;
+		}
+
+		public ItemIOType getItemIOType() {
+			return itemIOType;
+		}
+
+		public void setItemIOType(ItemIOType itemIOType) {
+			this.itemIOType = itemIOType;
 		}
 
 		public void readFromNBT(NBTTagCompound compound) {
@@ -99,6 +117,8 @@ public class TECableGeneral extends TECableBasic {
 					whitelist[slot] = new ItemStack(itemTags);
 				}
 			}
+			energyTransmit = compound.getBoolean("energyTransmit");
+			itemIOType = ItemIOType.values()[compound.getInteger("itemIOType")];
 		}
 
 		public NBTTagCompound writeToNBT(NBTTagCompound compound) {
@@ -112,7 +132,27 @@ public class TECableGeneral extends TECableBasic {
 				}
 			}
 			compound.setTag("whitelist", nbtTagList);
+			compound.setBoolean("energyTransmit", energyTransmit);
+			compound.setInteger("itemIOType", itemIOType.ordinal());
 			return compound;
+		}
+
+		public static enum ItemIOType {
+			INPUT, OUTPUT, STORAGE, DISABLE;
+
+			public String getTranslateKey() {
+				switch (this) {
+				case INPUT:
+					return "container.cable_2.item.input";
+				case OUTPUT:
+					return "container.cable_2.item.output";
+				case STORAGE:
+					return "container.cable_2.item.storage";
+				case DISABLE:
+				default:
+					return "container.cable_2.item.disable";
+				}
+			}
 		}
 	}
 }

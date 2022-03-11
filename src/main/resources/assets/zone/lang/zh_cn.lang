@@ -180,18 +180,13 @@ tile.powered_piston.name=动力活塞
 tile.powered_piston_sticky.name=动力粘性活塞
 tile.terminal.name=终端
 
-container.drainer=收集器
-container.grinder=研磨机
-container.elec_furnace=电炉
-container.alloy_smelter=合金炉
-container.centrifuge=离心机
-container.crystallizer=结晶器
-container.transmission_module=输导模块
-container.burning_box=燃烧室
-container.boiler=锅炉
-container.lathe=车床
-container.forming_press=冲压机床
-containe.pump=泵
+container.cable_2.energy.enable=启用能量传输
+container.cable_2.energy.disable=禁用能量传输
+
+container.cable_2.item.input=输入物品
+container.cable_2.item.output=输出物品
+container.cable_2.item.storage=存储物品
+container.cable_2.item.disable=禁用物品交互
 
 sphinx.yes=是
 sphinx.no=否

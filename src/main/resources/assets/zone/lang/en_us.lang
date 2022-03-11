@@ -180,18 +180,13 @@ tile.powered_piston.name=Powered Piston
 tile.powered_piston_sticky.name=Powered Sticky Piston
 tile.terminal.name=Terminal
 
-container.drainer=Drainer
-container.grinder=Grinder
-container.elec_furnace=Electric Furnace
-container.alloy_smelter=Alloy Smelter
-container.centrifuge=Centrifuge
-container.crystallizer=Crystallizer
-container.transmission_module=Transmission Module
-container.burning_box=Burning Box
-container.boiler=Boiler
-container.lathe=Lathe
-container.forming_press=Forming Press
-container.pump=Pump
+container.cable_2.energy.enable=Enable Energy Transmission
+container.cable_2.energy.disable=Disable Energy Transmission
+
+container.cable_2.item.input=Input Items
+container.cable_2.item.output=Output Items
+container.cable_2.item.storage=Storage Items
+container.cable_2.item.disable=Disable Item I/O
 
 sphinx.yes=Yes
 sphinx.no=No
