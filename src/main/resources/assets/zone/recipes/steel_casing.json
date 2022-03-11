@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#*#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:steel_plate"
+    },
+    "*": {
+      "item": "zone:spanner",
+      "data": 32767
+    }
+  },
+  "result": {
+    "item": "zone:steel_casing"
+  }
+}

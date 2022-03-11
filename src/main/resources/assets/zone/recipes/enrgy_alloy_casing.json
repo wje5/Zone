@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#*#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:energy_alloy_plate"
+    },
+    "*": {
+      "item": "zone:parallel_processor",
+      "data": 32767
+    }
+  },
+  "result": {
+    "item": "zone:energy_alloy_casing"
+  }
+}
