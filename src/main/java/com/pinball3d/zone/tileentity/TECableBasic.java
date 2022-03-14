@@ -38,7 +38,7 @@ public class TECableBasic extends TileEntity implements ITickable {
 			return;
 		}
 		List<BlockPos> l = new ArrayList<BlockPos>();
-		Set<BlockPos> set = new HashSet<BlockPos>();
+		Set<BlockPos> noentity = new HashSet<BlockPos>();
 		Map<TileEntity, DeviceWrapper> t = new HashMap<TileEntity, DeviceWrapper>();
 		Set<DeviceWrapper> dynamos = new HashSet<DeviceWrapper>(), capacitors = new HashSet<DeviceWrapper>(),
 				devices = new HashSet<DeviceWrapper>();
@@ -53,18 +53,18 @@ public class TECableBasic extends TileEntity implements ITickable {
 				cable = (TECableGeneral) tileentity;
 			}
 			for (EnumFacing facing : EnumFacing.VALUES) {
-				if (cable != null && !cable.getConfig(facing).isEnergyTransmit()) {
+				if (cable != null && !cable.getConfig(facing).canEnergyTransmit()) {
 					continue;
 				}
 				BlockPos p2 = p.offset(facing);
-				if (!set.contains(p2) && !l.contains(p2)) {
+				if (!noentity.contains(p2) && !l.contains(p2)) {
 					TileEntity te = world.getTileEntity(p2);
 					if (te instanceof TECableBasic) {
 						TECableGeneral c = null;
 						if (te instanceof TECableGeneral) {
 							c = (TECableGeneral) te;
 						}
-						if (c == null || c.getConfig(facing.getOpposite()).isEnergyTransmit()) {
+						if (c == null || c.getConfig(facing.getOpposite()).canEnergyTransmit()) {
 							((TECableBasic) te).skipped = world.getTotalWorldTime();
 							l.add(p2);
 							cables.add((TECableBasic) te);
@@ -102,7 +102,7 @@ public class TECableBasic extends TileEntity implements ITickable {
 							}
 						}
 					} else {
-						set.add(p2);
+						noentity.add(p2);
 					}
 				}
 			}
@@ -165,12 +165,19 @@ public class TECableBasic extends TileEntity implements ITickable {
 					break;
 				}
 			}
-			avg = energy * 1.0F / capacitors.size();
+			long maxCapacitorEnergy = capacitors.stream().mapToLong(e -> e.maxStore).sum();
+			long capacitorEnergy = capacitors.stream().mapToLong(e -> e.store).sum() + energy;
+			float store = capacitorEnergy * 1.0F / maxCapacitorEnergy;
 			it = capacitors.iterator();
 			while (it.hasNext()) {
 				DeviceWrapper w = it.next();
-				if (w.maxInputSpeed < avg) {
-					energy -= w.extract(energy >= Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) energy);
+				float f = w.store * 1.0F / w.maxStore;
+				if (f >= store) {
+					continue;
+				}
+				int input = Math.min((int) Math.min(Integer.MAX_VALUE, energy), (int) ((store - f) * w.maxStore));
+				if (w.maxInputSpeed < input) {
+					energy -= w.receive(w.maxInputSpeed);
 					it.remove();
 					if (energy <= 0) {
 						break;
@@ -181,12 +188,22 @@ public class TECableBasic extends TileEntity implements ITickable {
 			it = capacitors.iterator();
 			while (it.hasNext()) {
 				DeviceWrapper w = it.next();
-				avg = energy * 1.0F / capacitors.size();
-				energy -= w.receive(Math.round(avg));
+				maxCapacitorEnergy = capacitors.stream().mapToLong(e -> e.maxStore).sum();
+				capacitorEnergy = capacitors.stream().mapToLong(e -> e.store).sum() + energy;
+				store = capacitorEnergy * 1.0F / maxCapacitorEnergy;
+				float f = w.store * 1.0F / w.maxStore;
+				if (f >= store) {
+					continue;
+				}
+				int input = Math.min((int) Math.min(Integer.MAX_VALUE, energy), (int) ((store - f) * w.maxStore));
+				energy -= w.receive(Math.min(w.maxInputSpeed, input));
 				it.remove();
 				if (energy <= 0) {
 					break;
 				}
+			}
+			if (energy < 0) {
+				System.out.println("DRRR:" + energy);
 			}
 		} else {
 			long energy = totalOutput;

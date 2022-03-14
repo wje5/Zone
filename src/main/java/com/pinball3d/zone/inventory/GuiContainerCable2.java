@@ -37,35 +37,31 @@ public class GuiContainerCable2 extends GuiContainer {
 	public void initGui() {
 		super.initGui();
 		int offsetX = (width - xSize) / 2, offsetY = (height - ySize) / 2;
-		buttonList.add(new GuiButton(0, offsetX + 34, offsetY + 39, 41, 14, "") {
+		buttonList.add(new GuiButton(0, offsetX + 34, offsetY + 51, 19, 19, "") {
 			@Override
 			public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 				if (visible) {
 					GlStateManager.color(1.0F, 1.0F, 1.0F);
 					mc.getTextureManager().bindTexture(TEXTURE);
 					hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
-					if (hovered) {
-						drawTexturedModalRect(x, y, 188, 0, width, height);
+					if (hasData) {
+						drawTexturedModalRect(x, y, enableEnergy ? 207 : 226, hovered ? 57 : 19, width, height);
 					}
-					drawCenteredString(fontRenderer,
-							hasData ? I18n.format("container.cable_2.energy." + (enableEnergy ? "enable" : "disable"))
-									: "",
-							x + width / 2, y + 3, hovered ? 0xFFFFFFA0 : 0xFFF0F0F0);
 				}
 			}
 		});
-		buttonList.add(new GuiButton(1, offsetX + 34, offsetY + 56, 41, 14, "") {
+		buttonList.add(new GuiButton(1, offsetX + 55, offsetY + 51, 19, 19, "") {
 			@Override
 			public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 				if (visible) {
 					GlStateManager.color(1.0F, 1.0F, 1.0F);
 					mc.getTextureManager().bindTexture(TEXTURE);
 					hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
-					if (hovered) {
-						drawTexturedModalRect(x, y, 188, 0, width, height);
+					if (hasData) {
+						drawTexturedModalRect(x, y,
+								itemIOType == ItemIOType.DISABLE ? 188 : 188 + itemIOType.ordinal() * 19,
+								(itemIOType == ItemIOType.DISABLE ? 19 : 0) + (hovered ? 38 : 0), width, height);
 					}
-					drawCenteredString(fontRenderer, hasData ? I18n.format(itemIOType.getTranslateKey()) : "",
-							x + width / 2, y + 3, hovered ? 0xFFFFFFA0 : 0xFFF0F0F0);
 				}
 			}
 		});

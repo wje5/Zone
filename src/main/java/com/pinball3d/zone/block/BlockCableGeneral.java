@@ -141,7 +141,7 @@ public class BlockCableGeneral extends BlockCableBasic {
 		}
 		System.out.println(xGrid + "|" + yGrid + "|" + facing);
 		CableConfig config = ((TECableGeneral) world.getTileEntity(pos)).getConfig(facing);
-		System.out.println("SERVER:" + config.isEnergyTransmit() + "|" + config.getItemIOType());
+		System.out.println("SERVER:" + config.canEnergyTransmit() + "|" + config.getItemIOType());
 		player.openGui(Zone.instance, GuiElementLoader.CABLE_2_DOWN + facing.getIndex(), world, pos.getX(), pos.getY(),
 				pos.getZ());
 		return true;

@@ -1,18 +1,29 @@
 package com.pinball3d.zone.tileentity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import com.pinball3d.zone.tileentity.TECableGeneral.CableConfig.ItemIOType;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import scala.actors.threadpool.Arrays;
 
 public class TECableGeneral extends TECableBasic {
 	private CableConfig[] configs = new CableConfig[] { new CableConfig(), new CableConfig(), new CableConfig(),
 			new CableConfig(), new CableConfig(), new CableConfig() };
+	private long skipped;
 
 	public TECableGeneral() {
 
@@ -21,6 +32,63 @@ public class TECableGeneral extends TECableBasic {
 	@Override
 	public void update() {
 		super.update();
+		if (world.isRemote) {
+			return;
+		}
+		if (skipped == world.getTotalWorldTime()) {
+			return;
+		}
+		List<BlockPos> l = new ArrayList<BlockPos>();
+		Set<BlockPos> noentity = new HashSet<BlockPos>();
+		Set<IODeviceWrapper> inputs = new HashSet<IODeviceWrapper>(), outputs = new HashSet<IODeviceWrapper>(),
+				storages = new HashSet<IODeviceWrapper>();
+		Set<TECableGeneral> cables = new HashSet<TECableGeneral>();
+		l.add(pos);
+		cables.add(this);
+		for (int i = 0; i < l.size(); i++) {
+			BlockPos p = l.get(i);
+			TECableGeneral cable = (TECableGeneral) world.getTileEntity(p);
+			for (EnumFacing facing : EnumFacing.VALUES) {
+				ItemIOType type = cable.getConfig(facing).getItemIOType();
+				if (type == ItemIOType.DISABLE) {
+					continue;
+				}
+				BlockPos p2 = p.offset(facing);
+				if (!noentity.contains(p2) && !l.contains(p2)) {
+					TileEntity te = world.getTileEntity(p2);
+					if (te instanceof TECableGeneral) {
+						if (((TECableGeneral) te).getConfig(facing.getOpposite())
+								.getItemIOType() != ItemIOType.DISABLE) {
+							((TECableGeneral) te).skipped = world.getTotalWorldTime();
+							l.add(p2);
+							cables.add((TECableGeneral) te);
+						}
+					} else if (te != null) {
+						if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())) {
+							IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+									facing.getOpposite());
+							switch (type) {
+							case INPUT:
+								inputs.add(new IODeviceWrapper(handler, cable.getConfig(facing)));
+								break;
+							case OUTPUT:
+								outputs.add(new IODeviceWrapper(handler, cable.getConfig(facing)));
+								break;
+							case STORAGE:
+								storages.add(new IODeviceWrapper(handler, cable.getConfig(facing)));
+								break;
+							}
+						}
+					} else {
+						noentity.add(p2);
+					}
+				}
+			}
+		}
+		System.out.println(l);
+		System.out.println("inputs:" + inputs);
+		System.out.println("outputs:" + outputs);
+		System.out.println("storages:" + storages);
 	}
 
 	@Override
@@ -92,7 +160,7 @@ public class TECableGeneral extends TECableBasic {
 			return whitelist;
 		}
 
-		public boolean isEnergyTransmit() {
+		public boolean canEnergyTransmit() {
 			return energyTransmit;
 		}
 
@@ -139,20 +207,16 @@ public class TECableGeneral extends TECableBasic {
 
 		public static enum ItemIOType {
 			INPUT, OUTPUT, STORAGE, DISABLE;
+		}
+	}
 
-			public String getTranslateKey() {
-				switch (this) {
-				case INPUT:
-					return "container.cable_2.item.input";
-				case OUTPUT:
-					return "container.cable_2.item.output";
-				case STORAGE:
-					return "container.cable_2.item.storage";
-				case DISABLE:
-				default:
-					return "container.cable_2.item.disable";
-				}
-			}
+	public static class IODeviceWrapper {
+		public final IItemHandler handler;
+		public final CableConfig config;
+
+		public IODeviceWrapper(IItemHandler handler, CableConfig config) {
+			this.handler = handler;
+			this.config = config;
 		}
 	}
 }

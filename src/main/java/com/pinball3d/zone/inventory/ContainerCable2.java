@@ -43,7 +43,7 @@ public class ContainerCable2 extends Container {
 				addSlotToContainer(new TagSlot(config, j + i * 5, 80 + j * 18, 17 + i * 18));
 			}
 		}
-		energyTransmit = config.isEnergyTransmit();
+		energyTransmit = config.canEnergyTransmit();
 		itemIOType = config.getItemIOType();
 	}
 

@@ -57,7 +57,9 @@ public class TECapacitor extends ZoneTieredMachine {
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
-			return true;
+			if (facing == null) {
+				return true;
+			}
 		}
 		return super.hasCapability(capability, facing);
 	}
