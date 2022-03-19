@@ -103,7 +103,7 @@ public class TEBoiler extends ZoneTieredMachine {
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
+		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability) && facing == null) {
 			return true;
 		}
 		return super.hasCapability(capability, facing);
@@ -112,11 +112,8 @@ public class TEBoiler extends ZoneTieredMachine {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
-			if (facing == null) {
-				return (T) battery;
-			}
-			return (T) fuel;
+		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability) && facing == null) {
+			return (T) battery;
 		}
 		return super.getCapability(capability, facing);
 	}

@@ -20,19 +20,19 @@ public class HugeItemStack {
 		readFromNBT(tag);
 	}
 
+	/** NEVER MODIFY THE INPUT STACK */
 	public boolean merge(ItemStack stack) {
 		if (Util.isItemStackEqualEgnoreCount(this.stack, stack)) {
 			count += stack.getCount();
-			stack.setCount(0);
 			return true;
 		}
 		return false;
 	}
 
+	/** NEVER MODIFY THE INPUT STACK */
 	public boolean merge(HugeItemStack hugestack) {
 		if (Util.isItemStackEqualEgnoreCount(stack, hugestack.stack)) {
 			count += hugestack.count;
-			hugestack.count = 0;
 			return true;
 		}
 		return false;

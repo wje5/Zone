@@ -104,20 +104,17 @@ public class StorageWrapper {
 		int max = input.getSlots();
 		for (int i = 0; i < max; i++) {
 			ItemStack stack = input.getStackInSlot(i);
-			merge(stack.copy());
-			if (!isSimulate) {
-				input.extractItem(i, Integer.MAX_VALUE, false);
-			}
+			merge(input.extractItem(i, stack.getCount(), isSimulate));
 		}
 	}
 
+	/** NEVER MODIFY THE INPUT STACK */
 	public void merge(ItemStack stack) {
 		if (stack.isEmpty()) {
 			return;
 		}
 		if (stack.getMaxStackSize() <= 1) {
 			other.add(stack.copy());
-			stack.setCount(0);
 		} else {
 			Iterator<HugeItemStack> it = storges.iterator();
 			while (it.hasNext()) {
@@ -127,10 +124,10 @@ public class StorageWrapper {
 				}
 			}
 			storges.add(new HugeItemStack(stack.copy()));
-			stack.setCount(0);
 		}
 	}
 
+	/** NEVER MODIFY THE INPUT STACK */
 	public void merge(HugeItemStack hugestack) {
 		Iterator<HugeItemStack> it = storges.iterator();
 		while (it.hasNext()) {
@@ -140,17 +137,17 @@ public class StorageWrapper {
 			}
 		}
 		storges.add(hugestack.copy());
-		hugestack.count = 0;
 	}
 
+	/** NEVER MODIFY THE INPUT STACK */
 	public void merge(StorageWrapper wrapper) {
 		Iterator<HugeItemStack> it = wrapper.storges.iterator();
 		while (it.hasNext()) {
 			HugeItemStack i = it.next();
 			merge(i);
 		}
+		wrapper.other.forEach(e -> other.add(e.copy()));
 		other.addAll(wrapper.other);
-		wrapper.clear();
 	}
 
 	public void shrink(StorageWrapper wrapper) {

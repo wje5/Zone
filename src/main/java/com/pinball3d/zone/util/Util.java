@@ -464,13 +464,19 @@ public class Util {
 	}
 
 	public static boolean isItemStackEqualEgnoreCount(ItemStack stackA, ItemStack stackB) {
+		return isItemStackEqualEgnoreCount(stackA, stackB, false);
+	}
+
+	public static boolean isItemStackEqualEgnoreCount(ItemStack stackA, ItemStack stackB,
+			boolean enableDamageWildcard) {
 		if (stackA.isEmpty() && stackB.isEmpty()) {
 			return true;
 		} else {
 			if (!stackA.isEmpty() && !stackB.isEmpty()) {
 				if (stackA.getItem() != stackB.getItem()) {
 					return false;
-				} else if (stackA.getItemDamage() != 32767 && stackA.getItemDamage() != stackB.getItemDamage()) {
+				} else if ((!enableDamageWildcard || stackA.getItemDamage() != 32767)
+						&& stackA.getItemDamage() != stackB.getItemDamage()) {
 					return false;
 				} else if (stackA.getTagCompound() == null && stackB.getTagCompound() != null) {
 					return false;

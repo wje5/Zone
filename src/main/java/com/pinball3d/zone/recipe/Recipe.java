@@ -24,7 +24,7 @@ public abstract class Recipe {
 
 	public boolean apply(int index, ItemStack stack2) {
 		ItemStack stack = getInput(index);
-		if (Util.isItemStackEqualEgnoreCount(stack, stack2)) {
+		if (Util.isItemStackEqualEgnoreCount(stack, stack2, true)) {
 			if (stack2.getCount() >= stack.getCount()) {
 				return true;
 			}

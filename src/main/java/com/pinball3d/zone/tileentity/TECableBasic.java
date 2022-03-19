@@ -268,7 +268,6 @@ public class TECableBasic extends TileEntity implements ITickable {
 			e.networkMaxEnergy = networkMaxEnergy;
 			e.networkInput = networkInput;
 			e.networkOutput = networkOutput;
-
 		});
 //		System.out.println(networkEnergy + "|" + networkMaxEnergy + "|" + networkInput + "|" + networkOutput);
 //		System.out.println("==================");

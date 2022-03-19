@@ -129,8 +129,7 @@ public class ContainerCable2 extends Container {
 						if (k == null) {
 							k = slot1;
 						}
-					} else if (ItemStack.areItemsEqualIgnoreDurability(stack, slot1.getStack())
-							&& ItemStack.areItemStackShareTagsEqual(stack, slot1.getStack())) {
+					} else if (Util.isItemStackEqualEgnoreCount(stack, slot1.getStack())) {
 						return ItemStack.EMPTY;
 					}
 				}
@@ -240,13 +239,15 @@ public class ContainerCable2 extends Container {
 
 		@Override
 		public void putStack(ItemStack stack) {
-			synchronized (config.getWhitelist()) {
-				if (!stack.isEmpty()) {
-					stack.setCount(1);
+			if (!stack.isEmpty()) {
+				stack.setCount(1);
+				if (stack.isItemStackDamageable()) {
+					stack.setItemDamage(0);
+					stack.setTagCompound(null);
 				}
-				config.getWhitelist()[getSlotIndex()] = stack;
-				onSlotChanged();
 			}
+			config.getWhitelist()[getSlotIndex()] = stack;
+			onSlotChanged();
 		}
 
 		@Override
