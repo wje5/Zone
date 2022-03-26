@@ -110,11 +110,16 @@ public class GuiContainerCable2 extends GuiContainer {
 	protected void renderHoveredToolTip(int x, int y) {
 		super.renderHoveredToolTip(x, y);
 		int offsetX = (width - xSize) / 2, offsetY = (height - ySize) / 2;
-		if (mc.player.inventory.getItemStack().isEmpty() && x - offsetX >= 17 && x - offsetX <= 29 && y - offsetY >= 17
-				&& y - offsetY <= 69) {
-			drawHoveringText(Arrays.asList(
-					Util.formatEnergy(container.networkEnergy) + "/" + Util.formatEnergy(container.networkMaxEnergy)),
-					x, y);
+		if (mc.player.inventory.getItemStack().isEmpty()) {
+			if (x - offsetX >= 17 && x - offsetX <= 29 && y - offsetY >= 17 && y - offsetY <= 69) {
+				drawHoveringText(Arrays.asList(Util.formatEnergy(container.networkEnergy) + "/"
+						+ Util.formatEnergy(container.networkMaxEnergy)), x, y);
+			} else if (x - offsetX >= 34 && x - offsetX <= 53 && y - offsetY >= 51 && y - offsetY <= 70) {
+				drawHoveringText(I18n.format("container.cable_2.energy." + (enableEnergy ? "enable" : "disable")), x,
+						y);
+			} else if (x - offsetX >= 55 && x - offsetX <= 74 && y - offsetY >= 51 && y - offsetY <= 70) {
+				drawHoveringText(I18n.format(itemIOType.getTranslateKey()), x, y);
+			}
 		}
 	}
 

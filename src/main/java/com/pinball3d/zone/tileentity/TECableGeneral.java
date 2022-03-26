@@ -92,10 +92,6 @@ public class TECableGeneral extends TECableBasic {
 				}
 			}
 		}
-//		System.out.println(l);
-//		System.out.println("inputs:" + inputs);
-		System.out.println("outputs:" + outputs);
-//		System.out.println("storages:" + storages);
 		List<List<ItemStack>> inputData = new ArrayList<List<ItemStack>>();
 		inputs.forEach(e -> {
 			List<ItemStack> list = new ArrayList<ItemStack>();
@@ -131,6 +127,7 @@ public class TECableGeneral extends TECableBasic {
 		inputWrappers.forEach(e -> inputTotal.merge(e));
 		System.out.println("inputTotal:" + inputTotal);
 
+		List<ItemStack> fix = new ArrayList<ItemStack>();
 		inputTotal.storges.forEach(hugestack -> {
 			int[][] insertData = new int[outputs.size()][];
 			int[] maxInsert = new int[outputs.size()];
@@ -151,7 +148,7 @@ public class TECableGeneral extends TECableBasic {
 				}
 				maxInsert[i] = Arrays.stream(insertData[i]).sum();
 			}
-			System.out.println("insertData:" + Arrays.toString(insertData));
+//			System.out.println("insertData:" + Arrays.toString(insertData));
 			System.out.println("maxInsert:" + Arrays.toString(maxInsert));
 			int maxInsertTotal = Arrays.stream(maxInsert).sum();
 			int[] maxExtract = new int[inputWrappers.size()];
@@ -167,66 +164,514 @@ public class TECableGeneral extends TECableBasic {
 				}
 			}
 			System.out.println("maxExtract:" + Arrays.toString(maxExtract));
-			maxExtract = getAvg(maxExtract, maxInsertTotal);
-			System.out.println("maxExtract(avg):" + Arrays.toString(maxExtract));
-			int maxExtractTotal = Arrays.stream(maxExtract).sum();
-			maxInsert = getAvg(maxInsert, maxExtractTotal);
-			System.out.println("maxInsert(avg):" + Arrays.toString(maxInsert));
+			int[] maxExtractAvg = getAvg(maxExtract, maxInsertTotal);
+			for (int i = 0; i < maxExtract.length; i++) {
+				maxExtract[i] -= maxExtractAvg[i];
+			}
+			System.out.println("maxExtract(avg):" + Arrays.toString(maxExtractAvg));
+			int maxExtractTotal = Arrays.stream(maxExtractAvg).sum();
+			int[] maxInsertAvg = getAvg(maxInsert, maxExtractTotal);
+			for (int i = 0; i < maxInsert.length; i++) {
+				maxInsert[i] -= maxInsertAvg[i];
+			}
+			System.out.println("maxInsert(avg):" + Arrays.toString(maxInsertAvg));
 			it = inputs.iterator();
 			Iterator<List<ItemStack>> it2 = inputData.iterator();
-			for (int i = 0; i < maxExtract.length; i++) {
+			ItemStack stack = ItemStack.EMPTY;
+			for (int i = 0; i < maxExtractAvg.length; i++) {
 				IODeviceWrapper device = it.next();
 				List<ItemStack> list = it2.next();
-				if (maxExtract[i] > 0) {
+				if (maxExtractAvg[i] > 0) {
 					for (int j = 0; j < list.size(); j++) {
 						if (Util.isItemStackEqualEgnoreCount(hugestack.stack, list.get(j))) {
-							ItemStack stack = device.handler.extractItem(j,
-									Math.min(maxExtract[i], hugestack.stack.getMaxStackSize()), false);
+							stack = device.handler.extractItem(j, Math.min(maxExtractAvg[i], list.get(j).getCount()),
+									false);
 							if (!stack.isEmpty()) {
 								System.out.println("start:" + stack);
 								list.get(j).shrink(stack.getCount());
-								maxExtract[i] -= stack.getCount();
-								Iterator<IODeviceWrapper> it3 = outputs.iterator();
-								for (int k = 0; k < maxInsert.length && !stack.isEmpty(); k++) {
-									IODeviceWrapper insertDevice = it3.next();
-									for (int index = 0; index < insertData[k].length && !stack.isEmpty()
-											&& maxInsert[k] > 0; index++) {
-										if (insertData[k][index] > 0) {
-											ItemStack s = stack.copy();
-											int amount = Math.min(stack.getCount(),
-													Math.min(maxInsert[k], insertData[k][index]));
-											s.setCount(amount);
-											System.out.println("before insert:" + s);
-											if (s.isEmpty()) {
-												System.out.println(s);
+								maxExtractAvg[i] -= stack.getCount();
+								while (!stack.isEmpty()) {
+									Iterator<IODeviceWrapper> it3 = outputs.iterator();
+									for (int k = 0; k < maxInsertAvg.length && !stack.isEmpty(); k++) {
+										IODeviceWrapper insertDevice = it3.next();
+										for (int index = 0; index < insertData[k].length && !stack.isEmpty()
+												&& maxInsertAvg[k] > 0; index++) {
+											if (insertData[k][index] > 0) {
+												ItemStack s = stack.copy();
+												int amount = Math.min(stack.getCount(),
+														Math.min(maxInsertAvg[k], insertData[k][index]));
+												s.setCount(amount);
+												System.out.println("before insert:" + s);
+												if (s.isEmpty()) {
+													System.out.println(s);
+												}
+												s = insertDevice.handler.insertItem(index, s, false);
+												System.out.println("after insert:" + s);
+												amount = amount - s.getCount();
+												if (amount == 0) {
+													System.out.println("DRR");// debug
+												}
+												maxInsertAvg[k] -= amount;
+												insertData[k][index] -= amount;
+												stack.shrink(amount);
 											}
-											s = insertDevice.handler.insertItem(index, s, false);
-											System.out.println("after insert:" + s);
-											amount = amount - s.getCount();
-											if (amount == 0) {
-												System.out.println("DRR");// debug
+										}
+									}
+									if (!stack.isEmpty()) {
+										maxInsertAvg = getAvg(maxInsert, stack.getCount());
+										boolean flag = true;
+										for (int k = 0; k < maxInsert.length; k++) {
+											if (maxInsertAvg[k] > 0) {
+												flag = false;
 											}
-											maxInsert[k] -= amount;
-											insertData[k][index] -= amount;
-											stack.shrink(amount);
+											maxInsert[k] -= maxInsertAvg[k];
+										}
+										if (flag) {
+											System.out.println("DRRRRRR");
+											break;
 										}
 									}
 								}
 								System.out.println("end:" + stack);
-								if (!stack.isEmpty()) {
-									System.out.println("DRRRRRR");
-								}
-								if (maxExtract[i] <= 0) {
+								if (maxExtractAvg[i] <= 0) {
 									break;
 								}
 							}
 						}
 					}
 				}
-//				ItemStack stack = it.next().handler.;
+			}
+			maxExtractTotal = Arrays.stream(maxExtract).sum() + stack.getCount();
+			if (maxExtractTotal > 0) {
+				System.out.println("remain:maxExtract:" + Arrays.toString(maxExtract));
+				insertData = new int[storages.size()][];
+				maxInsert = new int[storages.size()];
+				it = storages.iterator();
+				maxInsertTotal = 0;
+				int i = 0, k = 0;
+				it = storages.iterator();
+				tag: for (; i < storages.size(); i++) {
+					IODeviceWrapper e = it.next();
+					insertData[i] = new int[e.handler.getSlots()];
+					boolean flag = true;
+					for (int j = 0; j < 15; j++) {
+						if (!e.config.whitelist[j].isEmpty()) {
+							flag = false;
+						}
+						if (Util.isItemStackEqualEgnoreCount(e.config.whitelist[j], hugestack.stack)) {
+							flag = true;
+							break;
+						}
+					}
+					if (flag) {
+						for (; k < e.handler.getSlots(); k++) {
+							ItemStack s = hugestack.stack.copy();
+							int amount = Math.min(maxExtractTotal, hugestack.stack.getMaxStackSize());
+							s.setCount(amount);
+							amount = amount - e.handler.insertItem(k, s, true).getCount();
+							insertData[i][k] = amount;
+							maxInsertTotal += amount;
+							maxInsert[i] += amount;
+							if (maxInsertTotal >= maxExtractTotal) {
+								break tag;
+							}
+						}
+					}
+					if (i < storages.size() - 1) {
+						k = 0;
+					}
+				}
+
+				int a = 0;
+				// DATA CORRECTION
+				if (!stack.isEmpty()) {
+					for (; a <= i && a < storages.size(); a++) {
+						IODeviceWrapper insertDevice = storages.get(a);
+						System.out.println("debug:" + a);
+						for (int index2 = 0; index2 < insertData[a].length && index2 <= k && !stack.isEmpty()
+								&& maxInsert[a] > 0; index2++) {
+							System.out.println("debug:" + a + "|" + index2);
+							if (insertData[a][index2] > 0) {
+								ItemStack s = stack.copy();
+								int amount = Math.min(stack.getCount(), Math.min(maxInsert[a], insertData[a][index2]));
+								s.setCount(amount);
+								System.out.println("before insert:" + s);
+								if (s.isEmpty()) {
+									System.out.println(s);
+								}
+								s = insertDevice.handler.insertItem(index2, s, false);
+								System.out.println("after insert:" + s);
+								amount = amount - s.getCount();
+								maxInsert[a] -= amount;
+								insertData[a][index2] -= amount;
+								stack.shrink(amount);
+							}
+						}
+						if (stack.isEmpty()) {
+							break;
+						}
+					}
+				}
+
+				System.out.println(i + "|" + k + "|" + maxInsertTotal);
+				maxExtractAvg = getAvg(maxExtract, maxInsertTotal);
+				for (int index = 0; index < maxExtract.length; index++) {
+					maxExtract[index] -= maxExtractAvg[index];
+				}
+				System.out.println(Arrays.toString(maxExtractAvg));
+
+				it = inputs.iterator();
+				it2 = inputData.iterator();
+				for (int index = 0; index < maxExtractAvg.length; index++) {
+					IODeviceWrapper device = it.next();
+					List<ItemStack> list = it2.next();
+					if (maxExtractAvg[index] > 0) {
+						for (int j = 0; j < list.size(); j++) {
+							if (Util.isItemStackEqualEgnoreCount(hugestack.stack, list.get(j))) {
+								stack = device.handler.extractItem(j,
+										Math.min(maxExtractAvg[index], list.get(j).getCount()), false);
+								if (!stack.isEmpty()) {
+									System.out.println("start:" + stack + "|" + i);
+									list.get(j).shrink(stack.getCount());
+									maxExtractAvg[index] -= stack.getCount();
+									for (; a <= i && a < storages.size() && !stack.isEmpty(); a++) {
+										IODeviceWrapper insertDevice = storages.get(a);
+										System.out.println("debug:" + a);
+										for (int index2 = 0; index2 < insertData[a].length && index2 <= k
+												&& !stack.isEmpty() && maxInsert[a] > 0; index2++) {
+											System.out.println("debug:" + a + "|" + index2);
+											if (insertData[a][index2] > 0) {
+												ItemStack s = stack.copy();
+												int amount = Math.min(stack.getCount(),
+														Math.min(maxInsert[a], insertData[a][index2]));
+												s.setCount(amount);
+												System.out.println("before insert:" + s);
+												if (s.isEmpty()) {
+													System.out.println(s);
+												}
+												s = insertDevice.handler.insertItem(index2, s, false);
+												System.out.println("after insert:" + s);
+												amount = amount - s.getCount();
+												maxInsert[a] -= amount;
+												insertData[a][index2] -= amount;
+												stack.shrink(amount);
+											}
+										}
+										if (stack.isEmpty()) {
+											break;
+										}
+									}
+									System.out.println("end:" + stack);
+									if (!stack.isEmpty()) {
+										System.out.println("DRRRRRR1" + stack);
+										fix.add(stack);
+									}
+									if (maxExtractAvg[index] <= 0) {
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		});
-		System.out.println("inputData2:" + inputData);
+		List<List<ItemStack>> storageData = new ArrayList<List<ItemStack>>();
+		storages.forEach(e -> {
+			List<ItemStack> list = new ArrayList<ItemStack>();
+			for (int i = 0; i < e.handler.getSlots(); i++) {
+				ItemStack stack = e.handler.getStackInSlot(i);
+				ItemStack s = ItemStack.EMPTY;
+				boolean flag = true;
+				for (int j = 0; j < 15; j++) {
+					if (!e.config.whitelist[j].isEmpty()) {
+						flag = false;
+					}
+					if (Util.isItemStackEqualEgnoreCount(e.config.whitelist[j], stack)) {
+						flag = true;
+						break;
+					}
+				}
+				if (flag) {
+					s = e.handler.extractItem(i, stack.getCount(), true).copy();// XXX need not copy
+				}
+				list.add(s);
+			}
+			storageData.add(list);
+		});
+		System.out.println("storageData:" + storageData);
+		List<StorageWrapper> storageWrappers = storageData.stream().map(e -> {
+			StorageWrapper w = new StorageWrapper();
+			e.forEach(stack -> w.merge(stack));
+			return w;
+		}).collect(Collectors.toList());
+		System.out.println("storageWrappers:" + storageWrappers);
+
+		StorageWrapper storageTotal = new StorageWrapper();
+		storageWrappers.forEach(e -> storageTotal.merge(e));
+		System.out.println("storageTotal:" + storageTotal);
+
+		storageTotal.storges.forEach(hugestack -> {
+			int[][] insertData = new int[outputs.size()][];
+			int[] maxInsert = new int[outputs.size()];
+			Iterator<IODeviceWrapper> it = outputs.iterator();
+			for (int i = 0; i < outputs.size(); i++) {
+				IODeviceWrapper e = it.next();
+				insertData[i] = new int[e.handler.getSlots()];
+				for (int j = 0; j < 15; j++) {
+					if (Util.isItemStackEqualEgnoreCount(e.config.whitelist[j], hugestack.stack)) {
+						for (int k = 0; k < e.handler.getSlots(); k++) {
+							ItemStack stack = hugestack.stack.copy();
+							int amount = Math.min(hugestack.count, hugestack.stack.getMaxStackSize());
+							stack.setCount(amount);
+							insertData[i][k] = amount - e.handler.insertItem(k, stack, true).getCount();
+						}
+						break;
+					}
+				}
+				maxInsert[i] = Arrays.stream(insertData[i]).sum();
+			}
+//			System.out.println("insertData:" + Arrays.toString(insertData));
+			System.out.println("maxInsert:" + Arrays.toString(maxInsert));
+			int maxInsertTotal = Arrays.stream(maxInsert).sum();
+			int[] maxExtract = new int[storageWrappers.size()];
+			for (int i = 0; i < storageWrappers.size(); i++) {
+				StorageWrapper w = storageWrappers.get(i);
+				Iterator<HugeItemStack> it2 = w.storges.iterator();
+				while (it2.hasNext()) {
+					HugeItemStack e = it2.next();
+					if (Util.isItemStackEqualEgnoreCount(hugestack.stack, e.stack)) {
+						maxExtract[i] = e.count;
+						break;
+					}
+				}
+			}
+			System.out.println("maxExtract:" + Arrays.toString(maxExtract));
+			int[] maxExtractAvg = getAvg(maxExtract, maxInsertTotal);
+			for (int i = 0; i < maxExtract.length; i++) {
+				maxExtract[i] -= maxExtractAvg[i];
+			}
+			System.out.println("maxExtract(avg):" + Arrays.toString(maxExtractAvg));
+			int maxExtractTotal = Arrays.stream(maxExtractAvg).sum();
+			int[] maxInsertAvg = getAvg(maxInsert, maxExtractTotal);
+			for (int i = 0; i < maxInsert.length; i++) {
+				maxInsert[i] -= maxInsertAvg[i];
+			}
+			System.out.println("maxInsert(avg):" + Arrays.toString(maxInsertAvg));
+			it = storages.iterator();
+			Iterator<List<ItemStack>> it2 = storageData.iterator();
+			ItemStack stack = ItemStack.EMPTY;
+			for (int i = 0; i < maxExtractAvg.length; i++) {
+				IODeviceWrapper device = it.next();
+				List<ItemStack> list = it2.next();
+				if (maxExtractAvg[i] > 0) {
+					for (int j = 0; j < list.size(); j++) {
+						if (Util.isItemStackEqualEgnoreCount(hugestack.stack, list.get(j))) {
+							stack = device.handler.extractItem(j, Math.min(maxExtractAvg[i], list.get(j).getCount()),
+									false);
+							if (!stack.isEmpty()) {
+								System.out.println("start:" + stack);
+								list.get(j).shrink(stack.getCount());
+								maxExtractAvg[i] -= stack.getCount();
+								while (!stack.isEmpty()) {
+									Iterator<IODeviceWrapper> it3 = outputs.iterator();
+									for (int k = 0; k < maxInsertAvg.length && !stack.isEmpty(); k++) {
+										IODeviceWrapper insertDevice = it3.next();
+										for (int index = 0; index < insertData[k].length && !stack.isEmpty()
+												&& maxInsertAvg[k] > 0; index++) {
+											if (insertData[k][index] > 0) {
+												ItemStack s = stack.copy();
+												int amount = Math.min(stack.getCount(),
+														Math.min(maxInsertAvg[k], insertData[k][index]));
+												s.setCount(amount);
+												System.out.println("before insert:" + s);
+												s = insertDevice.handler.insertItem(index, s, false);
+												System.out.println("after insert:" + s);
+												amount = amount - s.getCount();
+												if (amount == 0) {
+													System.out.println("DRR");// debug
+												}
+												maxInsertAvg[k] -= amount;
+												insertData[k][index] -= amount;
+												stack.shrink(amount);
+											}
+										}
+									}
+									if (!stack.isEmpty()) {
+										maxInsertAvg = getAvg(maxInsert, stack.getCount());
+										boolean flag = true;
+										for (int k = 0; k < maxInsert.length; k++) {
+											if (maxInsertAvg[k] > 0) {
+												flag = false;
+											}
+											maxInsert[k] -= maxInsertAvg[k];
+										}
+										if (flag) {
+											System.out.println("DRRRRRR2" + stack);
+											fix.add(stack);
+											break;
+										}
+									}
+								}
+								System.out.println("end:" + stack);
+								if (maxExtractAvg[i] <= 0) {
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+
+		// DATA CORRECTION
+		fix.forEach(stack -> {
+			for (int i = 0; i < storages.size(); i++) {
+				IODeviceWrapper insertDevice = storages.get(i);
+				for (int j = 0; j < insertDevice.handler.getSlots(); j++) {
+					stack = insertDevice.handler.insertItem(j, stack, false);
+					if (stack.isEmpty()) {
+						return;
+					}
+				}
+			}
+		});
+
+		///////////////
+		System.out.println("inputData:" + inputData);
+		inputWrappers.clear();
+		inputWrappers.addAll(inputData.stream().map(e -> {
+			StorageWrapper w = new StorageWrapper();
+			e.forEach(stack -> w.merge(stack));
+			return w;
+		}).collect(Collectors.toList()));
+		System.out.println("inputWrappers:" + inputWrappers);
+
+		inputTotal.clear();
+		inputWrappers.forEach(e -> inputTotal.merge(e));
+		System.out.println("inputTotal:" + inputTotal);
+
+		inputTotal.storges.forEach(hugestack -> {
+			int[] maxExtract = new int[inputWrappers.size()];
+			for (int i = 0; i < inputWrappers.size(); i++) {
+				StorageWrapper w = inputWrappers.get(i);
+				Iterator<HugeItemStack> it2 = w.storges.iterator();
+				while (it2.hasNext()) {
+					HugeItemStack e = it2.next();
+					if (Util.isItemStackEqualEgnoreCount(hugestack.stack, e.stack)) {
+						maxExtract[i] = e.count;
+						break;
+					}
+				}
+			}
+
+			int maxExtractTotal = Arrays.stream(maxExtract).sum();
+			if (maxExtractTotal > 0) {
+				System.out.println("remain:maxExtract:" + Arrays.toString(maxExtract));
+				int[][] insertData = new int[storages.size()][];
+				int[] maxInsert = new int[storages.size()];
+				Iterator<IODeviceWrapper> it = storages.iterator();
+				int maxInsertTotal = 0;
+				int i = 0, k = 0;
+				it = storages.iterator();
+				tag: for (; i < storages.size(); i++) {
+					IODeviceWrapper e = it.next();
+					insertData[i] = new int[e.handler.getSlots()];
+					boolean flag = true;
+					for (int j = 0; j < 15; j++) {
+						if (!e.config.whitelist[j].isEmpty()) {
+							flag = false;
+						}
+						if (Util.isItemStackEqualEgnoreCount(e.config.whitelist[j], hugestack.stack)) {
+							flag = true;
+							break;
+						}
+					}
+					if (flag) {
+						for (; k < e.handler.getSlots(); k++) {
+							ItemStack s = hugestack.stack.copy();
+							int amount = Math.min(maxExtractTotal, hugestack.stack.getMaxStackSize());
+							s.setCount(amount);
+							amount = amount - e.handler.insertItem(k, s, true).getCount();
+							insertData[i][k] = amount;
+							maxInsertTotal += amount;
+							maxInsert[i] += amount;
+							if (maxInsertTotal >= maxExtractTotal) {
+								break tag;
+							}
+						}
+					}
+					if (i < storages.size() - 1) {
+						k = 0;
+					}
+				}
+
+				int a = 0;
+				// DATA
+
+				System.out.println(i + "|" + k + "|" + maxInsertTotal);
+				int[] maxExtractAvg = getAvg(maxExtract, maxInsertTotal);
+				for (int index = 0; index < maxExtract.length; index++) {
+					maxExtract[index] -= maxExtractAvg[index];
+				}
+				System.out.println(Arrays.toString(maxExtractAvg));
+
+				it = inputs.iterator();
+				Iterator<List<ItemStack>> it2 = inputData.iterator();
+				for (int index = 0; index < maxExtractAvg.length; index++) {
+					IODeviceWrapper device = it.next();
+					List<ItemStack> list = it2.next();
+					if (maxExtractAvg[index] > 0) {
+						for (int j = 0; j < list.size(); j++) {
+							if (Util.isItemStackEqualEgnoreCount(hugestack.stack, list.get(j))) {
+								ItemStack stack = device.handler.extractItem(j,
+										Math.min(maxExtractAvg[index], list.get(j).getCount()), false);
+								if (!stack.isEmpty()) {
+									System.out.println("start:" + stack + "|" + i);
+									list.get(j).shrink(stack.getCount());
+									maxExtractAvg[index] -= stack.getCount();
+									for (; a <= i && a < storages.size() && !stack.isEmpty(); a++) {
+										IODeviceWrapper insertDevice = storages.get(a);
+										System.out.println("debug:" + a);
+										for (int index2 = 0; index2 < insertData[a].length && index2 <= k
+												&& !stack.isEmpty() && maxInsert[a] > 0; index2++) {
+											System.out.println("debug:" + a + "|" + index2);
+											if (insertData[a][index2] > 0) {
+												ItemStack s = stack.copy();
+												int amount = Math.min(stack.getCount(),
+														Math.min(maxInsert[a], insertData[a][index2]));
+												s.setCount(amount);
+												System.out.println("before insert:" + s);
+												if (s.isEmpty()) {
+													System.out.println(s);
+												}
+												s = insertDevice.handler.insertItem(index2, s, false);
+												System.out.println("after insert:" + s);
+												amount = amount - s.getCount();
+												maxInsert[a] -= amount;
+												insertData[a][index2] -= amount;
+												stack.shrink(amount);
+											}
+										}
+										if (stack.isEmpty()) {
+											break;
+										}
+									}
+									System.out.println("end:" + stack);
+									if (!stack.isEmpty()) {
+										System.out.println("DRRRRRR3" + stack);
+									}
+									if (maxExtractAvg[index] <= 0) {
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+
 	}
 
 	public static int[] getAvg(int[] array, int total) {
@@ -320,7 +765,7 @@ public class TECableGeneral extends TECableBasic {
 
 	public static class CableConfig {
 		private ItemStack[] whitelist = new ItemStack[15];
-		private boolean energyTransmit = true;
+		private boolean disableEnergyTransmit;
 		private ItemIOType itemIOType = ItemIOType.INPUT;
 
 		public CableConfig() {
@@ -332,11 +777,11 @@ public class TECableGeneral extends TECableBasic {
 		}
 
 		public boolean canEnergyTransmit() {
-			return energyTransmit;
+			return !disableEnergyTransmit;
 		}
 
 		public void setEnergyTransmit(boolean energyTransmit) {
-			this.energyTransmit = energyTransmit;
+			this.disableEnergyTransmit = !energyTransmit;
 		}
 
 		public ItemIOType getItemIOType() {
@@ -356,7 +801,7 @@ public class TECableGeneral extends TECableBasic {
 					whitelist[slot] = new ItemStack(itemTags);
 				}
 			}
-			energyTransmit = compound.getBoolean("energyTransmit");
+			disableEnergyTransmit = compound.getBoolean("disableEnergyTransmit");
 			itemIOType = ItemIOType.values()[compound.getInteger("itemIOType")];
 		}
 
@@ -371,13 +816,26 @@ public class TECableGeneral extends TECableBasic {
 				}
 			}
 			compound.setTag("whitelist", nbtTagList);
-			compound.setBoolean("energyTransmit", energyTransmit);
+			compound.setBoolean("disableEnergyTransmit", disableEnergyTransmit);
 			compound.setInteger("itemIOType", itemIOType.ordinal());
 			return compound;
 		}
 
 		public static enum ItemIOType {
 			INPUT, OUTPUT, STORAGE, DISABLE;
+
+			public String getTranslateKey() {
+				switch (this) {
+				case INPUT:
+					return "container.cable_2.item.input";
+				case OUTPUT:
+					return "container.cable_2.item.output";
+				case STORAGE:
+					return "container.cable_2.item.storage";
+				default:
+					return "container.cable_2.item.disable";
+				}
+			}
 		}
 	}
 
