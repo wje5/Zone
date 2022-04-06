@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " ##",
+    "**+",
+    " ##"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:glass_fibre_coil"
+    },
+    "*": {
+      "item": "zone:garton_metal_rod"
+    },
+    "+": {
+      "item": "zone:energy_alloy_plate"
+    }
+  },
+  "result": {
+    "item": "zone:rotor_accelerator"
+  }
+}

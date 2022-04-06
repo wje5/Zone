@@ -76,6 +76,8 @@ item.etherium_coil.name=乙金线圈
 item.glass_fibre_coil.name=玻璃纤维线圈
 item.etherium_coil_group.name=乙金线圈组
 item.energy_amplifier.name=能量增幅器
+item.energy_alloy_plate.name=高转速马达
+item.rotor_accelerator.name=转子加速器
 
 item.energy.name=能量
 item.construct_block.name=结构方块

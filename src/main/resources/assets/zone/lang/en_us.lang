@@ -76,6 +76,8 @@ item.etherium_coil.name=Etherium Coil
 item.glass_fibre_coil.name=Glass Fibre Coil
 item.etherium_coil_group.name=Etherium Coil Group
 item.energy_amplifier.name=Energy Amplifier
+item.energy_alloy_plate.name=Energy Alloy Plate
+item.rotor_accelerator.name=Rotor Accelerator
 
 item.energy.name=Energy
 item.construct_block.name=Construct Block

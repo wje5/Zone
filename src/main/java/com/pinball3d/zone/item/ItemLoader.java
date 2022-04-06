@@ -33,7 +33,9 @@ public class ItemLoader {
 			garton_metal_rivet, steel_rod, garton_metal_rod, gold_wire, etherium_wire, glass_fibre, energy_glass_plate,
 	//2022/3/3
 	        iron_casing, steel_casing, energy_alloy_casing, energy_alloy_plate, parallel_processor, arithmetic_element,
-	        stream_processing_module, gold_coil, etherium_coil, glass_fibre_coil, etherium_coil_group, energy_amplifier
+	        stream_processing_module, gold_coil, etherium_coil, glass_fibre_coil, etherium_coil_group, energy_amplifier,
+			//2022/4/6
+			high_speed_motor, rotor_accelerator
 	;
 
 	public static Item energy, construct_block, fc, manual, crucible, casting_table, hybrid_fuel, pipette;
@@ -209,6 +211,8 @@ public class ItemLoader {
 		register(registry, glass_fibre_coil = new ZoneItem("glass_fibre_coil"));
 		register(registry, etherium_coil_group = new ZoneItem("etherium_coil_group"));
 		register(registry, energy_amplifier = new ZoneItem("energy_amplifier"));
+		register(registry, high_speed_motor = new ZoneItem("high_speed_motor"));
+		register(registry, rotor_accelerator = new ZoneItem("rotor_accelerator"));
 
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
 //			ModelLoader.setCustomModelResourceLocation(terminal, 0,
