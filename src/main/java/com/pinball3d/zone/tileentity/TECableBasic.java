@@ -274,8 +274,15 @@ public class TECableBasic extends TileEntity implements ITickable {
 	}
 
 	public boolean isConnect(EnumFacing facing) {
+		if (this instanceof TECableGeneral && !((TECableGeneral) this).getConfig(facing).canEnergyTransmit()) {
+			return false;
+		}
 		TileEntity te = world.getTileEntity(getPos().offset(facing));
 		if (te instanceof TECableBasic) {
+			if (te instanceof TECableGeneral
+					&& !((TECableGeneral) te).getConfig(facing.getOpposite()).canEnergyTransmit()) {
+				return false;
+			}
 			return true;
 		}
 		if (te != null && te.hasCapability(CapabilityEnergy.ENERGY, facing.getOpposite())) {

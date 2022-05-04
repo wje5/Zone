@@ -1,0 +1,25 @@
+{
+    "parent": "block/block",
+    "elements": [
+        {   "from": [ 0, 6, 6 ],
+            "to": [ 6, 10, 10 ],
+            "faces": {
+                "down":  { "texture": "#down" },
+                "up":    { "texture": "#up" },
+                "north": { "texture": "#north" },
+                "south": { "texture": "#south" },
+                "west":  { "texture": "#west" },
+                "east":  { "texture": "#east" }
+            }
+        }
+    ],
+    "textures": {
+        "particle": "zone:blocks/cable_2_item",
+        "down": "zone:blocks/cable_2_item_1",
+        "up": "zone:blocks/cable_2_item",
+        "north": "zone:blocks/cable_2_item",
+        "south": "zone:blocks/cable_2_item",
+        "west": "zone:blocks/cable_2_item",
+        "east": "zone:blocks/cable_2_item"
+    }
+}

@@ -21,7 +21,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -115,17 +114,17 @@ public class TECableGeneral extends TECableBasic {
 			}
 			inputData.add(list);
 		});
-		System.out.println("inputData:" + inputData);
+		// System.out.println("inputData:" + inputData);
 		List<StorageWrapper> inputWrappers = inputData.stream().map(e -> {
 			StorageWrapper w = new StorageWrapper();
 			e.forEach(stack -> w.merge(stack));
 			return w;
 		}).collect(Collectors.toList());
-		System.out.println("inputWrappers:" + inputWrappers);
+		// System.out.println("inputWrappers:" + inputWrappers);
 
 		StorageWrapper inputTotal = new StorageWrapper();
 		inputWrappers.forEach(e -> inputTotal.merge(e));
-		System.out.println("inputTotal:" + inputTotal);
+		// System.out.println("inputTotal:" + inputTotal);
 
 		List<ItemStack> fix = new ArrayList<ItemStack>();
 		inputTotal.storges.forEach(hugestack -> {
@@ -148,8 +147,8 @@ public class TECableGeneral extends TECableBasic {
 				}
 				maxInsert[i] = Arrays.stream(insertData[i]).sum();
 			}
-//			System.out.println("insertData:" + Arrays.toString(insertData));
-			System.out.println("maxInsert:" + Arrays.toString(maxInsert));
+//			//System.out.println("insertData:" + Arrays.toString(insertData));
+			// System.out.println("maxInsert:" + Arrays.toString(maxInsert));
 			int maxInsertTotal = Arrays.stream(maxInsert).sum();
 			int[] maxExtract = new int[inputWrappers.size()];
 			for (int i = 0; i < inputWrappers.size(); i++) {
@@ -163,18 +162,18 @@ public class TECableGeneral extends TECableBasic {
 					}
 				}
 			}
-			System.out.println("maxExtract:" + Arrays.toString(maxExtract));
+			// System.out.println("maxExtract:" + Arrays.toString(maxExtract));
 			int[] maxExtractAvg = getAvg(maxExtract, maxInsertTotal);
 			for (int i = 0; i < maxExtract.length; i++) {
 				maxExtract[i] -= maxExtractAvg[i];
 			}
-			System.out.println("maxExtract(avg):" + Arrays.toString(maxExtractAvg));
+			// System.out.println("maxExtract(avg):" + Arrays.toString(maxExtractAvg));
 			int maxExtractTotal = Arrays.stream(maxExtractAvg).sum();
 			int[] maxInsertAvg = getAvg(maxInsert, maxExtractTotal);
 			for (int i = 0; i < maxInsert.length; i++) {
 				maxInsert[i] -= maxInsertAvg[i];
 			}
-			System.out.println("maxInsert(avg):" + Arrays.toString(maxInsertAvg));
+			// System.out.println("maxInsert(avg):" + Arrays.toString(maxInsertAvg));
 			it = inputs.iterator();
 			Iterator<List<ItemStack>> it2 = inputData.iterator();
 			ItemStack stack = ItemStack.EMPTY;
@@ -187,7 +186,7 @@ public class TECableGeneral extends TECableBasic {
 							stack = device.handler.extractItem(j, Math.min(maxExtractAvg[i], list.get(j).getCount()),
 									false);
 							if (!stack.isEmpty()) {
-								System.out.println("start:" + stack);
+								// System.out.println("start:" + stack);
 								list.get(j).shrink(stack.getCount());
 								maxExtractAvg[i] -= stack.getCount();
 								while (!stack.isEmpty()) {
@@ -201,15 +200,15 @@ public class TECableGeneral extends TECableBasic {
 												int amount = Math.min(stack.getCount(),
 														Math.min(maxInsertAvg[k], insertData[k][index]));
 												s.setCount(amount);
-												System.out.println("before insert:" + s);
+												// System.out.println("before insert:" + s);
 												if (s.isEmpty()) {
-													System.out.println(s);
+													// System.out.println(s);
 												}
 												s = insertDevice.handler.insertItem(index, s, false);
-												System.out.println("after insert:" + s);
+												// System.out.println("after insert:" + s);
 												amount = amount - s.getCount();
 												if (amount == 0) {
-													System.out.println("DRR");// debug
+													// System.out.println("DRR");// debug
 												}
 												maxInsertAvg[k] -= amount;
 												insertData[k][index] -= amount;
@@ -227,12 +226,12 @@ public class TECableGeneral extends TECableBasic {
 											maxInsert[k] -= maxInsertAvg[k];
 										}
 										if (flag) {
-											System.out.println("DRRRRRR");
+											// System.out.println("DRRRRRR");
 											break;
 										}
 									}
 								}
-								System.out.println("end:" + stack);
+								// System.out.println("end:" + stack);
 								if (maxExtractAvg[i] <= 0) {
 									break;
 								}
@@ -243,7 +242,7 @@ public class TECableGeneral extends TECableBasic {
 			}
 			maxExtractTotal = Arrays.stream(maxExtract).sum() + stack.getCount();
 			if (maxExtractTotal > 0) {
-				System.out.println("remain:maxExtract:" + Arrays.toString(maxExtract));
+				// System.out.println("remain:maxExtract:" + Arrays.toString(maxExtract));
 				insertData = new int[storages.size()][];
 				maxInsert = new int[storages.size()];
 				it = storages.iterator();
@@ -287,20 +286,20 @@ public class TECableGeneral extends TECableBasic {
 				if (!stack.isEmpty()) {
 					for (; a <= i && a < storages.size(); a++) {
 						IODeviceWrapper insertDevice = storages.get(a);
-						System.out.println("debug:" + a);
+						// System.out.println("debug:" + a);
 						for (int index2 = 0; index2 < insertData[a].length && index2 <= k && !stack.isEmpty()
 								&& maxInsert[a] > 0; index2++) {
-							System.out.println("debug:" + a + "|" + index2);
+							// System.out.println("debug:" + a + "|" + index2);
 							if (insertData[a][index2] > 0) {
 								ItemStack s = stack.copy();
 								int amount = Math.min(stack.getCount(), Math.min(maxInsert[a], insertData[a][index2]));
 								s.setCount(amount);
-								System.out.println("before insert:" + s);
+								// System.out.println("before insert:" + s);
 								if (s.isEmpty()) {
-									System.out.println(s);
+									// System.out.println(s);
 								}
 								s = insertDevice.handler.insertItem(index2, s, false);
-								System.out.println("after insert:" + s);
+								// System.out.println("after insert:" + s);
 								amount = amount - s.getCount();
 								maxInsert[a] -= amount;
 								insertData[a][index2] -= amount;
@@ -313,12 +312,12 @@ public class TECableGeneral extends TECableBasic {
 					}
 				}
 
-				System.out.println(i + "|" + k + "|" + maxInsertTotal);
+				// System.out.println(i + "|" + k + "|" + maxInsertTotal);
 				maxExtractAvg = getAvg(maxExtract, maxInsertTotal);
 				for (int index = 0; index < maxExtract.length; index++) {
 					maxExtract[index] -= maxExtractAvg[index];
 				}
-				System.out.println(Arrays.toString(maxExtractAvg));
+				// System.out.println(Arrays.toString(maxExtractAvg));
 
 				it = inputs.iterator();
 				it2 = inputData.iterator();
@@ -331,26 +330,26 @@ public class TECableGeneral extends TECableBasic {
 								stack = device.handler.extractItem(j,
 										Math.min(maxExtractAvg[index], list.get(j).getCount()), false);
 								if (!stack.isEmpty()) {
-									System.out.println("start:" + stack + "|" + i);
+									// System.out.println("start:" + stack + "|" + i);
 									list.get(j).shrink(stack.getCount());
 									maxExtractAvg[index] -= stack.getCount();
 									for (; a <= i && a < storages.size() && !stack.isEmpty(); a++) {
 										IODeviceWrapper insertDevice = storages.get(a);
-										System.out.println("debug:" + a);
+										// System.out.println("debug:" + a);
 										for (int index2 = 0; index2 < insertData[a].length && index2 <= k
 												&& !stack.isEmpty() && maxInsert[a] > 0; index2++) {
-											System.out.println("debug:" + a + "|" + index2);
+											// System.out.println("debug:" + a + "|" + index2);
 											if (insertData[a][index2] > 0) {
 												ItemStack s = stack.copy();
 												int amount = Math.min(stack.getCount(),
 														Math.min(maxInsert[a], insertData[a][index2]));
 												s.setCount(amount);
-												System.out.println("before insert:" + s);
+												// System.out.println("before insert:" + s);
 												if (s.isEmpty()) {
-													System.out.println(s);
+													// System.out.println(s);
 												}
 												s = insertDevice.handler.insertItem(index2, s, false);
-												System.out.println("after insert:" + s);
+												// System.out.println("after insert:" + s);
 												amount = amount - s.getCount();
 												maxInsert[a] -= amount;
 												insertData[a][index2] -= amount;
@@ -361,9 +360,9 @@ public class TECableGeneral extends TECableBasic {
 											break;
 										}
 									}
-									System.out.println("end:" + stack);
+									// System.out.println("end:" + stack);
 									if (!stack.isEmpty()) {
-										System.out.println("DRRRRRR1" + stack);
+										// System.out.println("DRRRRRR1" + stack);
 										fix.add(stack);
 									}
 									if (maxExtractAvg[index] <= 0) {
@@ -399,17 +398,17 @@ public class TECableGeneral extends TECableBasic {
 			}
 			storageData.add(list);
 		});
-		System.out.println("storageData:" + storageData);
+		// System.out.println("storageData:" + storageData);
 		List<StorageWrapper> storageWrappers = storageData.stream().map(e -> {
 			StorageWrapper w = new StorageWrapper();
 			e.forEach(stack -> w.merge(stack));
 			return w;
 		}).collect(Collectors.toList());
-		System.out.println("storageWrappers:" + storageWrappers);
+		// System.out.println("storageWrappers:" + storageWrappers);
 
 		StorageWrapper storageTotal = new StorageWrapper();
 		storageWrappers.forEach(e -> storageTotal.merge(e));
-		System.out.println("storageTotal:" + storageTotal);
+		// System.out.println("storageTotal:" + storageTotal);
 
 		storageTotal.storges.forEach(hugestack -> {
 			int[][] insertData = new int[outputs.size()][];
@@ -431,8 +430,8 @@ public class TECableGeneral extends TECableBasic {
 				}
 				maxInsert[i] = Arrays.stream(insertData[i]).sum();
 			}
-//			System.out.println("insertData:" + Arrays.toString(insertData));
-			System.out.println("maxInsert:" + Arrays.toString(maxInsert));
+//			//System.out.println("insertData:" + Arrays.toString(insertData));
+			// System.out.println("maxInsert:" + Arrays.toString(maxInsert));
 			int maxInsertTotal = Arrays.stream(maxInsert).sum();
 			int[] maxExtract = new int[storageWrappers.size()];
 			for (int i = 0; i < storageWrappers.size(); i++) {
@@ -446,18 +445,18 @@ public class TECableGeneral extends TECableBasic {
 					}
 				}
 			}
-			System.out.println("maxExtract:" + Arrays.toString(maxExtract));
+			// System.out.println("maxExtract:" + Arrays.toString(maxExtract));
 			int[] maxExtractAvg = getAvg(maxExtract, maxInsertTotal);
 			for (int i = 0; i < maxExtract.length; i++) {
 				maxExtract[i] -= maxExtractAvg[i];
 			}
-			System.out.println("maxExtract(avg):" + Arrays.toString(maxExtractAvg));
+			// System.out.println("maxExtract(avg):" + Arrays.toString(maxExtractAvg));
 			int maxExtractTotal = Arrays.stream(maxExtractAvg).sum();
 			int[] maxInsertAvg = getAvg(maxInsert, maxExtractTotal);
 			for (int i = 0; i < maxInsert.length; i++) {
 				maxInsert[i] -= maxInsertAvg[i];
 			}
-			System.out.println("maxInsert(avg):" + Arrays.toString(maxInsertAvg));
+			// System.out.println("maxInsert(avg):" + Arrays.toString(maxInsertAvg));
 			it = storages.iterator();
 			Iterator<List<ItemStack>> it2 = storageData.iterator();
 			ItemStack stack = ItemStack.EMPTY;
@@ -470,7 +469,7 @@ public class TECableGeneral extends TECableBasic {
 							stack = device.handler.extractItem(j, Math.min(maxExtractAvg[i], list.get(j).getCount()),
 									false);
 							if (!stack.isEmpty()) {
-								System.out.println("start:" + stack);
+								// System.out.println("start:" + stack);
 								list.get(j).shrink(stack.getCount());
 								maxExtractAvg[i] -= stack.getCount();
 								while (!stack.isEmpty()) {
@@ -484,12 +483,12 @@ public class TECableGeneral extends TECableBasic {
 												int amount = Math.min(stack.getCount(),
 														Math.min(maxInsertAvg[k], insertData[k][index]));
 												s.setCount(amount);
-												System.out.println("before insert:" + s);
+												// System.out.println("before insert:" + s);
 												s = insertDevice.handler.insertItem(index, s, false);
-												System.out.println("after insert:" + s);
+												// System.out.println("after insert:" + s);
 												amount = amount - s.getCount();
 												if (amount == 0) {
-													System.out.println("DRR");// debug
+													// System.out.println("DRR");// debug
 												}
 												maxInsertAvg[k] -= amount;
 												insertData[k][index] -= amount;
@@ -507,13 +506,13 @@ public class TECableGeneral extends TECableBasic {
 											maxInsert[k] -= maxInsertAvg[k];
 										}
 										if (flag) {
-											System.out.println("DRRRRRR2" + stack);
+											// System.out.println("DRRRRRR2" + stack);
 											fix.add(stack);
 											break;
 										}
 									}
 								}
-								System.out.println("end:" + stack);
+								// System.out.println("end:" + stack);
 								if (maxExtractAvg[i] <= 0) {
 									break;
 								}
@@ -538,18 +537,18 @@ public class TECableGeneral extends TECableBasic {
 		});
 
 		///////////////
-		System.out.println("inputData:" + inputData);
+		// System.out.println("inputData:" + inputData);
 		inputWrappers.clear();
 		inputWrappers.addAll(inputData.stream().map(e -> {
 			StorageWrapper w = new StorageWrapper();
 			e.forEach(stack -> w.merge(stack));
 			return w;
 		}).collect(Collectors.toList()));
-		System.out.println("inputWrappers:" + inputWrappers);
+		// System.out.println("inputWrappers:" + inputWrappers);
 
 		inputTotal.clear();
 		inputWrappers.forEach(e -> inputTotal.merge(e));
-		System.out.println("inputTotal:" + inputTotal);
+		// System.out.println("inputTotal:" + inputTotal);
 
 		inputTotal.storges.forEach(hugestack -> {
 			int[] maxExtract = new int[inputWrappers.size()];
@@ -567,7 +566,7 @@ public class TECableGeneral extends TECableBasic {
 
 			int maxExtractTotal = Arrays.stream(maxExtract).sum();
 			if (maxExtractTotal > 0) {
-				System.out.println("remain:maxExtract:" + Arrays.toString(maxExtract));
+				// System.out.println("remain:maxExtract:" + Arrays.toString(maxExtract));
 				int[][] insertData = new int[storages.size()][];
 				int[] maxInsert = new int[storages.size()];
 				Iterator<IODeviceWrapper> it = storages.iterator();
@@ -609,12 +608,12 @@ public class TECableGeneral extends TECableBasic {
 				int a = 0;
 				// DATA
 
-				System.out.println(i + "|" + k + "|" + maxInsertTotal);
+				// System.out.println(i + "|" + k + "|" + maxInsertTotal);
 				int[] maxExtractAvg = getAvg(maxExtract, maxInsertTotal);
 				for (int index = 0; index < maxExtract.length; index++) {
 					maxExtract[index] -= maxExtractAvg[index];
 				}
-				System.out.println(Arrays.toString(maxExtractAvg));
+				// System.out.println(Arrays.toString(maxExtractAvg));
 
 				it = inputs.iterator();
 				Iterator<List<ItemStack>> it2 = inputData.iterator();
@@ -627,26 +626,26 @@ public class TECableGeneral extends TECableBasic {
 								ItemStack stack = device.handler.extractItem(j,
 										Math.min(maxExtractAvg[index], list.get(j).getCount()), false);
 								if (!stack.isEmpty()) {
-									System.out.println("start:" + stack + "|" + i);
+									// System.out.println("start:" + stack + "|" + i);
 									list.get(j).shrink(stack.getCount());
 									maxExtractAvg[index] -= stack.getCount();
 									for (; a <= i && a < storages.size() && !stack.isEmpty(); a++) {
 										IODeviceWrapper insertDevice = storages.get(a);
-										System.out.println("debug:" + a);
+										// System.out.println("debug:" + a);
 										for (int index2 = 0; index2 < insertData[a].length && index2 <= k
 												&& !stack.isEmpty() && maxInsert[a] > 0; index2++) {
-											System.out.println("debug:" + a + "|" + index2);
+											// System.out.println("debug:" + a + "|" + index2);
 											if (insertData[a][index2] > 0) {
 												ItemStack s = stack.copy();
 												int amount = Math.min(stack.getCount(),
 														Math.min(maxInsert[a], insertData[a][index2]));
 												s.setCount(amount);
-												System.out.println("before insert:" + s);
+												// System.out.println("before insert:" + s);
 												if (s.isEmpty()) {
-													System.out.println(s);
+													// System.out.println(s);
 												}
 												s = insertDevice.handler.insertItem(index2, s, false);
-												System.out.println("after insert:" + s);
+												// System.out.println("after insert:" + s);
 												amount = amount - s.getCount();
 												maxInsert[a] -= amount;
 												insertData[a][index2] -= amount;
@@ -657,9 +656,9 @@ public class TECableGeneral extends TECableBasic {
 											break;
 										}
 									}
-									System.out.println("end:" + stack);
+									// System.out.println("end:" + stack);
 									if (!stack.isEmpty()) {
-										System.out.println("DRRRRRR3" + stack);
+										// System.out.println("DRRRRRR3" + stack);
 									}
 									if (maxExtractAvg[index] <= 0) {
 										break;
@@ -675,7 +674,7 @@ public class TECableGeneral extends TECableBasic {
 	}
 
 	public static int[] getAvg(int[] array, int total) {
-		System.out.println("total:" + total + " old:" + Arrays.toString(array));
+		// System.out.println("total:" + total + " old:" + Arrays.toString(array));
 		int t = Arrays.stream(array).sum();
 		if (t <= total) {
 			return Arrays.copyOf(array, array.length);
@@ -703,21 +702,21 @@ public class TECableGeneral extends TECableBasic {
 				}
 			}
 		}
-		System.out.println("new:" + Arrays.toString(newArray));
+		// System.out.println("new:" + Arrays.toString(newArray));
 		return newArray;
 	}
 
-	@Override
-	public boolean isConnect(EnumFacing facing) {
+	public boolean isConnectItem(EnumFacing facing) {
+		if (getConfig(facing).getItemIOType() == ItemIOType.DISABLE) {
+			return false;
+		}
 		TileEntity te = world.getTileEntity(getPos().offset(facing));
 		if (te instanceof TECableGeneral) {
 			return true;
 		}
-		if (te != null && te.hasCapability(CapabilityEnergy.ENERGY, facing.getOpposite())) {
-			IEnergyStorage s = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
-			if (s.canExtract() || s.canReceive()) {
-				return true;
-			}
+		if (te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())) {
+			IItemHandler s = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
+			return true;
 		}
 		return false;
 	}

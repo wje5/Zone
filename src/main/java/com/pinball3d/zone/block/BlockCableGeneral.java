@@ -8,6 +8,9 @@ import com.pinball3d.zone.tileentity.TECableGeneral;
 import com.pinball3d.zone.tileentity.TECableGeneral.CableConfig;
 import com.pinball3d.zone.tileentity.ZoneTieredMachine.Tier;
 
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -21,6 +24,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -30,8 +34,36 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @EventBusSubscriber
 public class BlockCableGeneral extends BlockCableBasic {
+	public static final PropertyBool ITEMDOWN = PropertyBool.create("itemdown");
+	public static final PropertyBool ITEMUP = PropertyBool.create("itemup");
+	public static final PropertyBool ITEMNORTH = PropertyBool.create("itemnorth");
+	public static final PropertyBool ITEMSOUTH = PropertyBool.create("itemsouth");
+	public static final PropertyBool ITEMWEST = PropertyBool.create("itemwest");
+	public static final PropertyBool ITEMEAST = PropertyBool.create("itemeast");
+
 	public BlockCableGeneral() {
 		super(Tier.T2);
+		getDefaultState().withProperty(ITEMDOWN, Boolean.valueOf(false)).withProperty(ITEMUP, Boolean.valueOf(false))
+				.withProperty(ITEMNORTH, Boolean.valueOf(false)).withProperty(ITEMEAST, Boolean.valueOf(false))
+				.withProperty(ITEMSOUTH, Boolean.valueOf(false)).withProperty(ITEMWEST, Boolean.valueOf(false));
+	}
+
+	@Override
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, new IProperty[] { DOWN, UP, NORTH, SOUTH, WEST, EAST, ITEMDOWN, ITEMUP,
+				ITEMNORTH, ITEMSOUTH, ITEMWEST, ITEMEAST });
+	}
+
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+		state = super.getActualState(state, world, pos);
+		TECableGeneral te = (TECableGeneral) world.getTileEntity(pos);
+		return state.withProperty(ITEMDOWN, te.isConnectItem(EnumFacing.DOWN))
+				.withProperty(ITEMUP, te.isConnectItem(EnumFacing.UP))
+				.withProperty(ITEMNORTH, te.isConnectItem(EnumFacing.NORTH))
+				.withProperty(ITEMSOUTH, te.isConnectItem(EnumFacing.SOUTH))
+				.withProperty(ITEMWEST, te.isConnectItem(EnumFacing.WEST))
+				.withProperty(ITEMEAST, te.isConnectItem(EnumFacing.EAST));
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -40,7 +72,7 @@ public class BlockCableGeneral extends BlockCableBasic {
 	public static void onRenderWorldLast(RenderWorldLastEvent event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		RayTraceResult result = mc.objectMouseOver;
-		if (result.typeOfHit == RayTraceResult.Type.BLOCK
+		if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK
 				&& mc.world.getTileEntity(result.getBlockPos()) instanceof TECableGeneral) {
 			Tessellator tess = Tessellator.getInstance();
 			BufferBuilder buffer = tess.getBuffer();

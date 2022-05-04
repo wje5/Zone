@@ -362,6 +362,8 @@ manual.sphinx_system_9=null
 
 elite.menu.view=视图(§aV)
 elite.menu.window=窗口(§aW)
+elite.menu.tool=工具(§aT)
+elite.menu.option=选项(§aO)
 elite.menu.help=帮助(§aH)
 
 elite.panel.map=地图

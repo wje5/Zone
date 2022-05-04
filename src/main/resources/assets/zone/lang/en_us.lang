@@ -349,6 +349,8 @@ manual.sphinx_system_9=Booting procedure takes about\n13 seconds,and costs rough
 
 elite.menu.view=§aView
 elite.menu.window=§aWindow
+elite.menu.tool=§aTool
+elite.menu.option=§aOption
 elite.menu.help=§aHelp
 
 elite.panel.map=Map

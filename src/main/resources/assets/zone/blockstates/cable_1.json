@@ -1,5 +1,220 @@
 {
     "multipart": [
-    	{"apply": { "model": "block/oak_fence_post" }}
+    	{   "when": { "down": false, "up": false, "north": false, "south": false, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center" }
+        },
+        
+        {   "when": { "down": true, "up": false, "north": false, "south": false, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_1", "x": 90}
+        },
+        {   "when": { "down": false, "up": true, "north": false, "south": false, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_1", "x": 270}
+        },
+        {   "when": { "down": false, "up": false, "north": true, "south": false, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_1"}
+        },
+        {   "when": { "down": false, "up": false, "north": false, "south": true, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_1", "y": 180}
+        },
+        {   "when": { "down": false, "up": false, "north": false, "south": false, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_1", "y": 270}
+        },
+        {   "when": { "down": false, "up": false, "north": false, "south": false, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_1", "y": 90}
+        },
+        
+        {   "when": { "down": true, "up": true, "north": false, "south": false, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_2", "x": 90}
+        },
+        {   "when": { "down": false, "up": false, "north": true, "south": true, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_2"}
+        },
+        {   "when": { "down": false, "up": false, "north": false, "south": false, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_2", "y": 90}
+        },
+        
+        {   "when": { "down": false, "up": false, "north": true, "south": false, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_3"}
+        },
+        {   "when": { "down": false, "up": false, "north": true, "south": false, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_3", "y": 90}
+        },
+        {   "when": { "down": false, "up": false, "north": false, "south": true, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_3", "y": 180}
+        },
+        {   "when": { "down": false, "up": false, "north": false, "south": true, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_3", "y": 270}
+        },
+        {   "when": { "down": true, "up": false, "north": false, "south": false, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_3", "x": 90}
+        },
+        {   "when": { "down": true, "up": false, "north": true, "south": false, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_3", "x": 90, "y": 90}
+        },
+        {   "when": { "down": true, "up": false, "north": false, "south": false, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_3", "x": 90, "y": 180}
+        },
+        {   "when": { "down": true, "up": false, "north": false, "south": true, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_3", "x": 90, "y": 270}
+        }, 
+        {   "when": { "down": false, "up": true, "north": false, "south": false, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_3", "x": 270}
+        },
+        {   "when": { "down": false, "up": true, "north": true, "south": false, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_3", "x": 270, "y": 90}
+        },
+        {   "when": { "down": false, "up": true, "north": false, "south": false, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_3", "x": 270, "y": 180}
+        },
+        {   "when": { "down": false, "up": true, "north": false, "south": true, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_3", "x": 270, "y": 270}
+        },
+        
+        {   "when": { "down": false, "up": false, "north": true, "south": false, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_4"}
+        },
+        {   "when": { "down": false, "up": false, "north": true, "south": true, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_4", "y": 90}
+        },
+        {   "when": { "down": false, "up": false, "north": false, "south": true, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_4", "y": 180}
+        },
+        {   "when": { "down": false, "up": false, "north": true, "south": true, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_4", "y": 270}
+        },
+        {   "when": { "down": true, "up": false, "north": false, "south": false, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_4", "x": 90}
+        },
+        {   "when": { "down": true, "up": false, "north": true, "south": true, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_4", "x": 90, "y": 90}
+        },
+        {   "when": { "down": false, "up": true, "north": false, "south": false, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_4", "x": 270}
+        },
+        {   "when": { "down": false, "up": true, "north": true, "south": true, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_4", "x": 270, "y": 90}
+        },
+        {   "when": { "down": true, "up": true, "north": true, "south": false, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_5"}
+        },
+        {   "when": { "down": true, "up": true, "north": false, "south": false, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_5", "y": 90}
+        },
+        {   "when": { "down": true, "up": true, "north": false, "south": true, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_5", "y": 180}
+        },
+        {   "when": { "down": true, "up": true, "north": false, "south": false, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_5", "y": 270}
+        },
+        
+        {   "when": { "down": true, "up": true, "north": false, "south": false, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_6"}
+        },
+        {   "when": { "down": false, "up": false, "north": true, "south": true, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_6", "x": 90}
+        },
+        {   "when": { "down": true, "up": true, "north": true, "south": true, "west": false, "east": false },
+        	"apply": { "model": "zone:cable_1_center_6", "y": 90}
+        },
+        
+        {   "when": { "down": true, "up": false, "north": true, "south": false, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_7"}
+        },
+        {   "when": { "down": true, "up": false, "north": true, "south": false, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_7", "y": 90}
+        },
+        {   "when": { "down": true, "up": false, "north": false, "south": true, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_7", "y": 180}
+        },
+        {   "when": { "down": true, "up": false, "north": false, "south": true, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_7", "y": 270}
+        },
+        {   "when": { "down": false, "up": true, "north": false, "south": true, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_7", "x": 180}
+        },
+        {   "when": { "down": false, "up": true, "north": true, "south": false, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_7", "x": 180, "y": 90}
+        },
+        {   "when": { "down": false, "up": true, "north": true, "south": false, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_7", "x": 180, "y": 180}
+        },
+        {   "when": { "down": false, "up": true, "north": false, "south": true, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_7", "x": 180, "y": 270}
+        },
+        
+        {   "when": { "down": true, "up": true, "north": true, "south": false, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_8"}
+        },
+        {   "when": { "down": true, "up": true, "north": true, "south": false, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_8", "y": 90}
+        },
+        {   "when": { "down": true, "up": true, "north": false, "south": true, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_8", "y": 180}
+        },
+        {   "when": { "down": true, "up": true, "north": false, "south": true, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_8", "y": 270}
+        },
+        {   "when": { "down": true, "up": false, "north": true, "south": true, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_8", "x": 90}
+        },
+        {   "when": { "down": true, "up": false, "north": false, "south": true, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_8", "x": 90, "y": 270}
+        },
+        {   "when": { "down": true, "up": false, "north": true, "south": true, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_8", "x": 90, "y": 180}
+        },
+        {   "when": { "down": true, "up": false, "north": true, "south": false, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_8", "x": 90, "y": 90}
+        },
+        {   "when": { "down": false, "up": true, "north": true, "south": true, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_8", "x": 270}
+        },
+        {   "when": { "down": false, "up": true, "north": true, "south": false, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_8", "x": 270, "y": 90}
+        },
+        {   "when": { "down": false, "up": true, "north": true, "south": true, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_8", "x": 270, "y": 180}
+        },
+        {   "when": { "down": false, "up": true, "north": false, "south": true, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_8", "x": 270, "y": 270}
+        },
+        
+        {   "when": { "down": true, "up": true, "north": false, "south": true, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_9"}
+        },
+        {   "when": { "down": true, "up": true, "north": true, "south": true, "west": true, "east": false },
+        	"apply": { "model": "zone:cable_1_center_9", "y": 90}
+        },
+        {   "when": { "down": true, "up": true, "north": true, "south": false, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_9", "y": 180}
+        },
+        {   "when": { "down": true, "up": true, "north": true, "south": true, "west": false, "east": true },
+        	"apply": { "model": "zone:cable_1_center_9", "y": 270}
+        },
+        {   "when": { "down": false, "up": true, "north": true, "south": true, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_9", "x": 90}
+        },
+        {   "when": { "down": true, "up": false, "north": true, "south": true, "west": true, "east": true },
+        	"apply": { "model": "zone:cable_1_center_9", "x": 270}
+        },
+        
+        {   "when": { "down": "true" },
+            "apply": { "model": "zone:cable_1_side", "x": 90 }
+        },
+        {   "when": { "up": "true" },
+            "apply": { "model": "zone:cable_1_side", "x": 270 }
+        },
+        {   "when": { "north": "true" },
+            "apply": { "model": "zone:cable_1_side" }
+        },
+        {   "when": { "south": "true" },
+            "apply": { "model": "zone:cable_1_side", "y": 180 }
+        },
+        {   "when": { "west": "true" },
+            "apply": { "model": "zone:cable_1_side", "y": 270 }
+        },
+        {   "when": { "east": "true" }, 
+            "apply": { "model": "zone:cable_1_side", "y": 90 }
+        }
     ]
 }

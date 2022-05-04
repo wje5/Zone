@@ -80,6 +80,8 @@ public class EliteMainwindow extends GuiScreen {
 										new FormattedString("Shift+Z")))
 								.addBar(new DividerBar())
 								.addBar(new ButtonBar(new FormattedString("AA"), new FormattedString("AA"))))));
+		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.tool")), 'h'));
+		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.option")), 'h'));
 		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.help")), 'h')
 				.addBar(new ButtonBar(new FormattedString("甲乙丙丁戊己庚AbCdEf"),
 						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))));
