@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " #+",
+    "**+",
+    " #+"
+  ],
+  "key": {
+    "#": {
+      "item": "zone:etherium_coil"
+    },
+    "*": {
+      "item": "zone:steel_rod"
+    },
+    "+": {
+      "item": "zone:etherium_plate"
+    }
+  },
+  "result": {
+    "item": "zone:high_speed_motor"
+  }
+}
