@@ -860,6 +860,136 @@
         },
         {   "when": { "down": false, "itemdown": true, "up": true, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": true, "itemwest": false, "east": false, "itemeast": false },
             "apply": { "model": "zone:cable_2_hybrid_center_58" }
+        },
+        
+        {   "when": { "down": false, "itemdown": false, "up": false, "itemup": true, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": true, "itemwest": false, "east": true, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_59" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": true, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": true },
+            "apply": { "model": "zone:cable_2_hybrid_center_60" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": false, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": true, "itemwest": false, "east": true, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_61" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": true, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": true, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_62" }
+        },
+        
+        {   "when": { "down": false, "itemdown": false, "up": false, "itemup": true, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": true, "east": true, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_63" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": true, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": true },
+            "apply": { "model": "zone:cable_2_hybrid_center_64" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": false, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": true, "itemwest": false, "east": false, "itemeast": true },
+            "apply": { "model": "zone:cable_2_hybrid_center_65" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": true, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": true, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_66" }
+        },
+        
+        {   "when": { "down": false, "itemdown": false, "up": true, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": true, "itemwest": false, "east": false, "itemeast": true },
+            "apply": { "model": "zone:cable_2_hybrid_center_67" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": true, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": false, "east": true, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_68" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": true, "east": true, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_69" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": true, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": true, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_70" }
+        },
+        
+        {   "when": { "down": false, "itemdown": false, "up": false, "itemup": true, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": true, "itemwest": false, "east": false, "itemeast": true },
+            "apply": { "model": "zone:cable_2_hybrid_center_71" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": true, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": true },
+            "apply": { "model": "zone:cable_2_hybrid_center_72" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": false, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": true, "east": true, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_73" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": true, "north": false, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": true, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_74" }
+        },
+        
+        {   "when": { "down": false, "itemdown": false, "up": true, "itemup": false, "north": true, "itemnorth": false, "south": false, "itemsouth": true, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_75" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": true, "north": true, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_76" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": false, "north": false, "itemnorth": true, "south": true, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_77" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": true, "itemup": false, "north": false, "itemnorth": false, "south": true, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_78" }
+        },
+        
+         {   "when": { "down": false, "itemdown": false, "up": false, "itemup": true, "north": true, "itemnorth": false, "south": true, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_79" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": true, "itemup": false, "north": false, "itemnorth": true, "south": false, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_80" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": false, "itemup": false, "north": true, "itemnorth": false, "south": true, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_81" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": true, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": true, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_82" }
+        },
+        
+        {   "when": { "down": false, "itemdown": false, "up": false, "itemup": true, "north": true, "itemnorth": false, "south": false, "itemsouth": true, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_83" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": true, "north": false, "itemnorth": true, "south": false, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_84" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": false, "itemup": false, "north": false, "itemnorth": true, "south": true, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_85" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": true, "itemup": false, "north": false, "itemnorth": false, "south": false, "itemsouth": true, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_86" }
+        },
+        
+        {   "when": { "down": false, "itemdown": false, "up": true, "itemup": false, "north": false, "itemnorth": true, "south": true, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_87" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": true, "itemup": false, "north": true, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_88" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": false, "north": true, "itemnorth": false, "south": false, "itemsouth": true, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_89" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": true, "north": false, "itemnorth": false, "south": true, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_90" }
+        },
+        
+        {   "when": { "down": false, "itemdown": false, "up": true, "itemup": false, "north": false, "itemnorth": true, "south": false, "itemsouth": true, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_91" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": false, "itemup": true, "north": true, "itemnorth": false, "south": false, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_92" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": false, "north": false, "itemnorth": true, "south": false, "itemsouth": true, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_93" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": false, "itemup": true, "north": false, "itemnorth": false, "south": true, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_94" }
+        },
+        
+        {   "when": { "down": false, "itemdown": false, "up": false, "itemup": true, "north": false, "itemnorth": true, "south": true, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_95" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": true, "itemup": false, "north": false, "itemnorth": true, "south": false, "itemsouth": false, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_96" }
+        },
+        {   "when": { "down": false, "itemdown": true, "up": false, "itemup": false, "north": true, "itemnorth": false, "south": false, "itemsouth": true, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_97" }
+        },
+        {   "when": { "down": true, "itemdown": false, "up": false, "itemup": true, "north": false, "itemnorth": false, "south": false, "itemsouth": true, "west": false, "itemwest": false, "east": false, "itemeast": false },
+            "apply": { "model": "zone:cable_2_hybrid_center_98" }
         }
     ]
 }

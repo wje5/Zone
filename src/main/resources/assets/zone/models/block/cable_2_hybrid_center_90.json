@@ -15,11 +15,11 @@
     ],
     "textures": {
         "particle": "zone:blocks/cable_2",
-        "down": "zone:blocks/transparent",
-        "up": "zone:blocks/cable_2_hybrid_center_127_3",
-        "north": "zone:blocks/transparent",
-        "south": "zone:blocks/cable_2_hybrid_center_130_1",
-        "west": "zone:blocks/cable_2_hybrid_center_9_3",
-        "east": "zone:blocks/cable_2_hybrid_center_18_2"
+         "down": "zone:blocks/transparent",
+        "up": "zone:blocks/transparent",
+        "north": "zone:blocks/cable_2_hybrid_center_1_1",
+        "south": "zone:blocks/transparent",
+        "west": "zone:blocks/cable_2_hybrid_center_34_1",
+        "east": "zone:blocks/cable_2_hybrid_center_64_3"
     }
 }
