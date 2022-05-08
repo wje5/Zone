@@ -1,8 +1,6 @@
 package com.pinball3d.zone.render;
 
 import com.pinball3d.zone.FluidHandler;
-import com.pinball3d.zone.tileentity.TECableBasic;
-import com.pinball3d.zone.tileentity.TECableGeneral;
 import com.pinball3d.zone.tileentity.TEPoweredPiston;
 
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -18,8 +16,6 @@ public class RenderLoader {
 	public RenderLoader() {
 		ModelLoaderRegistry.registerLoader(ModelFluid.LoaderDynBucket.INSTANCE);
 		ClientRegistry.bindTileEntitySpecialRenderer(TEPoweredPiston.class, new RenderPoweredPiston());
-		ClientRegistry.bindTileEntitySpecialRenderer(TECableBasic.class, new TESRCableBasic());
-		ClientRegistry.bindTileEntitySpecialRenderer(TECableGeneral.class, new TESRCableBasic());
 	}
 
 	@SubscribeEvent
