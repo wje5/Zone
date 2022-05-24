@@ -436,3 +436,7 @@ sound.boiler=锅炉：工作
 sound.lathe=车床：工作
 sound.forming_press=冲压机床：工作
 sound.pump=泵：工作
+
+chat.multiblock_error=位于 %1$s 的方块应为 %2$s
+chat.multiblock_error.check_facing=尝试检查位于 %1$s 方块的朝向
+chat.not_enough_energy=能量不足

@@ -2,8 +2,6 @@ package com.pinball3d.zone.block;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.Lists;
 import com.pinball3d.zone.TabZone;
 import com.pinball3d.zone.tileentity.TECableBasic;
@@ -22,8 +20,6 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.Properties.PropertyAdapter;
@@ -92,30 +88,7 @@ public class BlockCableBasic extends BlockContainer {
 		return false;
 	}
 
-	@Override
-	@Nullable
-	public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start,
-			Vec3d end) {
-//		List<RayTraceResult> list = Lists.<RayTraceResult>newArrayList();
-//		for (AxisAlignedBB axisalignedbb : getCollisionBoxList(this.getActualState(blockState, worldIn, pos))) {
-//			list.add(this.rayTrace(pos, start, end, axisalignedbb));
-//		}
-//		RayTraceResult raytraceresult1 = null;
-//		double d1 = 0.0D;
-//		for (RayTraceResult raytraceresult : list) {
-//			if (raytraceresult != null) {
-//				double d0 = raytraceresult.hitVec.squareDistanceTo(end);
-//				if (d0 > d1) {
-//					raytraceresult1 = raytraceresult;
-//					d1 = d0;
-//				}
-//			}
-//		}
-//		return raytraceresult1;
-		return super.collisionRayTrace(blockState, worldIn, pos, start, end);
-	}
-
-	private static List<AxisAlignedBB> getCollisionBoxList(IBlockState state) {
+	protected List<AxisAlignedBB> getCollisionBoxList(IBlockState state) {
 		List<AxisAlignedBB> list = Lists.<AxisAlignedBB>newArrayList();
 		list.add(new AxisAlignedBB(0.375D, 0.375D, 0.375D, 0.625D, 0.625D, 0.625D));
 		if (state.getValue(DOWN)) {

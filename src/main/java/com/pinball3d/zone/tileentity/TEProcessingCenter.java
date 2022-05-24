@@ -22,6 +22,8 @@ import com.pinball3d.zone.ChunkHandler.IChunkLoader;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.block.BlockLoader;
 import com.pinball3d.zone.block.BlockProcessingCenter;
+import com.pinball3d.zone.capability.EnergyIOWrapper;
+import com.pinball3d.zone.capability.ZoneEnergyStorage;
 import com.pinball3d.zone.sphinx.ClassifyGroup;
 import com.pinball3d.zone.sphinx.GlobalNetworkData;
 import com.pinball3d.zone.sphinx.IDevice;
@@ -59,8 +61,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -70,8 +72,7 @@ import net.minecraftforge.oredict.OreIngredient;
 public class TEProcessingCenter extends TileEntity implements ITickable, IChunkLoader {
 	private boolean on, inited;
 	private String name = "Name Undone";
-	private int energyTick;
-	private int energy;
+	protected ZoneEnergyStorage energy = new ZoneEnergyStorage(2880000);
 	private boolean loaded;
 	public static Comparator<WorldPos> worldPosComparator = new Comparator<WorldPos>() {
 		@Override
@@ -121,7 +122,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	public void shutdown() {
 		on = false;
 		BlockProcessingCenter.setState(false, world, pos);
-		energyTick = 0;
 	}
 
 	public String getName() {
@@ -299,22 +299,6 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 		}
 		return false;
-	}
-
-	public boolean consumeEnergy(int amount) {
-		if (1 == 1) {
-			return true;// XXX
-		}
-		BlockPos p = pos.add(0, -3, 0);
-		if (world.getBlockState(p).getBlock() == BlockLoader.transmission_module) {
-			TETransmissionModule te = (TETransmissionModule) world.getTileEntity(p);
-			boolean flag = te.tryUseEnergy(amount, false);
-			energy = te.getEnergy();
-			return flag;
-		} else {
-			energy = 0;
-			return false;
-		}
 	}
 
 	public StorageWrapper getNetworkUseableItems() {
@@ -580,8 +564,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		return WorkingState.WORKING;
 	}
 
-	public int getEnergy() {
-		return energy;
+	public IEnergyStorage getEnergy() {
+		return new EnergyIOWrapper(energy, false, true);
 	}
 
 	public int getMaxStorage() {
@@ -1243,7 +1227,8 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			initSphinx();
 			inited = true;
 		}
-		if (!((BlockProcessingCenter) blockType).isFullStructure(worldPos) && on) {
+//		System.out.println(energy.getEnergyStored() + "|" + energy.getMaxEnergyStored());
+		if (((BlockProcessingCenter) blockType).isFullStructure(worldPos) != null && on) {
 			shutdown();
 //			fireLog(new LogSphinxShutdownStructure(getNextLogId()));// TODO
 			return;
@@ -1263,16 +1248,13 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 			}
 			return;
 		}
-		while (energyTick <= 0) {
-			if (consumeEnergy(1)) {
-				energyTick += 10;
-			} else {
-				shutdown();
+		if (energy.extractEnergy(480, true) == 480) {
+			energy.extractEnergy(480, false);
+		} else {
+			shutdown();
 //				fireLog(new LogSphinxShutdownEnergy(getNextLogId()));// TODO
-				return;
-			}
+			return;
 		}
-		energyTick--;
 		boolean flag = updateDevice();
 		if (flag || map == null || mapDirty) {
 			refreshMap();
@@ -1286,7 +1268,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		name = compound.getString("name");
-		energyTick = compound.getInteger("energyTick");
+		energy.readFromNBT(compound.getCompoundTag("energy"));
 		on = compound.getBoolean("on");
 		logId = compound.getInteger("logId");
 		nodeId = compound.getInteger("nodeId");
@@ -1412,7 +1394,7 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 		if (name != null) {
 			compound.setString("name", name);
 		}
-		compound.setInteger("energyTick", energyTick);
+		compound.setTag("energy", energy.writeToNBT(new NBTTagCompound()));
 		compound.setBoolean("on", on);
 		compound.setInteger("logId", logId);
 		compound.setInteger("nodeId", nodeId);
@@ -1590,12 +1572,12 @@ public class TEProcessingCenter extends TileEntity implements ITickable, IChunkL
 	}
 
 	public NBTTagCompound writeNetworkData(NBTTagCompound tag) {
-		tag.setInteger("energy", energy);
+//		tag.setInteger("energy", energy);
 		return tag;
 	}
 
 	public void readNetworkData(NBTTagCompound tag) {
-		energy = tag.getInteger("energy");
+//		energy = tag.getInteger("energy");
 	}
 
 	@Override

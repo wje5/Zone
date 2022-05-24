@@ -1,5 +1,8 @@
 {
     "variants": {
-        "normal": { "model": "zone:dynavolt_restrainer" }
+        "facing=north": { "model": "zone:dynavolt_restrainer" },
+        "facing=south": { "model": "zone:dynavolt_restrainer", "y": 180 },
+        "facing=west":  { "model": "zone:dynavolt_restrainer", "y": 270 },
+        "facing=east":  { "model": "zone:dynavolt_restrainer", "y": 90 }
     }
 }

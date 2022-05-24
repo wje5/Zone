@@ -53,9 +53,10 @@ public class TEBoiler extends ZoneTieredMachine {
 			return;
 		}
 		boolean flag = fuelTick > 0;
-		fuelTick = flag ? fuelTick - 1 : 0;
+		fuelTick = flag ? fuelTick - getTier().getMultiple() : 0;
 		if (fuelTick <= 0) {
-			if (fuel.getStackInSlot(0).getItem() == ItemLoader.hybrid_fuel
+			if (energy.getEnergyStored() < energy.getMaxEnergyStored()
+					&& fuel.getStackInSlot(0).getItem() == ItemLoader.hybrid_fuel
 					&& !fuel.extractItem(0, 1, false).isEmpty()) {
 				fuelTick += 1200;
 				if (!ConfigLoader.disableMachineSound) {
@@ -103,7 +104,7 @@ public class TEBoiler extends ZoneTieredMachine {
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability) && facing == null) {
+		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
 			return true;
 		}
 		return super.hasCapability(capability, facing);
@@ -112,8 +113,11 @@ public class TEBoiler extends ZoneTieredMachine {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability) && facing == null) {
-			return (T) battery;
+		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.equals(capability)) {
+			if (facing == null) {
+				return (T) battery;
+			}
+			return (T) fuel;
 		}
 		return super.getCapability(capability, facing);
 	}

@@ -30,6 +30,7 @@ import com.pinball3d.zone.tileentity.TECentrifuge;
 import com.pinball3d.zone.tileentity.TECharger;
 import com.pinball3d.zone.tileentity.TECrystallizer;
 import com.pinball3d.zone.tileentity.TEDrainer;
+import com.pinball3d.zone.tileentity.TEDynavoltRestrainer;
 import com.pinball3d.zone.tileentity.TEElecFurnace;
 import com.pinball3d.zone.tileentity.TEExtruder;
 import com.pinball3d.zone.tileentity.TEFormingPress;
@@ -66,6 +67,7 @@ public class GuiElementLoader implements IGuiHandler {
 	public static final int CABLE_2_SOUTH = 19;
 	public static final int CABLE_2_WEST = 20;
 	public static final int CABLE_2_EAST = 21;
+	public static final int DYNAVOLT_RESTRAINER = 22;
 
 	public GuiElementLoader() {
 		NetworkRegistry.INSTANCE.registerGuiHandler(Zone.instance, this);
@@ -127,6 +129,9 @@ public class GuiElementLoader implements IGuiHandler {
 		case CABLE_2_EAST:
 			return new ContainerCable2(player, (TECableGeneral) world.getTileEntity(new BlockPos(x, y, z)),
 					EnumFacing.VALUES[ID - CABLE_2_DOWN]);
+		case DYNAVOLT_RESTRAINER:
+			return new ContainerDynavoltRestrainer(player,
+					(TEDynavoltRestrainer) world.getTileEntity(new BlockPos(x, y, z)));
 		}
 		return null;
 	}
@@ -216,6 +221,9 @@ public class GuiElementLoader implements IGuiHandler {
 		case CABLE_2_EAST:
 			return new GuiContainerCable2(new ContainerCable2(player,
 					(TECableGeneral) world.getTileEntity(new BlockPos(x, y, z)), EnumFacing.VALUES[ID - CABLE_2_DOWN]));
+		case DYNAVOLT_RESTRAINER:
+			return new GuiContainerDynavoltRestrainer(new ContainerDynavoltRestrainer(player,
+					(TEDynavoltRestrainer) world.getTileEntity(new BlockPos(x, y, z))));
 		}
 
 		return null;

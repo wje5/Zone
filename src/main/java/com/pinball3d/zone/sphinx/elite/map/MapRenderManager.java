@@ -183,10 +183,10 @@ public class MapRenderManager implements IWorldEventListener {
 		GlStateManager.popMatrix();
 
 		if (selectedRayTraceResult != null) {
-			drawSelectBoundingBox(selectedRayTraceResult, true);
+			drawSelectBox(selectedRayTraceResult, true);
 		}
 		if (MouseHandler.isCursorEnable() && rayTraceResult != null) {
-			drawSelectBoundingBox(rayTraceResult, false);
+			drawSelectBox(rayTraceResult, false);
 		}
 
 		GlStateManager.enableBlend();
@@ -260,15 +260,17 @@ public class MapRenderManager implements IWorldEventListener {
 		frameCount++;
 	}
 
-	public void drawSelectBoundingBox(RayTraceResult ray, boolean isSelected) {
+	public void drawSelectBox(RayTraceResult ray, boolean isSelected) {
 		if (ray.typeOfHit == RayTraceResult.Type.BLOCK) {
-			GlStateManager.enableBlend();
-			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
-					GlStateManager.DestFactor.ZERO);
+//			GlStateManager.enableBlend();
+//			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+//					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE,
+//					GlStateManager.DestFactor.ZERO);
+			GlStateManager.disableBlend();
+
 			GlStateManager.glLineWidth(2.0F);
 			GlStateManager.disableTexture2D();
-			GlStateManager.depthMask(false);
+//			GlStateManager.depthMask(false);
 			BlockPos blockpos = ray.getBlockPos();
 			IBlockState iblockstate = world.getBlockState(blockpos);
 

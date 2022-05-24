@@ -10,6 +10,7 @@ public class TileEntityLoader {
 		registerTileEntity(TEProcessingCenter.class, "ProcessingCenter");
 		registerTileEntity(TENode.class, "Node");
 		registerTileEntity(TETransmissionModule.class, "TransmissionModule");
+		registerTileEntity(TEDynavoltRestrainer.class, "DynavoltRestrainer");
 		registerTileEntity(TEStorageChest.class, "StorageChest");
 		registerTileEntity(TEBeaconCore.class, "BeaconCore");
 		registerTileEntity(TEPoweredPiston.class, "PoweredPiston");

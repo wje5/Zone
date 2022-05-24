@@ -1,6 +1,7 @@
 package com.pinball3d.zone.block;
 
 import com.pinball3d.zone.TabZone;
+import com.pinball3d.zone.block.BlockProcessingCenter.Result;
 import com.pinball3d.zone.tileentity.TEProcessingCenter;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.UserData;
 import com.pinball3d.zone.tileentity.TEProcessingCenter.WorkingState;
@@ -19,6 +20,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.server.command.TextComponentHelper;
 
 public class BlockControllerMainframe extends Block {
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
@@ -40,17 +42,31 @@ public class BlockControllerMainframe extends Block {
 			return false;
 		}
 		Block block = center.getBlockState().getBlock();
-		if (block instanceof BlockProcessingCenter && ((BlockProcessingCenter) block).isFullStructure(center)) {
+		if (block instanceof BlockProcessingCenter) {
 			if (!worldIn.isRemote) {
-				TEProcessingCenter te = (TEProcessingCenter) center.getTileEntity();
-				if (te.getWorkingState() == WorkingState.OFF) {
-					if (te.getUsers().isEmpty()) {
-						te.addUser(new UserData(playerIn, true, false, true));
+				Result r = ((BlockProcessingCenter) block).isFullStructure(center);
+				if (r == null) {
+					TEProcessingCenter te = (TEProcessingCenter) center.getTileEntity();
+					if (te.getWorkingState() == WorkingState.OFF) {
+						if (te.getEnergy().getEnergyStored() >= 480) {
+							if (te.getUsers().isEmpty()) {
+								te.addUser(new UserData(playerIn, true, false, true));
+							}
+							if (te.isAdmin(playerIn)) {
+								te.open();
+//							te.fireLog(new LogSphinxOpen(te.getNextLogId(), playerIn));//TODO
+							}
+						} else {
+							playerIn.sendMessage(
+									TextComponentHelper.createComponentTranslation(playerIn, "chat.not_enough_energy"));
+						}
 					}
-					if (te.isAdmin(playerIn)) {
-						te.open();
-//						te.fireLog(new LogSphinxOpen(te.getNextLogId(), playerIn));//TODO
-					}
+				} else {
+					String text = "x=" + pos.getX() + ", y=" + pos.getY() + ", z=" + pos.getZ();
+//					String text = r.pos.toString();
+					playerIn.sendMessage(TextComponentHelper.createComponentTranslation(playerIn,
+							"chat.multiblock_error" + (r.checkFacing ? ".check_facing" : ""), text,
+							r.block.getLocalizedName()));
 				}
 			}
 			return true;

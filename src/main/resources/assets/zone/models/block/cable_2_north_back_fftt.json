@@ -1,0 +1,6 @@
+{
+    "parent": "zone:block/face_north",
+    "textures": {
+        "texture": "zone:blocks/cable_2_bg_2_1"
+    }
+}

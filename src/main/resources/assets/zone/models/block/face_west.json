@@ -1,0 +1,11 @@
+{
+    "parent": "block/block",
+    "elements": [
+        {   "from": [ 6, 6, 6 ],
+            "to": [ 6, 10, 10 ],
+            "faces": {
+                "west":  { "texture": "#texture", "cullface": "west" }
+            }
+        }
+    ]
+}

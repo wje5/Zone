@@ -22,6 +22,9 @@ public class ServerChunkHelper {
 
 	public static void updateCameraPos(EntityPlayerMP player) {
 		UUID uuid = player.getUniqueID();
+		if (!cameraPos.containsKey(uuid)) {
+			return;
+		}
 		PlayerChunkMap map = player.getServerWorld().getPlayerChunkMap();
 		BlockPos pos = cameraPos.get(uuid);
 		boolean flag = pos == null;

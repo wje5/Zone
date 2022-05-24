@@ -67,6 +67,10 @@ public class EliteMainwindow extends GuiScreen {
 		return null;
 	}
 
+	public WorldPos getTerminalPos() {
+		return terminalPos;
+	}
+
 	private void applyMenu() {
 		menuBar = new MenuBar(this);
 		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.view")), 'v')
@@ -116,6 +120,7 @@ public class EliteMainwindow extends GuiScreen {
 						terminalPos.getPos().getZ() + 0.5F) > 16F
 				|| !(terminalPos.getTileEntity() instanceof TETerminal)) {
 			mc.displayGuiScreen(null);
+			return;
 		}
 		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 

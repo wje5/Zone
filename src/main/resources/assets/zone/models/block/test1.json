@@ -1,0 +1,6 @@
+{
+    "parent": "zone:block/face_up",
+    "textures": {
+        "texture": "zone:blocks/reinforced_stone"
+    }
+}

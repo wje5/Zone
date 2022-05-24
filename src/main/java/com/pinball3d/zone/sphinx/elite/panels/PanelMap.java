@@ -79,25 +79,14 @@ public class PanelMap extends Panel {
 			getParent().setDropDownList(createDropDownList(mouseX, mouseY));
 			return new Drag(mouseButton);
 		} else if (mouseButton == 2) {
-			boolean flag = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 			return isMouseInPanel(mouseX, mouseY) ? new Drag(mouseButton, (x, y, moveX, moveY) -> {
-				if (flag) {
-					renderManager.cameraY += moveY * Math.cos(renderManager.cameraPitch / 180F * Math.PI);
-					double d = moveY * Math.sin(renderManager.cameraPitch / 180F * Math.PI);
-					renderManager.cameraZ += d * Math.cos(renderManager.cameraYaw / 180F * Math.PI);
-					renderManager.cameraX -= d * Math.sin(renderManager.cameraYaw / 180F * Math.PI);
-
-					renderManager.cameraX += moveX * Math.cos(renderManager.cameraYaw / 180F * Math.PI);
-					renderManager.cameraZ += moveX * Math.sin(renderManager.cameraYaw / 180F * Math.PI);
-				} else {
-					renderManager.cameraPitch = (renderManager.cameraPitch + moveY * 0.1F) % 360;
-					renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
-							: renderManager.cameraPitch < -180 ? renderManager.cameraPitch + 360F
-									: renderManager.cameraPitch;
-					renderManager.cameraYaw = (renderManager.cameraYaw + moveX * 0.1F) % 360;
-					renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
-							: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
-				}
+				renderManager.cameraPitch = (renderManager.cameraPitch + moveY * 0.1F) % 360;
+				renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
+						: renderManager.cameraPitch < -180 ? renderManager.cameraPitch + 360F
+								: renderManager.cameraPitch;
+				renderManager.cameraYaw = (renderManager.cameraYaw + moveX * 0.1F) % 360;
+				renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
+						: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
 			}, cancel -> {
 			}) : null;
 		} else {
@@ -138,22 +127,23 @@ public class PanelMap extends Panel {
 	public void doRender(int mouseX, int mouseY, float partialTicks) {
 		if (!inited) {
 			renderManager = new MapRenderManager();
+			renderManager.cameraX = getParent().getTerminalPos().getPos().getX();
+			renderManager.cameraZ = getParent().getTerminalPos().getPos().getZ();
 			renderManager.setWorldAndLoadRenderers(getParent().mc.world);
 			inited = true;
 		}
 		float speed = 0.3F;
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			renderManager.cameraZ -= speed;
+		int moveForward = (Keyboard.isKeyDown(Keyboard.KEY_W) ? 1 : 0) - (Keyboard.isKeyDown(Keyboard.KEY_S) ? 1 : 0);
+		int moveLeft = (Keyboard.isKeyDown(Keyboard.KEY_A) ? 1 : 0) - (Keyboard.isKeyDown(Keyboard.KEY_D) ? 1 : 0);
+		if (moveForward != 0) {
+			renderManager.cameraX += moveForward * speed * Math.sin(Math.toRadians(renderManager.cameraYaw));
+			renderManager.cameraZ -= moveForward * speed * Math.cos(Math.toRadians(renderManager.cameraYaw));
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			renderManager.cameraX -= speed;
+		if (moveLeft != 0) {
+			renderManager.cameraX += moveLeft * speed * Math.sin(Math.toRadians(renderManager.cameraYaw - 90));
+			renderManager.cameraZ -= moveLeft * speed * Math.cos(Math.toRadians(renderManager.cameraYaw - 90));
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			renderManager.cameraZ += speed;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			renderManager.cameraX += speed;
-		}
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 			renderManager.cameraY += speed;
 		}
@@ -239,7 +229,7 @@ public class PanelMap extends Panel {
 		int dx = x + 40 - mouseX;
 		int dy = y + 40 - mouseY;
 		if (Math.sqrt(dx * dx + dy * dy) < 40) {
-			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + 0, y + 0, 78, 85, 80, 80);
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, y, 176, 176, 80, 80);
 		}
 		map.forEach((a, b) -> b.run());
 	}

@@ -434,3 +434,7 @@ sound.boiler=Boiler:Work
 sound.lathe=Lathe:Work
 sound.forming_press=Forming Press:Work
 sound.pump=Pump:Work
+
+chat.multiblock_error=Block at %1$s must be %2$s
+chat.multiblock_error.check_facing=Try to check block facing at %1$s
+chat.not_enough_energy=Not enough energy

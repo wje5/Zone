@@ -14,12 +14,12 @@
         }
     ],
     "textures": {
-        "particle": "zone:blocks/cable_2_energy",
-        "down": "zone:blocks/cable_2_energy_3",
-        "up": "zone:blocks/cable_2_energy",
-        "north": "zone:blocks/cable_2_energy_1",
-        "south": "zone:blocks/cable_2_energy",
-        "west": "zone:blocks/cable_2_energy",
-        "east": "zone:blocks/cable_2_energy_1"
+        "particle": "zone:blocks/cable_2_energy_side",
+        "down": "zone:blocks/cable_2_energy_side_3",
+        "up": "zone:blocks/transparent",
+        "north": "zone:blocks/cable_2_energy_side_1",
+        "south": "zone:blocks/cable_2_energy_side",
+        "west": "zone:blocks/cable_2_energy_side",
+        "east": "zone:blocks/cable_2_energy_side_1"
     }
 }

@@ -88,7 +88,7 @@ public class BlockTieredMachineLightable extends BlockTieredMachine {
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing facing = EnumFacing.getHorizontal(meta % 4);
-		return this.getDefaultState().withProperty(FACING, facing);
+		return getDefaultState().withProperty(FACING, facing);
 	}
 
 	@Override

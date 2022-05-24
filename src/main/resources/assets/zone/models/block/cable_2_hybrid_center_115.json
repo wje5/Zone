@@ -18,8 +18,8 @@
         "down": "zone:blocks/transparent",
         "up": "zone:blocks/cable_2_hybrid_center_7",
         "north": "zone:blocks/transparent",
-        "south": "zone:blocks/cable_2_item_center_6_3",
+        "south": "zone:blocks/cable_2_item_center_5_3",
         "west": "zone:blocks/transparent",
-        "east": "zone:blocks/cable_2_energy_center_4_2"
+        "east": "zone:blocks/cable_2_hybrid_center_18_2"
     }
 }

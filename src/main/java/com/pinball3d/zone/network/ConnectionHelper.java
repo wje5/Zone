@@ -47,7 +47,6 @@ public class ConnectionHelper {
 				continue;
 			}
 			c.update();
-			System.out.println(c);
 		}
 	}
 
@@ -238,7 +237,7 @@ public class ConnectionHelper {
 				break;
 			case ENERGY:
 				if (te != null) {
-					tag.setInteger(name(), te.getEnergy());
+					tag.setInteger(name(), te.getEnergy().getEnergyStored());
 				}
 				break;
 			case OREDICTIONARY:

@@ -1,7 +1,11 @@
 {
-    "parent": "block/cube_column",
+    "parent": "block/cube",
     "textures": {
-        "end": "zone:blocks/dynavolt_restrainer",
-        "side": "zone:blocks/construct_block_all"
+        "up": "zone:blocks/dynavolt_restrainer",
+        "down": "zone:blocks/dynavolt_restrainer",
+        "north": "zone:blocks/elec_furnace_3_on_top",
+        "south": "zone:blocks/dynavolt_restrainer",
+        "west": "zone:blocks/cluster_operation_module_animated",
+        "east": "zone:blocks/cluster_operation_module_animated"
     }
 }

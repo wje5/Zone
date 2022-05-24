@@ -17,7 +17,7 @@
         "particle": "zone:blocks/cable_2",
          "down": "zone:blocks/transparent",
         "up": "zone:blocks/cable_2_hybrid_center_9_3",
-        "north": "zone:blocks/cable_2_energy_center_4_2",
+        "north": "zone:blocks/cable_2_hybrid_center_18_2",
         "south": "zone:blocks/transparent",
         "west": "zone:blocks/transparent",
         "east": "zone:blocks/cable_2_item_center_6_3"

@@ -14,8 +14,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MessageUpdateCameraPos implements IMessage {
-	UUID uuid;
-	BlockPos pos;
+	private UUID uuid;
+	private BlockPos pos;
 
 	public MessageUpdateCameraPos() {
 
@@ -48,7 +48,6 @@ public class MessageUpdateCameraPos implements IMessage {
 				if (player != null) {
 					ServerChunkHelper.setCameraPos(message.uuid, message.pos);
 				}
-
 			});
 			return null;
 		}

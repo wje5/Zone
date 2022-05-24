@@ -1,7 +1,10 @@
 package com.pinball3d.zone.block;
 
+import java.util.List;
+
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.collect.Lists;
 import com.pinball3d.zone.Zone;
 import com.pinball3d.zone.inventory.GuiElementLoader;
 import com.pinball3d.zone.tileentity.TECableGeneral;
@@ -22,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
@@ -64,6 +68,31 @@ public class BlockCableGeneral extends BlockCableBasic {
 				.withProperty(ITEMSOUTH, te.isConnectItem(EnumFacing.SOUTH))
 				.withProperty(ITEMWEST, te.isConnectItem(EnumFacing.WEST))
 				.withProperty(ITEMEAST, te.isConnectItem(EnumFacing.EAST));
+	}
+
+	@Override
+	protected List<AxisAlignedBB> getCollisionBoxList(IBlockState state) {
+		List<AxisAlignedBB> list = Lists.<AxisAlignedBB>newArrayList();
+		list.add(new AxisAlignedBB(0.375D, 0.375D, 0.375D, 0.625D, 0.625D, 0.625D));
+		if (state.getValue(DOWN) | state.getValue(ITEMDOWN)) {
+			list.add(new AxisAlignedBB(0.375D, 0.0D, 0.375D, 0.625D, 0.375D, 0.625D));
+		}
+		if (state.getValue(UP) | state.getValue(ITEMUP)) {
+			list.add(new AxisAlignedBB(0.375D, 0.625D, 0.375D, 0.625D, 1.0D, 0.625D));
+		}
+		if (state.getValue(NORTH) | state.getValue(ITEMNORTH)) {
+			list.add(new AxisAlignedBB(0.375D, 0.375D, 0.0D, 0.625D, 0.625D, 0.375D));
+		}
+		if (state.getValue(SOUTH) | state.getValue(ITEMSOUTH)) {
+			list.add(new AxisAlignedBB(0.375D, 0.375D, 0.625D, 0.625D, 0.625D, 1.0D));
+		}
+		if (state.getValue(WEST) | state.getValue(ITEMWEST)) {
+			list.add(new AxisAlignedBB(0.0D, 0.375D, 0.375D, 0.375D, 0.625D, 0.625D));
+		}
+		if (state.getValue(EAST) | state.getValue(ITEMEAST)) {
+			list.add(new AxisAlignedBB(0.625D, 0.375D, 0.375D, 1.0D, 0.625D, 0.625D));
+		}
+		return list;
 	}
 
 	@SuppressWarnings("incomplete-switch")
