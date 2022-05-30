@@ -8,17 +8,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import com.google.gson.JsonObject;
 import com.pinball3d.zone.network.ConnectHelperClient;
 import com.pinball3d.zone.network.ConnectionHelper.Type;
 import com.pinball3d.zone.network.NetworkHandler;
 import com.pinball3d.zone.network.elite.MessageCloseElite;
 import com.pinball3d.zone.sphinx.elite.DropDownList.ButtonBar;
-import com.pinball3d.zone.sphinx.elite.DropDownList.DividerBar;
-import com.pinball3d.zone.sphinx.elite.DropDownList.FolderBar;
+import com.pinball3d.zone.sphinx.elite.EliteConfigHandler.WorkspaceConfig;
+import com.pinball3d.zone.sphinx.elite.EliteConfigHandler.WorkspaceConfig.StateData;
 import com.pinball3d.zone.sphinx.elite.MenuBar.Menu;
 import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Edge;
@@ -26,8 +28,10 @@ import com.pinball3d.zone.sphinx.elite.PanelGroup.Rect;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Side;
 import com.pinball3d.zone.sphinx.elite.panels.PanelInfo;
 import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
+import com.pinball3d.zone.sphinx.elite.panels.PanelRegistry;
 import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
 import com.pinball3d.zone.tileentity.TETerminal;
+import com.pinball3d.zone.util.Pair;
 import com.pinball3d.zone.util.WorldPos;
 
 import net.minecraft.client.Minecraft;
@@ -35,8 +39,12 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.world.WorldEvent.Unload;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+@EventBusSubscriber(value = net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class EliteMainwindow extends GuiScreen {
 	public static final ResourceLocation ELITE = new ResourceLocation("zone:textures/gui/elite/elite.png");
 
@@ -51,11 +59,14 @@ public class EliteMainwindow extends GuiScreen {
 	private List<Set<PanelGroup>> draggingPanels;
 	private PanelGroup focusPanel;
 	private WorldPos terminalPos;
-
+	private UUID network;
+	private WorkspaceConfig config;
 	public boolean enableDebugMode;
 
 	public EliteMainwindow(WorldPos terminalPos, UUID network) {
 		this.terminalPos = terminalPos;
+		this.network = network;
+		this.config = EliteConfigHandler.getConfig(network);
 		ConnectHelperClient.getInstance().requestTerminal(terminalPos, network, Type.NETWORKUUID, Type.NETWORKPOS);
 	}
 
@@ -74,43 +85,54 @@ public class EliteMainwindow extends GuiScreen {
 	private void applyMenu() {
 		menuBar = new MenuBar(this);
 		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.view")), 'v')
-				.addBar(new ButtonBar(new FormattedString("甲乙丙丁戊己庚AbCdEf"),
+				.addBar(new ButtonBar(new FormattedString(I18n.format("elite.menu.view.show_extra_contents")),
 						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))));
-		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.window")), 'w')
-				.addBar(new FolderBar(new FormattedString(("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")))
-						.addBar(new ButtonBar(new FormattedString("aBCdDDDDDDDD"), new FormattedString("Shift+Z")))
-						.addBar(new FolderBar(new FormattedString("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK"))
-								.addBar(new ButtonBar(new FormattedString("aBCdDDDDDDDD"),
-										new FormattedString("Shift+Z")))
-								.addBar(new DividerBar())
-								.addBar(new ButtonBar(new FormattedString("AA"), new FormattedString("AA"))))));
-		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.tool")), 'h'));
-		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.option")), 'h'));
-		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.help")), 'h')
-				.addBar(new ButtonBar(new FormattedString("甲乙丙丁戊己庚AbCdEf"),
-						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))));
-	}
-
-	private void applyPanels() {
-		PanelGroup g = new PanelGroup(this, 0, 28, getWidth() - 200, getHeight() - 49);
-		g.addPanel(new PanelMap(this, g));
-		panels.add(g);
-
-		PanelGroup g2 = new PanelGroup(this, getWidth() - 200, 28, 200, getHeight() - 49);
-		g2.addPanel(new PanelInfo(getWindow(), g2));
-		panels.add(g2);
+//		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.window")), 'w')
+//				.addBar(new FolderBar(new FormattedString(("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")))
+//						.addBar(new ButtonBar(new FormattedString("aBCdDDDDDDDD"), new FormattedString("Shift+Z")))
+//						.addBar(new FolderBar(new FormattedString("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK"))
+//								.addBar(new ButtonBar(new FormattedString("aBCdDDDDDDDD"),
+//										new FormattedString("Shift+Z")))
+//								.addBar(new DividerBar())
+//								.addBar(new ButtonBar(new FormattedString("AA"), new FormattedString("AA"))))));
+//		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.tool")), 'h'));
+//		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.option")), 'h'));
+//		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.help")), 'h')
+//				.addBar(new ButtonBar(new FormattedString("甲乙丙丁戊己庚AbCdEf"),
+//						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))));
 	}
 
 	@Override
 	public void initGui() {
 		if (!inited) {
 			mc.renderGlobal.setWorldAndLoadRenderers(null);
-			applyMenu();
-			applyPanels();
-			buttomBar = new ButtomBar(this);
+			initState();
 			inited = true;
 		}
 		Keyboard.enableRepeatEvents(true);
+	}
+
+	public void initState() {
+		applyMenu();
+		if (config.init) {
+			config.stateData.panels.forEach(e -> {
+				PanelGroup g = new PanelGroup(this, e.value().get(0) * getWidth(),
+						e.value().get(1) * (getHeight() - 49) + 28, e.value().get(2) * getWidth(),
+						e.value().get(3) * (getHeight() - 49));
+				e.key().forEach(pair -> g.addPanel(PanelRegistry.createPanel(this, g, pair.key(), pair.value())));
+				panels.add(g);
+			});
+		} else {
+			PanelGroup g = new PanelGroup(this, 0, 28, getWidth() - 200, getHeight() - 49);
+			g.addPanel(new PanelMap(this, g));
+			panels.add(g);
+
+			PanelGroup g2 = new PanelGroup(this, getWidth() - 200, 28, 200, getHeight() - 49);
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			panels.add(g2);
+		}
+		config.init = true;
+		buttomBar = new ButtomBar(this);
 	}
 
 	@Override
@@ -633,7 +655,20 @@ public class EliteMainwindow extends GuiScreen {
 		MouseHandler.changeMouse(null);
 		Keyboard.enableRepeatEvents(false);
 		NetworkHandler.instance.sendToServer(new MessageCloseElite(terminalPos));
+		writeStateDataToConfig();
+		EliteConfigHandler.saveConfig(network);
 		super.onGuiClosed();
+	}
+
+	public void writeStateDataToConfig() {
+		config.stateData = new StateData();
+		for (PanelGroup g : panels) {
+			config.stateData.panels.add(new Pair<List<Pair<String, JsonObject>>, List<Float>>(
+					g.getPanels().stream().map(e -> new Pair<String, JsonObject>(e.getId(), e.writeDataToJson()))
+							.collect(Collectors.toList()),
+					Arrays.asList(g.getXF() / getWidth(), (g.getYF() - 28) / (getHeight() - 49),
+							g.getWidthF() / getWidth(), g.getHeightF() / (getHeight() - 49))));
+		}
 	}
 
 	@Override
@@ -644,5 +679,12 @@ public class EliteMainwindow extends GuiScreen {
 			menuBar.onListClosed();
 		}
 		refreshPanelSize();
+	}
+
+	@SubscribeEvent
+	public static void onUnload(Unload event) {
+		if (Minecraft.getMinecraft().currentScreen instanceof EliteMainwindow) {
+			((EliteMainwindow) Minecraft.getMinecraft().currentScreen).onGuiClosed();
+		}
 	}
 }

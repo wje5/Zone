@@ -38,7 +38,7 @@ public class PanelInfo extends Panel {
 	private Panel lastFocusPanel;
 
 	public PanelInfo(EliteMainwindow parent, PanelGroup parentGroup) {
-		super(parent, parentGroup, new FormattedString(I18n.format("elite.panel.info")));
+		super(parent, parentGroup, "info", new FormattedString(I18n.format("elite.panel.info")));
 	}
 
 	@Override
@@ -120,6 +120,7 @@ public class PanelInfo extends Panel {
 		private Subpanel blockstatePanel;
 		private boolean flammability;
 
+		@SuppressWarnings("deprecation")
 		public PanelBlockData(EliteMainwindow parent, Subpanel parentPanel, MapRenderManager manager) {
 			super(parent, parentPanel, new BoxLayout(true));
 			PanelHolder holder = new PanelHolder(parent, this);

@@ -34,7 +34,7 @@ public class PanelMap extends Panel {
 	private boolean inited;
 
 	public PanelMap(EliteMainwindow parent, PanelGroup parentGroup) {
-		super(parent, parentGroup, new FormattedString(I18n.format("elite.panel.map")));
+		super(parent, parentGroup, "map", new FormattedString(I18n.format("elite.panel.map")));
 		if (fluidRenderer == null) {
 			BlockRendererDispatcher dispatcher = parent.mc.getBlockRendererDispatcher();
 			try {

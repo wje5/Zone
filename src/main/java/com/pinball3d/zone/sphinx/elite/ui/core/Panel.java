@@ -2,6 +2,7 @@ package com.pinball3d.zone.sphinx.elite.ui.core;
 
 import org.lwjgl.opengl.GL11;
 
+import com.google.gson.JsonObject;
 import com.pinball3d.zone.math.Pos2i;
 import com.pinball3d.zone.sphinx.elite.Drag;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
@@ -13,12 +14,14 @@ import com.pinball3d.zone.sphinx.elite.ui.core.layout.BoxLayout;
 public class Panel {
 	private EliteMainwindow parent;
 	private PanelGroup parentGroup;
+	private String id;
 	private FormattedString name;
 	private Subpanel root;
 
-	public Panel(EliteMainwindow parent, PanelGroup parentGroup, FormattedString name) {
+	public Panel(EliteMainwindow parent, PanelGroup parentGroup, String id, FormattedString name) {
 		this.parent = parent;
 		this.parentGroup = parentGroup;
+		this.id = id;
 		this.name = name;
 		root = new Subpanel(parent, null, 0, 0, new BoxLayout(true)) {
 			@Override
@@ -134,6 +137,14 @@ public class Panel {
 
 	public PanelGroup getParentGroup() {
 		return parentGroup;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public JsonObject writeDataToJson() {
+		return null;
 	}
 
 	public FormattedString getName() {

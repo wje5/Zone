@@ -1,7 +1,9 @@
 package com.pinball3d.zone;
 
 import com.pinball3d.zone.render.RenderLoader;
+import com.pinball3d.zone.sphinx.elite.EliteConfigHandler;
 import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
+import com.pinball3d.zone.sphinx.elite.panels.PanelRegistry;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -13,6 +15,8 @@ public class ClientProxy extends CommonProxy {
 		super.preInit(event);
 		new RenderLoader();
 		EliteRenderHelper.init();
+		EliteConfigHandler.onPreinit(event);
+		PanelRegistry.registerAll();
 	}
 
 	@Override
