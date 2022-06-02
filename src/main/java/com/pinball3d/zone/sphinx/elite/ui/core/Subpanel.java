@@ -132,6 +132,7 @@ public class Subpanel extends Component {
 
 	@Override
 	public void doRenderPre(int mouseX, int mouseY, float partialTicks) {
+		refresh();
 		super.doRenderPre(mouseX, mouseY, partialTicks);
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(0, -scrollingDistance, 0);

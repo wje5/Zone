@@ -441,6 +441,7 @@ public class PanelGroup {
 
 	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		calcPanelGroup(mouseX, mouseY);
+		getChosenPanel().onMouseMoved(mouseX - getX() - 1, mouseY - getY() - 31, moveX, moveY);
 	}
 
 	public PanelGroup addPanel(Panel panel) {

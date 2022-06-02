@@ -52,6 +52,7 @@ public class EliteMainwindow extends GuiScreen {
 	private MenuBar menuBar;
 	private ButtomBar buttomBar;
 	private IDropDownList dropDownList;
+	private FloatingWindow floatingWindow;
 	private IFocus focus;
 	private List<PanelGroup> panels = new ArrayList<PanelGroup>();
 	private Drag drag;
@@ -85,7 +86,14 @@ public class EliteMainwindow extends GuiScreen {
 	private void applyMenu() {
 		menuBar = new MenuBar(this);
 		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.view")), 'v')
-				.addBar(new ButtonBar(new FormattedString(I18n.format("elite.menu.view.show_extra_contents")),
+				.addBar(new ButtonBar(new FormattedString(I18n.format("elite.menu.view.extra_contents_display")),
+						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))));
+//		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.window")), 'w').addBar(
+//				new FolderBar(new FormattedString(I18n.format("elite.menu.window.workspace"))).addBar(new ButtonBar(
+//						new FormattedString(I18n.format("elite.menu.window.workspace.keyboard_shortcuts_and_menu")),
+//						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")))));
+		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.option")), 'v')
+				.addBar(new ButtonBar(new FormattedString(I18n.format("elite.menu.option.keyboard_shortcuts_and_menu")),
 						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))));
 //		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.window")), 'w')
 //				.addBar(new FolderBar(new FormattedString(("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")))
@@ -172,6 +180,9 @@ public class EliteMainwindow extends GuiScreen {
 		panels.forEach(e -> e.doRenderPost(mouseX, mouseY, partialTicks));
 		if (dropDownList != null) {
 			dropDownList.doRender(mouseX, mouseY);
+		}
+		if (floatingWindow != null) {
+			floatingWindow.doRender(mouseX, mouseY, partialTicks);
 		}
 		MouseHandler.renderMouse();
 		GlStateManager.popMatrix();

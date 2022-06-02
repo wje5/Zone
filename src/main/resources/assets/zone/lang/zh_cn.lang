@@ -363,9 +363,16 @@ manual.sphinx_system_8=\n在束能器下方放置输导模块，\n以为系统�
 manual.sphinx_system_9=null
 
 elite.menu.view=视图(§aV)
+elite.menu.view.extra_contents_display=显示额外内容(§aX)
+
 elite.menu.window=窗口(§aW)
+elite.menu.window.workspace=工作区
+
 elite.menu.tool=工具(§aT)
+
 elite.menu.option=选项(§aO)
+elite.menu.option.keyboard_shortcuts_and_menu=键盘快捷键和菜单(§aK)...
+
 elite.menu.help=帮助(§aH)
 
 elite.panel.map=地图

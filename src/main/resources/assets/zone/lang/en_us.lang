@@ -363,9 +363,16 @@ manual.sphinx_system_8=\nPlace the Transmission Module\nright below the\nDynavol
 manual.sphinx_system_9=Booting procedure takes about\n13 seconds,and costs roughly\n4 stacks of Energy.\nIt uses one Energy per 10 ticks.\nIt's necessary to maintain the\nsystem.\n\n§oHave fun!§r
 
 elite.menu.view=§aView
+elite.menu.view.extra_contents_display=E§axtra Contents Display
+
 elite.menu.window=§aWindow
+elite.menu.window.workspace=Workspace
+
 elite.menu.tool=§aTool
+
 elite.menu.option=§aOption
+elite.menu.option.keyboard_shortcuts_and_menu=§aKeyboard Shortcuts and Menu...
+
 elite.menu.help=§aHelp
 
 elite.panel.map=Map

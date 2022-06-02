@@ -1,6 +1,6 @@
 {
     "parent": "zone:block/face_east",
     "textures": {
-        "texture": "zone:blocks/cable_2_item_2_3"
+        "texture": "zone:blocks/cable_2_item_1_1"
     }
 }
