@@ -388,6 +388,7 @@ elite.panel.info.block.material.harvest_level=挖掘等级
 elite.panel.info.block.material.hardness=硬度
 elite.panel.info.block.material.resistance=爆炸抗性
 
+elite.window.keyboard_shortcuts_and_menu.title=键盘快捷键和菜单
 elite.choose_network.title=Sphinx Elite 启动器
 elite.choose_network.text1=§l选择要连接的网络
 elite.choose_network.text2=连接以使用终端进行网络操作
@@ -447,3 +448,5 @@ sound.pump=泵：工作
 chat.multiblock_error=位于 %1$s 的方块应为 %2$s
 chat.multiblock_error.check_facing=尝试检查位于 %1$s 方块的朝向
 chat.not_enough_energy=能量不足
+chat.not_enough_permission=您没有执行此操作的权限
+chat.sphinx_working=Sphinx 正在工作

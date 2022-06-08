@@ -20,7 +20,6 @@ import com.pinball3d.zone.sphinx.elite.FontHandler;
 import com.pinball3d.zone.sphinx.elite.FormattedString;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
 import com.pinball3d.zone.sphinx.elite.map.MapRenderManager;
-import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockFluidRenderer;

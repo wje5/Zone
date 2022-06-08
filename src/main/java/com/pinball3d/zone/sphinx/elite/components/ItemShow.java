@@ -1,10 +1,10 @@
-package com.pinball3d.zone.sphinx.elite.ui.components;
+package com.pinball3d.zone.sphinx.elite.components;
 
 import java.util.function.Supplier;
 
+import com.pinball3d.zone.sphinx.elite.Component;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
-import com.pinball3d.zone.sphinx.elite.ui.core.Component;
-import com.pinball3d.zone.sphinx.elite.ui.core.Subpanel;
+import com.pinball3d.zone.sphinx.elite.Subpanel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

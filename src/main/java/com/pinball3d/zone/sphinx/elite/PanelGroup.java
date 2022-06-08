@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
+import com.pinball3d.zone.sphinx.elite.panels.Panel;
 
 import net.minecraft.client.renderer.GlStateManager;
 

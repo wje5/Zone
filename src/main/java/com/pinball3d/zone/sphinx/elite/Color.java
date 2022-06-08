@@ -30,6 +30,8 @@ public class Color {
 	public static final Color TEXT_GRAY = new Color(0xFF878787);
 
 	public static final Color DOTTED_LINE = new Color(0xFFD9BEA7);
+	public static final Color WINDOW_BORDER = new Color(0xFF1883D7);
+	public static final Color WINDOW_BG = new Color(0xFF515658);
 
 	public static final Color CHOSEN_TEXT_BG = new Color(0xFF0078D7);
 	public static final Color CHOSEN_TEXT_CURSOR = new Color(0xFFFF8728);

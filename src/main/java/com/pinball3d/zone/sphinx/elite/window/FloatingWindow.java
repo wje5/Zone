@@ -1,10 +1,16 @@
-package com.pinball3d.zone.sphinx.elite;
+package com.pinball3d.zone.sphinx.elite.window;
 
 import org.lwjgl.opengl.GL11;
 
 import com.pinball3d.zone.math.Pos2i;
-import com.pinball3d.zone.sphinx.elite.ui.core.Subpanel;
-import com.pinball3d.zone.sphinx.elite.ui.core.layout.BoxLayout;
+import com.pinball3d.zone.sphinx.elite.Color;
+import com.pinball3d.zone.sphinx.elite.Drag;
+import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
+import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
+import com.pinball3d.zone.sphinx.elite.FontHandler;
+import com.pinball3d.zone.sphinx.elite.FormattedString;
+import com.pinball3d.zone.sphinx.elite.Subpanel;
+import com.pinball3d.zone.sphinx.elite.layout.BoxLayout;
 
 public class FloatingWindow {
 	private EliteMainwindow parent;
@@ -12,23 +18,31 @@ public class FloatingWindow {
 	private int x, y, width, height;
 	private Subpanel root;
 
-	public FloatingWindow(EliteMainwindow parent, FormattedString title) {
+	public FloatingWindow(EliteMainwindow parent, int width, int height, FormattedString title) {
+		this(parent, (parent.getWidth() - width) / 2, (parent.getHeight() - height) / 2 - 65, width, height, title);
+	}
+
+	public FloatingWindow(EliteMainwindow parent, int x, int y, int width, int height, FormattedString title) {
 		this.parent = parent;
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
 		this.title = title;
 		root = new Subpanel(parent, null, 0, 0, new BoxLayout(true)) {
 			@Override
 			public Pos2i getPos() {
-				return new Pos2i(getX(), getY());
+				return new Pos2i(getPanelX(), getPanelX());
 			}
 
 			@Override
 			public int getWidth() {
-				return FloatingWindow.this.getWidth();
+				return FloatingWindow.this.getPanelWidth();
 			}
 
 			@Override
 			public int getHeight() {
-				return FloatingWindow.this.getHeight();
+				return FloatingWindow.this.getPanelHeight();
 			}
 
 			@Override
@@ -45,7 +59,7 @@ public class FloatingWindow {
 
 	public void doRenderPre(int mouseX, int mouseY, float partialTicks) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(root.getPos().x, parent.getHeight() - (root.getPos().y + root.getHeight()), root.getWidth(),
+		GL11.glScissor(root.getPos().x, parent.getHeight() - root.getPos().y + root.getHeight(), root.getWidth(),
 				root.getHeight());
 		GL11.glPushMatrix();
 		GL11.glTranslatef(root.getPos().x - getX(), root.getPos().y - getY(), 0);
@@ -55,8 +69,14 @@ public class FloatingWindow {
 	}
 
 	public void doRender(int mouseX, int mouseY, float partialTicks) {
+		EliteRenderHelper.drawBorder(x, y, width, height, 1, Color.WINDOW_BORDER);
+		EliteRenderHelper.drawRect(x + 1, y + 1, width - 2, 25, Color.FF0078D7);
+		EliteRenderHelper.drawRect(x + 1, y + 26, width - 2, height - 27, Color.WINDOW_BG);
+		EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + 5, y + 6, 116, 57, 16, 14);
+		FontHandler.renderText(x + 26, y + 5, title, Color.WHITE);
+
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(root.getPos().x, parent.getHeight() - (root.getPos().y + root.getHeight()), root.getWidth(),
+		GL11.glScissor(root.getPos().x, parent.getHeight() - root.getPos().y + root.getHeight(), root.getWidth(),
 				root.getHeight());
 		GL11.glPushMatrix();
 		GL11.glTranslatef(root.getPos().x - getX(), root.getPos().y - getY(), 0);
@@ -67,7 +87,7 @@ public class FloatingWindow {
 
 	public void doRenderPost(int mouseX, int mouseY, float partialTicks) {
 		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(root.getPos().x, parent.getHeight() - (root.getPos().y + root.getHeight()), root.getWidth(),
+		GL11.glScissor(root.getPos().x, parent.getHeight() - root.getPos().y + root.getHeight(), root.getWidth(),
 				root.getHeight());
 		GL11.glPushMatrix();
 		GL11.glTranslatef(root.getPos().x - getX(), root.getPos().y - getY(), 0);
@@ -110,5 +130,17 @@ public class FloatingWindow {
 
 	public int getPanelY() {
 		return y + 30;
+	}
+
+	public int getPanelWidth() {
+		return width - 2;
+	}
+
+	public int getPanelHeight() {
+		return height - 31;
+	}
+
+	public Subpanel getRoot() {
+		return root;
 	}
 }

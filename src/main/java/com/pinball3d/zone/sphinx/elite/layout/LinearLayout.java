@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx.elite.ui.core.layout;
+package com.pinball3d.zone.sphinx.elite.layout;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,10 +8,10 @@ import java.util.Map.Entry;
 
 import com.pinball3d.zone.math.Pos2i;
 import com.pinball3d.zone.math.ZoneMathHelper;
-import com.pinball3d.zone.sphinx.elite.ui.core.Component;
-import com.pinball3d.zone.sphinx.elite.ui.core.ILayout;
-import com.pinball3d.zone.sphinx.elite.ui.core.Subpanel;
-import com.pinball3d.zone.sphinx.elite.ui.core.layout.BoxLayout.Type;
+import com.pinball3d.zone.sphinx.elite.Component;
+import com.pinball3d.zone.sphinx.elite.ILayout;
+import com.pinball3d.zone.sphinx.elite.Subpanel;
+import com.pinball3d.zone.sphinx.elite.layout.BoxLayout.Type;
 
 public class LinearLayout implements ILayout {
 	@Override

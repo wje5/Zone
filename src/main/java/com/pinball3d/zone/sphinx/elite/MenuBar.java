@@ -80,11 +80,12 @@ public class MenuBar {
 			return;
 		}
 		isKeyBoard = false;
+		parent.setFocus(null);
 		computeChosenIndex(mouseX, mouseY);
 		if (!isClicked) {
 			if (chosenIndex >= 0 && chosenIndex < list.size()) {
 				isClicked = true;
-				parent.setFocus(this::onMenuShortCut);
+				parent.setFocus(this::keyTyped);
 				isKeyBoard = true;
 				openDropDownList(false);
 			}
@@ -92,6 +93,7 @@ public class MenuBar {
 			isClicked = false;
 			computeChosenIndex(mouseX, mouseY);
 			parent.setDropDownList(null);
+			parent.setFocus(null);
 		}
 	}
 
@@ -103,10 +105,11 @@ public class MenuBar {
 		if (chosenIndex < 0) {
 			chosenIndex = 0;
 			isKeyBoard = true;
-			parent.setFocus(this::onMenuShortCut);
+			parent.setFocus(this::keyTyped);
 		} else {
 			chosenIndex = -1;
 			isKeyBoard = false;
+			parent.setFocus(null);
 		}
 	}
 
@@ -124,7 +127,7 @@ public class MenuBar {
 		parent.setDropDownList(l);
 	}
 
-	public void onMenuShortCut(char c, int keyCode) {
+	public void keyTyped(char c, int keyCode) {
 		if (isKeyBoard) {
 			switch (keyCode) {
 			case Keyboard.KEY_RETURN:
@@ -149,6 +152,7 @@ public class MenuBar {
 					}
 				}
 				isKeyBoard = false;
+				parent.setFocus(null);
 				chosenIndex = -1;
 			}
 		}
@@ -157,6 +161,7 @@ public class MenuBar {
 	public boolean onQuit() {
 		if (isKeyBoard) {
 			isKeyBoard = false;
+			parent.setFocus(null);
 			chosenIndex = -1;
 			isClicked = false;
 			return false;
@@ -194,6 +199,7 @@ public class MenuBar {
 
 	public void onListClosed() {
 		isKeyBoard = false;
+		parent.setFocus(null);
 		isClicked = false;
 		chosenIndex = -1;
 	}

@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx.elite.ui.core;
+package com.pinball3d.zone.sphinx.elite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,8 +14,6 @@ import org.lwjgl.opengl.GL11;
 import com.pinball3d.zone.math.Box4i;
 import com.pinball3d.zone.math.Pos2i;
 import com.pinball3d.zone.math.ZoneMathHelper;
-import com.pinball3d.zone.sphinx.elite.Drag;
-import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 
 import net.minecraft.client.renderer.GlStateManager;

@@ -61,8 +61,8 @@ public class ScreenChooseNetwork extends GuiScreen {
 		}
 		mousePrevX = mouseX;
 		mousePrevY = mouseY;
-		EliteRenderHelper.drawBorder(x, y, width, height, 1, new Color(0xFF1883D7));
-		EliteRenderHelper.drawRect(x + 1, y + 1, width - 2, 25, new Color(0xFF0078D7));
+		EliteRenderHelper.drawBorder(x, y, width, height, 1, Color.WINDOW_BORDER);
+		EliteRenderHelper.drawRect(x + 1, y + 1, width - 2, 25, Color.FF0078D7);
 		EliteRenderHelper.drawRect(x + 1, y + 26, width - 2, 71, Color.WHITE);
 		EliteRenderHelper.drawRect(x + 1, y + 95, width - 2, 1, new Color(0xFFA0A0A0));
 		EliteRenderHelper.drawRect(x + 1, y + 97, width - 2, 219, new Color(0xFFF0F0F0));

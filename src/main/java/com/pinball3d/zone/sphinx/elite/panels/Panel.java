@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx.elite.ui.core;
+package com.pinball3d.zone.sphinx.elite.panels;
 
 import org.lwjgl.opengl.GL11;
 
@@ -7,9 +7,10 @@ import com.pinball3d.zone.math.Pos2i;
 import com.pinball3d.zone.sphinx.elite.Drag;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.FormattedString;
-import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
-import com.pinball3d.zone.sphinx.elite.ui.core.layout.BoxLayout;
+import com.pinball3d.zone.sphinx.elite.Subpanel;
+import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
+import com.pinball3d.zone.sphinx.elite.layout.BoxLayout;
 
 public class Panel {
 	private EliteMainwindow parent;

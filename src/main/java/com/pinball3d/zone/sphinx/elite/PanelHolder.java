@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx.elite.ui.core;
+package com.pinball3d.zone.sphinx.elite;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -8,10 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.pinball3d.zone.math.Pos2i;
-import com.pinball3d.zone.sphinx.elite.Color;
-import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
-import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
-import com.pinball3d.zone.sphinx.elite.ui.core.layout.BoxLayout.Type;
+import com.pinball3d.zone.sphinx.elite.layout.BoxLayout.Type;
 
 public class PanelHolder extends Subpanel {
 	public PanelHolder(EliteMainwindow parent, Subpanel parentPanel) {

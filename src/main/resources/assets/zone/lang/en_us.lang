@@ -388,6 +388,7 @@ elite.panel.info.block.material.harvest_level=Harvest Level
 elite.panel.info.block.material.hardness=Hardness
 elite.panel.info.block.material.resistance=Resistance
 
+elite.window.keyboard_shortcuts_and_menu.title=Keyboard Shortcuts and Menu
 elite.choose_network.title=Sphinx Elite Launcher
 elite.choose_network.text1=§lSelect a network to connect
 elite.choose_network.text2=Connect to use terminal for network operations
@@ -431,6 +432,8 @@ elite.translate.material.portal=Portal
 elite.translate.material.cake=Cake
 elite.translate.material.web=Web
 
+elite.translate.snowy=Snowy
+
 sound.grinder=Grinder:Work
 sound.drainer=Drainer:Work
 sound.alloy_smelter=Alloy Smelter:Work
@@ -445,3 +448,5 @@ sound.pump=Pump:Work
 chat.multiblock_error=Block at %1$s must be %2$s
 chat.multiblock_error.check_facing=Try to check block facing at %1$s
 chat.not_enough_energy=Not enough energy
+chat.not_enough_permission=You do not have permission to perform this operation
+chat.sphinx_working=Sphinx is working

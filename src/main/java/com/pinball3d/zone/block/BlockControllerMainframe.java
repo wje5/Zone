@@ -55,11 +55,17 @@ public class BlockControllerMainframe extends Block {
 							if (te.isAdmin(playerIn)) {
 								te.open();
 //							te.fireLog(new LogSphinxOpen(te.getNextLogId(), playerIn));//TODO
+							} else {
+								playerIn.sendMessage(TextComponentHelper.createComponentTranslation(playerIn,
+										"chat.not_enough_permission"));
 							}
 						} else {
 							playerIn.sendMessage(
 									TextComponentHelper.createComponentTranslation(playerIn, "chat.not_enough_energy"));
 						}
+					} else {
+						playerIn.sendMessage(
+								TextComponentHelper.createComponentTranslation(playerIn, "chat.sphinx_working"));
 					}
 				} else {
 					String text = "x=" + pos.getX() + ", y=" + pos.getY() + ", z=" + pos.getZ();

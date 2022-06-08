@@ -6,7 +6,6 @@ import java.util.Map;
 import com.google.gson.JsonObject;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
-import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
 
 public class PanelRegistry {
 	private static Map<String, Factory> map = new HashMap<String, Factory>();

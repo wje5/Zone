@@ -1,4 +1,4 @@
-package com.pinball3d.zone.sphinx.elite.ui.core;
+package com.pinball3d.zone.sphinx.elite;
 
 import java.util.List;
 import java.util.Map;

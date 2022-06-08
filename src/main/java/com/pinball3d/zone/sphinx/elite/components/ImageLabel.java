@@ -1,36 +1,25 @@
-package com.pinball3d.zone.sphinx.elite.ui.components;
+package com.pinball3d.zone.sphinx.elite.components;
 
 import java.util.function.Supplier;
 
-import com.pinball3d.zone.sphinx.elite.Drag;
+import com.pinball3d.zone.sphinx.elite.Component;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
+import com.pinball3d.zone.sphinx.elite.Subpanel;
 import com.pinball3d.zone.sphinx.elite.TextureLocation;
-import com.pinball3d.zone.sphinx.elite.ui.core.Component;
-import com.pinball3d.zone.sphinx.elite.ui.core.Subpanel;
 import com.pinball3d.zone.util.Pair;
 
-public class ImageButton extends Component {
+public class ImageLabel extends Component {
 	private Supplier<Pair<TextureLocation, Float>> texture;
-	private Runnable onClick;
 
-	public ImageButton(EliteMainwindow parent, Subpanel parentPanel, Pair<TextureLocation, Float> texture,
-			Runnable onClick) {
-		this(parent, parentPanel, () -> texture, onClick);
+	public ImageLabel(EliteMainwindow parent, Subpanel parentPanel, Pair<TextureLocation, Float> texture) {
+		this(parent, parentPanel, () -> texture);
 	}
 
-	public ImageButton(EliteMainwindow parent, Subpanel parentPanel, Supplier<Pair<TextureLocation, Float>> texture,
-			Runnable onClick) {
+	public ImageLabel(EliteMainwindow parent, Subpanel parentPanel, Supplier<Pair<TextureLocation, Float>> texture) {
 		super(parent, parentPanel, (int) (texture.get().key().uWidth * texture.get().value()),
 				(int) (texture.get().key().vHeight * texture.get().value()));
 		this.texture = texture;
-		this.onClick = onClick;
-	}
-
-	@Override
-	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		onClick.run();
-		return new Drag(mouseButton);
 	}
 
 	@Override

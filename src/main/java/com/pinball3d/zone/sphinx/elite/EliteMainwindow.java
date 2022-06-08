@@ -26,10 +26,11 @@ import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Edge;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Rect;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Side;
+import com.pinball3d.zone.sphinx.elite.panels.Panel;
 import com.pinball3d.zone.sphinx.elite.panels.PanelInfo;
 import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 import com.pinball3d.zone.sphinx.elite.panels.PanelRegistry;
-import com.pinball3d.zone.sphinx.elite.ui.core.Panel;
+import com.pinball3d.zone.sphinx.elite.window.FloatingWindow;
 import com.pinball3d.zone.tileentity.TETerminal;
 import com.pinball3d.zone.util.Pair;
 import com.pinball3d.zone.util.WorldPos;
@@ -94,7 +95,14 @@ public class EliteMainwindow extends GuiScreen {
 //						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")))));
 		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.option")), 'v')
 				.addBar(new ButtonBar(new FormattedString(I18n.format("elite.menu.option.keyboard_shortcuts_and_menu")),
-						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))));
+						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")) {
+					@Override
+					public void onClick() {
+						super.onClick();
+						floatingWindow = new FloatingWindow(EliteMainwindow.this, 626, 317,
+								new FormattedString(I18n.format("elite.window.keyboard_shortcuts_and_menu.title")));
+					}
+				}));
 //		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.window")), 'w')
 //				.addBar(new FolderBar(new FormattedString(("KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK")))
 //						.addBar(new ButtonBar(new FormattedString("aBCdDDDDDDDD"), new FormattedString("Shift+Z")))
@@ -182,7 +190,9 @@ public class EliteMainwindow extends GuiScreen {
 			dropDownList.doRender(mouseX, mouseY);
 		}
 		if (floatingWindow != null) {
+			floatingWindow.doRenderPre(mouseX, mouseY, partialTicks);
 			floatingWindow.doRender(mouseX, mouseY, partialTicks);
+			floatingWindow.doRenderPost(mouseX, mouseY, partialTicks);
 		}
 		MouseHandler.renderMouse();
 		GlStateManager.popMatrix();
@@ -251,6 +261,9 @@ public class EliteMainwindow extends GuiScreen {
 		MouseHandler.changeMouse(type);
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
 		if (keyCode == Keyboard.KEY_ESCAPE) {

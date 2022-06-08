@@ -1,14 +1,14 @@
-package com.pinball3d.zone.sphinx.elite.ui.components;
+package com.pinball3d.zone.sphinx.elite.components;
 
 import java.util.function.Supplier;
 
 import com.pinball3d.zone.sphinx.elite.Color;
+import com.pinball3d.zone.sphinx.elite.Component;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.FontHandler;
 import com.pinball3d.zone.sphinx.elite.FormattedString;
+import com.pinball3d.zone.sphinx.elite.Subpanel;
 import com.pinball3d.zone.sphinx.elite.FormattedString.StringComponent;
-import com.pinball3d.zone.sphinx.elite.ui.core.Component;
-import com.pinball3d.zone.sphinx.elite.ui.core.Subpanel;
 
 public class Label extends Component {
 	private Supplier<FormattedString> text;
