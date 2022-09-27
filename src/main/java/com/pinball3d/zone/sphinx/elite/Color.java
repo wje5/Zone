@@ -31,6 +31,7 @@ public class Color {
 
 	public static final Color DOTTED_LINE = new Color(0xFFD9BEA7);
 	public static final Color WINDOW_BORDER = new Color(0xFF1883D7);
+	public static final Color WINDOW_BORDER_DARK = new Color(0xFF424242);
 	public static final Color WINDOW_BG = new Color(0xFF515658);
 
 	public static final Color CHOSEN_TEXT_BG = new Color(0xFF0078D7);
@@ -41,6 +42,7 @@ public class Color {
 	public static final Color FF0078D7 = new Color(0xFF0078D7);
 	public static final Color FFC7C7C7 = new Color(0xFFC7C7C7);
 	public static final Color FF6F6F6F = new Color(0xFF6F6F6F);
+	public static final Color FF66AEE7 = new Color(0xFF66AEE7);
 
 	public static final Color ICON = new Color(0xFFDDDDDD);
 

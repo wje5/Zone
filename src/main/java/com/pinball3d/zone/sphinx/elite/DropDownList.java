@@ -94,6 +94,11 @@ public class DropDownList implements IDropDownList {
 			return;
 		}
 		switch (keyCode) {
+		case Keyboard.KEY_ESCAPE:
+		case Keyboard.KEY_LMENU:
+		case Keyboard.KEY_RMENU:
+			parent.setDropDownList(null);
+			break;
 		case Keyboard.KEY_UP:
 			int old = chosenIndex;
 			do {

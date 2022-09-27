@@ -50,7 +50,7 @@ public class PanelGroup {
 				if (dragIndex == i) {
 					color = Color.DIVIDER_BG;
 				}
-			} else if (hoverIndex == i) {
+			} else if (hoverIndex == i && parent.getFloatingWindows().isEmpty()) {
 				color = Color.COMP_BG_CHOSEN;
 			}
 			EliteRenderHelper.drawRect(getX() + xOffset + 1, getY() + 1, w, 28, color);
@@ -287,7 +287,7 @@ public class PanelGroup {
 					if (Math.abs(mouseX - dragX) + Math.abs(mouseY - dragY) > 3) {
 						dragging = true;
 					}
-				}, cancel -> {
+				}, (x, y, cancel) -> {
 					if (!cancel) {
 						if (dragging) {
 							if (dragToIndex >= 0) {
@@ -350,7 +350,7 @@ public class PanelGroup {
 				return new Drag(0, (x, y, mX, mY) -> {
 					dragX = x;
 					dragY = y;
-				}, cancel -> {
+				}, (x, y, cancel) -> {
 					if (!cancel && hoverRemain) {
 						PanelGroupList l = new PanelGroupList(parent, this,
 								Arrays.stream(Arrays.copyOf(panelsWidth, panels.size() - remain)).sum() + getX() + 11,

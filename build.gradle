@@ -102,7 +102,7 @@ dependencies {
 
     //deobfCompile "mekanism:Mekanism:1.12.2:9.8.3.390"
     //compile "buildcraft:buildcraft:all:7.99.24.8"
-    compile "immersive-engineering:ImmersiveEngineering:0.12:92"
+    //compile "immersive-engineering:ImmersiveEngineering:0.12:92"
     //compile files('run/mods/LagGoggles-1.12.2-5.8-132-sources.jar')
     //compile files('run/mods/LagGoggles-1.12.2-5.8-132.jar')
     compile files('natives/')

@@ -11,7 +11,7 @@ public class MenuBar {
 	private EliteMainwindow parent;
 	private List<Menu> list = new ArrayList<Menu>();
 	private int chosenIndex = -1;
-	private boolean isClicked, isKeyBoard;
+	private boolean isClicked;
 
 	public MenuBar(EliteMainwindow parent) {
 		this.parent = parent;
@@ -27,7 +27,7 @@ public class MenuBar {
 		EliteRenderHelper.drawRect(0, 0, parent.getWidth(), 28, Color.COMP_BG_LIGHT);
 		for (int i = 0; i < list.size(); i++) {
 			Menu m = list.get(i);
-			x += m.doRender(x, chosenIndex == i ? isClicked ? 2 : 1 : 0);
+			x += m.doRender(x, chosenIndex == i && parent.getFloatingWindows().isEmpty() ? isClicked ? 2 : 1 : 0);
 		}
 	}
 
@@ -54,7 +54,7 @@ public class MenuBar {
 				x += m.getWidth();
 			}
 		}
-		if (!isClicked && !isKeyBoard) {
+		if (!isClicked && !parent.isAlt()) {
 			chosenIndex = -1;
 		}
 		return old != chosenIndex;
@@ -79,21 +79,19 @@ public class MenuBar {
 		if (mouseButton != 0) {
 			return;
 		}
-		isKeyBoard = false;
-		parent.setFocus(null);
+		parent.setAlt(false);
 		computeChosenIndex(mouseX, mouseY);
 		if (!isClicked) {
 			if (chosenIndex >= 0 && chosenIndex < list.size()) {
 				isClicked = true;
-				parent.setFocus(this::keyTyped);
-				isKeyBoard = true;
+				parent.setAlt(true);
 				openDropDownList(false);
 			}
 		} else if (!(chosenIndex >= 0 && chosenIndex < list.size())) {
 			isClicked = false;
 			computeChosenIndex(mouseX, mouseY);
 			parent.setDropDownList(null);
-			parent.setFocus(null);
+			parent.setAlt(false);
 		}
 	}
 
@@ -104,12 +102,10 @@ public class MenuBar {
 	public void onPressAlt() {
 		if (chosenIndex < 0) {
 			chosenIndex = 0;
-			isKeyBoard = true;
-			parent.setFocus(this::keyTyped);
+			parent.setAlt(true);
 		} else {
 			chosenIndex = -1;
-			isKeyBoard = false;
-			parent.setFocus(null);
+			parent.setAlt(false);
 		}
 	}
 
@@ -128,7 +124,7 @@ public class MenuBar {
 	}
 
 	public void keyTyped(char c, int keyCode) {
-		if (isKeyBoard) {
+		if (parent.isAlt()) {
 			switch (keyCode) {
 			case Keyboard.KEY_RETURN:
 				isClicked = true;
@@ -151,17 +147,15 @@ public class MenuBar {
 						return;
 					}
 				}
-				isKeyBoard = false;
-				parent.setFocus(null);
+				parent.setAlt(false);
 				chosenIndex = -1;
 			}
 		}
 	}
 
 	public boolean onQuit() {
-		if (isKeyBoard) {
-			isKeyBoard = false;
-			parent.setFocus(null);
+		if (parent.isAlt()) {
+			parent.setAlt(false);
 			chosenIndex = -1;
 			isClicked = false;
 			return false;
@@ -198,8 +192,7 @@ public class MenuBar {
 	}
 
 	public void onListClosed() {
-		isKeyBoard = false;
-		parent.setFocus(null);
+		parent.setAlt(false);
 		isClicked = false;
 		chosenIndex = -1;
 	}

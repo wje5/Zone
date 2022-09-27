@@ -93,7 +93,7 @@ public class MapRenderManager implements IWorldEventListener {
 		return world;
 	}
 
-	public void doRender(int width, int height, int mouseX, int mouseY, float partialTicks) {
+	public void doRender(int width, int height, int mouseX, int mouseY, float partialTicks, boolean renderMouseHover) {
 		int j = Math.min(Minecraft.getDebugFPS(), mc.gameSettings.limitFramerate);
 		j = Math.max(j, 60);
 		long l = Math.max(1000000000 / j / 4, 0L);
@@ -105,7 +105,11 @@ public class MapRenderManager implements IWorldEventListener {
 		GlStateManager.matrixMode(GL11.GL_PROJECTION);
 
 		// TODO EntityRenderer.updateLightMap
-		getMouseOver(mouseX, mouseY, width, height, partialTicks);
+		if (renderMouseHover) {
+			getMouseOver(mouseX, mouseY, width, height, partialTicks);
+		} else {
+			rayTraceResult = null;
+		}
 		GlStateManager.enableDepth();
 		GlStateManager.enableAlpha();
 		GlStateManager.alphaFunc(GL11.GL_GREATER, 0.5F);

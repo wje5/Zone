@@ -206,7 +206,7 @@ public class PanelGroupList implements IDropDownList {
 						textOffset = w - width + 14;
 					}
 				}
-			}, cancel -> {
+			}, (x, y, cancel) -> {
 				dragText = false;
 			});
 		}
@@ -221,7 +221,7 @@ public class PanelGroupList implements IDropDownList {
 		return new Drag(mouseButton, (x, y, moveX, moveY) -> {
 			dragX = x;
 			dragY = y;
-		}, cancel -> {
+		}, (x, y, cancel) -> {
 			if (mouseButton == 0) {
 				dragLeft = false;
 			} else {

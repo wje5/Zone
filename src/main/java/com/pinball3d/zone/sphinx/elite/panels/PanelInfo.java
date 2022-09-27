@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.pinball3d.zone.FluidHandler;
+import com.pinball3d.zone.math.Pos2i;
 import com.pinball3d.zone.sphinx.elite.Color;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.EliteRenderHelper;
@@ -17,6 +18,7 @@ import com.pinball3d.zone.sphinx.elite.components.BlockShow;
 import com.pinball3d.zone.sphinx.elite.components.Label;
 import com.pinball3d.zone.sphinx.elite.layout.BoxLayout;
 import com.pinball3d.zone.sphinx.elite.layout.LinearLayout;
+import com.pinball3d.zone.sphinx.elite.layout.PosLayout;
 import com.pinball3d.zone.sphinx.elite.map.MapRenderManager;
 import com.pinball3d.zone.util.VanillaTranslateHandler;
 
@@ -42,7 +44,7 @@ public class PanelInfo extends Panel {
 
 	@Override
 	public void doRenderPre(int mouseX, int mouseY, float partialTicks) {
-		refreshInfo();
+		refreshInfo2();
 		super.doRenderPre(mouseX, mouseY, partialTicks);
 	}
 
@@ -52,6 +54,41 @@ public class PanelInfo extends Panel {
 		super.doRender(mouseX, mouseY, partialTicks);
 	}
 
+	public void refreshInfo2() {
+		Subpanel root = getRoot();
+		Panel panel = getParent().getFocusPanel().getChosenPanel();
+		InfoType t = getTypeFromPanel(panel);
+		if (t == null) {
+			t = getTypeFromPanel(lastFocusPanel);
+		}
+		if (t != type) {
+			type = t;
+			root.clearComponents();
+			if (t != null) {
+				lastFocusPanel = panel;
+				Subpanel s = getInfoFromPanel(panel);
+				refresh = s::refresh;
+				root.addComponent(s);
+
+				EliteMainwindow parent = getParent();
+				root.addComponent(new Label(parent, root, getName(), Color.TEXT_LIGHT));
+				Subpanel panel1 = new Subpanel(parent, root, 200, 60, new PosLayout());
+				panel1.addComponent(new Label(parent, panel1, new FormattedString("DR R R R RRRRR"), Color.TEXT_LIGHT),
+						new Pos2i(5, 0));
+				panel1.addComponent(new Label(parent, panel1, new FormattedString("III"), Color.TEXT_LIGHT),
+						new Pos2i(15, 15));
+				root.addComponent(panel1);
+				for (int i = 0; i < 100; i++) {
+					root.addComponent(
+							new Label(parent, root, new FormattedString("DR R R R RRRRR" + i), Color.TEXT_LIGHT));
+				}
+			} else {
+				lastFocusPanel = null;
+				refresh = null;
+			}
+		}
+	}
+
 	public void refreshInfo() {
 		Subpanel root = getRoot();
 		EliteMainwindow parent = getParent();
@@ -59,7 +96,7 @@ public class PanelInfo extends Panel {
 		if (panel instanceof PanelMap) {
 			PanelMap map = (PanelMap) panel;
 			MapRenderManager manager = map.getRenderManager();
-			if (manager == null || manager.selectedRayTraceResult == null) {
+			if (manager == null || manager.getWorld() == null || manager.selectedRayTraceResult == null) {
 				if (type != null) {
 					type = null;
 					root.clearComponents();
@@ -77,32 +114,47 @@ public class PanelInfo extends Panel {
 					root.addComponent(p);
 					refresh = p::refresh;
 
-//					root.addComponent(new Label(parent, root, getName(), Color.TEXT_LIGHT));
-
-//					Subpanel panel1 = new Subpanel(parent, root, 200, 60, new PosLayout());
-//					panel1.addComponent(
-//							new Label(parent, panel1, new FormattedString("DR R R R RRRRR"), Color.TEXT_LIGHT),
-//							new Pos2i(5, 0));
-//					panel1.addComponent(new Label(parent, panel1, new FormattedString("III"), Color.TEXT_LIGHT),
-//							new Pos2i(15, 15));
-//					root.addComponent(panel1);
-//					for (int i = 0; i < 100; i++) {
-//						root.addComponent(
-//								new Label(parent, root, new FormattedString("DR R R R RRRRR" + i), Color.TEXT_LIGHT));
-//					}
 				} else {
 					refresh.run();
 				}
-			} else if (lastFocusPanel == null || getParent().getPanels().stream().map(e -> e.getChosenPanel())
-					.collect(Collectors.toSet()).contains(lastFocusPanel)) {
-				if (type != null) {
-					type = null;
-					root.clearComponents();
-					System.out.println(type);
-				}
-				lastFocusPanel = null;
+			}
+		} else if (lastFocusPanel != null && getParent().getPanels().stream().map(e -> e.getChosenPanel())
+				.collect(Collectors.toSet()).contains(lastFocusPanel)) {
+
+		} else {
+			if (type != null) {
+				type = null;
+				root.clearComponents();
+				System.out.println(type);
+			}
+			lastFocusPanel = null;
+		}
+	}
+
+	public InfoType getTypeFromPanel(Panel panel) {
+		if (panel instanceof PanelMap) {
+			PanelMap map = (PanelMap) panel;
+			MapRenderManager manager = map.getRenderManager();
+			if (manager == null || manager.getWorld() == null || manager.selectedRayTraceResult == null) {
+				return null;
+			} else if (manager.selectedRayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
+				return InfoType.BLOCK;
 			}
 		}
+		return null;
+	}
+
+	public Subpanel getInfoFromPanel(Panel panel) {
+		if (panel instanceof PanelMap) {
+			PanelMap map = (PanelMap) panel;
+			MapRenderManager manager = map.getRenderManager();
+			if (manager == null || manager.getWorld() == null || manager.selectedRayTraceResult == null) {
+				return null;
+			} else if (manager.selectedRayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
+				return new PanelBlockData(getParent(), getRoot(), manager);
+			}
+		}
+		return null;
 	}
 
 	public static enum InfoType {

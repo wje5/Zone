@@ -65,11 +65,11 @@ public class PanelMap extends Panel {
 					renderManager.cameraYaw = (renderManager.cameraYaw + moveX * speed) % 360;
 					renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
 							: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
-				}, cancel -> {
+				}, (x, y, cancel) -> {
 				}, true);
 			}
 			return new Drag(mouseButton, (x, y, moveX, moveY) -> {
-			}, cancel -> {
+			}, (x, y, cancel) -> {
 				if (!cancel) {
 					renderManager.selectedRayTraceResult = renderManager.rayTraceResult;
 				}
@@ -86,7 +86,7 @@ public class PanelMap extends Panel {
 				renderManager.cameraYaw = (renderManager.cameraYaw + moveX * 0.1F) % 360;
 				renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
 						: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
-			}, cancel -> {
+			}, (x, y, cancel) -> {
 			}) : null;
 		} else {
 			return new Drag(mouseButton);
@@ -149,7 +149,8 @@ public class PanelMap extends Panel {
 		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 			renderManager.cameraY -= speed;
 		}
-		renderManager.doRender(getWidth(), getHeight(), mouseX, mouseY, partialTicks);
+		renderManager.doRender(getWidth(), getHeight(), mouseX, mouseY, partialTicks,
+				getParent().getFloatingWindows().isEmpty());
 
 		FontHandler.renderText(10, 0, new FormattedString("(123中(文测试）AaBbCc"), Color.TEXT_LIGHT,
 				getParentGroup().getWidth());
@@ -227,7 +228,7 @@ public class PanelMap extends Panel {
 		});
 		int dx = x + 40 - mouseX;
 		int dy = y + 40 - mouseY;
-		if (Math.sqrt(dx * dx + dy * dy) < 40) {
+		if (Math.sqrt(dx * dx + dy * dy) < 40 && getParent().getFloatingWindows().isEmpty()) {
 			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, y, 176, 176, 80, 80);
 		}
 		map.forEach((a, b) -> b.run());

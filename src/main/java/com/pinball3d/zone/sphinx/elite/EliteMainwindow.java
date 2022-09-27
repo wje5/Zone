@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -53,8 +54,7 @@ public class EliteMainwindow extends GuiScreen {
 	private MenuBar menuBar;
 	private ButtomBar buttomBar;
 	private IDropDownList dropDownList;
-	private FloatingWindow floatingWindow;
-	private IFocus focus;
+	private Stack<FloatingWindow> floatingWindows = new Stack<>();
 	private List<PanelGroup> panels = new ArrayList<PanelGroup>();
 	private Drag drag;
 	private boolean inited, isAlt;
@@ -93,14 +93,16 @@ public class EliteMainwindow extends GuiScreen {
 //				new FolderBar(new FormattedString(I18n.format("elite.menu.window.workspace"))).addBar(new ButtonBar(
 //						new FormattedString(I18n.format("elite.menu.window.workspace.keyboard_shortcuts_and_menu")),
 //						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")))));
-		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.option")), 'v')
+		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.option")), 'o')
 				.addBar(new ButtonBar(new FormattedString(I18n.format("elite.menu.option.keyboard_shortcuts_and_menu")),
 						new FormattedString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")) {
 					@Override
 					public void onClick() {
 						super.onClick();
-						floatingWindow = new FloatingWindow(EliteMainwindow.this, 626, 317,
-								new FormattedString(I18n.format("elite.window.keyboard_shortcuts_and_menu.title")));
+						for (int i = 0; i < 3; i++) {
+							putFloatingWindow(new FloatingWindow(EliteMainwindow.this, 626, 317, new FormattedString(
+									I18n.format("elite.window.keyboard_shortcuts_and_menu.title"))));
+						}
 					}
 				}));
 //		menuBar.addMenu(new Menu(this, new FormattedString(I18n.format("elite.menu.window")), 'w')
@@ -144,6 +146,30 @@ public class EliteMainwindow extends GuiScreen {
 			panels.add(g);
 
 			PanelGroup g2 = new PanelGroup(this, getWidth() - 200, 28, 200, getHeight() - 49);
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
+			g2.addPanel(new PanelInfo(getWindow(), g2));
 			g2.addPanel(new PanelInfo(getWindow(), g2));
 			panels.add(g2);
 		}
@@ -189,11 +215,11 @@ public class EliteMainwindow extends GuiScreen {
 		if (dropDownList != null) {
 			dropDownList.doRender(mouseX, mouseY);
 		}
-		if (floatingWindow != null) {
-			floatingWindow.doRenderPre(mouseX, mouseY, partialTicks);
-			floatingWindow.doRender(mouseX, mouseY, partialTicks);
-			floatingWindow.doRenderPost(mouseX, mouseY, partialTicks);
-		}
+		floatingWindows.forEach(e -> {
+			e.doRenderPre(mouseX, mouseY, partialTicks);
+			e.doRender(mouseX, mouseY, partialTicks);
+			e.doRenderPost(mouseX, mouseY, partialTicks);
+		});
 		MouseHandler.renderMouse();
 		GlStateManager.popMatrix();
 		GlStateManager.matrixMode(GL11.GL_PROJECTION);
@@ -261,17 +287,18 @@ public class EliteMainwindow extends GuiScreen {
 		MouseHandler.changeMouse(type);
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		if (dropDownList != null) {
+			dropDownList.keyTyped(typedChar, keyCode);
+			return;
+		}
+		if (!floatingWindows.isEmpty()) {
+			floatingWindows.peek().keyTyped(typedChar, keyCode);
+			return;
+		}
 		if (keyCode == Keyboard.KEY_ESCAPE) {
-			if (dropDownList != null) {
-				if (dropDownList.onQuit()) {
-					dropDownList = null;
-				}
-			} else if (menuBar.onQuit()) {
+			if (menuBar.onQuit()) {
 				Iterator<PanelGroup> it = panels.iterator();
 				while (it.hasNext()) {
 					Iterator<Panel> it2 = it.next().getPanels().iterator();
@@ -285,22 +312,16 @@ public class EliteMainwindow extends GuiScreen {
 			}
 		} else if (keyCode == Keyboard.KEY_LMENU || keyCode == Keyboard.KEY_RMENU) {
 			isAlt = true;
-			boolean flag = false;
 			if (drag != null) {
 				drag.stop(true);
 				setDrag(null);
-				flag = true;
-			}
-			if (!flag) {
-				menuBar.onPressAlt();
 			}
 			if (dropDownList != null) {
 				dropDownList = null;
 			}
-		} else if (dropDownList != null) {
-			dropDownList.keyTyped(typedChar, keyCode);
-		} else if (focus != null) {
-			focus.keyTyped(typedChar, keyCode);
+			menuBar.onPressAlt();
+		} else if (isAlt) {
+			menuBar.keyTyped(typedChar, keyCode);
 		} else {
 			// process hotkey
 			if (typedChar == 'g') {
@@ -313,10 +334,6 @@ public class EliteMainwindow extends GuiScreen {
 			}
 		}
 
-	}
-
-	public void setFocus(IFocus focus) {
-		this.focus = focus;
 	}
 
 	public void setDropDownList(IDropDownList dropDownList) {
@@ -340,6 +357,10 @@ public class EliteMainwindow extends GuiScreen {
 		return panels;
 	}
 
+	public Stack<FloatingWindow> getFloatingWindows() {
+		return floatingWindows;
+	}
+
 	public int getWidth() {
 		return mc.displayWidth;
 	}
@@ -350,6 +371,10 @@ public class EliteMainwindow extends GuiScreen {
 
 	public boolean isAlt() {
 		return isAlt;
+	}
+
+	public void setAlt(boolean isAlt) {
+		this.isAlt = isAlt;
 	}
 
 	public PanelGroup getFocusPanel() {
@@ -370,10 +395,42 @@ public class EliteMainwindow extends GuiScreen {
 		return null;
 	}
 
+	public void putFloatingWindow(FloatingWindow window) {
+		int x = (getWidth() - window.getWidth()) / 2;
+		int y = (getHeight() - window.getHeight()) / 2 - 65;
+		int x2 = x, y2 = y;
+		for (FloatingWindow e : floatingWindows) {
+			if (x2 >= e.getX() && x2 <= e.getX() + 26 && y2 >= e.getY() && y2 <= e.getY() + 26) {
+				x2 = e.getX() + 26;
+				y2 = e.getY() + 26;
+				if (x2 + window.getWidth() > getWidth()) {
+					x2 = 26;
+				}
+				if (y2 + window.getHeight() > getHeight()) {
+					y2 = 26;
+				}
+			}
+		}
+		window.setPos(x2, y2);
+		floatingWindows.add(window);
+	}
+
+	public boolean tryCloseFloatingWindow() {
+		if (!floatingWindows.isEmpty() && floatingWindows.peek().canQuit()) {
+			floatingWindows.peek().close();
+			floatingWindows.pop();
+			return true;
+		}
+		return false;
+	}
+
 	private void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		menuBar.onMouseMoved(mouseX, mouseY, moveX, moveY);
 		if (dropDownList != null) {
 			dropDownList.onMouseMoved(mouseX, mouseY, moveX, moveY);
+		}
+		if (!floatingWindows.isEmpty()) {
+			floatingWindows.forEach(e -> e.onMouseMoved(mouseX, mouseY, moveX, moveY));
 		}
 		panels.forEach(e -> e.onMouseMoved(mouseX, mouseY, moveX, moveY));
 		if (drag != null) {
@@ -394,11 +451,20 @@ public class EliteMainwindow extends GuiScreen {
 			if (drag == null) {
 				dropDownList = null;
 				menuBar.onListClosed();
+			} else {
+				setDrag(drag);
+			}
+			return;
+		} else if (!floatingWindows.isEmpty()) {
+			Drag drag = floatingWindows.peek().onMouseClicked(mouseX, mouseY, mouseButton);
+			if (drag != null) {
+				setDrag(drag);
 			}
 			return;
 		} else {
 			menuBar.mouseClicked(mouseX, mouseY, mouseButton);
 		}
+
 		if (mouseButton == 0) {
 			for (PanelGroup p : panels) {
 				Rect rect = p.getRect();
@@ -447,6 +513,10 @@ public class EliteMainwindow extends GuiScreen {
 	}
 
 	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
+		if (!floatingWindows.isEmpty()) {
+			floatingWindows.peek().onMouseScrolled(mouseX, mouseY, distance);
+			return;
+		}
 		for (PanelGroup g : panels) {
 			g.onMouseScrolled(mouseX, mouseY, distance);
 		}
@@ -455,7 +525,6 @@ public class EliteMainwindow extends GuiScreen {
 	@Override
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
-
 	}
 
 	private void onStartDragPanelSide(int mouseX, int mouseY) {
@@ -464,7 +533,7 @@ public class EliteMainwindow extends GuiScreen {
 				calcResizePanel(mouseX, mouseY);
 			}
 			onResizePanel(x, y, mX, mY);
-		}, (cancel) -> {
+		}, (x, y, cancel) -> {
 			draggingPanels = null;
 			dragMinX = 0;
 			dragMaxX = 0;
@@ -628,10 +697,7 @@ public class EliteMainwindow extends GuiScreen {
 
 	@Override
 	protected void mouseReleased(int mX, int mY, int mouseButton) {
-		if (drag != null) {
-			drag.stop(false);
-			setDrag(null);
-		}
+
 		int mouseX = MouseHandler.getX();
 		int mouseY = MouseHandler.getY();
 
@@ -642,6 +708,10 @@ public class EliteMainwindow extends GuiScreen {
 					menuBar.onListClosed();
 				}
 			}
+		}
+		if (drag != null) {
+			drag.stop(false);
+			setDrag(null);
 		}
 	}
 
