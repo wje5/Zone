@@ -9,7 +9,7 @@ public interface IDropDownList {
 
 	public void keyTyped(char typedChar, int keyCode);
 
-	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY);
+	public void mouseMoved(int mouseX, int mouseY, int moveX, int moveY);
 
 	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton);
 

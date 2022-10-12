@@ -57,21 +57,26 @@ public class PanelMap extends Panel {
 			int dy = 50 - mouseY;
 			if (Math.sqrt(dx * dx + dy * dy) < 40) {
 				return new Drag(mouseButton, (x, y, moveX, moveY) -> {
-					float speed = 0.5F;
-					renderManager.cameraPitch = (renderManager.cameraPitch + moveY * speed) % 360;
-					renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
-							: renderManager.cameraPitch < -180 ? renderManager.cameraPitch + 360F
-									: renderManager.cameraPitch;
-					renderManager.cameraYaw = (renderManager.cameraYaw + moveX * speed) % 360;
-					renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
-							: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
+					if (inited) {
+						float speed = 0.5F;
+						renderManager.cameraPitch = (renderManager.cameraPitch + moveY * speed) % 360;
+						renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
+								: renderManager.cameraPitch < -180 ? renderManager.cameraPitch + 360F
+										: renderManager.cameraPitch;
+						renderManager.cameraYaw = (renderManager.cameraYaw + moveX * speed) % 360;
+						renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
+								: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F
+										: renderManager.cameraYaw;
+					}
 				}, (x, y, cancel) -> {
 				}, true);
 			}
 			return new Drag(mouseButton, (x, y, moveX, moveY) -> {
 			}, (x, y, cancel) -> {
 				if (!cancel) {
-					renderManager.selectedRayTraceResult = renderManager.rayTraceResult;
+					if (inited) {
+						renderManager.selectedRayTraceResult = renderManager.rayTraceResult;
+					}
 				}
 			});
 		} else if (mouseButton == 1) {
@@ -79,13 +84,15 @@ public class PanelMap extends Panel {
 			return new Drag(mouseButton);
 		} else if (mouseButton == 2) {
 			return isMouseInPanel(mouseX, mouseY) ? new Drag(mouseButton, (x, y, moveX, moveY) -> {
-				renderManager.cameraPitch = (renderManager.cameraPitch + moveY * 0.1F) % 360;
-				renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
-						: renderManager.cameraPitch < -180 ? renderManager.cameraPitch + 360F
-								: renderManager.cameraPitch;
-				renderManager.cameraYaw = (renderManager.cameraYaw + moveX * 0.1F) % 360;
-				renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
-						: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
+				if (inited) {
+					renderManager.cameraPitch = (renderManager.cameraPitch + moveY * 0.1F) % 360;
+					renderManager.cameraPitch = renderManager.cameraPitch > 180 ? renderManager.cameraPitch - 360F
+							: renderManager.cameraPitch < -180 ? renderManager.cameraPitch + 360F
+									: renderManager.cameraPitch;
+					renderManager.cameraYaw = (renderManager.cameraYaw + moveX * 0.1F) % 360;
+					renderManager.cameraYaw = renderManager.cameraYaw > 180 ? renderManager.cameraYaw - 360F
+							: renderManager.cameraYaw < -180 ? renderManager.cameraYaw + 360F : renderManager.cameraYaw;
+				}
 			}, (x, y, cancel) -> {
 			}) : null;
 		} else {
@@ -102,9 +109,9 @@ public class PanelMap extends Panel {
 	}
 
 	@Override
-	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
+	public void mouseScrolled(int mouseX, int mouseY, int distance) {
 		if (isMouseInPanel(mouseX, mouseY)) {
-			if (renderManager != null) {
+			if (inited) {
 				renderManager.scale += distance / 120F;
 			}
 		}
@@ -131,26 +138,28 @@ public class PanelMap extends Panel {
 			renderManager.setWorldAndLoadRenderers(getParent().mc.world);
 			inited = true;
 		}
-		float speed = 0.3F;
-		int moveForward = (Keyboard.isKeyDown(Keyboard.KEY_W) ? 1 : 0) - (Keyboard.isKeyDown(Keyboard.KEY_S) ? 1 : 0);
-		int moveLeft = (Keyboard.isKeyDown(Keyboard.KEY_A) ? 1 : 0) - (Keyboard.isKeyDown(Keyboard.KEY_D) ? 1 : 0);
-		if (moveForward != 0) {
-			renderManager.cameraX += moveForward * speed * Math.sin(Math.toRadians(renderManager.cameraYaw));
-			renderManager.cameraZ -= moveForward * speed * Math.cos(Math.toRadians(renderManager.cameraYaw));
-		}
-		if (moveLeft != 0) {
-			renderManager.cameraX += moveLeft * speed * Math.sin(Math.toRadians(renderManager.cameraYaw - 90));
-			renderManager.cameraZ -= moveLeft * speed * Math.cos(Math.toRadians(renderManager.cameraYaw - 90));
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-			renderManager.cameraY += speed;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
-			renderManager.cameraY -= speed;
+		if (isFocus()) {
+			float speed = 0.3F * partialTicks;
+			int moveForward = (Keyboard.isKeyDown(Keyboard.KEY_W) ? 1 : 0)
+					- (Keyboard.isKeyDown(Keyboard.KEY_S) ? 1 : 0);
+			int moveLeft = (Keyboard.isKeyDown(Keyboard.KEY_A) ? 1 : 0) - (Keyboard.isKeyDown(Keyboard.KEY_D) ? 1 : 0);
+			if (moveForward != 0) {
+				renderManager.cameraX += moveForward * speed * Math.sin(Math.toRadians(renderManager.cameraYaw));
+				renderManager.cameraZ -= moveForward * speed * Math.cos(Math.toRadians(renderManager.cameraYaw));
+			}
+			if (moveLeft != 0) {
+				renderManager.cameraX += moveLeft * speed * Math.sin(Math.toRadians(renderManager.cameraYaw - 90));
+				renderManager.cameraZ -= moveLeft * speed * Math.cos(Math.toRadians(renderManager.cameraYaw - 90));
+			}
+			if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+				renderManager.cameraY += speed;
+			}
+			if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+				renderManager.cameraY -= speed;
+			}
 		}
 		renderManager.doRender(getWidth(), getHeight(), mouseX, mouseY, partialTicks,
-				getParent().getFloatingWindows().isEmpty());
+				getParent().doMouseHover() && !isMouseHoverRotaryBall(mouseX, mouseY));
 
 		FontHandler.renderText(10, 0, new FormattedString("(123中(文测试）AaBbCc"), Color.TEXT_LIGHT,
 				getParentGroup().getWidth());
@@ -172,11 +181,21 @@ public class PanelMap extends Panel {
 				new FormattedString(
 						"x:" + renderManager.cameraX + " y:" + renderManager.cameraY + " z:" + renderManager.cameraZ),
 				Color.TEXT_LIGHT, getParentGroup().getWidth());
-		drawRotaryBall(getParentGroup().getWidth() - 90, 10, mouseX, mouseY);
+		drawRotaryBall(mouseX, mouseY);
 		super.doRender(mouseX, mouseY, partialTicks);
 	}
 
-	public void drawRotaryBall(int x, int y, int mouseX, int mouseY) {
+	public boolean isMouseHoverRotaryBall(int mouseX, int mouseY) {
+		int x = getParentGroup().getWidth() - 90;
+		int y = 10;
+		int dx = x + 40 - mouseX;
+		int dy = y + 40 - mouseY;
+		return Math.sqrt(dx * dx + dy * dy) < 40;
+	}
+
+	public void drawRotaryBall(int mouseX, int mouseY) {
+		int x = getParentGroup().getWidth() - 90;
+		int y = 10;
 		int length = 33;
 		int x1 = (int) (-MathHelper.cos(renderManager.cameraYaw * 0.017453292F) * length);
 		int y1 = (int) (MathHelper.sin(renderManager.cameraPitch * 0.017453292F)
@@ -226,9 +245,7 @@ public class PanelMap extends Panel {
 					Math.abs(renderManager.cameraYaw) >= 90 ? 15 : 0, 115, 15, 15);
 			FontHandler.renderTextCenter(x + 40 + x3, y + 32 + y3, new FormattedString("Z"), new Color(0xFF2E2E2E));
 		});
-		int dx = x + 40 - mouseX;
-		int dy = y + 40 - mouseY;
-		if (Math.sqrt(dx * dx + dy * dy) < 40 && getParent().getFloatingWindows().isEmpty()) {
+		if (getParent().doMouseHover() && isMouseHoverRotaryBall(mouseX, mouseY)) {
 			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x, y, 176, 176, 80, 80);
 		}
 		map.forEach((a, b) -> b.run());

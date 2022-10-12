@@ -216,7 +216,7 @@ public class Subpanel extends Component {
 	}
 
 	@Override
-	public boolean onMouseScrolled(int mouseX, int mouseY, int distance) {
+	public boolean mouseScrolled(int mouseX, int mouseY, int distance) {
 		Iterator<Entry<Component, Pos2i>> it = components.entrySet().iterator();
 		while (it.hasNext()) {
 			Entry<Component, Pos2i> e = it.next();
@@ -224,7 +224,7 @@ public class Subpanel extends Component {
 			int x = e.getValue().x;
 			int y = e.getValue().y;
 			if (mouseX >= x && mouseX <= x + c.getWidth() && mouseY >= y && mouseY <= y + c.getHeight()) {
-				boolean flag = c.onMouseScrolled(mouseX - x, mouseY - y, distance);
+				boolean flag = c.mouseScrolled(mouseX - x, mouseY - y, distance);
 				if (flag) {
 					return true;
 				}
@@ -234,18 +234,18 @@ public class Subpanel extends Component {
 		System.out.println(max + "|" + scrollingDistance + "|" + distance);
 		if (max < 0) {
 			scrollingDistance = 0;
-			return super.onMouseScrolled(mouseX, mouseY, distance);
+			return super.mouseScrolled(mouseX, mouseY, distance);
 		}
 		if (scrollingDistance >= max) {
 			scrollingDistance = Math.max(0, max);
 			if (distance < 0) {
-				return super.onMouseScrolled(mouseX, mouseY, distance);
+				return super.mouseScrolled(mouseX, mouseY, distance);
 			}
 		}
 		if (scrollingDistance <= 0) {
 			scrollingDistance = 0;
 			if (distance > 0) {
-				return super.onMouseScrolled(mouseX, mouseY, distance);
+				return super.mouseScrolled(mouseX, mouseY, distance);
 			}
 		}
 		scrollingDistance = ZoneMathHelper.mid(0, scrollingDistance - distance, max);

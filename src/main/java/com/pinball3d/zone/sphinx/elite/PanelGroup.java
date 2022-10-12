@@ -50,7 +50,7 @@ public class PanelGroup {
 				if (dragIndex == i) {
 					color = Color.DIVIDER_BG;
 				}
-			} else if (hoverIndex == i && parent.getFloatingWindows().isEmpty()) {
+			} else if (hoverIndex == i && parent.doMouseHover()) {
 				color = Color.COMP_BG_CHOSEN;
 			}
 			EliteRenderHelper.drawRect(getX() + xOffset + 1, getY() + 1, w, 28, color);
@@ -61,7 +61,7 @@ public class PanelGroup {
 				EliteRenderHelper.drawRect(getX() + xOffset + 1, getY() + 25, w, 4, new Color(0xFF316C6B));
 			}
 
-			if (hoverIndex == i && hoverQuit) {
+			if (hoverIndex == i && hoverQuit && parent.doMouseHover()) {
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + w - 22, getY() + 9, 8, 40, 14,
 						11);
 			} else {
@@ -72,8 +72,8 @@ public class PanelGroup {
 		}
 		if (remain > 0) {
 			int w = FontHandler.renderText(getX() + xOffset + 32, getY() + 6, new FormattedString("" + remain),
-					Color.TEXT_LIGHT, xOffset);
-			if (hoverRemain) {
+					Color.TEXT_LIGHT);
+			if (hoverRemain && parent.doMouseHover()) {
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + 11, getY() + 6, 32, 40, 22 + w,
 						17);
 				EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, getX() + xOffset + 33 + w, getY() + 6, 255, 40, 1,
@@ -274,7 +274,7 @@ public class PanelGroup {
 		}
 	}
 
-	public Drag onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		if (mouseButton == 0) {
 			if (hoverIndex >= 0 && parent.getPanels().get(hoverPanelIndex) == this) {
 				dragX = mouseX;
@@ -373,8 +373,8 @@ public class PanelGroup {
 		return getChosenPanel().mouseClicked(mouseX - getX() - 1, mouseY - getY() - 31, mouseButton);
 	}
 
-	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
-		getChosenPanel().onMouseScrolled(mouseX - getX() - 1, mouseY - getY() - 31, distance);
+	public void mouseScrolled(int mouseX, int mouseY, int distance) {
+		getChosenPanel().mouseScrolled(mouseX - getX() - 1, mouseY - getY() - 31, distance);
 	}
 
 	public void calcPanelGroup(int mouseX, int mouseY) {
@@ -439,9 +439,13 @@ public class PanelGroup {
 		}
 	}
 
-	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
+	public void mouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		calcPanelGroup(mouseX, mouseY);
-		getChosenPanel().onMouseMoved(mouseX - getX() - 1, mouseY - getY() - 31, moveX, moveY);
+		getChosenPanel().mouseMoved(mouseX - getX() - 1, mouseY - getY() - 31, moveX, moveY);
+	}
+
+	public boolean keyTyped(char typedChar, int keyCode) {
+		return false;
 	}
 
 	public PanelGroup addPanel(Panel panel) {

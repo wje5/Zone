@@ -13,9 +13,9 @@ import com.pinball3d.zone.sphinx.elite.history.EventTyping;
 import com.pinball3d.zone.sphinx.elite.history.History;
 import com.pinball3d.zone.sphinx.elite.history.HistoryEvent;
 import com.pinball3d.zone.sphinx.elite.panels.Panel;
+import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
 
 public class PanelGroupList implements IDropDownList {
 	private int x, y;
@@ -71,12 +71,10 @@ public class PanelGroupList implements IDropDownList {
 			yOffset += 22;
 		}
 
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(0, 0, -800F);
-		GlStateManager.enableDepth();
-		GlStateManager.depthFunc(GL11.GL_GEQUAL);
-		EliteRenderHelper.drawRect(x + 7, y + 9, width - 13, 20, Color.COMP_BG_LIGHT);
-		GlStateManager.depthFunc(GL11.GL_LEQUAL);
+		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		GL11.glScissor(x + 7, parent.getHeight() - (y + 29), width - 13, 20);
+		FontHandler.renderText(x + 7 - textOffset, y + 9, new FormattedString(text, false), Color.WHITE);
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
 		int cursorOffset = FontHandler.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
 		if (isText) {
@@ -98,9 +96,6 @@ public class PanelGroupList implements IDropDownList {
 				EliteRenderHelper.drawRect(x + 7 + cursorOffset - textOffset, y + 9, 1, 20, Color.FFEDEDED);
 			}
 		}
-
-		FontHandler.renderText(x + 7 - textOffset, y + 9, new FormattedString(text, false), Color.WHITE);
-		GlStateManager.popMatrix();
 	}
 
 	public void updateList() {
@@ -276,7 +271,7 @@ public class PanelGroupList implements IDropDownList {
 	}
 
 	@Override
-	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
+	public void mouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		computeChosenIndex(mouseX, mouseY);
 	}
 
@@ -664,6 +659,9 @@ public class PanelGroupList implements IDropDownList {
 			break;
 		default:
 			if (isText) {
+				if (!Util.isValidChar(typedChar, 8)) {
+					break;
+				}
 				if (cursorIndex2 != -2) {
 					int min = 0, max = 0;
 					if (cursorIndex > cursorIndex2) {

@@ -104,7 +104,7 @@ public class ConnectionHelper {
 				if (!te.isPointInRange(terminal.getDim(), terminal.getPos().getX(), terminal.getPos().getY(),
 						terminal.getPos().getZ()) || te.getWorkingState() != WorkingState.WORKING
 						|| !te.isUser(player) && tileentity instanceof TETerminal
-								&& ((TETerminal) tileentity).getPlayerUuid().equals(uuid)) {
+								&& uuid.equals(((TETerminal) tileentity).getPlayerUuid())) {
 					network = null;
 					return false;
 				}

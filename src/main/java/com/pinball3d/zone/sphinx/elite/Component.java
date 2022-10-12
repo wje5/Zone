@@ -39,7 +39,7 @@ public class Component {
 		return null;
 	}
 
-	public boolean onMouseScrolled(int mouseX, int mouseY, int distance) {
+	public boolean mouseScrolled(int mouseX, int mouseY, int distance) {
 		return false;
 	}
 

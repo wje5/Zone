@@ -5,12 +5,15 @@ import java.util.Map;
 
 import com.google.gson.JsonObject;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
+import com.pinball3d.zone.sphinx.elite.FormattedString;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
 
 public class PanelRegistry {
 	private static Map<String, Factory> map = new HashMap<String, Factory>();
 
 	public static void registerAll() {
+		register("empty",
+				(parent, parentGroup, data) -> new Panel(parent, parentGroup, "empty", new FormattedString("empty")));
 		register("map", (parent, parentGroup, data) -> new PanelMap(parent, parentGroup));
 		register("info", (parent, parentGroup, data) -> new PanelInfo(parent, parentGroup));
 	}

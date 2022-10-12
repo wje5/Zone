@@ -11,7 +11,7 @@ public class MenuBar {
 	private EliteMainwindow parent;
 	private List<Menu> list = new ArrayList<Menu>();
 	private int chosenIndex = -1;
-	private boolean isClicked;
+	private boolean isClicked, released;
 
 	public MenuBar(EliteMainwindow parent) {
 		this.parent = parent;
@@ -27,11 +27,11 @@ public class MenuBar {
 		EliteRenderHelper.drawRect(0, 0, parent.getWidth(), 28, Color.COMP_BG_LIGHT);
 		for (int i = 0; i < list.size(); i++) {
 			Menu m = list.get(i);
-			x += m.doRender(x, chosenIndex == i && parent.getFloatingWindows().isEmpty() ? isClicked ? 2 : 1 : 0);
+			x += m.doRender(x, chosenIndex == i ? isClicked ? 2 : parent.doMouseHover() ? 1 : 0 : 0);
 		}
 	}
 
-	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
+	public void mouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		if (computeChosenIndex(mouseX, mouseY) && isClicked) {
 			openDropDownList(false);
 		}
@@ -96,7 +96,10 @@ public class MenuBar {
 	}
 
 	public boolean mouseReleased(int mouseX, int mouseY, int mouseButton) {
-		return checkChosenIndex(mouseX, mouseY) >= 0;
+		int index = checkChosenIndex(mouseX, mouseY);
+		boolean r = checkChosenIndex(mouseX, mouseY) >= 0 && !(released && isClicked && chosenIndex == index);
+		released = r;
+		return r;
 	}
 
 	public void onPressAlt() {

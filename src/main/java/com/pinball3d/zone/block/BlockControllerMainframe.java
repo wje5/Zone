@@ -54,6 +54,8 @@ public class BlockControllerMainframe extends Block {
 							}
 							if (te.isAdmin(playerIn)) {
 								te.open();
+								playerIn.sendMessage(TextComponentHelper.createComponentTranslation(playerIn,
+										"chat.sphinx_open_finish"));
 //							te.fireLog(new LogSphinxOpen(te.getNextLogId(), playerIn));//TODO
 							} else {
 								playerIn.sendMessage(TextComponentHelper.createComponentTranslation(playerIn,

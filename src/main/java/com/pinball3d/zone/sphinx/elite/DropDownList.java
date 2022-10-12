@@ -80,10 +80,10 @@ public class DropDownList implements IDropDownList {
 	}
 
 	@Override
-	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
+	public void mouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 		computeChosenIndex(mouseX, mouseY);
 		if (childList != null) {
-			childList.onMouseMoved(mouseX, mouseY, moveX, moveY);
+			childList.mouseMoved(mouseX, mouseY, moveX, moveY);
 		}
 	}
 

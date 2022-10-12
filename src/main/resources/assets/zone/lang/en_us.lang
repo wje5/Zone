@@ -450,3 +450,4 @@ chat.multiblock_error.check_facing=Try to check block facing at %1$s
 chat.not_enough_energy=Not enough energy
 chat.not_enough_permission=You do not have permission to perform this operation
 chat.sphinx_working=Sphinx is working
+chat.sphinx_open_finish=Sphinx open finished.

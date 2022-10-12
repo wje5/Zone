@@ -2,7 +2,6 @@ package com.pinball3d.zone.sphinx.elite.panels;
 
 import java.util.Map.Entry;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import com.pinball3d.zone.FluidHandler;
 import com.pinball3d.zone.math.Pos2i;
@@ -35,7 +34,6 @@ import net.minecraftforge.fml.common.Loader;
 
 public class PanelInfo extends Panel {
 	private InfoType type;
-	private Runnable refresh;
 	private Panel lastFocusPanel;
 
 	public PanelInfo(EliteMainwindow parent, PanelGroup parentGroup) {
@@ -44,7 +42,7 @@ public class PanelInfo extends Panel {
 
 	@Override
 	public void doRenderPre(int mouseX, int mouseY, float partialTicks) {
-		refreshInfo2();
+		refreshInfo();
 		super.doRenderPre(mouseX, mouseY, partialTicks);
 	}
 
@@ -54,7 +52,7 @@ public class PanelInfo extends Panel {
 		super.doRender(mouseX, mouseY, partialTicks);
 	}
 
-	public void refreshInfo2() {
+	public void refreshInfo() {
 		Subpanel root = getRoot();
 		Panel panel = getParent().getFocusPanel().getChosenPanel();
 		InfoType t = getTypeFromPanel(panel);
@@ -67,9 +65,7 @@ public class PanelInfo extends Panel {
 			if (t != null) {
 				lastFocusPanel = panel;
 				Subpanel s = getInfoFromPanel(panel);
-				refresh = s::refresh;
 				root.addComponent(s);
-
 				EliteMainwindow parent = getParent();
 				root.addComponent(new Label(parent, root, getName(), Color.TEXT_LIGHT));
 				Subpanel panel1 = new Subpanel(parent, root, 200, 60, new PosLayout());
@@ -84,50 +80,7 @@ public class PanelInfo extends Panel {
 				}
 			} else {
 				lastFocusPanel = null;
-				refresh = null;
 			}
-		}
-	}
-
-	public void refreshInfo() {
-		Subpanel root = getRoot();
-		EliteMainwindow parent = getParent();
-		Panel panel = getParent().getFocusPanel().getChosenPanel();
-		if (panel instanceof PanelMap) {
-			PanelMap map = (PanelMap) panel;
-			MapRenderManager manager = map.getRenderManager();
-			if (manager == null || manager.getWorld() == null || manager.selectedRayTraceResult == null) {
-				if (type != null) {
-					type = null;
-					root.clearComponents();
-					System.out.println(type);
-				}
-				lastFocusPanel = null;
-			} else if (manager.selectedRayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK) {
-				if (type != InfoType.BLOCK) {
-					type = InfoType.BLOCK;
-					root.clearComponents();
-					System.out.println(type);
-					lastFocusPanel = panel;
-
-					PanelBlockData p = new PanelBlockData(parent, root, manager);
-					root.addComponent(p);
-					refresh = p::refresh;
-
-				} else {
-					refresh.run();
-				}
-			}
-		} else if (lastFocusPanel != null && getParent().getPanels().stream().map(e -> e.getChosenPanel())
-				.collect(Collectors.toSet()).contains(lastFocusPanel)) {
-
-		} else {
-			if (type != null) {
-				type = null;
-				root.clearComponents();
-				System.out.println(type);
-			}
-			lastFocusPanel = null;
 		}
 	}
 

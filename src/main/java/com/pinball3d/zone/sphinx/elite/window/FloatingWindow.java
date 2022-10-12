@@ -99,7 +99,7 @@ public class FloatingWindow {
 		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 
-	public Drag onMouseClicked(int mouseX, int mouseY, int mouseButton) {
+	public Drag mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		System.out.println(mouseX + "|" + mouseY + "|" + mouseButton);
 		if (mouseX >= getPanelX() && mouseX <= getPanelX() + getPanelWidth() && mouseY >= getPanelY()
 				&& mouseY <= getPanelY() + getPanelHeight()) {
@@ -122,11 +122,11 @@ public class FloatingWindow {
 		});
 	}
 
-	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
+	public void mouseScrolled(int mouseX, int mouseY, int distance) {
 
 	}
 
-	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
+	public void mouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 
 	}
 

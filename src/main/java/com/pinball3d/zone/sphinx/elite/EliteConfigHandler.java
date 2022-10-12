@@ -42,6 +42,13 @@ public class EliteConfigHandler {
 		return config;
 	}
 
+	public static WorkspaceConfig resetConfig(UUID uuid) {
+		WorkspaceConfig config = new WorkspaceConfig();
+		map.put(uuid, config);
+		saveConfig(uuid);
+		return config;
+	}
+
 	public static void saveConfig(UUID uuid) {
 		getConfig(uuid).saveToFile(new File(path, uuid.toString() + ".json"));
 	}

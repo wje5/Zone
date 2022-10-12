@@ -7,9 +7,9 @@ import com.pinball3d.zone.math.Pos2i;
 import com.pinball3d.zone.sphinx.elite.Drag;
 import com.pinball3d.zone.sphinx.elite.EliteMainwindow;
 import com.pinball3d.zone.sphinx.elite.FormattedString;
+import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 import com.pinball3d.zone.sphinx.elite.PanelGroup;
 import com.pinball3d.zone.sphinx.elite.Subpanel;
-import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 import com.pinball3d.zone.sphinx.elite.layout.BoxLayout;
 
 public class Panel {
@@ -18,6 +18,10 @@ public class Panel {
 	private String id;
 	private FormattedString name;
 	private Subpanel root;
+
+	public Panel(EliteMainwindow parent, PanelGroup parentGroup) {
+		this(parent, parentGroup, "empty", new FormattedString("empty"));
+	}
 
 	public Panel(EliteMainwindow parent, PanelGroup parentGroup, String id, FormattedString name) {
 		this.parent = parent;
@@ -97,7 +101,7 @@ public class Panel {
 		return false;
 	}
 
-	public void onMouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
+	public void mouseMoved(int mouseX, int mouseY, int moveX, int moveY) {
 
 	}
 
@@ -112,9 +116,9 @@ public class Panel {
 		return null;
 	}
 
-	public void onMouseScrolled(int mouseX, int mouseY, int distance) {
+	public void mouseScrolled(int mouseX, int mouseY, int distance) {
 		if (isMouseInPanel(mouseX, mouseY)) {
-			root.onMouseScrolled(mouseX, mouseY, distance);
+			root.mouseScrolled(mouseX, mouseY, distance);
 		}
 	}
 
@@ -136,6 +140,11 @@ public class Panel {
 
 	public String getId() {
 		return id;
+	}
+
+	public boolean isFocus() {
+		return getParent().getFocusPanel() == getParentGroup() && getParentGroup().getChosenPanel() == this
+				&& getParent().getFloatingWindows().isEmpty() && getParent().getDropDownList() == null;
 	}
 
 	public JsonObject writeDataToJson() {
