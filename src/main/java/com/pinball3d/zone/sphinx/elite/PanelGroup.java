@@ -200,6 +200,9 @@ public class PanelGroup {
 				l.clear();
 			}
 		}
+		if (side == null) {
+			System.out.println(panels + "|||||||");
+		}
 		switch (side) {
 		case UP:
 			l.forEach(e -> e.height += rect.height);
@@ -413,11 +416,11 @@ public class PanelGroup {
 					continue;
 				}
 				if (!flag2 && mouseX >= p.x + xOffset && mouseX <= p.x + xOffset + w) {
-					hoverIndex = i;
-					if (dragIndex >= 0) {
-						dragToIndex = hoverIndex;
-						if (dragToIndex < pl.size() && mouseX >= p.x + xOffset + w / 2) {
-							dragToIndex++;
+					p.hoverIndex = i;
+					if (p.dragIndex >= 0) {
+						p.dragToIndex = hoverIndex;
+						if (p.dragToIndex < pl.size() && mouseX >= p.x + xOffset + w / 2) {
+							p.dragToIndex++;
 						}
 					}
 					if (mouseX >= p.x + xOffset + w - 22 && mouseX <= p.x + xOffset + w - 8 && mouseY >= p.y + 9
@@ -428,8 +431,8 @@ public class PanelGroup {
 				}
 				xOffset += w + 1;
 			}
-			if (!flag2 && dragIndex >= 0 && dragToIndex < 0) {
-				dragToIndex = pl.size() - p.remain;
+			if (!flag2 && p.dragIndex >= 0 && p.dragToIndex < 0) {
+				p.dragToIndex = pl.size() - p.remain;
 			}
 			int w = FontHandler.getStringWidth(new FormattedString("" + p.remain));
 			if (mouseX >= p.getX() + xOffset + 11 && mouseX <= p.getX() + xOffset + 34 + w && mouseY >= p.getY() + 6

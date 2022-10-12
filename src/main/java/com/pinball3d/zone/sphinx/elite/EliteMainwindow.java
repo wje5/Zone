@@ -166,7 +166,6 @@ public class EliteMainwindow extends GuiScreen {
 
 	@Override
 	public void drawScreen(int mX, int mY, float partialTicks) {
-//		System.out.println(panels);
 		if (terminalPos.getDim() != mc.player.dimension
 				|| mc.player.getDistance(terminalPos.getPos().getX() + 0.5F, terminalPos.getPos().getY() + 0.5F,
 						terminalPos.getPos().getZ() + 0.5F) > 16F
