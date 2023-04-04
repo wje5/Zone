@@ -54,9 +54,6 @@ public class EliteConfigHandler {
 	}
 
 	public static class WorkspaceConfig {
-		public int a = 1;
-		public String text = "アカギ";
-		public int x = 80, y = 80;
 		public boolean init;
 		public StateData stateData;
 

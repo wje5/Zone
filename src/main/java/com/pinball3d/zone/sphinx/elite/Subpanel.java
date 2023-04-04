@@ -21,7 +21,6 @@ import net.minecraft.client.renderer.GlStateManager;
 public class Subpanel extends Component {
 	public Map<Component, Pos2i> components = new HashMap<Component, Pos2i>();
 	protected Map<Component, List<Object>> componentsOrigin = new LinkedHashMap<Component, List<Object>>();
-	private Component focus;
 	private ILayout layout;
 	private int width, scrollingDistance, length;
 	private Runnable onClick;

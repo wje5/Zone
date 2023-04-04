@@ -8,17 +8,20 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import com.pinball3d.zone.math.Pos2i;
 import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
+import com.pinball3d.zone.sphinx.elite.components.ScrollingBar;
 import com.pinball3d.zone.sphinx.elite.history.EventTyping;
 import com.pinball3d.zone.sphinx.elite.history.History;
 import com.pinball3d.zone.sphinx.elite.history.HistoryEvent;
+import com.pinball3d.zone.sphinx.elite.layout.PosLayout;
 import com.pinball3d.zone.sphinx.elite.panels.Panel;
 import com.pinball3d.zone.util.Util;
 
 import net.minecraft.client.gui.GuiScreen;
 
 public class PanelGroupList implements IDropDownList {
-	private int x, y;
+	private int x, y, maxHeight = 596;
 	private EliteMainwindow parent;
 	private PanelGroup parentGroup;
 	private int chosenIndex = -1, cursorIndex = -1, cursorIndex2 = -2, textOffset = 0, dragX, dragY;
@@ -26,6 +29,9 @@ public class PanelGroupList implements IDropDownList {
 	private List<Panel> list = new ArrayList<Panel>(), list2 = new ArrayList<Panel>();
 	private String text = "";
 	private History history = new History();
+
+	private ScrollingBar scrollingBar;
+	private Subpanel panel;
 
 	public PanelGroupList(EliteMainwindow parent, PanelGroup parentGroup, int x, int y) {
 		this.parent = parent;
@@ -35,67 +41,126 @@ public class PanelGroupList implements IDropDownList {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
+	public void doRender(int mouseX, int mouseY, float partialTicks) {
 		if (!init) {
 			init = true;
 			computeChosenIndex(mouseX, mouseY);
+			panel = new Subpanel(parent, null, 17, getHeight() - 39, new PosLayout()) {
+				@Override
+				public Pos2i getPos() {
+					return new Pos2i(x + PanelGroupList.this.getWidth() - 20, y + 35);
+				}
+
+				@Override
+				public int getRenderWidth() {
+					return 17;
+				}
+			};
+			panel.addComponent(scrollingBar = new ScrollingBar(parent, panel, false, getHeight() - 39));
 		}
 		updateList();
+
+		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		GL11.glScissor(panel.getPos().x, parent.getHeight() - panel.getPos().y - panel.getHeight(), panel.getWidth(),
+				panel.getHeight());
+		GL11.glPushMatrix();
+		GL11.glTranslatef(panel.getPos().x, panel.getPos().y, 0);
+		panel.doRenderPre(mouseX, mouseY, partialTicks);
+		GL11.glPopMatrix();
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
 		int width = getWidth();
 		int height = getHeight();
-		int yOffset = 44;
-		EliteRenderHelper.drawBorder(x, y, width, height, 1, Color.DIVIDER_BG);
-		EliteRenderHelper.drawRect(x + 1, y + 1, width - 2, height - 2, Color.COMP_BG_LIGHT);
-		EliteRenderHelper.drawRect(x + 6, y + 38, width - 12, 1, Color.FF9F9F9F);
-		EliteRenderHelper.drawRect(x + 6, y + 39, width - 12, 1, Color.WHITE);
+		int yOffset = 35;
+		EliteRenderHelper.drawBorder(x, y, width, height, 1, Color.FF646464);
+		EliteRenderHelper.drawRect(x + 1, y + 1, width - 2, height - 2, Color.WINDOW_BG);
+		EliteRenderHelper.drawRect(x + 6, y + 28, width - 12, 1, Color.FF9F9F9F);
+		EliteRenderHelper.drawRect(x + 6, y + 29, width - 12, 1, Color.WHITE);
+		EliteRenderHelper.drawRect(x + 6, y + 35, width - 10, height - 39, Color.BACKGROUND);
+		int inRange = (height - 39) / 21;
+		if (list.size() + list2.size() > inRange) {
+//			EliteRenderHelper.drawRect(x + width - 20, y + 35, 17, height - 39, Color.FF171717);
+			if (mouseX >= x + width - 20 && mouseX <= x + width - 4) {
+				if (mouseY >= y + 35 && mouseY <= y + 51) {
+					EliteRenderHelper.drawRect(x + width - 19, y + 35, 15, 17, Color.FF373737);
+				}
+				if (mouseY >= y + height - 21 && mouseY <= y + height - 4) {
+					EliteRenderHelper.drawRect(x + width - 19, y + height - 21, 15, 17, Color.FF373737);
+				}
+			}
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + width - 15, y + 40, 116, 77, 7, 6);
+			EliteRenderHelper.drawTexture(EliteMainwindow.ELITE, x + width - 15, y + height - 15, 123, 77, 7, 6);
+			int barHeight = height - 73;
+//			int tabHeight = 
+			EliteRenderHelper.drawRect(x + width - 20, y + 52, 17, barHeight, Color.WHITE);
+		}
+		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		GL11.glScissor(x + 6, parent.getHeight() - (y + height - 4), width - 12, height - 39);
 		for (int i = 0; i < list.size(); i++) {
 			Panel p = list.get(i);
 			if (chosenIndex == i) {
-				EliteRenderHelper.drawRect(x + 6, y + yOffset, width - 12, 22, Color.DIVIDER_BG);
+				EliteRenderHelper.drawBorder(x + 10, y + yOffset, width - 33, 21, 1, Color.HOVER_BLUE);
+				EliteRenderHelper.drawRect(x + 11, y + yOffset + 1, width - 35, 19, Color.HOVER_BLUE_COVER);
 				if (!isText) {
-					EliteRenderHelper.drawDottedBorder(x + 6, y + yOffset, width - 12, 22, Color.DOTTED_LINE);
+					EliteRenderHelper.drawDottedBorder(x + 10, y + yOffset, width - 33, 21, Color.DOTTED_LINE);
 				}
 			}
-			FontHandler.renderText(x + 11, y + yOffset + 5, new FormattedString("§l" + p.getName()), Color.WHITE);
-			yOffset += 22;
+			EliteRenderHelper.drawTexture(EliteMainwindow.ICONS, x + 10, y + yOffset + 2, 0, 0, 16, 16);
+			FontHandler.renderText(x + 29, y + yOffset + 2, new FormattedString("§l" + p.getName()), Color.WHITE);
+			yOffset += 21;
 		}
 		for (int i = 0; i < list2.size(); i++) {
 			Panel p = list2.get(i);
 			if (chosenIndex == i + list.size()) {
-				EliteRenderHelper.drawRect(x + 6, y + yOffset, width - 12, 22, Color.DIVIDER_BG);
+				EliteRenderHelper.drawBorder(x + 10, y + yOffset, width - 33, 21, 1, Color.HOVER_BLUE);
+				EliteRenderHelper.drawRect(x + 11, y + yOffset + 1, width - 35, 19, Color.HOVER_BLUE_COVER);
 				if (!isText) {
-					EliteRenderHelper.drawDottedBorder(x + 6, y + yOffset, width - 12, 22, Color.DOTTED_LINE);
+					EliteRenderHelper.drawDottedBorder(x + 10, y + yOffset, width - 33, 21, Color.DOTTED_LINE);
 				}
 			}
-			FontHandler.renderText(x + 11, y + yOffset + 5, p.getName(), Color.WHITE);
-			yOffset += 22;
+			EliteRenderHelper.drawTexture(EliteMainwindow.ICONS, x + 10, y + yOffset + 2, 0, 0, 16, 16);
+			FontHandler.renderText(x + 29, y + yOffset + 2, p.getName(), Color.WHITE);
+			yOffset += 21;
 		}
-
-		GL11.glEnable(GL11.GL_SCISSOR_TEST);
-		GL11.glScissor(x + 7, parent.getHeight() - (y + 29), width - 13, 20);
-		FontHandler.renderText(x + 7 - textOffset, y + 9, new FormattedString(text, false), Color.WHITE);
-		GL11.glDisable(GL11.GL_SCISSOR_TEST);
-
+		GL11.glScissor(x + 7, parent.getHeight() - (y + 23), width - 13, 17);
 		int cursorOffset = FontHandler.getStringWidth(new FormattedString(text.substring(0, cursorIndex + 1), false));
 		if (isText) {
 			if (cursorIndex2 > -2) {
 				int cursorOffset2 = FontHandler
 						.getStringWidth(new FormattedString(text.substring(0, cursorIndex2 + 1), false));
-				if (parent.mc.world.getTotalWorldTime() % 20 < 10) {
-					EliteRenderHelper.drawRect(x + 7 + cursorOffset - textOffset, y + 9, 1, 20,
-							Color.CHOSEN_TEXT_CURSOR);
-				}
 				if (cursorIndex2 > cursorIndex) {
-					EliteRenderHelper.drawRect(x + 8 + cursorOffset - textOffset, y + 9,
-							cursorOffset2 - cursorOffset - 1, 20, Color.CHOSEN_TEXT_BG);
+					EliteRenderHelper.drawRect(x + 8 + cursorOffset - textOffset, y + 6,
+							cursorOffset2 - cursorOffset - 1, 17, Color.CHOSEN_TEXT_BG);
 				} else {
-					EliteRenderHelper.drawRect(x + 7 + cursorOffset2 - textOffset, y + 9,
-							cursorOffset - cursorOffset2 - 1, 20, Color.CHOSEN_TEXT_BG);
+					EliteRenderHelper.drawRect(x + 7 + cursorOffset2 - textOffset, y + 6,
+							cursorOffset - cursorOffset2 - 1, 17, Color.CHOSEN_TEXT_BG);
 				}
-			} else if (parent.mc.world.getTotalWorldTime() % 20 < 10) {
-				EliteRenderHelper.drawRect(x + 7 + cursorOffset - textOffset, y + 9, 1, 20, Color.FFEDEDED);
+				FontHandler.renderText(x + 7 - textOffset, y + 6, new FormattedString(text, false), Color.WHITE);
+				if (parent.mc.world.getTotalWorldTime() % 20 < 10) {
+					EliteRenderHelper.drawRect(x + 7 + cursorOffset - textOffset, y + 6, 1, 20,
+							Color.CHOSEN_TEXT_CURSOR_INVERSE);
+				}
+			} else {
+				FontHandler.renderText(x + 7 - textOffset, y + 6, new FormattedString(text, false), Color.FFD0D0D0);
+				if (parent.mc.world.getTotalWorldTime() % 20 < 10) {
+					EliteRenderHelper.drawRect(x + 7 + cursorOffset - textOffset, y + 6, 1, 17, Color.TEXT_CURSOR);
+				}
 			}
 		}
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		GL11.glScissor(panel.getPos().x, parent.getHeight() - panel.getPos().y - panel.getHeight(), panel.getWidth(),
+				panel.getHeight());
+		GL11.glPushMatrix();
+		GL11.glTranslatef(panel.getPos().x, panel.getPos().y, 0);
+		panel.doRender(mouseX, mouseY, partialTicks);
+		GL11.glPopMatrix();
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(panel.getPos().x, panel.getPos().y, 0);
+		panel.doRenderPost(mouseX, mouseY, partialTicks);
+		GL11.glPopMatrix();
+
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 
 	public void updateList() {
@@ -233,10 +298,10 @@ public class PanelGroupList implements IDropDownList {
 					parentGroup.getPanels().remove(p);
 					parentGroup.getPanels().add(0, p);
 					parentGroup.setChosenIndex(0);
-					parentGroup.calcPanelGroup(dragX, dragY);
+					PanelGroup.calcPanelGroup(parent, dragX, dragY);
 				} else {
 					parentGroup.setChosenIndex(parentGroup.getPanels().indexOf(list2.get(chosenIndex - list.size())));
-					parentGroup.calcPanelGroup(dragX, dragY);
+					PanelGroup.calcPanelGroup(parent, dragX, dragY);
 				}
 				parent.setDropDownList(null);
 			} else {
@@ -468,6 +533,9 @@ public class PanelGroupList implements IDropDownList {
 			redo();
 		}
 		switch (keyCode) {
+		case Keyboard.KEY_ESCAPE:
+			parent.setDropDownList(null);
+			break;
 		case Keyboard.KEY_UP:
 			isText = false;
 			if (chosenIndex == 0) {
@@ -712,17 +780,17 @@ public class PanelGroupList implements IDropDownList {
 			chosenIndex = -1;
 		}
 		if (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h) {
-			if (mouseX >= x + 7 && mouseX <= x + w - 7 && mouseY >= y + 9 && mouseY <= y + 29) {
+			if (mouseX >= x + 7 && mouseX <= x + w - 7 && mouseY >= y + 7 && mouseY <= y + 23) {
 				hoverText = true;
 			}
-			if (mouseX >= x + 6 && mouseX <= x + w - 6 && mouseY >= y + 44 && mouseY <= y + h - 5) {
-				int yOffset = y + 44;
+			if (mouseX >= x + 6 && mouseX <= x + w - 23 && mouseY >= y + 36 && mouseY <= y + h - 4) {
+				int yOffset = y + 36;
 				for (int i = 0; i < list.size() + list2.size(); i++) {
-					if (mouseY >= yOffset && mouseY <= yOffset + 22 && (i != old || isText)) {
+					if (mouseY >= yOffset && mouseY <= yOffset + 21 && (i != old || isText)) {
 						chosenIndex = i;
 						return true;
 					}
-					yOffset += 22;
+					yOffset += 21;
 				}
 			}
 		}
@@ -734,12 +802,20 @@ public class PanelGroupList implements IDropDownList {
 	}
 
 	public int getWidth() {
-		return parentGroup.getPanels().stream().mapToInt(e -> FontHandler.getStringWidth(e.getName())).max().getAsInt()
-				+ 31;
+		return parentGroup.getPanels().isEmpty() ? 0
+				: parentGroup.getPanels().stream()
+						.mapToInt(e -> FontHandler.getStringWidth(parentGroup.getPanels()
+								.indexOf(e) < parentGroup.getPanels().size() - parentGroup.getRemain() ? e.getName()
+										: new FormattedString("§l" + e.getName())))
+						.max().getAsInt() + 54;
 	}
 
 	public int getHeight() {
-		return parentGroup.getPanels().size() * 22 + 49;
+		return Math.min(maxHeight, parentGroup.getPanels().size() * 21 + 42);
+	}
+
+	public void setMaxHeight(int maxHeight) {
+		this.maxHeight = maxHeight;
 	}
 
 	public int getX() {

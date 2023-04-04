@@ -1,6 +1,7 @@
 package com.pinball3d.zone.sphinx.elite;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import com.pinball3d.zone.sphinx.elite.PanelGroup.Edge;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Rect;
 import com.pinball3d.zone.sphinx.elite.PanelGroup.Side;
 import com.pinball3d.zone.sphinx.elite.panels.Panel;
+import com.pinball3d.zone.sphinx.elite.panels.PanelInfo;
 import com.pinball3d.zone.sphinx.elite.panels.PanelMap;
 import com.pinball3d.zone.sphinx.elite.panels.PanelRegistry;
 import com.pinball3d.zone.sphinx.elite.window.FloatingWindow;
@@ -48,8 +50,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @EventBusSubscriber(value = net.minecraftforge.fml.relauncher.Side.CLIENT)
 public class EliteMainwindow extends GuiScreen {
 	public static final ResourceLocation ELITE = new ResourceLocation("zone:textures/gui/elite/elite.png");
+	public static final ResourceLocation ICONS = new ResourceLocation("zone:textures/gui/elite/icons.png");
 
-	private int dragMinX, dragMaxX, dragMinY, dragMaxY;
+	private int dragMinX, dragMaxX, dragMinY, dragMaxY, panelDragGroupIndex = -1, panelDragIndex = -1,
+			panelDragToIndex = -1, panelHoverGroupIndex = -1;
 	private MenuBar menuBar;
 	private ButtomBar buttomBar;
 	private IDropDownList dropDownList;
@@ -141,21 +145,26 @@ public class EliteMainwindow extends GuiScreen {
 	public void initState() {
 		applyMenu();
 		panels.clear();
+		System.out.println(getWidth() + "|" + getHeight());
 		if (config.init) {
+			DecimalFormat f = new DecimalFormat(".000");
 			config.stateData.panels.forEach(e -> {
-				PanelGroup g = new PanelGroup(this, e.value().get(0) * getWidth(),
-						e.value().get(1) * (getHeight() - 49) + 28, e.value().get(2) * getWidth(),
-						e.value().get(3) * (getHeight() - 49));
+				PanelGroup g = new PanelGroup(this, Float.valueOf(f.format(f.format(e.value().get(0) * getWidth()))),
+						Float.valueOf(f.format(e.value().get(1) * (getHeight() - 49) + 28)),
+						Float.valueOf(f.format(e.value().get(2) * getWidth())),
+						Float.valueOf(f.format(e.value().get(3) * (getHeight() - 49))));
 				e.key().forEach(pair -> g.addPanel(PanelRegistry.createPanel(this, g, pair.key(), pair.value())));
 				panels.add(g);
 			});
+			panels.forEach(e -> System.out.println(e.getXF() + "|" + (e.getXF() + e.getWidthF()) + "|" + e));
 		} else {
 			PanelGroup g = new PanelGroup(this, 0, 28, getWidth() - 200, getHeight() - 49);
 			g.addPanel(new PanelMap(this, g));
 			panels.add(g);
 
 			PanelGroup g2 = new PanelGroup(this, getWidth() - 200, 28, 200, getHeight() - 49);
-			for (int i = 0; i < 10; i++) {
+			g2.addPanel(new PanelInfo(getWindow(), g));
+			for (int i = 0; i < 50; i++) {
 				g2.addPanel(new Panel(this, g2, "empty", new FormattedString("" + i)));
 			}
 			panels.add(g2);
@@ -173,6 +182,7 @@ public class EliteMainwindow extends GuiScreen {
 			mc.displayGuiScreen(null);
 			return;
 		}
+//		panels.forEach(e -> System.out.println(e.getXF() + "|" + (e.getXF() + e.getWidthF()) + "|" + e));
 		GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		updateMouse();
@@ -206,7 +216,7 @@ public class EliteMainwindow extends GuiScreen {
 			e.doRenderPost(mouseX, mouseY, partialTicks);
 		});
 		if (dropDownList != null) {
-			dropDownList.doRender(mouseX, mouseY);
+			dropDownList.doRender(mouseX, mouseY, partialTicks);
 		}
 		floatingWindows.forEach(e -> {
 			e.doRenderPre(mouseX, mouseY, partialTicks);
@@ -375,6 +385,38 @@ public class EliteMainwindow extends GuiScreen {
 		this.isAlt = isAlt;
 	}
 
+	public int getPanelDragGroupIndex() {
+		return panelDragGroupIndex;
+	}
+
+	public void setPanelDragGroupIndex(int panelDragGroupIndex) {
+		this.panelDragGroupIndex = panelDragGroupIndex;
+	}
+
+	public int getPanelDragIndex() {
+		return panelDragIndex;
+	}
+
+	public void setPanelDragIndex(int panelDragIndex) {
+		this.panelDragIndex = panelDragIndex;
+	}
+
+	public int getPanelDragToIndex() {
+		return panelDragToIndex;
+	}
+
+	public void setPanelDragToIndex(int panelDragToIndex) {
+		this.panelDragToIndex = panelDragToIndex;
+	}
+
+	public int getPanelHoverGroupIndex() {
+		return panelHoverGroupIndex;
+	}
+
+	public void setPanelHoverGroupIndex(int panelHoverGroupIndex) {
+		this.panelHoverGroupIndex = panelHoverGroupIndex;
+	}
+
 	public PanelGroup getFocusPanel() {
 		if (!panels.contains(focusPanel)) {
 			focusPanel = panels.isEmpty() ? null : panels.get(0);
@@ -430,6 +472,7 @@ public class EliteMainwindow extends GuiScreen {
 		if (!floatingWindows.isEmpty()) {
 			floatingWindows.forEach(e -> e.mouseMoved(mouseX, mouseY, moveX, moveY));
 		}
+		PanelGroup.calcPanelGroup(this, mouseX, mouseY);
 		panels.forEach(e -> e.mouseMoved(mouseX, mouseY, moveX, moveY));
 		if (drag != null) {
 			drag.drag(mouseX, mouseY, moveX, moveY);
@@ -550,7 +593,7 @@ public class EliteMainwindow extends GuiScreen {
 			for (Side s : Side.values()) {
 				Edge edge = rect.getEdge(s);
 				if (s.isRow()) {
-					if (edge.getY1() == 28 || Math.abs(edge.getY1() - (getHeight() - 21)) < 1) {
+					if (edge.getY1() <= 28 || Math.abs(edge.getY1() - (getHeight() - 21)) < 1) {
 						continue;
 					}
 					if (mouseX >= edge.getX1() - 5 && mouseX <= edge.getX2() + 5 && mouseY >= edge.getY1() - 5
@@ -724,8 +767,8 @@ public class EliteMainwindow extends GuiScreen {
 				maxY = y2;
 			}
 		}
-		float xScale = getWidth() / maxX;
-		float yScale = (getHeight() - 49) / (maxY - 28);
+		float xScale = getWidth() * 1.0F / maxX;
+		float yScale = (getHeight() - 49F) / (maxY - 28);
 		for (PanelGroup p : panels) {
 			p.setXF(p.getXF() * xScale);
 			p.setYF((p.getYF() - 28) * yScale + 28);

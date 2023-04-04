@@ -3,7 +3,7 @@ package com.pinball3d.zone.sphinx.elite;
 import com.pinball3d.zone.sphinx.elite.MouseHandler.MouseType;
 
 public interface IDropDownList {
-	public void doRender(int mouseX, int mouseY);
+	public void doRender(int mouseX, int mouseY, float partialTicks);
 
 	public boolean onQuit();
 

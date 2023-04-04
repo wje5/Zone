@@ -21,7 +21,7 @@ public class DropDownList implements IDropDownList {
 	}
 
 	@Override
-	public void doRender(int mouseX, int mouseY) {
+	public void doRender(int mouseX, int mouseY, float partialTicks) {
 		int width = getWidth();
 		int height = getHeight();
 		EliteRenderHelper.drawBorder(x, y, width, height, 1, Color.TEXT_DARK);
@@ -33,7 +33,7 @@ public class DropDownList implements IDropDownList {
 			yOffset += bar.getHeight();
 		}
 		if (childList != null) {
-			childList.doRender(mouseX, mouseY);
+			childList.doRender(mouseX, mouseY, partialTicks);
 		}
 	}
 

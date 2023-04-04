@@ -37,7 +37,6 @@ public class LinearLayout implements ILayout {
 		List<Component> east = new ArrayList<Component>();
 		for (Entry<Component, Type> e : map.entrySet()) {
 			Type h = e.getValue().getHorizontal();
-			Type v = e.getValue().getVertical();
 			if (h == Type.WEST) {
 				west.add(e.getKey());
 			} else if (h == Type.CENTER) {

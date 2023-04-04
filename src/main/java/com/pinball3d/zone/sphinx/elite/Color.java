@@ -13,7 +13,7 @@ public class Color {
 	public static final Color COMP_BG_DARK = new Color(0xFF424242);
 	public static final Color COMP_ORNAMENT = new Color(0xFFA8A8A8);
 
-	public static final Color BACKGROUND = new Color(0xFF282828);
+	public static final Color BACKGROUND = new Color(0xFF2F2F2F);
 
 	public static final Color CHECKBOX_BORDER = new Color(0xFF858585);
 	public static final Color CHECKBOX_FILL = new Color(0xFFD4D4D4);
@@ -34,8 +34,12 @@ public class Color {
 	public static final Color WINDOW_BORDER_DARK = new Color(0xFF424242);
 	public static final Color WINDOW_BG = new Color(0xFF515658);
 
+	public static final Color TEXT_CURSOR = new Color(0xFFAEA9A7);
+	public static final Color CHOSEN_TEXT_CURSOR_INVERSE = new Color(0xFFFF8728);
 	public static final Color CHOSEN_TEXT_BG = new Color(0xFF0078D7);
-	public static final Color CHOSEN_TEXT_CURSOR = new Color(0xFFFF8728);
+
+	public static final Color HOVER_BLUE = new Color(0xFF1C5482);
+	public static final Color HOVER_BLUE_COVER = new Color(0x7F1C5482);
 
 	public static final Color FF9F9F9F = new Color(0xFF9F9F9F);
 	public static final Color FFEDEDED = new Color(0xFFEDEDED);
@@ -43,7 +47,11 @@ public class Color {
 	public static final Color FFC7C7C7 = new Color(0xFFC7C7C7);
 	public static final Color FF6F6F6F = new Color(0xFF6F6F6F);
 	public static final Color FF66AEE7 = new Color(0xFF66AEE7);
-
+	public static final Color FF646464 = new Color(0xFF646464);
+	public static final Color FFD0D0D0 = new Color(0xFFD0D0D0);
+	public static final Color FFDDDDDD = new Color(0xFFDDDDDD);
+	public static final Color FF171717 = new Color(0xFF171717);
+	public static final Color FF373737 = new Color(0xFF373737);
 	public static final Color ICON = new Color(0xFFDDDDDD);
 
 	public final int a, r, g, b;
